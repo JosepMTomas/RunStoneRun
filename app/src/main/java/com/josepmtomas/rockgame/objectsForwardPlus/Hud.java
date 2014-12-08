@@ -449,14 +449,17 @@ public class Hud
 		multiplierBaseOffsetY = screenHeight - numberHeight * 4f;
 
 		multiplierNumbersOffsetY = multiplierBaseOffsetY + numberHeight * 1.25f;
-		multiplierNumbersOffsetsX[0] = multiplierBaseOffsetX - (numberHeight * 0.75f);
+		multiplierNumbersOffsetsX[0] = multiplierBaseOffsetX - (numberWidth * 0.75f);
+		multiplierNumbersOffsetsX[1] = multiplierNumbersOffsetsX[0] - numberWidth * 0.75f;
+		multiplierNumbersOffsetsX[2] = multiplierNumbersOffsetsX[1] - numberWidth * 0.75f;
+		multiplierNumbersOffsetsX[3] = multiplierNumbersOffsetsX[2] - numberWidth;
 
-		for(int i=1; i < 4; i++)
+		/*for(int i=3; i < 4; i++)
 		{
 			multiplierNumbersOffsetsX[i] = multiplierNumbersOffsetsX[0] - ((float)i * numberWidth);
-		}
+		}*/
 
-		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 0.25f;
+		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
 		multiplierProgressOffsetX = multiplierBaseOffsetX - numberWidth * 4.25f;
 	}
 
@@ -510,7 +513,7 @@ public class Hud
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 
-		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersNegativeTexture);
+		//scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersNegativeTexture);
 		for(int i=0; i < 4; i++)
 		{
 			scorePanelProgram.setSpecificUniforms(multiplierNumbersOffsetsX[i], multiplierNumbersOffsetY, scoreTexCoordOffsetsX[multiplierNumbers[i]], scoreTexCoordOffsetsY[multiplierNumbers[i]]);
@@ -535,11 +538,11 @@ public class Hud
 
 		///// multiplier
 
-		scorePanelProgram.setCommonUniforms(viewProjection, multiplierTexture);
+		/*scorePanelProgram.setCommonUniforms(viewProjection, multiplierTexture);
 		scorePanelProgram.setSpecificUniforms(multiplierBaseOffsetX, multiplierBaseOffsetY, 0f, 0f);
 
 		glBindVertexArray(multiplierVaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, numMultiplierElementsToDraw, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, numMultiplierElementsToDraw, GL_UNSIGNED_SHORT, 0);*/
 
 
 		/// Progress bar program
