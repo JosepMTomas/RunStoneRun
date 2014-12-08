@@ -1,0 +1,21 @@
+package com.josepmtomas.rockgame.data;
+
+/**
+ * Created by Josep on 30/07/2014.
+ */
+public enum GroundPatchType
+{
+	GROUND_ROOT,
+	GROUND_DOWN,
+	GROUND_LEFT,
+	GROUND_RIGHT,
+	GROUND_UP,
+	GROUND_UP_LEFT,
+	GROUND_UP_RIGHT,
+	RIVER_ENTRY_UP,
+	RIVER_ENTRY_UP_LEFT,
+	RIVER_ENTRY_UP_RIGHT,
+	RIVER_EXIT_ROOT,
+	RIVER_EXIT_LEFT,
+	RIVER_EXIT_RIGHT
+}
