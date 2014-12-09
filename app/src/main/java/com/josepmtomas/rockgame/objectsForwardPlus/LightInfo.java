@@ -40,7 +40,7 @@ public class LightInfo
 
 	public LightInfo()
 	{
-		lightPos = new vec3(100f, 150f, 0f);
+		lightPos = new vec3(150f, 150f, 0f);
 		lightColor = new vec4(1f);
 		ambientColor = new vec4(0.125f, 0.168f, 0.2f, 1f);//(0.2f, 0.25f, 0.3f, 1f);
 

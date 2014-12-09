@@ -63,6 +63,13 @@ public class PlayerRock
 	private int[] vboHandles = new int[2];
 	public int[] vaoHandle = new int[1];
 
+	// Shadow mesh geometry definition
+	private float[] shadowVertices;
+	private short[] shadowElements;
+	public int numShadowElementsToDraw;
+	private int[] shadowVboHandles = new int[2];
+	public int[] shadowVaoHandle = new int[1];
+
 	// Shader program
 	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
@@ -138,6 +145,7 @@ public class PlayerRock
 		glGenVertexArrays(1, vaoHandle, 0);
 
 		load("models/player_rock.vbm");
+		loadShadow("models/player_rock.vbm");
 	}
 
 
@@ -275,6 +283,110 @@ public class PlayerRock
 	}
 
 
+	private void loadShadow(String shadowFileName)
+	{
+		int numShadowVertices, numShadowElements;
+		FloatBuffer shadowVerticesBuffer;
+		ShortBuffer shadowElementsBuffer;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read shadow geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			InputStream inputStream = context.getResources().getAssets().open(shadowFileName);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String nextLine;
+
+			int verticesOffset = 0;
+			int elementsOffset = 0;
+
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				// Split the line into tokens separated by spaces
+				String[] tokens = nextLine.split(" ");
+
+				// Check the first token of the line
+				if(tokens[0].equals("VERTICES"))
+				{
+					// Get the number of vertices and initialize the positions array
+					numShadowVertices = Integer.parseInt(tokens[1]);
+					shadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
+				}
+				else if(tokens[0].equals("FACES"))
+				{
+					// Get the number of faces and initialize the elements array
+					numShadowElements = Integer.parseInt(tokens[1]);
+					numShadowElementsToDraw = numShadowElements * 3;
+					shadowElements = new short[numShadowElementsToDraw];
+				}
+				else if(tokens[0].equals("VERTEX"))
+				{
+					// Read the vertex positions
+					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+				}
+				else if(tokens[0].equals("FACE"))
+				{
+					// Read the face indices (triangle)
+					shadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					shadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					shadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Buffers
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Build the java native buffers
+		shadowVerticesBuffer = ByteBuffer
+				.allocateDirect(shadowVertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(shadowVertices);
+		shadowVerticesBuffer.position(0);
+
+		shadowElementsBuffer = ByteBuffer
+				.allocateDirect(shadowElements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(shadowElements);
+		shadowElementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, shadowVboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, shadowVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER,  shadowVerticesBuffer.capacity() * BYTES_PER_FLOAT, shadowVerticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shadowVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shadowElementsBuffer.capacity() * BYTES_PER_SHORT, shadowElementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, shadowVaoHandle, 0);
+		glBindVertexArray(shadowVaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, shadowVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, POSITION_COMPONENTS * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shadowVboHandles[1]);
+
+		glBindVertexArray(0);
+	}
+
+
 	public void updateLightMatrices(float[] lightViewProjection)
 	{
 		this.lightViewProjection = lightViewProjection;
@@ -404,8 +516,8 @@ public class PlayerRock
 		shadowPassProgram.useProgram();
 		shadowPassProgram.setUniforms(lightModelViewProjection);
 
-		//glBindVertexArray(positionsVaoHandle[0]);
-		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(shadowVaoHandle[0]);
+		glDrawElements(GL_TRIANGLES, numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0);
 	}
 
 

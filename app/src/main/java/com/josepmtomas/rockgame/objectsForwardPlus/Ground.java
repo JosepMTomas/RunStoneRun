@@ -425,8 +425,8 @@ public class Ground
 		pineTreeCullingPoints = pineTree.cullingPoints;
 
 		String[] hugeTreeLODs = {
-				"models/huge_tree_lod_a.vbm",
-				"models/huge_tree_lod_b.vbm"
+				"models/huge_tree_lod_a_2.vbm",
+				"models/huge_tree_lod_b_2.vbm"
 		};
 		hugeTree = new Tree(context, hugeTreeLODs);
 		hugeTree.addShadowGeometry("models/huge_tree_lod_a_shadow.vbm");
@@ -2200,6 +2200,8 @@ public class Ground
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_B]);
 
 		////Log.e("Number of pine trees","A("+pineTreeNumInstances[LOD_A]+") B("+pineTreeNumInstances[LOD_B]+")");
+
+		glEnable(GL_CULL_FACE);
 
 		treeProgram.setCommonUniforms(viewProjection, hugeTreeTexture);
 
