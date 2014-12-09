@@ -30,6 +30,8 @@ public class GroundPatch extends BoundarySampler
 {
 	private static final String TAG = "GroundPatch";
 
+	private static final int COLOR_COMPONENTS = 3;
+
 	public int type;
 
 	// LOD

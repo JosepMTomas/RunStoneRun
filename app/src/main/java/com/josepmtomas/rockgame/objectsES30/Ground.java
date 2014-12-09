@@ -36,6 +36,11 @@ public class Ground
 {
 	private final static String TAG = "Ground";
 
+	private static final int POSITION_COMPONENTS = 3;
+	private static final int TEXCOORD_COMPONENTS = 2;
+	private static final int NORMAL_COMPONENTS = 3;
+	private static final int TANGENT_COMPONENTS = 4;
+
 	// VBO handle for: positions, texture coordinates, normals, tangents & elements
 	private int[] vboHandles = new int[5];
 
@@ -164,10 +169,10 @@ public class Ground
 		//int compressedTexture = TextureHelper.loadETC2Texture(context,"textures/grass_color_mip_0.pkm", GL_COMPRESSED_RGBA8_ETC2_EAC, false, false);
 
 		// Common attributes arrays (static information)
-		patchPositions = new float[numVerticesX * numVerticesZ * Constants.POSITION_COMPONENTS];
-		patchTexCoords = new float[numVerticesX * numVerticesZ * Constants.TEXCOORD_COMPONENTS];
-		patchNormals = new float[numVerticesX * numVerticesZ * Constants.NORMAL_COMPONENTS];
-		patchTangents = new float[numVerticesX * numVerticesZ * Constants.TANGENT_COMPONENTS];
+		patchPositions = new float[numVerticesX * numVerticesZ * POSITION_COMPONENTS];
+		patchTexCoords = new float[numVerticesX * numVerticesZ * TEXCOORD_COMPONENTS];
+		patchNormals = new float[numVerticesX * numVerticesZ * NORMAL_COMPONENTS];
+		patchTangents = new float[numVerticesX * numVerticesZ * TANGENT_COMPONENTS];
 		patchElements = new short[numPolygonsX * numPolygonsZ * 6];
 
 		shadowPlanePositions = new float[12];

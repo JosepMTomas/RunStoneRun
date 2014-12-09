@@ -523,7 +523,7 @@ public class ForwardPlusRenderer implements Renderer
 		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		//TODO: draw scene normally
-		playerRock.draw(shadowMatrix, shadowMapTexID[0]);
+		//playerRock.draw(shadowMatrix, shadowMapTexID[0]);
 		/////////ground.draw(reflectionTexID[0], framebufferDimensions);
 
 
@@ -556,6 +556,7 @@ public class ForwardPlusRenderer implements Renderer
 		glEnable(GL_CULL_FACE);
 
 		skyDome.draw();
+		playerRock.draw(shadowMatrix, shadowMapTexID[0]);
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}

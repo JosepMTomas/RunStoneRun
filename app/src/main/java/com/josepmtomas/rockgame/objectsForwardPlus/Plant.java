@@ -14,7 +14,6 @@ import java.nio.ShortBuffer;
 import static android.opengl.GLES30.*;
 
 import static com.josepmtomas.rockgame.Constants.*;
-import static com.josepmtomas.rockgame.Constants.POSITION_COMPONENTS;
 
 /**
  * Created by Josep on 11/10/2014.

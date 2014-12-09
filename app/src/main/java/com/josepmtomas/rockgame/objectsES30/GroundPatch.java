@@ -24,6 +24,8 @@ public class GroundPatch
 {
 	public int type;
 
+	private static final int COLOR_COMPONENTS = 3;
+
 	// Frustum culling points
 	private float[] initialCullingPoints;
 	private float[] currentCullingPoints = new float[12];
@@ -63,7 +65,7 @@ public class GroundPatch
 
 		setIdentityM(currentModelMatrix, 0);
 
-		colors = new float[numVerticesZ * numVerticesZ * Constants.COLOR_COMPONENTS];
+		colors = new float[numVerticesZ * numVerticesZ * COLOR_COMPONENTS];
 	}
 
 
@@ -169,7 +171,7 @@ public class GroundPatch
 		{
 			for(int j=0; j < numVerticesX; j++)
 			{
-				position = (i * numVerticesX + j) * Constants.COLOR_COMPONENTS;
+				position = (i * numVerticesX + j) * COLOR_COMPONENTS;
 
 				colors[position] = random.nextFloat();
 				colors[position+1] = 0.0f;
@@ -224,8 +226,8 @@ public class GroundPatch
 		// Paint the first row (x,0)
 		for(int x=1; x < numVerticesX; x++)
 		{
-			current = x * Constants.COLOR_COMPONENTS;
-			previousLeft = (x-1) * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
+			previousLeft = (x-1) * COLOR_COMPONENTS;
 
 			// Get a random with a value between [0,1] and transform it into a random with a value
 			// between [-1,1]
@@ -240,8 +242,8 @@ public class GroundPatch
 		// Paint the first column (0,z)
 		for(int z=1; z < numVerticesZ; z++)
 		{
-			current = z * numVerticesX * Constants.COLOR_COMPONENTS;
-			previousDown = (z-1) * numVerticesX * Constants.COLOR_COMPONENTS;
+			current = z * numVerticesX * COLOR_COMPONENTS;
+			previousDown = (z-1) * numVerticesX * COLOR_COMPONENTS;
 
 			// Get a random with a value between [0,1] and transform it into a random with a value
 			// between [-1,1]
@@ -258,9 +260,9 @@ public class GroundPatch
 		{
 			for(int x=1; x < numVerticesX; x++)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousLeft = (z * numVerticesX + (x-1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousLeft = (z * numVerticesX + (x-1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]
@@ -288,7 +290,7 @@ public class GroundPatch
 		// Paint the first row
 		for(int x=0; x < numVerticesX; x++)
 		{
-			current = x * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
 
 			colors[current] = downColors[offset++];
 			colors[current+1] = downColors[offset++];
@@ -298,8 +300,8 @@ public class GroundPatch
 		// Paint the first column (0,z)
 		for(int z=1; z < numVerticesZ; z++)
 		{
-			current = z * numVerticesX * Constants.COLOR_COMPONENTS;
-			previousDown = (z-1) * numVerticesX * Constants.COLOR_COMPONENTS;
+			current = z * numVerticesX * COLOR_COMPONENTS;
+			previousDown = (z-1) * numVerticesX * COLOR_COMPONENTS;
 
 			// Get a random with a value between [0,1] and transform it into a random with a value
 			// between [-1,1]
@@ -316,9 +318,9 @@ public class GroundPatch
 		{
 			for(int x=1; x < numVerticesX; x++)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousLeft = (z * numVerticesX + (x-1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousLeft = (z * numVerticesX + (x-1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]
@@ -346,7 +348,7 @@ public class GroundPatch
 		// Paint the first column
 		for(int z=0; z < numVerticesZ; z++)
 		{
-			current = z * numVerticesX * Constants.COLOR_COMPONENTS;
+			current = z * numVerticesX * COLOR_COMPONENTS;
 
 			colors[current] = leftColors[offset++];
 			colors[current+1] = leftColors[offset++];
@@ -356,8 +358,8 @@ public class GroundPatch
 		// Paint the first row (x,0)
 		for(int x=1; x < numVerticesX; x++)
 		{
-			current = x * Constants.COLOR_COMPONENTS;
-			previousLeft = (x-1) * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
+			previousLeft = (x-1) * COLOR_COMPONENTS;
 
 			// Get a random with a value between [0,1] and transform it into a random with a value
 			// between [-1,1]
@@ -374,9 +376,9 @@ public class GroundPatch
 		{
 			for(int x=1; x < numVerticesX; x++)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousLeft = (z * numVerticesX + (x-1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousLeft = (z * numVerticesX + (x-1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]
@@ -401,7 +403,7 @@ public class GroundPatch
 
 		// Paint the last column
 		for (int z = 0; z < numVerticesZ; z++) {
-			current = (z * numVerticesX + (numVerticesX-1)) * Constants.COLOR_COMPONENTS;
+			current = (z * numVerticesX + (numVerticesX-1)) * COLOR_COMPONENTS;
 
 			colors[current] = rightColors[offset++];
 			colors[current + 1] = rightColors[offset++];
@@ -410,8 +412,8 @@ public class GroundPatch
 
 		// Paint the first row (x,0)
 		for (int x = numVerticesX-2; x >= 0; x--) {
-			current = x * Constants.COLOR_COMPONENTS;
-			previousRight = (x+1) * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
+			previousRight = (x+1) * COLOR_COMPONENTS;
 
 			// Get a random with a value between [0,1] and transform it into a random with a value
 			// between [-1,1]
@@ -428,9 +430,9 @@ public class GroundPatch
 		{
 			for(int x=numVerticesX-2; x >= 0; x--)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousRight = (z * numVerticesX + (x+1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousRight = (z * numVerticesX + (x+1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]
@@ -458,7 +460,7 @@ public class GroundPatch
 		// Paint the first row
 		for(int x=0; x < numVerticesX; x++)
 		{
-			current = x * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
 
 			colors[current] = downColors[offset++];
 			colors[current+1] = downColors[offset++];
@@ -469,7 +471,7 @@ public class GroundPatch
 		offset = 3;
 		for(int z=1; z < numVerticesZ; z++)
 		{
-			current = (z * numVerticesX) * Constants.COLOR_COMPONENTS;
+			current = (z * numVerticesX) * COLOR_COMPONENTS;
 
 			colors[current] = leftColors[offset++];
 			colors[current+1] = leftColors[offset++];
@@ -481,9 +483,9 @@ public class GroundPatch
 		{
 			for(int x=1; x < numVerticesX; x++)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousLeft = (z * numVerticesX + (x-1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousLeft = (z * numVerticesX + (x-1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]
@@ -511,7 +513,7 @@ public class GroundPatch
 		// Paint the first row
 		for(int x=0; x < numVerticesX; x++)
 		{
-			current = x * Constants.COLOR_COMPONENTS;
+			current = x * COLOR_COMPONENTS;
 
 			colors[current] = downColors[offset++];
 			colors[current+1] = downColors[offset++];
@@ -521,7 +523,7 @@ public class GroundPatch
 		// Paint the last column
 		offset = 3;
 		for (int z = 1; z < numVerticesZ; z++) {
-			current = (z * numVerticesX + (numVerticesX-1)) * Constants.COLOR_COMPONENTS;
+			current = (z * numVerticesX + (numVerticesX-1)) * COLOR_COMPONENTS;
 
 			colors[current] = rightColors[offset++];
 			colors[current+1] = rightColors[offset++];
@@ -533,9 +535,9 @@ public class GroundPatch
 		{
 			for(int x=numVerticesX-2; x >= 0; x--)
 			{
-				current = (z * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousDown = ((z-1) * numVerticesX + x) * Constants.COLOR_COMPONENTS;
-				previousRight = (z * numVerticesX + (x+1)) * Constants.COLOR_COMPONENTS;
+				current = (z * numVerticesX + x) * COLOR_COMPONENTS;
+				previousDown = ((z-1) * numVerticesX + x) * COLOR_COMPONENTS;
+				previousRight = (z * numVerticesX + (x+1)) * COLOR_COMPONENTS;
 
 				// Get a random with a value between [0,1] and transform it into a random with a value
 				// between [-1,1]

@@ -1,10 +1,7 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.josepmtomas.rockgame.algebra.vec2;
-import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
 import com.josepmtomas.rockgame.util.TextureHelper;
@@ -17,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
 
 import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
@@ -453,11 +449,6 @@ public class Hud
 		multiplierNumbersOffsetsX[1] = multiplierNumbersOffsetsX[0] - numberWidth * 0.75f;
 		multiplierNumbersOffsetsX[2] = multiplierNumbersOffsetsX[1] - numberWidth * 0.75f;
 		multiplierNumbersOffsetsX[3] = multiplierNumbersOffsetsX[2] - numberWidth;
-
-		/*for(int i=3; i < 4; i++)
-		{
-			multiplierNumbersOffsetsX[i] = multiplierNumbersOffsetsX[0] - ((float)i * numberWidth);
-		}*/
 
 		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
 		multiplierProgressOffsetX = multiplierBaseOffsetX - numberWidth * 4.25f;

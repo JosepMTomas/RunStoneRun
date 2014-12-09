@@ -52,6 +52,11 @@ public class Ground
 	private final static int GROUND_PATCH_RIVER_MIDDLE = 3;
 	private final static int GROUND_PATCH_RIVER_EXIT = 4;*/
 
+	private static final int POSITION_COMPONENTS = 3;
+	private static final int TEXCOORD_COMPONENTS = 2;
+	private static final int NORMAL_COMPONENTS = 3;
+	private static final int TANGENT_COMPONENTS = 4;
+
 	private final static int RIVER_MIN_LENGTH = 1;
 	private final static int RIVER_MAX_LENGTH = 3;
 	private final static int RIVER_LENGTH_DIFFERENCE = RIVER_MAX_LENGTH - RIVER_MIN_LENGTH;

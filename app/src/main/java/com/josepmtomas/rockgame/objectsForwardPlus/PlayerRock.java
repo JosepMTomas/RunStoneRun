@@ -2,6 +2,7 @@ package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.util.Log;
 
 import static com.josepmtomas.rockgame.Constants.*;
 import com.josepmtomas.rockgame.R;
@@ -22,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,40 +42,26 @@ public class PlayerRock
 	private static final int TEXCOORD_COMPONENTS = 2;
 	private static final int NORMAL_COMPONENTS = 3;
 	private static final int TANGENT_COMPONENTS = 4;
-	private static final int COLOR_COMPONENTS = 3;
 
-	private static final int STRIDE = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS + COLOR_COMPONENTS;
+	private static final int STRIDE = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS;
 	private static final int BYTE_STRIDE = STRIDE * BYTES_PER_FLOAT;
 
 	private static final int POSITION_OFFSET = 0;
 	private static final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
 	private static final int NORMAL_OFFSET = TEXCOORD_OFFSET +TEXCOORD_COMPONENTS;
 	private static final int TANGENT_OFFSET = NORMAL_OFFSET + NORMAL_COMPONENTS;
-	private static final int COLOR_OFFSET = TANGENT_OFFSET + TANGENT_COMPONENTS;
 
 	private static final int POSITION_BYTE_OFFSET = 0;
 	private static final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * BYTES_PER_FLOAT;
 	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
 	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * BYTES_PER_FLOAT;
-	private static final int COLOR_BYTE_OFFSET = COLOR_OFFSET * BYTES_PER_FLOAT;
 
-	// Mesh definition
-	protected int numVertices;
-	protected int numIndices;
-
+	// Main geometry definition
 	private float[] vertices;
-	private int[] indices;
-
-	private FloatBuffer verticesBuffer;
-	private IntBuffer elementsBuffer;
-
+	private short[] elements;
+	public int numElementsToDraw;
 	private int[] vboHandles = new int[2];
-	private int[] vaoHandle = new int[1];			// VAO used for shaded rendering (all attributes)
-	private int[] positionsVaoHandle = new int[1];	// VAO used for geometry rendering (z pre-pass & shadow mapping)
-
-	// Mesh collision
-	List<CollisionSphere> collisionSpheres = new ArrayList<CollisionSphere>();
-	List<CollisionCylinder> collisionCylinders = new ArrayList<CollisionCylinder>();
+	public int[] vaoHandle = new int[1];
 
 	// Shader program
 	DepthPrePassProgram depthPrePassProgram;
@@ -99,7 +87,7 @@ public class PlayerRock
 	private float[] viewProjection;
 	private float[] modelViewProjection = new float[16];
 
-	// Reflection proxy matrices
+	// Reflection matrices
 	private float[] proxyModel = new float[16];
 	private float[] proxyModelViewProjection = new float[16];
 
@@ -128,12 +116,15 @@ public class PlayerRock
 
 	private LightInfo lightInfo;
 
+	private Context context;
+
 	/**
 	 * Creates a new player rock
 	 * @param context current application context
 	 */
 	public PlayerRock(Context context, LightInfo lightInfo)
 	{
+		this.context = context;
 		this.lightInfo = lightInfo;
 
 		currentPositionY = 10f;
@@ -142,16 +133,27 @@ public class PlayerRock
 		shadowPassProgram = new ShadowPassProgram(context);
 		playerRockProgram = new PlayerRockProgram(context);
 
-		load(context, R.raw.spherified_cube2);
-		initialize();
+		//load(context, R.raw.spherified_cube2);
+
+		glGenVertexArrays(1, vaoHandle, 0);
+
+		load("models/player_rock.vbm");
 	}
 
 
-	private void load(Context context, int resourceId)
+	private void load(String fileName)
 	{
+		int numVertices, numElements;
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
 		try
 		{
-			InputStream inputStream = context.getResources().openRawResource(resourceId);
+			InputStream inputStream = context.getResources().getAssets().open(fileName);
 			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -168,97 +170,59 @@ public class PlayerRock
 				// Check the first token of the line
 				if(tokens[0].equals("VERTICES"))
 				{
-					// Get the number of vertices and initialize its array
+					// Get the number of vertices and initialize the positions array
 					numVertices = Integer.parseInt(tokens[1]);
-
 					vertices = new float[STRIDE * numVertices];
 				}
-				if(tokens[0].equals("FACES"))
+				else if(tokens[0].equals("FACES"))
 				{
-					// Get the number of faces and initialize the indices array
-					numIndices = Integer.parseInt(tokens[1]);
-					indices = new int[3 * numIndices];
+					// Get the number of faces and initialize the elements array
+					numElements = Integer.parseInt(tokens[1]);
+					numElementsToDraw = numElements * 3;
+					elements = new short[numElementsToDraw];
 				}
 				else if(tokens[0].equals("VERTEX"))
 				{
-					// Read a vertex: <position(3)> <uvs(2)> <normal(3)> <tangent(4)>
-
-					// Vertex position (3 components: X Y Z)
+					// Read the vertex positions
 					vertices[verticesOffset++] = Float.parseFloat(tokens[1]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[2]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 
-					// Vertex texture coordinate (2 components: X Y)
+					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
 
-					// Vertex normal (3 components: X Y Z)
+					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);
 
-					// Vertex tangent (4 components: X Y Z W)
+					// read the vertex tangents
 					vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);
-
-					// Vertex colors (3 components: R G B)
-					vertices[verticesOffset++] = Float.parseFloat(tokens[13]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[14]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[15]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
 					// Read the face indices (triangle)
-					indices[elementsOffset++] = Integer.parseInt(tokens[1]);
-					indices[elementsOffset++] = Integer.parseInt(tokens[2]);
-					indices[elementsOffset++] = Integer.parseInt(tokens[3]);
-				}
-				else if(tokens[0].equals("COLLISION_SPHERE"))
-				{
-					// Read a collision sphere (center(X Y Z) & radius)
-					CollisionSphere collisionSphere = new CollisionSphere(
-							new vec3(
-									Float.parseFloat(tokens[1]),
-									Float.parseFloat(tokens[2]),
-									Float.parseFloat(tokens[3])),
-							Float.parseFloat(tokens[4]));
-
-					collisionSpheres.add(collisionSphere);
-				}
-				else if(tokens[0].equals("COLLISION_CYLINDER"))
-				{
-					// Read a collision cylinder ( bottom(X Y Z) top(X Y Z) & radius)
-					CollisionCylinder collisionCylinder = new CollisionCylinder(
-							new vec3(
-									Float.parseFloat(tokens[1]),
-									Float.parseFloat(tokens[2]),
-									Float.parseFloat(tokens[3])),
-							new vec3(
-									Float.parseFloat(tokens[4]),
-									Float.parseFloat(tokens[5]),
-									Float.parseFloat(tokens[6])),
-							Float.parseFloat(tokens[7]));
-
-					collisionCylinders.add(collisionCylinder);
+					elements[elementsOffset++] = Short.parseShort(tokens[1]);
+					elements[elementsOffset++] = Short.parseShort(tokens[2]);
+					elements[elementsOffset++] = Short.parseShort(tokens[3]);
 				}
 			}
 		}
 		catch (IOException e)
 		{
-			throw new RuntimeException("Could not open resource: " + resourceId, e);
+			e.printStackTrace();
 		}
-		catch (Resources.NotFoundException nfe)
-		{
-			throw new RuntimeException("Resource not found: " + resourceId, nfe);
-		}
-	}
 
+		Log.e(TAG, "numVertices = " + vertices.length + ", numElements = " + elements.length);
 
-	private void initialize()
-	{
-		// Build the arrays
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Buffers
+		////////////////////////////////////////////////////////////////////////////////////////////
+
 		verticesBuffer = ByteBuffer
 				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -267,23 +231,22 @@ public class PlayerRock
 		verticesBuffer.position(0);
 
 		elementsBuffer = ByteBuffer
-				.allocateDirect(indices.length * BYTES_PER_INT)
+				.allocateDirect(elements.length * BYTES_PER_SHORT)
 				.order(ByteOrder.nativeOrder())
-				.asIntBuffer()
-				.put(indices);
+				.asShortBuffer()
+				.put(elements);
 		elementsBuffer.position(0);
 
 		// Create and populate the buffer objects
 		glGenBuffers(2, vboHandles, 0);
 
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_INT, elementsBuffer, GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
 
 		// Create the VAO
-		glGenVertexArrays(1, vaoHandle, 0);
 		glBindVertexArray(vaoHandle[0]);
 
 		// Vertex positions
@@ -305,26 +268,6 @@ public class PlayerRock
 		glEnableVertexAttribArray(3);
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
-
-		// Vertex colors
-		glEnableVertexAttribArray(4);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(4, 3, GL_FLOAT, false, BYTE_STRIDE, COLOR_BYTE_OFFSET);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
-
-		glBindVertexArray(0);
-
-		/******************************************************************************************/
-
-		// Create the VAO for the depth pre-pass & the shadow mapping pass
-		glGenVertexArrays(1, positionsVaoHandle, 0);
-		glBindVertexArray(positionsVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
 
@@ -449,8 +392,8 @@ public class PlayerRock
 		depthPrePassProgram.useProgram();
 		depthPrePassProgram.setUniforms(modelViewProjection);
 
-		glBindVertexArray(positionsVaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(positionsVaoHandle[0]);
+		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 	}
 
 
@@ -461,8 +404,8 @@ public class PlayerRock
 		shadowPassProgram.useProgram();
 		shadowPassProgram.setUniforms(lightModelViewProjection);
 
-		glBindVertexArray(positionsVaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(positionsVaoHandle[0]);
+		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 	}
 
 
@@ -474,8 +417,8 @@ public class PlayerRock
 		playerRockProgram.useProgram();
 		playerRockProgram.setUniforms(proxyModel, proxyModelViewProjection, shadowMatrix, shadowMapSampler);
 
-		glBindVertexArray(vaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(vaoHandle[0]);
+		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
 	}
 
 
@@ -487,7 +430,7 @@ public class PlayerRock
 		playerRockProgram.setUniforms(model, modelViewProjection, shadowMatrix, shadowMapSampler);
 
 		glBindVertexArray(vaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
 	}
 
 
@@ -548,10 +491,6 @@ public class PlayerRock
 
 	public void deleteGL()
 	{
-		glDeleteBuffers(2, vboHandles, 0);
-		glDeleteVertexArrays(1, vaoHandle, 0);
-		glDeleteVertexArrays(1, positionsVaoHandle, 0);
-
 		playerRockProgram.deleteProgram();
 		depthPrePassProgram.deleteProgram();
 		shadowPassProgram.deleteProgram();

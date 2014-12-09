@@ -15,7 +15,7 @@ public class Constants
 	public static final int BYTES_PER_SHORT = 2;
 
 	// Mesh attributes components
-	public static final int POSITION_COMPONENTS = 3;
+	/*public static final int POSITION_COMPONENTS = 3;
 	public static final int TEXCOORD_COMPONENTS = 2;
 	public static final int NORMAL_COMPONENTS = 3;
 	public static final int TANGENT_COMPONENTS = 4;
@@ -37,7 +37,7 @@ public class Constants
 	public static final int TANGENT_BYTE_OFFSET = NORMAL_BYTE_OFFSET + (NORMAL_COMPONENTS * BYTES_PER_FLOAT);
 	public static final int COLOR_BYTE_OFFSET = TANGENT_BYTE_OFFSET + (TANGENT_COMPONENTS * BYTES_PER_FLOAT);
 
-	public static final int STRIDE = TOTAL_COMPONENTS * BYTES_PER_FLOAT;
+	public static final int STRIDE = TOTAL_COMPONENTS * BYTES_PER_FLOAT;*/
 
 	public static final int MAX_GRASS_INSTANCES = 128;
 	public static final int MAX_TREE_INSTANCES = 128;

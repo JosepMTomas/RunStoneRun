@@ -220,7 +220,7 @@ public class StaticMesh
 		glBindVertexArray(vaoHandle[0]);
 
 		// Vertex positions
-		glEnableVertexAttribArray(0);
+		/*glEnableVertexAttribArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, Constants.STRIDE, 0);
 
@@ -246,7 +246,7 @@ public class StaticMesh
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
 
-		glBindVertexArray(0);
+		glBindVertexArray(0);*/
 	}
 
 
