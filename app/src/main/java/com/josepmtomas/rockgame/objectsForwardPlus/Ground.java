@@ -11,6 +11,7 @@ import com.josepmtomas.rockgame.R;
 import com.josepmtomas.rockgame.algebra.operations;
 import com.josepmtomas.rockgame.algebra.vec2;
 import com.josepmtomas.rockgame.algebra.vec3;
+import com.josepmtomas.rockgame.programsForwardPlus.BrokenTreeProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.DepthPrePassProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.GrassLowProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.GrassProgram;
@@ -164,6 +165,8 @@ public class Ground
 
 	// Objects patches
 	private ObjectsPatch[][] objectsPatches;
+
+	// Objects
 	private Tree pineTree;
 	private Tree hugeTree;
 	private Plant fernPlant;
@@ -171,6 +174,29 @@ public class Ground
 	private Plant riverWeedPlant;
 	private Rock rockA;
 	private Rock rockB;
+
+	// Broken objects
+	private boolean drawBrokenTree = false;
+	private int brokenTreeRootVaoHandle;
+	private int brokenTreeTopVaoHandle;
+	private int brokenTreeTexture;
+	private BrokenTree brokenPineTree;
+
+	// Broken parameters & matrices
+	private float[] brokenTreeInitialRootY = {0f, 0f};
+	private float[] brokenTreeInitialTopY = {53.871f, 0f};
+	private float brokenTreeDistanceZ = 0f;
+	private float brokenTreeForce = 0f;
+	private float brokenTreeX = 0f;
+	private float brokenTreeZ = 0f;
+	private float brokenTreeRootY = 0f;
+	private float brokenTreeTopY = 0f;
+	private float brokenTreeRootRotationAngle = 0f;
+	private float brokenTreeTopRotationAngle = 0f;
+	private float[] brokenTreeRootModel = new float[16];
+	private float[] brokenTreeTopModel = new float[16];
+	private float[] brokenTreeRootModelViewProjection = new float[16];
+	private float[] brokenTreeTopModelViewProjection = new float[16];
 
 	// Movement
 	private vec3 displacement;
@@ -224,6 +250,8 @@ public class Ground
 	RockProgram rockProgram;
 	RockLowProgram rockLowProgram;
 
+	BrokenTreeProgram brokenTreeProgram;
+
 	// TODO: debug
 	ObjectsPatchDebugProgram objectsPatchDebugProgram;
 
@@ -249,18 +277,6 @@ public class Ground
 	private FloatBuffer objectsPatchesLightMVPMatricesBuffer;
 	private int[] objectsPatchesLightMVPMatricesUbo;
 
-	/*private float[] pineTreeMatricesLODA;
-	private float[] pineTreeMatricesLODB;
-	private float[] pineTreeIndicesLODA;
-	private float[] pineTreeIndicesLODB;
-	private FloatBuffer pineTreeMatricesBufferLODA;
-	private FloatBuffer pineTreeMatricesBufferLODB;
-	private FloatBuffer pineTreeIndicesBufferLODA;
-	private FloatBuffer pineTreeIndicesBufferLODB;
-	private final int[] pineTreeMatricesUbo;
-	private final int[] pineTreeIndicesUbo;
-	private int[] pineTreeNumInstances;*/
-
 	private float[] pineTreeArrayLODA;
 	private float[] pineTreeArrayLODB;
 	private FloatBuffer pineTreeArrayBufferLODA;
@@ -268,28 +284,12 @@ public class Ground
 	private final int[] pineTreeArrayUbo;
 	private int[] pineTreeNumInstances = {0,0};
 
-	/*private float[] hugeTreeMatrices;
-	private int[] hugeTreeIndices;
-	private FloatBuffer hugeTreeMatricesBuffer;
-	private IntBuffer hugeTreeIndicesBuffer;
-	private int[] hugeTreeMatricesUbo;
-	private int[] hugeTreeIndicesUbo;
-	private int hugeTreeNumInstances;*/
-
 	private float[] hugeTreeArrayLODA;
 	private float[] hugeTreeArrayLODB;
 	private FloatBuffer hugeTreeArrayBufferLODA;
 	private FloatBuffer hugeTreeArrayBufferLODB;
 	private final int[] hugeTreeArrayUbo;
 	private int[] hugeTreeNumInstances = {0,0};
-
-	/*private float[] fernPlantMatrices;
-	private int[] fernPlantIndices;
-	private FloatBuffer fernPlantMatricesBuffer;
-	private IntBuffer fernPlantIndicesBuffer;
-	private int[] fernPlantMatricesUbo;
-	private int[] fernPlantIndicesUbo;
-	private int fernPlantNumInstances;*/
 
 	private float[] fernPlantArrayLODA;
 	private float[] fernPlantArrayLODB;
@@ -319,7 +319,7 @@ public class Ground
 	private final int[] rockBArrayUbo;
 	private int[] rockBNumInstances = {0,0};
 
-	private int[] grassMatricesUbo;
+	// Grass
 	private int[] grassUbo;
 	private float[] grassArrayLODA = new float[4096];
 	private float[] grassArrayLODB = new float[4096];
@@ -453,6 +453,8 @@ public class Ground
 		rockB = new Rock(context, "models/rock_b_lod_a.vbm", "models/rock_b_lod_b.vbm");
 		rockB.addShadowGeometry("models/rock_b_lod_b.vbm");
 
+		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_a.vbm", "models/pine_tree_broken_b.vbm");
+
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Shader programs
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -472,6 +474,7 @@ public class Ground
 		treeLeavesProgram = new TreeLeavesProgram(context);
 		rockProgram = new RockProgram(context);
 		rockLowProgram = new RockLowProgram(context);
+		brokenTreeProgram = new BrokenTreeProgram(context);
 
 		//TODO: debug
 		objectsPatchDebugProgram = new ObjectsPatchDebugProgram(context);
@@ -1710,7 +1713,7 @@ public class Ground
 	}
 
 
-	public void update(float[] viewProjection, float[] lightViewProjection, vec3 displacement, float[] shadowMatrix, int shadowMapSampler, float time)
+	public void update(float[] viewProjection, float[] lightViewProjection, vec3 displacement, float[] shadowMatrix, int shadowMapSampler, float deltaTime)
 	{
 		//float sideDisplacement = FloatMath.sin(time) * 2.0f;
 		//vec3 displacement = new vec3(sideDisplacement, 0.0f, 2f);
@@ -1721,6 +1724,45 @@ public class Ground
 		this.displacement = displacement;
 		this.shadowMatrix = shadowMatrix;
 		this.shadowMapSampler = shadowMapSampler;
+
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Broken Tree
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		if(drawBrokenTree)
+		{
+			brokenTreeX += displacement.x;
+			brokenTreeZ += displacement.z;
+			brokenTreeDistanceZ += displacement.z;
+
+			// Tree falls
+			brokenTreeForce = brokenTreeForce - (98f * deltaTime);
+			//brokenTreeRootY -= 9.8f * deltaTime;
+			brokenTreeTopY += brokenTreeForce;
+
+			brokenTreeRootRotationAngle -= 1.0f * deltaTime;
+			brokenTreeTopRotationAngle += 5.0f; //playerRock.currentSpeed * deltaTime;
+
+			// root model matrix
+			setIdentityM(brokenTreeRootModel, 0);
+			translateM(brokenTreeRootModel, 0, brokenTreeX, brokenTreeRootY, brokenTreeZ);
+			//rotateM(brokenTreeRootModel, 0, brokenTreeRootRotationAngle, 1f, 0f, 0f);
+
+			multiplyMM(brokenTreeRootModelViewProjection, 0, viewProjection, 0, brokenTreeRootModel, 0);
+
+			// top model matrix
+			setIdentityM(brokenTreeTopModel, 0);
+			translateM(brokenTreeTopModel, 0, brokenTreeX, brokenTreeTopY, brokenTreeZ);
+			rotateM(brokenTreeTopModel, 0, brokenTreeTopRotationAngle, 1f, 0f, 0f);
+
+			multiplyMM(brokenTreeTopModelViewProjection, 0, viewProjection, 0, brokenTreeTopModel, 0);
+
+			if(brokenTreeDistanceZ > 50f)
+			{
+				drawBrokenTree = false;
+			}
+		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Objects patches
@@ -1756,7 +1798,7 @@ public class Ground
 			Log.d(TAG, "NEW UP OBJECTS PATCH");
 		}
 
-		updateObjectsPatchesBuffer();
+		//updateObjectsPatchesBuffer();
 
 
 		boolean rebuildLOD = false;
@@ -1838,6 +1880,7 @@ public class Ground
 		int treeCount = 0;
 		int collisionCount = 0;
 		int position;
+		int treeType;
 		float posX, posY, posZ, radius, type, distance;
 
 		for(int x=0; x < numObjectsPatchesX; x++)
@@ -1855,6 +1898,31 @@ public class Ground
 
 					if(distance <= (radius + playerRock.rockRadius))
 					{
+						if(playerRock.state == PLAYER_ROCK_MOVING)
+						{
+							treeType = objectsPatches[x][z].deleteTreeAfterCollision(i);
+
+							brokenTreeX = posX;
+							brokenTreeZ = posZ;
+							brokenTreeDistanceZ = 0f;
+							brokenTreeRootY = brokenTreeInitialRootY[treeType];
+							brokenTreeTopY = brokenTreeInitialTopY[treeType];
+							brokenTreeRootRotationAngle = 0f;
+							brokenTreeTopRotationAngle = 0f;
+							brokenTreeForce = 1.0f;
+
+							if(treeType == 0)
+							{
+								brokenTreeRootVaoHandle = brokenPineTree.rootVaoHandle[0];
+								brokenTreeTopVaoHandle = brokenPineTree.topVaoHandle[0];
+								brokenTreeTexture = pineBranchTexture;
+								drawBrokenTree = true;
+							}
+							else
+							{
+								//TODO: hugeTree vaos
+							}
+						}
 						playerRock.hit();
 						break;
 					}
@@ -1882,7 +1950,9 @@ public class Ground
 			}
 		}
 
+		updateObjectsPatchesBuffer();
 		//Log.d("Trees/Collisions", "("+treeCount+"),("+collisionCount+")");
+
 	}
 
 
@@ -2183,6 +2253,20 @@ public class Ground
 				}
 			}
 		}*/
+
+		if(drawBrokenTree)
+		{
+			brokenTreeProgram.useProgram();
+			brokenTreeProgram.setCommonUniforms(brokenTreeTexture);
+
+			brokenTreeProgram.setSpecificUniforms(brokenTreeRootModel, brokenTreeRootModelViewProjection);
+			glBindVertexArray(brokenTreeRootVaoHandle);
+			glDrawElements(GL_TRIANGLES, brokenPineTree.numRootElementsToDraw, GL_UNSIGNED_SHORT, 0);
+
+			brokenTreeProgram.setSpecificUniforms(brokenTreeTopModel, brokenTreeTopModelViewProjection);
+			glBindVertexArray(brokenTreeTopVaoHandle);
+			glDrawElements(GL_TRIANGLES, brokenPineTree.numTopElementsToDraw, GL_UNSIGNED_SHORT, 0);
+		}
 
 
 		treeProgram.useProgram();

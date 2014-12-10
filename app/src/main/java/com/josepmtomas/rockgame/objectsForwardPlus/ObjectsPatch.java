@@ -725,6 +725,21 @@ public class ObjectsPatch extends BoundarySampler
 		numCollisionSpheres = collisionSpheresCount;
 	}
 
+
+	public int deleteTreeAfterCollision(int index)
+	{
+		if(index < pineTreeNumInstances[LOD_A])
+		{
+			pineTreePoints[index * 3 + 2] = 0f;
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+
+
 	public boolean updateLOD()
 	{
 		/*LODCounter--;
