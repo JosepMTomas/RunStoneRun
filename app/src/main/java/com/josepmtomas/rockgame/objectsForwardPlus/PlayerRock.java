@@ -405,7 +405,7 @@ public class PlayerRock
 			if(currentPositionY < 10f)
 			{
 				currentPositionY = 10f;
-				initialForce = -initialForce * 0.9f;
+				initialForce = -initialForce * 0.75f;
 			}
 
 			if(previousPositionY == currentPositionY)

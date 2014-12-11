@@ -179,14 +179,18 @@ public class Ground
 	private boolean drawBrokenTree = false;
 	private int brokenTreeRootVaoHandle;
 	private int brokenTreeTopVaoHandle;
+	private int brokenTreeRootNumElementsToDraw;
+	private int brokenTreeTopNumElementsToDraw;
 	private int brokenTreeTexture;
 	private BrokenTree brokenPineTree;
+	private BrokenTree brokenHugeTree;
 
 	// Broken parameters & matrices
 	private float[] brokenTreeInitialRootY = {0f, 0f};
-	private float[] brokenTreeInitialTopY = {53.871f, 0f};
+	private float[] brokenTreeInitialTopY = {53.871f, 25f};
 	private float brokenTreeDistanceZ = 0f;
 	private float brokenTreeForce = 0f;
+	private float brokenTreeScale = 0f;
 	private float brokenTreeX = 0f;
 	private float brokenTreeZ = 0f;
 	private float brokenTreeRootY = 0f;
@@ -454,6 +458,8 @@ public class Ground
 		rockB.addShadowGeometry("models/rock_b_lod_b.vbm");
 
 		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_a.vbm", "models/pine_tree_broken_b.vbm");
+
+		brokenHugeTree = new BrokenTree(context, "models/huge_tree_broken_root.vbm", "models/huge_tree_broken_top.vbm");
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Shader programs
@@ -1748,6 +1754,7 @@ public class Ground
 			setIdentityM(brokenTreeRootModel, 0);
 			translateM(brokenTreeRootModel, 0, brokenTreeX, brokenTreeRootY, brokenTreeZ);
 			//rotateM(brokenTreeRootModel, 0, brokenTreeRootRotationAngle, 1f, 0f, 0f);
+			scaleM(brokenTreeRootModel, 0, brokenTreeScale, brokenTreeScale, brokenTreeScale);
 
 			multiplyMM(brokenTreeRootModelViewProjection, 0, viewProjection, 0, brokenTreeRootModel, 0);
 
@@ -1755,6 +1762,7 @@ public class Ground
 			setIdentityM(brokenTreeTopModel, 0);
 			translateM(brokenTreeTopModel, 0, brokenTreeX, brokenTreeTopY, brokenTreeZ);
 			rotateM(brokenTreeTopModel, 0, brokenTreeTopRotationAngle, 1f, 0f, 0f);
+			scaleM(brokenTreeTopModel, 0, brokenTreeScale, brokenTreeScale, brokenTreeScale);
 
 			multiplyMM(brokenTreeTopModelViewProjection, 0, viewProjection, 0, brokenTreeTopModel, 0);
 
@@ -1881,7 +1889,7 @@ public class Ground
 		int collisionCount = 0;
 		int position;
 		int treeType;
-		float posX, posY, posZ, radius, type, distance;
+		float posX, posY, posZ, radius, scale, type, distance;
 
 		for(int x=0; x < numObjectsPatchesX; x++)
 		{
@@ -1900,27 +1908,36 @@ public class Ground
 					{
 						if(playerRock.state == PLAYER_ROCK_MOVING)
 						{
-							treeType = objectsPatches[x][z].deleteTreeAfterCollision(i);
+							treeType = (int)type;
+							scale = objectsPatches[x][z].deleteTreeAfterCollision(i);
 
 							brokenTreeX = posX;
 							brokenTreeZ = posZ;
 							brokenTreeDistanceZ = 0f;
 							brokenTreeRootY = brokenTreeInitialRootY[treeType];
-							brokenTreeTopY = brokenTreeInitialTopY[treeType];
+							brokenTreeTopY = brokenTreeInitialTopY[treeType] * scale;
 							brokenTreeRootRotationAngle = 0f;
 							brokenTreeTopRotationAngle = 0f;
 							brokenTreeForce = 1.0f;
+							brokenTreeScale = scale;
 
 							if(treeType == 0)
 							{
 								brokenTreeRootVaoHandle = brokenPineTree.rootVaoHandle[0];
 								brokenTreeTopVaoHandle = brokenPineTree.topVaoHandle[0];
+								brokenTreeRootNumElementsToDraw = brokenPineTree.numRootElementsToDraw;
+								brokenTreeTopNumElementsToDraw = brokenPineTree.numTopElementsToDraw;
 								brokenTreeTexture = pineBranchTexture;
 								drawBrokenTree = true;
 							}
 							else
 							{
-								//TODO: hugeTree vaos
+								brokenTreeRootVaoHandle = brokenHugeTree.rootVaoHandle[0];
+								brokenTreeTopVaoHandle = brokenHugeTree.topVaoHandle[0];
+								brokenTreeRootNumElementsToDraw = brokenHugeTree.numRootElementsToDraw;
+								brokenTreeTopNumElementsToDraw = brokenHugeTree.numTopElementsToDraw;
+								brokenTreeTexture = hugeTreeTexture;
+								drawBrokenTree = true;
 							}
 						}
 						playerRock.hit();

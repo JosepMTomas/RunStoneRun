@@ -482,7 +482,7 @@ public class ObjectsPatch extends BoundarySampler
 					collisionCylinders[collisionCylindersOffset++] = pointX;
 					collisionCylinders[collisionCylindersOffset++] = pointZ;
 					collisionCylinders[collisionCylindersOffset++] = 2.0f;
-					collisionCylinders[collisionCylindersOffset++] = 1.0f;
+					collisionCylinders[collisionCylindersOffset++] = 0.0f;
 
 					countLODA++;
 					collisionCylindersCount++;
@@ -530,7 +530,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
 				collisionCylinders[collisionCylindersOffset++] = 2.0f;
-				collisionCylinders[collisionCylindersOffset++] = 2.0f;
+				collisionCylinders[collisionCylindersOffset++] = 1.0f;
 
 				countLODA++;
 				collisionCylindersCount++;
@@ -726,16 +726,23 @@ public class ObjectsPatch extends BoundarySampler
 	}
 
 
-	public int deleteTreeAfterCollision(int index)
+	public float deleteTreeAfterCollision(int index)
 	{
-		if(index < pineTreeNumInstances[LOD_A])
+		float scale;
+		int i = index;
+
+		if(i < pineTreeNumInstances[LOD_A])
 		{
-			pineTreePoints[index * 3 + 2] = 0f;
-			return 0;
+			scale = pineTreePoints[i * 3 + 2];
+			pineTreePoints[i * 3 + 2] = 0f;
+			return scale;
 		}
 		else
 		{
-			return 1;
+			i = i - pineTreeNumInstances[LOD_A];
+			scale = hugeTreePoints[i * 3 + 2];
+			hugeTreePoints[i * 3 + 2] = 0f;
+			return scale;
 		}
 	}
 
