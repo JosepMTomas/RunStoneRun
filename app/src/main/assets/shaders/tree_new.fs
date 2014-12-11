@@ -11,7 +11,7 @@ in vec2 vTexCoord;
 in vec3 vNormal;
 
 in float vDistance;
-in float vDiffuse;
+in vec4 vDiffuse;
 in vec4 vAmbient;
 
 out vec4 fragColor;

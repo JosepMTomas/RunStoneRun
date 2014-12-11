@@ -387,7 +387,7 @@ public class ForwardPlusRenderer implements Renderer
 		// Update View-Projection matrix on objects
 		playerRock.update(viewProjection, deltaTime);
 		playerRock.updateLightMatrices(shadowViewProjection);
-		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], 0.0f);
+		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], deltaTime);
 		skyDome.update(viewProjection);
 		testTree.update(viewProjection);
 

@@ -6,7 +6,8 @@ uniform sampler2D diffuseSampler;
 in vec2 vTexCoords;
 in float vDistance;
 in float vShadows;
-in vec4 ambient;
+in vec4 vLightColor;
+in vec4 vAmbient;
 //in vec4 vLodColor;
 
 out vec4 fragColor;
@@ -17,7 +18,9 @@ void main()
 	
 	if(diffuseTex.w < 0.25) discard;
 	
-	vec4 ambientTex = diffuseTex * ambient;
+	vec4 ambientTex = diffuseTex * vAmbient;
+	
+	diffuseTex *= vLightColor;
 	
 	fragColor = mix(diffuseTex * vShadows + ambientTex, vec4(1.0), vDistance);
 	//fragColor = vLodColor;

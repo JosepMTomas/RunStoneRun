@@ -11,13 +11,15 @@ layout (std140) uniform rockProperties
 };
 
 uniform mat4 viewProjection;
+uniform mat4 shadowMatrix;
+uniform sampler2DShadow shadowMapSampler;
 
 out vec2 vTexCoord;
 out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBinormal;
 out float vDistance;
-
+out float vShadows;
 
 void main()
 {
@@ -29,6 +31,12 @@ void main()
 	position.x += property.x;
 	position.z += property.y;
 	position.w = 1.0;
+	
+	// calculate shadow coords
+	vec4 shadowCoords = shadowMatrix * (position);
+	
+	// calculate shadows
+	vShadows = textureProj(shadowMapSampler, shadowCoords);
 	
 	// calculate final distance
 	vDistance = property.w * property.w;

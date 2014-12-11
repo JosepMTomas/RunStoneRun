@@ -25,7 +25,7 @@ out vec3 vNormal;
 out vec4 vAmbient;
 
 
-out float vDiffuse;
+out vec4 vDiffuse;
 out lowp float vDistance;
 
 //const vec3 vLight = vec3(0.71, 0.71, 0.0);
@@ -47,9 +47,9 @@ void main()
 	vNormal = aNormal;
 	
 	// Per-vertex diffuse component
-	vDiffuse = dot(vNormal, vLight);
-	//vDiffuse *= 2.0;
-	vDiffuse = clamp(vDiffuse, 0.0, 1.0);
+	float diffuse = dot(vNormal, vLight);
+	diffuse = clamp(diffuse, 0.0, 1.0);
+	vDiffuse = lightColor * diffuse;
 	
 	vAmbient = ambientColor;
 

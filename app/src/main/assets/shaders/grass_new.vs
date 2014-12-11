@@ -23,7 +23,8 @@ uniform int lod;
 out vec2 vTexCoords;
 out float vDistance;
 out float vShadows;
-out vec4 ambient;
+out vec4 vAmbient;
+out vec4 vLightColor;
 //out vec4 vLodColor;
 
 void main()
@@ -55,7 +56,8 @@ void main()
 		default: vLodColor = vec4(1.0, 0.0, 1.0, 0.0); break;
 	}*/
 	
-	ambient = ambientColor;
+	vAmbient = ambientColor;
+	vLightColor = lightColor;
 	
 	gl_Position = viewProjection * position;
 }

@@ -36,12 +36,15 @@ public class LightInfo
 	public float[] viewProjection = new float[16];
 
 	//TODO: temp
-	private int increment = -1;
+	private float currentAngle = 0f;
 
 	public LightInfo()
 	{
 		lightPos = new vec3(150f, 150f, 0f);
-		lightColor = new vec4(1f);
+		//lightColor = new vec4(1f);
+		lightColor = new vec4(0.988f, 0.89f, 0.655f, 1f);	//light orange
+		//lightColor = new vec4(0.655f, 0.945f, 0.988f, 1.0f); // light blue
+		//lightColor = new vec4(1.0f, 0.0f, 0.0f, 1.0f);
 		ambientColor = new vec4(0.125f, 0.168f, 0.2f, 1f);//(0.2f, 0.25f, 0.3f, 1f);
 
 		initialize();
@@ -82,6 +85,8 @@ public class LightInfo
 
 	public void update()
 	{
+		//TODO: rotation test
+		currentAngle += 1f;
 		/*if(lightPos.x >= 150f) increment = -1;
 		if(lightPos.x <= -150f) increment = 1;
 
@@ -126,6 +131,7 @@ public class LightInfo
 		setLookAtM(view, 0, lightPos.x, lightPos.y, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
 		//setLookAtM(shadowView, 0, 300f, 200f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
 		//perspectiveM(shadowProjection, 0, 90f, 1f, 0.1f, 500f);
+		//rotateM(view, 0, currentAngle, 0f, 1f, 0f);
 		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
 		//TODO: orthoM(shadowPerspective, 0, );
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);

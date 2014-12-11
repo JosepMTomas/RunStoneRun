@@ -65,7 +65,7 @@ void main()
 	
 	diffuse *= shadow;
 	
-	diffuseColor = (diffuseColor * diffuse);// + ambient;
+	diffuseColor = (diffuseColor * lightColor * diffuse) ;// + ambient;
 	
 	fragColor = mix(diffuseColor, vec4(1.0), vDistance);
 	//fragColor = fragColor * (1.0 - vColor.y);

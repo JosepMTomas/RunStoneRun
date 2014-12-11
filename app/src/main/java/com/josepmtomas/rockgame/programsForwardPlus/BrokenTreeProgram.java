@@ -32,8 +32,6 @@ public class BrokenTreeProgram extends ShaderProgram
 
 	public void setCommonUniforms(int diffuseSampler)
 	{
-		//TODO: lightInfo block
-
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
 		glUniform1i(diffuseSamplerLocation, 0);

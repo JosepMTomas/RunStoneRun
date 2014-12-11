@@ -181,6 +181,10 @@ public class Ground
 	private int brokenTreeTopVaoHandle;
 	private int brokenTreeRootNumElementsToDraw;
 	private int brokenTreeTopNumElementsToDraw;
+	private int brokenTreeRootShadowVaoHandle;
+	private int brokenTreeTopShadowVaoHandle;
+	private int brokenTreeRootShadowNumElementsToDraw;
+	private int brokenTreeTopShadowNumElementsToDraw;
 	private int brokenTreeTexture;
 	private BrokenTree brokenPineTree;
 	private BrokenTree brokenHugeTree;
@@ -458,8 +462,10 @@ public class Ground
 		rockB.addShadowGeometry("models/rock_b_lod_b.vbm");
 
 		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_a.vbm", "models/pine_tree_broken_b.vbm");
+		brokenPineTree.addShadowGeometry("models/pine_tree_broken_root_shadow.vbm", "models/pine_tree_broken_top_shadow.vbm");
 
 		brokenHugeTree = new BrokenTree(context, "models/huge_tree_broken_root.vbm", "models/huge_tree_broken_top.vbm");
+		brokenHugeTree.addShadowGeometry("models/huge_tree_broken_root_shadow.vbm", "models/huge_tree_broken_top_shadow.vbm");
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Shader programs
@@ -1743,12 +1749,11 @@ public class Ground
 			brokenTreeDistanceZ += displacement.z;
 
 			// Tree falls
-			brokenTreeForce = brokenTreeForce - (98f * deltaTime);
-			//brokenTreeRootY -= 9.8f * deltaTime;
+			brokenTreeForce = brokenTreeForce - (9.8f * deltaTime);
 			brokenTreeTopY += brokenTreeForce;
 
 			brokenTreeRootRotationAngle -= 1.0f * deltaTime;
-			brokenTreeTopRotationAngle += 5.0f; //playerRock.currentSpeed * deltaTime;
+			brokenTreeTopRotationAngle += playerRock.currentSpeed * 0.25f * deltaTime;
 
 			// root model matrix
 			setIdentityM(brokenTreeRootModel, 0);
@@ -1885,8 +1890,6 @@ public class Ground
 		// Objects collisions
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		int treeCount = 0;
-		int collisionCount = 0;
 		int position;
 		int treeType;
 		float posX, posY, posZ, radius, scale, type, distance;
@@ -1897,10 +1900,11 @@ public class Ground
 			{
 				for(int i=0; i < objectsPatches[x][z].numCollisionCylinders; i++)
 				{
-					posX = objectsPatches[x][z].collisionCylinders[i*4];
-					posZ = objectsPatches[x][z].collisionCylinders[i*4 + 1];
-					radius = objectsPatches[x][z].collisionCylinders[i*4 + 2];
-					type = objectsPatches[x][z].collisionCylinders[i*4 + 3];
+					position = i*4;
+					posX   = objectsPatches[x][z].collisionCylinders[position];
+					posZ   = objectsPatches[x][z].collisionCylinders[position + 1];
+					radius = objectsPatches[x][z].collisionCylinders[position + 2];
+					type   = objectsPatches[x][z].collisionCylinders[position + 3];
 
 					distance = FloatMath.sqrt((posX*posX) + (posZ*posZ));
 
@@ -1913,29 +1917,47 @@ public class Ground
 
 							brokenTreeX = posX;
 							brokenTreeZ = posZ;
-							brokenTreeDistanceZ = 0f;
 							brokenTreeRootY = brokenTreeInitialRootY[treeType];
 							brokenTreeTopY = brokenTreeInitialTopY[treeType] * scale;
 							brokenTreeRootRotationAngle = 0f;
 							brokenTreeTopRotationAngle = 0f;
+							brokenTreeDistanceZ = 0f;
 							brokenTreeForce = 1.0f;
 							brokenTreeScale = scale;
 
 							if(treeType == 0)
 							{
+								// Assign main geometry
 								brokenTreeRootVaoHandle = brokenPineTree.rootVaoHandle[0];
 								brokenTreeTopVaoHandle = brokenPineTree.topVaoHandle[0];
 								brokenTreeRootNumElementsToDraw = brokenPineTree.numRootElementsToDraw;
 								brokenTreeTopNumElementsToDraw = brokenPineTree.numTopElementsToDraw;
+
+								// Assign shadow geometry
+								brokenTreeRootShadowVaoHandle = brokenPineTree.rootShadowVaoHandle[0];
+								brokenTreeTopShadowVaoHandle = brokenPineTree.topShadowVaoHandle[0];
+								brokenTreeRootShadowNumElementsToDraw = brokenPineTree.numRootShadowElementsToDraw;
+								brokenTreeTopShadowNumElementsToDraw = brokenPineTree.numTopShadowElementsToDraw;
+
+								// Assign texture & make the broken tree drawable
 								brokenTreeTexture = pineBranchTexture;
 								drawBrokenTree = true;
 							}
 							else
 							{
+								// Assign main geometry
 								brokenTreeRootVaoHandle = brokenHugeTree.rootVaoHandle[0];
 								brokenTreeTopVaoHandle = brokenHugeTree.topVaoHandle[0];
 								brokenTreeRootNumElementsToDraw = brokenHugeTree.numRootElementsToDraw;
 								brokenTreeTopNumElementsToDraw = brokenHugeTree.numTopElementsToDraw;
+
+								// Assign shadow geometry
+								brokenTreeRootShadowVaoHandle = brokenHugeTree.rootShadowVaoHandle[0];
+								brokenTreeTopShadowVaoHandle = brokenHugeTree.topShadowVaoHandle[0];
+								brokenTreeRootShadowNumElementsToDraw = brokenHugeTree.numRootShadowElementsToDraw;
+								brokenTreeTopShadowNumElementsToDraw = brokenHugeTree.numTopShadowElementsToDraw;
+
+								// Assign texture & make the broken tree drawable
 								brokenTreeTexture = hugeTreeTexture;
 								drawBrokenTree = true;
 							}
@@ -1947,12 +1969,13 @@ public class Ground
 
 				for(int i=0; i < objectsPatches[x][z].numCollisionSpheres; i++)
 				{
-					posX = objectsPatches[x][z].collisionSpheres[i*4];
-					posY = objectsPatches[x][z].collisionSpheres[i*4 + 1];
-					posZ = objectsPatches[x][z].collisionSpheres[i*4 + 2];
-					radius = objectsPatches[x][z].collisionSpheres[i*4 + 3];
+					position = i*4;
+					posX   = objectsPatches[x][z].collisionSpheres[position];
+					posY   = objectsPatches[x][z].collisionSpheres[position + 1];
+					posZ   = objectsPatches[x][z].collisionSpheres[position + 2];
+					radius = objectsPatches[x][z].collisionSpheres[position + 3];
 
-					distance = FloatMath.sqrt((posX*posX) + (posZ*posZ));
+					distance = FloatMath.sqrt((posX*posX) + (posY*posY) +(posZ*posZ));
 
 					if(distance <= (radius + playerRock.rockRadius))
 					{
@@ -2101,6 +2124,19 @@ public class Ground
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 		glDisable(GL_CULL_FACE);
+
+		if(drawBrokenTree)
+		{
+			shadowPassProgram.useProgram();
+
+			shadowPassProgram.setUniforms(brokenTreeRootModelViewProjection);
+			glBindVertexArray(brokenTreeRootShadowVaoHandle);
+			glDrawElements(GL_TRIANGLES, brokenTreeRootShadowNumElementsToDraw, GL_UNSIGNED_SHORT, 0);
+
+			shadowPassProgram.setUniforms(brokenTreeTopModelViewProjection);
+			glBindVertexArray(brokenTreeTopShadowVaoHandle);
+			glDrawElements(GL_TRIANGLES, brokenTreeTopShadowNumElementsToDraw, GL_UNSIGNED_SHORT, 0);
+		}
 
 		treeShadowPassProgram.useProgram();
 
@@ -2278,11 +2314,11 @@ public class Ground
 
 			brokenTreeProgram.setSpecificUniforms(brokenTreeRootModel, brokenTreeRootModelViewProjection);
 			glBindVertexArray(brokenTreeRootVaoHandle);
-			glDrawElements(GL_TRIANGLES, brokenPineTree.numRootElementsToDraw, GL_UNSIGNED_SHORT, 0);
+			glDrawElements(GL_TRIANGLES, brokenTreeRootNumElementsToDraw, GL_UNSIGNED_SHORT, 0);
 
 			brokenTreeProgram.setSpecificUniforms(brokenTreeTopModel, brokenTreeTopModelViewProjection);
 			glBindVertexArray(brokenTreeTopVaoHandle);
-			glDrawElements(GL_TRIANGLES, brokenPineTree.numTopElementsToDraw, GL_UNSIGNED_SHORT, 0);
+			glDrawElements(GL_TRIANGLES, brokenTreeTopNumElementsToDraw, GL_UNSIGNED_SHORT, 0);
 		}
 
 
@@ -2342,13 +2378,13 @@ public class Ground
 
 
 		rockProgram.useProgram();
-		rockProgram.setCommonUniforms(viewProjection, rockADiffuseTexture, rockANormalTexture);
+		rockProgram.setCommonUniforms(viewProjection, shadowMatrix, rockADiffuseTexture, rockANormalTexture, shadowMapSampler);
 		rockProgram.setSpecificUniforms(rockAArrayUbo[LOD_A]);
 
 		glBindVertexArray(rockA.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockA.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockANumInstances[LOD_A]);
 
-		rockProgram.setCommonUniforms(viewProjection, rockBDiffuseTexture, rockBNormalTexture);
+		rockProgram.setCommonUniforms(viewProjection, shadowMatrix, rockBDiffuseTexture, rockBNormalTexture, shadowMapSampler);
 		rockProgram.setSpecificUniforms(rockBArrayUbo[LOD_A]);
 		glBindVertexArray(rockB.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockB.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_A]);

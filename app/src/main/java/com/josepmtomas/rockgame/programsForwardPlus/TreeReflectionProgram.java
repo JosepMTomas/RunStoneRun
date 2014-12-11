@@ -15,6 +15,8 @@ public class TreeReflectionProgram extends ShaderProgram
 	private final int treePropertiesBlockLocation;
 	private final int diffuseSamplerLocation;
 
+	private final int lightInfoBlockLocation;
+
 
 	public TreeReflectionProgram(Context context)
 	{
@@ -23,6 +25,8 @@ public class TreeReflectionProgram extends ShaderProgram
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
 		treePropertiesBlockLocation = glGetUniformBlockIndex(program, "treeProperties");
 		diffuseSamplerLocation = glGetUniformLocation(program, "diffuseSampler");
+
+		lightInfoBlockLocation = glGetUniformBlockIndex(program, "lightInfo");
 	}
 
 
@@ -33,6 +37,8 @@ public class TreeReflectionProgram extends ShaderProgram
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
 		glUniform1i(diffuseSamplerLocation, 0);
+
+		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
 	}
 
 

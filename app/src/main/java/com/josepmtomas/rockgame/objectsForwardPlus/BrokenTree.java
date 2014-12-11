@@ -38,34 +38,57 @@ public class BrokenTree
 
 	private static final int BYTE_STRIDE = TOTAL_COMPONENTS * BYTES_PER_FLOAT;
 
-	private Context context;
-
-	// Root geometry definition
+	// Root mesh geometry definition
 	private float[] rootVertices;
 	private short[] rootElements;
 	public int numRootElementsToDraw = 0;
 	private int[] rootVboHandles = new int[2];
 	public int[] rootVaoHandle = new int[1];
 
-	// Top geometry definition
+	// Top mesh geometry definition
 	private float[] topVertices;
 	private short[] topElements;
 	public int numTopElementsToDraw = 0;
 	private int[] topVboHandles = new int[2];
 	public int[] topVaoHandle = new int[1];
 
+	// Root shadow mesh geometry definition
+	private float[] rootShadowVertices;
+	private short[] rootShadowElements;
+	public int numRootShadowElementsToDraw;
+	private int[] rootShadowVboHandles = new int[2];
+	public int[] rootShadowVaoHandle = new int[1];
+
+	// Top shadow mesh geometry definition
+	private float[] topShadowVertices;
+	private short[] topShadowElements;
+	public int numTopShadowElementsToDraw;
+	private int[] topShadowVboHandles = new int[2];
+	public int[] topShadowVaoHandle = new int[1];
+
+	private Context context;
+
 
 	public BrokenTree(Context context, String rootFileName, String topFileName)
 	{
+		this.context = context;
+
 		glGenVertexArrays(1, rootVaoHandle, 0);
 		glGenVertexArrays(1, topVaoHandle, 0);
 
-		this.loadRoot(context, rootFileName);
-		this.loadTop(context, topFileName);
+		loadRoot(rootFileName);
+		loadTop(topFileName);
 	}
 
 
-	private void loadRoot(Context context, String rootFileName)
+	public void addShadowGeometry(String rootShadowFileName, String topShadowFileName)
+	{
+		loadRootShadow(rootShadowFileName);
+		loadTopShadow(topShadowFileName);
+	}
+
+
+	private void loadRoot(String rootFileName)
 	{
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
@@ -197,7 +220,7 @@ public class BrokenTree
 	}
 
 
-	private void loadTop(Context context, String topFileName)
+	private void loadTop(String topFileName)
 	{
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
@@ -324,6 +347,214 @@ public class BrokenTree
 		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topVboHandles[1]);
+
+		glBindVertexArray(0);
+	}
+
+
+	private void loadRootShadow(String shadowFileName)
+	{
+		int numShadowVertices, numShadowElements;
+		FloatBuffer shadowVerticesBuffer;
+		ShortBuffer shadowElementsBuffer;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read shadow geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			InputStream inputStream = context.getResources().getAssets().open(shadowFileName);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String nextLine;
+
+			int verticesOffset = 0;
+			int elementsOffset = 0;
+
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				// Split the line into tokens separated by spaces
+				String[] tokens = nextLine.split(" ");
+
+				// Check the first token of the line
+				if(tokens[0].equals("VERTICES"))
+				{
+					// Get the number of vertices and initialize the positions array
+					numShadowVertices = Integer.parseInt(tokens[1]);
+					rootShadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
+				}
+				else if(tokens[0].equals("FACES"))
+				{
+					// Get the number of faces and initialize the elements array
+					numShadowElements = Integer.parseInt(tokens[1]);
+					numRootShadowElementsToDraw = numShadowElements * 3;
+					rootShadowElements = new short[numRootShadowElementsToDraw];
+				}
+				else if(tokens[0].equals("VERTEX"))
+				{
+					// Read the vertex positions
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+				}
+				else if(tokens[0].equals("FACE"))
+				{
+					// Read the face indices (triangle)
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Buffers
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Build the java native buffers
+		shadowVerticesBuffer = ByteBuffer
+				.allocateDirect(rootShadowVertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(rootShadowVertices);
+		shadowVerticesBuffer.position(0);
+
+		shadowElementsBuffer = ByteBuffer
+				.allocateDirect(rootShadowElements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(rootShadowElements);
+		shadowElementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, rootShadowVboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, rootShadowVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER,  shadowVerticesBuffer.capacity() * BYTES_PER_FLOAT, shadowVerticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootShadowVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shadowElementsBuffer.capacity() * BYTES_PER_SHORT, shadowElementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, rootShadowVaoHandle, 0);
+		glBindVertexArray(rootShadowVaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, rootShadowVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, POSITION_COMPONENTS * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootShadowVboHandles[1]);
+
+		glBindVertexArray(0);
+	}
+
+
+	private void loadTopShadow(String shadowFileName)
+	{
+		int numShadowVertices, numShadowElements;
+		FloatBuffer shadowVerticesBuffer;
+		ShortBuffer shadowElementsBuffer;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read shadow geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			InputStream inputStream = context.getResources().getAssets().open(shadowFileName);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String nextLine;
+
+			int verticesOffset = 0;
+			int elementsOffset = 0;
+
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				// Split the line into tokens separated by spaces
+				String[] tokens = nextLine.split(" ");
+
+				// Check the first token of the line
+				if(tokens[0].equals("VERTICES"))
+				{
+					// Get the number of vertices and initialize the positions array
+					numShadowVertices = Integer.parseInt(tokens[1]);
+					topShadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
+				}
+				else if(tokens[0].equals("FACES"))
+				{
+					// Get the number of faces and initialize the elements array
+					numShadowElements = Integer.parseInt(tokens[1]);
+					numTopShadowElementsToDraw = numShadowElements * 3;
+					topShadowElements = new short[numTopShadowElementsToDraw];
+				}
+				else if(tokens[0].equals("VERTEX"))
+				{
+					// Read the vertex positions
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+				}
+				else if(tokens[0].equals("FACE"))
+				{
+					// Read the face indices (triangle)
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Buffers
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Build the java native buffers
+		shadowVerticesBuffer = ByteBuffer
+				.allocateDirect(topShadowVertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(topShadowVertices);
+		shadowVerticesBuffer.position(0);
+
+		shadowElementsBuffer = ByteBuffer
+				.allocateDirect(topShadowElements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(topShadowElements);
+		shadowElementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, topShadowVboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, topShadowVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER,  shadowVerticesBuffer.capacity() * BYTES_PER_FLOAT, shadowVerticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topShadowVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shadowElementsBuffer.capacity() * BYTES_PER_SHORT, shadowElementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, topShadowVaoHandle, 0);
+		glBindVertexArray(topShadowVaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, topShadowVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, POSITION_COMPONENTS * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topShadowVboHandles[1]);
 
 		glBindVertexArray(0);
 	}

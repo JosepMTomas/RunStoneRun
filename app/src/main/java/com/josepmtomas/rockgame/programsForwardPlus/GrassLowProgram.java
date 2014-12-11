@@ -12,6 +12,7 @@ import static android.opengl.GLES30.*;
 public class GrassLowProgram extends ShaderProgram
 {
 	private final int grassPropertiesBlockLocation;
+	private final int lightInfoBlockLocation;
 
 	private final int viewProjectionLocation;
 
@@ -23,6 +24,7 @@ public class GrassLowProgram extends ShaderProgram
 		super(context, "shaders/grass_new_low.vs", "shaders/grass_new_low.fs");
 
 		grassPropertiesBlockLocation = glGetUniformBlockIndex(program, "grassProperties");
+		lightInfoBlockLocation = glGetUniformBlockIndex(program, "lightInfo");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
 
@@ -36,7 +38,9 @@ public class GrassLowProgram extends ShaderProgram
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
-		glUniform1i(program, 0);
+		glUniform1i(diffuseSamplerLocation, 0);
+
+		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
 	}
 
 
