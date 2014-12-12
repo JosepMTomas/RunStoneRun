@@ -90,8 +90,8 @@ public class Hud
 		createMatrices(screenWidth, screenHeight);
 
 		// Score panel
-		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
-		scoreNumbersTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
+		scoreNumbersTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		scoreNumbersNegativeTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas_negative_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier panel
@@ -103,7 +103,7 @@ public class Hud
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/gradient_h_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Positions
-		setPositions(screenWidth, screenHeight, screenHeight * NUMBER_HEIGHT_PERCENTAGE, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
+		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
 
 		// Programs
 		scorePanelProgram = new ScorePanelProgram(context);
@@ -451,7 +451,7 @@ public class Hud
 		multiplierNumbersOffsetsX[3] = multiplierNumbersOffsetsX[2] - numberWidth;
 
 		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
-		multiplierProgressOffsetX = multiplierBaseOffsetX - numberWidth * 4.25f;
+		multiplierProgressOffsetX = multiplierBaseOffsetX - numberHeight * 4.25f;
 	}
 
 

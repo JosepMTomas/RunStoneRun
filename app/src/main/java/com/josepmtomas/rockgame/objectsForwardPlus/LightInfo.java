@@ -42,9 +42,15 @@ public class LightInfo
 	private float[] lightColor1 = {1.0f, 0.706f, 0.0f};
 	private float[] lightColor2 = {1.0f, 1.0f, 1.0f};
 
+	// Background colors
+	private float[] backColor1 = {0.949f, 0.623f, 0.38f};
+	private float[] backColor2 = {1f, 1f, 1f};
+	public float[] backColor = {0f, 0f, 0f};
+
 	//TODO: temp
 	private float increment = 1f;
 	private float currentAngle = 0f;
+	public float percent;
 
 	public LightInfo()
 	{
@@ -97,11 +103,11 @@ public class LightInfo
 		currentAngle += increment;
 		if(currentAngle > 180f)
 		{
-			increment = -deltaTime*5f;
+			increment = -deltaTime * 5f;
 		}
 		if(currentAngle < 0)
 		{
-			increment = deltaTime*5f;
+			increment = deltaTime * 5f;
 		}
 
 		float angleAlpha;
@@ -109,18 +115,30 @@ public class LightInfo
 		if(currentAngle > 0f && currentAngle < 90f)
 		{
 			angleAlpha = currentAngle / 90f;
+			percent = angleAlpha;
 			angleAlphaOM = 1.0f - angleAlpha;
+
 			lightColor.x = lightColor2[0]*angleAlpha + lightColor1[0]*angleAlphaOM;
 			lightColor.y = lightColor2[1]*angleAlpha + lightColor1[1]*angleAlphaOM;
 			lightColor.z = lightColor2[2]*angleAlpha + lightColor1[2]*angleAlphaOM;
+
+			backColor[0] = backColor2[0]*angleAlpha + backColor1[0]*angleAlphaOM;
+			backColor[1] = backColor2[1]*angleAlpha + backColor1[1]*angleAlphaOM;
+			backColor[2] = backColor2[2]*angleAlpha + backColor1[2]*angleAlphaOM;
 		}
 		else
 		{
-			angleAlpha = (currentAngle-90f)/90f;
+			angleAlpha = (currentAngle - 90f) / 90f;
 			angleAlphaOM = 1.0f - angleAlpha;
+			percent = angleAlphaOM;
+
 			lightColor.x = lightColor1[0]*angleAlpha + lightColor2[0]*angleAlphaOM;
 			lightColor.y = lightColor1[1]*angleAlpha + lightColor2[1]*angleAlphaOM;
 			lightColor.z = lightColor1[2]*angleAlpha + lightColor2[2]*angleAlphaOM;
+
+			backColor[0] = backColor1[0]*angleAlpha + backColor2[0]*angleAlphaOM;
+			backColor[1] = backColor1[1]*angleAlpha + backColor2[1]*angleAlphaOM;
+			backColor[2] = backColor1[2]*angleAlpha + backColor2[2]*angleAlphaOM;
 		}
 
 		//currentAngle = 45f;

@@ -70,6 +70,14 @@ public class PlayerRock
 	private int[] shadowVboHandles = new int[2];
 	public int[] shadowVaoHandle = new int[1];
 
+	// Reflection mesh geometry definition
+	private float[] reflectionVertices;
+	private short[] reflectionElements;
+	public int numReflectionElementsToDraw;
+	private int[] reflectionVboHandles = new int[2];
+	public int[] reflectionVaoHandle = new int[1];
+
+
 	// Shader program
 	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
@@ -146,6 +154,7 @@ public class PlayerRock
 
 		load("models/player_rock.vbm");
 		loadShadow("models/player_rock.vbm");
+		loadReflection("models/player_rock_reflection.vbm");
 	}
 
 
@@ -387,6 +396,139 @@ public class PlayerRock
 	}
 
 
+	private void loadReflection(String reflectionFileName)
+	{
+		int numVertices, numElements;
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			InputStream inputStream = context.getResources().getAssets().open(reflectionFileName);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String nextLine;
+
+			int verticesOffset = 0;
+			int elementsOffset = 0;
+
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				// Split the line into tokens separated by spaces
+				String[] tokens = nextLine.split(" ");
+
+				// Check the first token of the line
+				if(tokens[0].equals("VERTICES"))
+				{
+					// Get the number of vertices and initialize the positions array
+					numVertices = Integer.parseInt(tokens[1]);
+					reflectionVertices = new float[STRIDE * numVertices];
+				}
+				else if(tokens[0].equals("FACES"))
+				{
+					// Get the number of faces and initialize the elements array
+					numElements = Integer.parseInt(tokens[1]);
+					numReflectionElementsToDraw = numElements * 3;
+					reflectionElements = new short[numReflectionElementsToDraw];
+				}
+				else if(tokens[0].equals("VERTEX"))
+				{
+					// Read the vertex positions
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+
+					// Read the vertex texture coordinates
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+
+					// Read the vertex normals
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[7]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[8]);
+
+					// read the vertex tangents
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[9]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[10]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[11]);
+					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[12]);
+				}
+				else if(tokens[0].equals("FACE"))
+				{
+					// Read the face indices (triangle)
+					reflectionElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					reflectionElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					reflectionElements[elementsOffset++] = Short.parseShort(tokens[3]);
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Buffers
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		verticesBuffer = ByteBuffer
+				.allocateDirect(reflectionVertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(reflectionVertices);
+		verticesBuffer.position(0);
+
+		elementsBuffer = ByteBuffer
+				.allocateDirect(reflectionElements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(reflectionElements);
+		elementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, reflectionVboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, reflectionVaoHandle, 0);
+		glBindVertexArray(reflectionVaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
+
+		// Vertex texture coordinates
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
+
+		// Vertex normals
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
+		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
+
+		// Vertex tangents
+		glEnableVertexAttribArray(3);
+		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
+		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
+
+		glBindVertexArray(0);
+	}
+
+
 	public void updateLightMatrices(float[] lightViewProjection)
 	{
 		this.lightViewProjection = lightViewProjection;
@@ -493,7 +635,7 @@ public class PlayerRock
 		setIdentityM(proxyModel, 0);
 		translateM(proxyModel, 0, 0.0f, -10.0f, 0.0f);
 		rotateM(proxyModel, 0, rotationY, 0f, 1f, 0f);
-		rotateM(proxyModel, 0, -rotationX + 180f, 1f, 0f, 0f);
+		rotateM(proxyModel, 0, -rotationX, 1f, 0f, 0f); // +180f
 	}
 
 
@@ -529,8 +671,8 @@ public class PlayerRock
 		playerRockProgram.useProgram();
 		playerRockProgram.setUniforms(proxyModel, proxyModelViewProjection, shadowMatrix, shadowMapSampler);
 
-		//glBindVertexArray(vaoHandle[0]);
-		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(reflectionVaoHandle[0]);
+		glDrawElements(GL_TRIANGLES, numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0);
 	}
 
 

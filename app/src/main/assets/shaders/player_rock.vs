@@ -29,7 +29,7 @@ void main()
 	vTexCoord = aTexCoord;
 	vNormal = normalize((model * vec4(aNormal, 0.0)).xyz);
 	vTangent = aTangent.xyz;
-	vBinormal = cross(aNormal, aTangent.xyz) * aTangent.z;
+	vBinormal = cross(vNormal, aTangent.xyz) * aTangent.z;
 	
 	/*vDiffuse = dot(vNormal, vLight);
 	vDiffuse = clamp(vDiffuse, 0.0, 1.0);*/

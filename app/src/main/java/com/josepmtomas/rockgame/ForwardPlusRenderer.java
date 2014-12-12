@@ -152,7 +152,7 @@ public class ForwardPlusRenderer implements Renderer
 	public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig)
 	{
 		// GL init
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 		// Camera set up
 		perspectiveCamera = new PerspectiveCamera(eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, near, far, renderAspectRatio, fov);
@@ -171,12 +171,12 @@ public class ForwardPlusRenderer implements Renderer
 				perspectiveCamera, lightInfo);
 		ground.setPlayerRock(playerRock);
 		ground.setPerspectiveCamera(perspectiveCamera); //TODO: delete
-		skyDome = new SkyDome(context);
+		skyDome = new SkyDome(context, lightInfo);
 		testTree = new TestTree(context);
 
 		screen = new Screen(context, 1, 1);
 		//hud = new Hud(context, renderWidth, renderHeight);
-		hud = new Hud(context, renderWidth, renderHeight, 150, 150);
+		hud = new Hud(context, renderWidth, renderHeight, 107f, 150f);
 
 
 
@@ -329,6 +329,8 @@ public class ForwardPlusRenderer implements Renderer
 	@Override
 	public void onDrawFrame(GL10 unused)
 	{
+		glClearColor(lightInfo.backColor[0], lightInfo.backColor[1], lightInfo.backColor[2], 1.0f);
+
 		endTime = System.nanoTime() - startTime;
 		deltaTime = ((float)(endTime/1000))*0.000001f;
 		//Log.w("CurrentFrame", " "+ endTime/1000000 + " ms");

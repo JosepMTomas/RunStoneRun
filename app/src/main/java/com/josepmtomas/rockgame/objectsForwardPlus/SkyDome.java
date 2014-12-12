@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.josepmtomas.rockgame.Constants;
 import com.josepmtomas.rockgame.programsForwardPlus.SkyDomeProgram;
+import com.josepmtomas.rockgame.util.TextureHelper;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,15 +65,26 @@ public class SkyDome
 	private float[] reflectionModel = new float[16];
 	private float[] reflectionModelViewProjection = new float[16];
 
+	// Sky textures
+	private int skyMiddayTexture;
+	private int skyDuskTexture;
+
 	// Shader program
 	SkyDomeProgram skyDomeProgram;
 
-	public SkyDome(Context context)
+	// LightInfo
+	LightInfo lightInfo;
+
+	public SkyDome(Context context, LightInfo lightInfo)
 	{
 		skyDomeProgram = new SkyDomeProgram(context);
+		this.lightInfo = lightInfo;
 
 		load(context, "models/sky_dome.vbm");
 		initialize();
+
+		skyMiddayTexture = TextureHelper.loadETC2Texture(context, "textures/sky/midday.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		skyDuskTexture = TextureHelper.loadETC2Texture(context, "textures/sky/dusk.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -117,7 +129,7 @@ public class SkyDome
 
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					vertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
 					/*vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
@@ -205,8 +217,8 @@ public class SkyDome
 		setIdentityM(model, 0);
 		//translateM(model, 0, 0f, -5f, 0f);
 		//scaleM(model, 0, 100f, 100f, 100f);
-		translateM(model, 0, 0f, 100f, 0f);
-		scaleM(model, 0, 100f, 50f, 100f);
+		//translateM(model, 0, 0f, 100f, 0f);
+		scaleM(model, 0, 100f, 100f, 100f);
 
 		/***************************************/
 
@@ -229,7 +241,7 @@ public class SkyDome
 	public void draw()
 	{
 		skyDomeProgram.useProgram();
-		skyDomeProgram.setUniforms(modelViewProjection);
+		skyDomeProgram.setUniforms(modelViewProjection, skyDuskTexture, skyMiddayTexture, lightInfo.percent);
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
@@ -239,7 +251,7 @@ public class SkyDome
 	public void drawReflectionProxy()
 	{
 		skyDomeProgram.useProgram();
-		skyDomeProgram.setUniforms(reflectionModelViewProjection);
+		skyDomeProgram.setUniforms(reflectionModelViewProjection, skyDuskTexture, skyMiddayTexture, lightInfo.percent);
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
