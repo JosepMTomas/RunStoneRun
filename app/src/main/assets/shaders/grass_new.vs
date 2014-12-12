@@ -41,8 +41,9 @@ void main()
 	vDistance = current.w;
 	
 	// Shadow mapping
+	float diffuse = dot(vec3(0.0, 1.0, 0.0), vLight);
 	float shadow = textureProj(shadowMapSampler, shadowCoords);
-	vShadows = shadow;
+	vShadows = diffuse * shadow;
 	//vShadows = shadow + 0.2;
 	/*vShadows = vec3(shadow);
 	vShadows += vec3(0.137, 0.169, 0.441);

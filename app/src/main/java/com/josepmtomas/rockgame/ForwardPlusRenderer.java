@@ -372,7 +372,10 @@ public class ForwardPlusRenderer implements Renderer
 
 	private void update(float deltaTime)
 	{
-		lightInfo.update();
+		lightInfo.update(deltaTime);
+
+		multiplyMM(shadowBiasProjection, 0, shadowBias, 0, lightInfo.projection, 0);
+		multiplyMM(shadowMatrix, 0, shadowBiasProjection, 0, lightInfo.view, 0);
 
 		setLookAtM(view, 0, eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, 0f, 1f, 0f);
 		rotateM(view, 0, yRotation, 1f, 0f, 0f);

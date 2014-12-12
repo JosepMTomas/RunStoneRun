@@ -1,16 +1,10 @@
 #version 300 es
 precision lowp float;
 
-layout (std140) uniform lightInfo
-{
-	vec3 vLight;
-	vec4 lightColor;
-	vec4 ambientColor;
-};
-
 uniform sampler2D diffuseSampler;
 
 in vec2 vTexCoords;
+in vec4 vDiffuse;
 in float vDistance;
 
 out vec4 fragColor;
@@ -21,5 +15,5 @@ void main()
 	
 	if(diffuseTex.w < 0.25) discard;
 	
-	fragColor = mix(diffuseTex * lightColor, vec4(1.0), vDistance);
+	fragColor = mix(diffuseTex * vDiffuse, vec4(1.0), vDistance);
 }

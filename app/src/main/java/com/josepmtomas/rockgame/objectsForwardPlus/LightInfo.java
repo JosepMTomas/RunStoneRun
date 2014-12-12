@@ -20,9 +20,12 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
 public class LightInfo
 {
 	private vec3 lightPos;
-	private vec3 vLight;
 	private vec4 lightColor;
 	private vec4 ambientColor;
+
+	private float[] lightRotation = new float[16];
+	private float[] initialLightVector = {1f, 0f, 0f, 0f};
+	private float[] lightVector = {0f, 0f, 0f, 0f};
 
 	// array
 	private float[] lightInfoArray = new float[12];
@@ -35,7 +38,12 @@ public class LightInfo
 	public float[] projection = new float[16];
 	public float[] viewProjection = new float[16];
 
+	// Light colors
+	private float[] lightColor1 = {1.0f, 0.706f, 0.0f};
+	private float[] lightColor2 = {1.0f, 1.0f, 1.0f};
+
 	//TODO: temp
+	private float increment = 1f;
 	private float currentAngle = 0f;
 
 	public LightInfo()
@@ -45,7 +53,7 @@ public class LightInfo
 		lightColor = new vec4(0.988f, 0.89f, 0.655f, 1f);	//light orange
 		//lightColor = new vec4(0.655f, 0.945f, 0.988f, 1.0f); // light blue
 		//lightColor = new vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		ambientColor = new vec4(0.125f, 0.168f, 0.2f, 1f);//(0.2f, 0.25f, 0.3f, 1f);
+		ambientColor = new vec4(/*0.125f, 0.168f, 0.2f, 1f);*/0.2f, 0.25f, 0.3f, 1f);
 
 		initialize();
 	}
@@ -83,23 +91,50 @@ public class LightInfo
 	}
 
 
-	public void update()
+	public void update(float deltaTime)
 	{
 		//TODO: rotation test
-		currentAngle += 1f;
-		/*if(lightPos.x >= 150f) increment = -1;
-		if(lightPos.x <= -150f) increment = 1;
+		currentAngle += increment;
+		if(currentAngle > 180f)
+		{
+			increment = -deltaTime*5f;
+		}
+		if(currentAngle < 0)
+		{
+			increment = deltaTime*5f;
+		}
 
-		Log.d("LightInfo", "LightPos.x = " + lightPos.x);
+		float angleAlpha;
+		float angleAlphaOM;
+		if(currentAngle > 0f && currentAngle < 90f)
+		{
+			angleAlpha = currentAngle / 90f;
+			angleAlphaOM = 1.0f - angleAlpha;
+			lightColor.x = lightColor2[0]*angleAlpha + lightColor1[0]*angleAlphaOM;
+			lightColor.y = lightColor2[1]*angleAlpha + lightColor1[1]*angleAlphaOM;
+			lightColor.z = lightColor2[2]*angleAlpha + lightColor1[2]*angleAlphaOM;
+		}
+		else
+		{
+			angleAlpha = (currentAngle-90f)/90f;
+			angleAlphaOM = 1.0f - angleAlpha;
+			lightColor.x = lightColor1[0]*angleAlpha + lightColor2[0]*angleAlphaOM;
+			lightColor.y = lightColor1[1]*angleAlpha + lightColor2[1]*angleAlphaOM;
+			lightColor.z = lightColor1[2]*angleAlpha + lightColor2[2]*angleAlphaOM;
+		}
 
-		lightPos.add(increment, 0f, 0f);*/
+		//currentAngle = 45f;
+		//if(lightPos.x >= 150f) increment = -1f;
+		//if(lightPos.x <= -150f) increment = 1f;
 
-		vLight = normalize(lightPos);
+		//Log.d("LightInfo", "LightPos.x = " + lightPos.x);
+
+		//lightPos.add(increment, 0f, 0f);
 
 		// Update the light position values
-		lightInfoArray[0] = vLight.x;
-		lightInfoArray[1] = vLight.y;
-		lightInfoArray[2] = vLight.z;
+		lightInfoArray[0] = lightVector[0];
+		lightInfoArray[1] = lightVector[1];
+		lightInfoArray[2] = lightVector[2];
 
 		// Update the light color values
 		lightInfoArray[4] = lightColor.x;
@@ -128,10 +163,18 @@ public class LightInfo
 		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);*/
 
-		setLookAtM(view, 0, lightPos.x, lightPos.y, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
+		setLookAtM(view, 0, lightPos.x, 0f/*lightPos.y*/, 0f, 0f, 0f, 0f, 0f, 1f, 0f);
 		//setLookAtM(shadowView, 0, 300f, 200f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
 		//perspectiveM(shadowProjection, 0, 90f, 1f, 0.1f, 500f);
-		//rotateM(view, 0, currentAngle, 0f, 1f, 0f);
+		translateM(view, 0, 0f, 0f, 0f);
+		rotateM(view, 0, -currentAngle, 0f, 0f, 1f);
+
+		// Light vector update
+		setIdentityM(lightRotation, 0);
+		rotateM(lightRotation, 0, currentAngle, 0f, 0f, 1f);
+		multiplyMV(lightVector, 0, lightRotation, 0, initialLightVector, 0);
+
+
 		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
 		//TODO: orthoM(shadowPerspective, 0, );
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
