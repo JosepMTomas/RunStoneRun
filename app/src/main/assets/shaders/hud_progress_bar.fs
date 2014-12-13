@@ -2,6 +2,7 @@
 
 // input(s) from vertex shader
 in vec2 vTexCoord;
+in float vGradient;
 
 // uniforms
 uniform sampler2D progressSampler;
@@ -13,13 +14,13 @@ out vec4 fragColor;
 
 void main()
 {
-	lowp vec4 numbersTex = texture(progressSampler, vTexCoord);
+	lowp vec4 progressTex = texture(progressSampler, vTexCoord);
 	
-	float value = numbersTex.x + percent;
+	float value = vGradient + percent;
 	//value = clamp(value, 0.0, 1.0);
 	value = floor(value);
 	
-	fragColor = vec4(value, value, value, 0.75);
+	fragColor = vec4(vec3(value), progressTex.w);
 	
 	//fragColor = vec4(vec3(numbersTex.x + 0.25), numbersTex.x);
 	//fragColor = numbersTex;

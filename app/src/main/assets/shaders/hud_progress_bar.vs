@@ -3,6 +3,7 @@
 // geometry attribute(s)
 layout (location = 0) in vec4 aPosition;
 layout (location = 1) in vec2 aTexCoord;
+layout (location = 2) in float aGradient;
 
 // uniforms
 uniform mat4 viewProjection;
@@ -11,6 +12,7 @@ uniform vec2 texCoordOffset;
 
 // shader output(s)
 out vec2 vTexCoord;
+out float vGradient;
 
 
 void main()
@@ -20,6 +22,9 @@ void main()
 	
 	// final texture coordinates
 	vTexCoord = aTexCoord;
+	
+	// gradient
+	vGradient = aGradient;
 	
 	// vertex shader output
 	gl_Position = viewProjection * position;

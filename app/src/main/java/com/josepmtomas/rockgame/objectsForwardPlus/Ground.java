@@ -1962,7 +1962,7 @@ public class Ground
 								drawBrokenTree = true;
 							}
 						}
-						playerRock.hit();
+						playerRock.hit(0);
 						break;
 					}
 				}
@@ -1979,7 +1979,7 @@ public class Ground
 
 					if(distance <= (radius + playerRock.rockRadius))
 					{
-						playerRock.hit();
+						playerRock.hit(1);
 						break;
 					}
 				}

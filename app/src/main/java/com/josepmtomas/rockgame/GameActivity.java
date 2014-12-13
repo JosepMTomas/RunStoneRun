@@ -34,6 +34,13 @@ public class GameActivity extends Activity
 	private DeferredRenderer deferredRenderer;
 	private ForwardPlusRenderer forwardPlusRenderer;
 
+	private MediaPlayer backgroundMusicPlayer;
+	private Thread backgroundMusicThread;
+
+	private MediaPlayer impactRockOnTreeSoundEffect;
+	private MediaPlayer impactRockOnRockSoundEffect;
+	private MediaPlayer treeFallingSoundEffect;
+
 	private Context context;
 
     @Override
@@ -87,6 +94,24 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 				mediaPlayer.start();
 			}
 		}).start();*/
+
+		backgroundMusicPlayer = MediaPlayer.create(context, R.raw.art_of_gardens);
+		impactRockOnRockSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_rock);
+		impactRockOnTreeSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_tree);
+		treeFallingSoundEffect = MediaPlayer.create(context, R.raw.tree_falling);
+
+		backgroundMusicThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+				Log.d("Background music thread", "Ready to start");
+				backgroundMusicPlayer.start();
+			}
+		});
+
+		backgroundMusicThread.start();
+
 
 		/*****************/
 
@@ -215,10 +240,48 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
         return super.onOptionsItemSelected(item);
     }
 
+	public void playImpactRockOnRockSound()
+	{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+				Log.d("SoundFX thread", "Ready to start: impact rock on rock sound effect");
+				impactRockOnRockSoundEffect.start();
+			}
+		}).start();
+	}
+
+	public void playImpactRockOnTreeSound()
+	{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+				Log.d("SoundFX thread", "Ready to start: impact rock on tree sound effect");
+				impactRockOnTreeSoundEffect.start();
+			}
+		}).start();
+	}
+
+	public void playTreeFallingSound()
+	{
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Log.d("SoundFX thread", "Ready to start: tree falling sound effect");
+				treeFallingSoundEffect.start();
+			}
+		}).start();
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
 
+		backgroundMusicPlayer.start();
 		/*final MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.the_metal);
 		//mediaPlayer.start();
 
@@ -238,6 +301,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		super.onPause();
 
 		Log.d(TAG, "<<<<< ON PAUSE >>>>>");
+		backgroundMusicPlayer.pause();
 
 		forwardPlusRenderer.deleteGL();
 	}
@@ -246,6 +310,12 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	protected void onStop() {
 		super.onStop();
+
+		// release media players
+		backgroundMusicPlayer.release();
+		impactRockOnRockSoundEffect.release();
+		impactRockOnTreeSoundEffect.release();
+		treeFallingSoundEffect.release();
 
 		Log.d(TAG, "<<<<< ON STOP >>>>>");
 	}

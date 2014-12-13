@@ -99,8 +99,9 @@ public class Hud
 		multiplierTexture = TextureHelper.loadETC2Texture(context, "textures/hud/multiplier_9patch_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier progress bar
-		createMultiplierProgressGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE);
-		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/gradient_h_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		//createMultiplierProgressGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE);
+		createMultiplierProgressGeometry((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f);
+		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Positions
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -337,6 +338,157 @@ public class Hud
 		glBindVertexArray(0);
 	}
 
+	private void createMultiplierProgressGeometry(float width, float height)
+	{
+		float[] percentagesX = new float[3];
+		float[] incrementsX = new float[3];
+		float[] uvsX = {0.25f, 0.75f, 1.0f};
+
+		float[] vertices = new float[48];
+		short[] elements = new short[18];
+		int verticesOffset = 0;
+
+		/*percentagesX[0] = height / (width * 0.5f);
+		percentagesX[1] = width - (percentagesX[0] * 2f);
+		percentagesX[2] = percentagesX[0];*/
+		/*percentagesX[0] = 0.25f;
+		percentagesX[1] = 0.75f;
+		percentagesX[2] = 1.0f;*/
+
+		percentagesX[0] = (height / width) * 0.5f;
+		percentagesX[1] = 1.0f - (percentagesX[0]);
+		percentagesX[2] = 1.0f;
+
+		/*incrementsX[0] = percentagesX[0] * width;
+		incrementsX[1] = (percentagesX[0] + percentagesX[1]) * width;
+		incrementsX[2] = width;*/
+		/*incrementsX[0] = 50f;
+		incrementsX[1] = 100f;
+		incrementsX[2] = 50f;*/
+		incrementsX[0] = percentagesX[0] * width;
+		incrementsX[1] = percentagesX[1] * width;
+		incrementsX[2] = percentagesX[2] * width;
+
+
+		// First position
+		vertices[verticesOffset++] = 0f;
+		vertices[verticesOffset++] = height;
+		vertices[verticesOffset++] = 0f;
+		// First texture coordinate
+		vertices[verticesOffset++] = 0f;
+		vertices[verticesOffset++] = 1f;
+		// First percentage
+		vertices[verticesOffset++] = 1f;
+
+		// Second position
+		vertices[verticesOffset++] = 0f;
+		vertices[verticesOffset++] = 0f;
+		vertices[verticesOffset++] = 0f;
+		// Second texture coordinate
+		vertices[verticesOffset++] = 0f;
+		vertices[verticesOffset++] = 0f;
+		// Second percentage
+		vertices[verticesOffset++] = 1f;
+
+		for(int i=0; i < 3; i++)
+		{
+			// First position
+			vertices[verticesOffset++] = incrementsX[i];
+			vertices[verticesOffset++] = height;
+			vertices[verticesOffset++] = 0f;
+			// First texture coordinate
+			vertices[verticesOffset++] = uvsX[i];
+			vertices[verticesOffset++] = 1f;
+			// First percentage
+			vertices[verticesOffset++] = 1f - percentagesX[i];
+
+			// Second position
+			vertices[verticesOffset++] = incrementsX[i];
+			vertices[verticesOffset++] = 0f;
+			vertices[verticesOffset++] = 0f;
+			// Second texture coordinate
+			vertices[verticesOffset++] = uvsX[i];
+			vertices[verticesOffset++] = 0f;
+			// Second percentage
+			vertices[verticesOffset++] = 1f - percentagesX[i];
+		}
+
+		elements[0] = 0;
+		elements[1] = 1;
+		elements[2] = 2;
+
+		elements[3] = 1;
+		elements[4] = 3;
+		elements[5] = 2;
+
+		elements[6] = 2;
+		elements[7] = 3;
+		elements[8] = 4;
+
+		elements[9] = 5;
+		elements[10] = 4;
+		elements[11] = 3;
+
+		elements[12] = 4;
+		elements[13] = 5;
+		elements[14] = 6;
+
+		elements[15] = 7;
+		elements[16] = 6;
+		elements[17] = 5;
+
+		// Java native buffers
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
+		verticesBuffer = ByteBuffer
+				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(vertices);
+		verticesBuffer.position(0);
+
+		elementsBuffer = ByteBuffer
+				.allocateDirect(elements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(elements);
+		elementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, multiplierProgressVboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, multiplierProgressVaoHandle, 0);
+		glBindVertexArray(multiplierProgressVaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
+
+		// Vertex texture coordinates
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
+
+		// Vertex texture coordinates
+		glEnableVertexAttribArray(2);
+		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
+		glVertexAttribPointer(2, 1, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 5 * BYTES_PER_FLOAT);
+
+		// Elements
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
+
+		glBindVertexArray(0);
+	}
+
 
 	private void createMultiplierProgressGeometry(float numberSize)
 	{
@@ -451,7 +603,7 @@ public class Hud
 		multiplierNumbersOffsetsX[3] = multiplierNumbersOffsetsX[2] - numberWidth;
 
 		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
-		multiplierProgressOffsetX = multiplierBaseOffsetX - numberHeight * 4.25f;
+		multiplierProgressOffsetX = scorePositionOffsetsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
 	}
 
 
@@ -543,6 +695,6 @@ public class Hud
 		progressBarProgram.setSpecificUniforms(multiplierProgressOffsetX, multiplierProgressOffsetY, multiplierProgressValue);
 
 		glBindVertexArray(multiplierProgressVaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 	}
 }

@@ -5,6 +5,8 @@ import android.content.res.Resources;
 import android.util.Log;
 
 import static com.josepmtomas.rockgame.Constants.*;
+
+import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.R;
 import com.josepmtomas.rockgame.algebra.operations;
 import com.josepmtomas.rockgame.algebra.vec3;
@@ -131,15 +133,14 @@ public class PlayerRock
 
 	private LightInfo lightInfo;
 
+	private GameActivity parent;
 	private Context context;
 
-	/**
-	 * Creates a new player rock
-	 * @param context current application context
-	 */
-	public PlayerRock(Context context, LightInfo lightInfo)
+
+	public PlayerRock(GameActivity parent, LightInfo lightInfo)
 	{
-		this.context = context;
+		this.parent = parent;
+		this.context = parent.getApplicationContext();
 		this.lightInfo = lightInfo;
 
 		currentPositionY = 10f;
@@ -568,7 +569,8 @@ public class PlayerRock
 		switch(currentState)
 		{
 			case TURNING_LEFT:
-				rotationY += 2.5f;
+				//rotationY += 2.5f;
+				rotationY += 75f * deltaTime;
 				if(rotationY > 75f)
 				{
 					rotationY = 75f;
@@ -577,7 +579,8 @@ public class PlayerRock
 				break;
 
 			case TURNING_RIGHT:
-				rotationY -= 2.5f;
+				//rotationY -= 2.5f;
+				rotationY -= 75f * deltaTime;
 				if(rotationY < -75f)
 				{
 					rotationY = -75f;
@@ -586,8 +589,8 @@ public class PlayerRock
 				break;
 
 			case RETURNING_CENTER:
-				if(rotationY > 0) rotationY -= 2.5f;
-				if(rotationY < 0) rotationY += 2.5f;
+				if(rotationY > 0) rotationY -= 75f * deltaTime;
+				if(rotationY < 0) rotationY += 75f * deltaTime;
 				if(rotationY == 0) currentState = PlayeRockState.MOVING_FORWARD;
 				break;
 
@@ -726,7 +729,7 @@ public class PlayerRock
 	// Collision
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void hit()
+	public void hit(int type)
 	{
 		if(state == PLAYER_ROCK_MOVING)
 		{
@@ -734,6 +737,16 @@ public class PlayerRock
 			initialForce = 3f;
 			state = PLAYER_ROCK_RECOVERING;
 			scoreMultiplier = 0f;
+
+			if(type == 0)
+			{
+				parent.playImpactRockOnTreeSound();
+				parent.playTreeFallingSound();
+			}
+			else
+			{
+				parent.playImpactRockOnRockSound();
+			}
 		}
 		else if(state == PLAYER_ROCK_RECOVERING)
 		{

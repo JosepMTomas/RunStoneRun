@@ -132,15 +132,21 @@ public class ForwardPlusRenderer implements Renderer
 	private float fScore = 0f;
 	private int iScore = 0;
 
+	// GameActivity
+	private GameActivity parent;
 
-	public ForwardPlusRenderer(Context context, float width, float height, float resolutionPercentage)
+
+	public ForwardPlusRenderer(GameActivity parent, float width, float height, float resolutionPercentage)
 	{
+		this.parent = parent;
+		this.context = parent.getApplicationContext();
+
 		this.FRAMEBUFFER_WIDTH = (int)(width * resolutionPercentage);
 		this.FRAMEBUFFER_HEIGHT = (int)(height * resolutionPercentage);
 		framebufferDimensions[0] = FRAMEBUFFER_WIDTH;
 		framebufferDimensions[1] = FRAMEBUFFER_HEIGHT;
 
-		this.context = context;
+		//this.context = context;
 		this.renderWidth = (int)width;
 		this.renderHeight = (int)height;
 		this.renderAspectRatio = width / height;
@@ -164,7 +170,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		lightInfo = new LightInfo();
 		// Create and initialize objects
-		playerRock = new PlayerRock(context, lightInfo);
+		playerRock = new PlayerRock(parent, lightInfo);
 		ground = new Ground(context,
 				11, 9, 10, 10, 90f, 90f,
 				3, 3, 450f, 450f,
