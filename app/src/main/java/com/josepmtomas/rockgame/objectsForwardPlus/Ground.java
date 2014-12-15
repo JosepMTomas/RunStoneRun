@@ -169,9 +169,9 @@ public class Ground
 	// Objects
 	private Tree pineTree;
 	private Tree hugeTree;
+	private Tree palmTree;
 	private Plant fernPlant;
 	private Plant weedPlant;
-	private Plant riverWeedPlant;
 	private Rock rockA;
 	private Rock rockB;
 
@@ -190,8 +190,8 @@ public class Ground
 	private BrokenTree brokenHugeTree;
 
 	// Broken parameters & matrices
-	private float[] brokenTreeInitialRootY = {0f, 0f};
-	private float[] brokenTreeInitialTopY = {53.871f, 25f};
+	private float[] brokenTreeInitialRootY = {0f, 0f, 0f};
+	private float[] brokenTreeInitialTopY = {53.871f, 25f, 0.0f};
 	private float brokenTreeDistanceZ = 0f;
 	private float brokenTreeForce = 0f;
 	private float brokenTreeScale = 0f;
@@ -225,9 +225,10 @@ public class Ground
 	private int pineTreeReflectionProxyTexture;
 	private int hugeTreeTexture;
 	private int hugeTreeReflectionProxyTexture;
+	private int palmTreeTexture;
+	private int palmTreeReflectionProxyTexture;
 	private int fernPlantTexture;
 	private int weedPlantTexture;
-	private int riverWeedPlantTexture;
 	private int rockADiffuseTexture;
 	private int rockANormalTexture;
 	private int rockBDiffuseTexture;
@@ -298,6 +299,13 @@ public class Ground
 	private FloatBuffer hugeTreeArrayBufferLODB;
 	private final int[] hugeTreeArrayUbo;
 	private int[] hugeTreeNumInstances = {0,0};
+
+	private float[] palmTreeArrayLODA;
+	private float[] palmTreeArrayLODB;
+	private FloatBuffer palmTreeArrayBufferLODA;
+	private FloatBuffer palmTreeArrayBufferLODB;
+	private final int[] palmTreeArrayUbo;
+	private int[] palmTreeNumInstances = {0,0};
 
 	private float[] fernPlantArrayLODA;
 	private float[] fernPlantArrayLODB;
@@ -440,6 +448,14 @@ public class Ground
 		hugeTree.addShadowGeometry("models/huge_tree_lod_a_shadow.vbm");
 		hugeTree.addReflectionGeometry("models/huge_tree_reflection_proxy.vbm");
 
+		String[] palmTreeLODs = {
+				"models/palm_tree_lod_a.vbm",
+				"models/palm_tree_lod_b.vbm"
+		};
+		palmTree = new Tree(context, palmTreeLODs);
+		palmTree.addShadowGeometry("models/palm_tree_shadow.vbm");
+		palmTree.addReflectionGeometry("models/palm_tree_reflection_proxy.vbm");
+
 		String[] fernPlantLODs = {
 				"models/fern_plant_low.vbm",
 				"models/fern_plant_lod_b.vbm"
@@ -488,7 +504,7 @@ public class Ground
 		rockLowProgram = new RockLowProgram(context);
 		brokenTreeProgram = new BrokenTreeProgram(context);
 
-		//TODO: debug
+		//TODO: debug (delete later)
 		objectsPatchDebugProgram = new ObjectsPatchDebugProgram(context);
 
 		String[] grass1Texture = {
@@ -566,19 +582,16 @@ public class Ground
 
 		/************************************** OBJECTS PATCHES ***********************************/
 
-		////pineTreeMatricesUbo = new int[2];
-		////pineTreeIndicesUbo = new int[2];
 		//TODO: numInstances reallocated
 		pineTreeArrayUbo = new int[2];
 		pineTreeNumInstances = new int[2];
 
-		//hugeTreeMatricesUbo = new int[1];
-		//hugeTreeIndicesUbo = new int[1];
 		hugeTreeArrayUbo = new int[2];
 		hugeTreeNumInstances = new int[2];
 
-		//fernPlantMatricesUbo = new int[1];
-		//fernPlantIndicesUbo = new int[1];
+		palmTreeArrayUbo = new int[2];
+		palmTreeNumInstances = new int[2];
+
 		fernPlantArrayUbo = new int[2];
 		fernPlantNumInstances = new int[2];
 
@@ -618,20 +631,6 @@ public class Ground
 		Log.d(TAG, "Loading grass patch texture");
 		grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		//grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, false, true);
-
-
-		String[] riverWeedPlantTextureMips = {
-				"textures/river_weed_plant/river_weed_plant_mip_0.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_1.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_2.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_3.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_4.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_5.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_6.mp3",
-				"textures/river_weed_plant/river_weed_plant_mip_7.mp3"
-		};
-		Log.d(TAG, "Loading river weed texture");
-		riverWeedPlantTexture = TextureHelper.loadETC2Texture(context, riverWeedPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] pineBranchTextureMips = {
 				"textures/pine_tree/pine_tree_mip_0.mp3",
@@ -684,6 +683,32 @@ public class Ground
 		};
 		Log.d(TAG, "Loading huge tree reflection proxy texture");
 		hugeTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, hugeTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		String[] palmTreeTextureMips = {
+				"textures/palm_tree/diffuse_mip_0.mp3",
+				"textures/palm_tree/diffuse_mip_1.mp3",
+				"textures/palm_tree/diffuse_mip_2.mp3",
+				"textures/palm_tree/diffuse_mip_3.mp3",
+				"textures/palm_tree/diffuse_mip_4.mp3",
+				"textures/palm_tree/diffuse_mip_5.mp3",
+				"textures/palm_tree/diffuse_mip_6.mp3",
+				"textures/palm_tree/diffuse_mip_7.mp3"
+		};
+		Log.d(TAG, "Loading palm tree texture");
+		palmTreeTexture = TextureHelper.loadETC2Texture(context, palmTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		String[] palmTreeReflectionProxyTextureMips = {
+				"textures/palm_tree/reflection_proxy_mip_0.mp3",
+				"textures/palm_tree/reflection_proxy_mip_1.mp3",
+				"textures/palm_tree/reflection_proxy_mip_2.mp3",
+				"textures/palm_tree/reflection_proxy_mip_3.mp3",
+				"textures/palm_tree/reflection_proxy_mip_4.mp3",
+				"textures/palm_tree/reflection_proxy_mip_5.mp3",
+				"textures/palm_tree/reflection_proxy_mip_6.mp3",
+				"textures/palm_tree/reflection_proxy_mip_7.mp3"
+		};
+		Log.d(TAG, "Loading huge tree reflection proxy texture");
+		palmTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] fernPlantTextureMips = {
 				"textures/fern_plant/fern_plant_mip_0.mp3",
@@ -1943,7 +1968,7 @@ public class Ground
 								brokenTreeTexture = pineBranchTexture;
 								drawBrokenTree = true;
 							}
-							else
+							else if(treeType == 1)
 							{
 								// Assign main geometry
 								brokenTreeRootVaoHandle = brokenHugeTree.rootVaoHandle[0];
@@ -1961,6 +1986,11 @@ public class Ground
 								brokenTreeTexture = hugeTreeTexture;
 								drawBrokenTree = true;
 							}
+							else
+							{
+								drawBrokenTree = false;
+							}
+							//TODO: else
 						}
 						playerRock.hit(0);
 						break;
@@ -2061,17 +2091,23 @@ public class Ground
 
 		//treeProgram.useProgram();
 		treeReflectionProgram.useProgram();
-		treeReflectionProgram.setCommonUniforms(viewProjection, pineTreeReflectionProxyTexture);
 
+		treeReflectionProgram.setCommonUniforms(viewProjection, pineTreeReflectionProxyTexture);
 		treeReflectionProgram.setSpecificUniforms(pineTreeArrayUbo[LOD_A]);
 		glBindVertexArray(pineTree.reflectionVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_A]);
 
-		treeReflectionProgram.setCommonUniforms(viewProjection, hugeTreeReflectionProxyTexture);
 
+		treeReflectionProgram.setCommonUniforms(viewProjection, hugeTreeReflectionProxyTexture);
 		treeReflectionProgram.setSpecificUniforms(hugeTreeArrayUbo[LOD_A]);
 		glBindVertexArray(hugeTree.reflectionVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, hugeTree.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, hugeTreeNumInstances[LOD_A]);
+
+
+		treeReflectionProgram.setCommonUniforms(viewProjection, palmTreeReflectionProxyTexture);
+		treeReflectionProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_A]);
+		glBindVertexArray(palmTree.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
 
 		//TODO:
 		/**treeProgram.setUniforms(viewProjection, shadowMatrix, pineTreeMatricesUbo[0], pineTreeIndicesUbo[0], objectsPatchesModelMatricesUbo[0], shadowMapSampler, pineBranchTexture);
@@ -2149,6 +2185,10 @@ public class Ground
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, hugeTreeArrayUbo[LOD_A]);
 		glBindVertexArray(hugeTree.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, hugeTree.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, hugeTreeNumInstances[LOD_A]);
+
+		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, palmTreeArrayUbo[LOD_A]);
+		glBindVertexArray(palmTree.shadowVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
 
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, fernPlantArrayUbo[LOD_A]);
 		glBindVertexArray(fernPlant.shadowVaoHandle[0]);
@@ -2335,6 +2375,16 @@ public class Ground
 		treeProgram.setSpecificUniforms(pineTreeArrayUbo[LOD_B]);
 		glBindVertexArray(pineTree.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_B]);
+
+
+		treeProgram.setCommonUniforms(viewProjection, palmTreeTexture);
+		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_A]);
+		glBindVertexArray(palmTree.vaoHandles[LOD_A]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
+
+		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_B]);
+		glBindVertexArray(palmTree.vaoHandles[LOD_B]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_B]);
 
 		////Log.e("Number of pine trees","A("+pineTreeNumInstances[LOD_A]+") B("+pineTreeNumInstances[LOD_B]+")");
 
@@ -2945,34 +2995,18 @@ public class Ground
 		// Tree
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		/**pineTreeMatricesUbo = new int[1];
-		pineTreeIndicesUbo = new int[1];
-
-		hugeTreeMatricesUbo = new int[1];
-		hugeTreeIndicesUbo = new int[1];
-
-		fernPlantMatricesUbo = new int[1];
-		fernPlantIndicesUbo = new int[1];**/
-
-		/*pineTreeMatricesLODA = new float[MAX_TREE_INSTANCES_TOTAL * 16];
-		pineTreeMatricesLODB = new float[MAX_TREE_INSTANCES_TOTAL * 16];
-		pineTreeIndicesLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
-		pineTreeIndicesLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];*/
 		pineTreeArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		pineTreeArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
-		//hugeTreeMatrices = new float[MAX_TREE_INSTANCES_TOTAL * 16];
-		//hugeTreeIndices = new int[MAX_TREE_INSTANCES_TOTAL * 4];
 		hugeTreeArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		hugeTreeArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
-		//fernPlantMatrices = new float[MAX_TREE_INSTANCES_TOTAL * 16];
-		//fernPlantIndices = new int[MAX_TREE_INSTANCES_TOTAL * 4];
+		palmTreeArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+		palmTreeArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+
 		fernPlantArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		fernPlantArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
-		//weedPlantMatrices = new float[MAX_TREE_INSTANCES_TOTAL * 16];
-		//weedPlantIndices = new int[MAX_TREE_INSTANCES_TOTAL * 4];
 		weedPlantArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		weedPlantArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
@@ -2985,21 +3019,6 @@ public class Ground
 
 		for(int i=0; i < MAX_TREE_INSTANCES_TOTAL; i++)
 		{
-			////setIdentityM(pineTreeMatricesLODA, i*16);
-			////setIdentityM(pineTreeMatricesLODB, i*16);
-			////setIdentityM(hugeTreeMatrices, i*16);
-			////setIdentityM(fernPlantMatrices, i*16);
-			////setIdentityM(weedPlantMatrices, i*16);
-
-			/*pineTreeIndicesLODA[i*4] = 4;
-			pineTreeIndicesLODA[i*4 + 1] = 0.5f;
-			pineTreeIndicesLODA[i*4 + 2] = 6;
-			pineTreeIndicesLODA[i*4 + 3] = 7;
-
-			pineTreeIndicesLODB[i*4] = 4;
-			pineTreeIndicesLODB[i*4 + 1] = 1.0f;
-			pineTreeIndicesLODB[i*4 + 2] = 6;
-			pineTreeIndicesLODB[i*4 + 3] = 7;*/
 			pineTreeArrayLODA[i*4] = 0f;
 			pineTreeArrayLODA[i*4 + 1] = 0f;
 			pineTreeArrayLODA[i*4 + 2] = 0f;
@@ -3010,10 +3029,7 @@ public class Ground
 			pineTreeArrayLODB[i*4 + 2] = 0f;
 			pineTreeArrayLODB[i*4 + 3] = 0f;
 
-			/*hugeTreeIndices[i*4] = 4;
-			hugeTreeIndices[i*4 + 1] = 5;
-			hugeTreeIndices[i*4 + 2] = 6;
-			hugeTreeIndices[i*4 + 3] = 7;*/
+
 			hugeTreeArrayLODA[i*4] = 0f;
 			hugeTreeArrayLODA[i*4 + 1] = 0f;
 			hugeTreeArrayLODA[i*4 + 2] = 0f;
@@ -3024,10 +3040,18 @@ public class Ground
 			hugeTreeArrayLODB[i*4 + 2] = 0f;
 			hugeTreeArrayLODB[i*4 + 3] = 0f;
 
-			/*fernPlantIndices[i*4] = 4;
-			fernPlantIndices[i*4 + 1] = 5;
-			fernPlantIndices[i*4 + 2] = 6;
-			fernPlantIndices[i*4 + 3] = 7;*/
+
+			palmTreeArrayLODA[i*4] = 0f;
+			palmTreeArrayLODA[i*4 + 1] = 0f;
+			palmTreeArrayLODA[i*4 + 2] = 0f;
+			palmTreeArrayLODA[i*4 + 3] = 0f;
+
+			palmTreeArrayLODB[i*4] = 0f;
+			palmTreeArrayLODB[i*4 + 1] = 0f;
+			palmTreeArrayLODB[i*4 + 2] = 0f;
+			palmTreeArrayLODB[i*4 + 3] = 0f;
+
+
 			fernPlantArrayLODA[i*4] = 0f;
 			fernPlantArrayLODA[i*4 + 1] = 0f;
 			fernPlantArrayLODA[i*4 + 2] = 0f;
@@ -3038,10 +3062,7 @@ public class Ground
 			fernPlantArrayLODB[i*4 + 2] = 0f;
 			fernPlantArrayLODB[i*4 + 3] = 0f;
 
-			/*weedPlantIndices[i*4] = 4;
-			weedPlantIndices[i*4 + 1] = 5;
-			weedPlantIndices[i*4 + 2] = 6;
-			weedPlantIndices[i*4 + 3] = 7;*/
+
 			weedPlantArrayLODA[i*4] = 0f;
 			weedPlantArrayLODA[i*4 + 1] = 0f;
 			weedPlantArrayLODA[i*4 + 2] = 0f;
@@ -3077,30 +3098,6 @@ public class Ground
 		}
 
 
-		/*pineTreeMatricesBufferLODA = ByteBuffer
-				.allocateDirect(pineTreeMatricesLODA.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(pineTreeMatricesLODA);
-		pineTreeMatricesBufferLODB = ByteBuffer
-				.allocateDirect(pineTreeMatricesLODB.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(pineTreeMatricesLODB);
-		pineTreeIndicesBufferLODA = ByteBuffer
-				.allocateDirect(pineTreeIndicesLODA.length * BYTES_PER_INT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(pineTreeIndicesLODA);
-		pineTreeIndicesBufferLODB = ByteBuffer
-				.allocateDirect(pineTreeIndicesLODB.length * BYTES_PER_INT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(pineTreeIndicesLODB);
-		pineTreeMatricesBufferLODA.position(0);
-		pineTreeMatricesBufferLODB.position(0);
-		pineTreeIndicesBufferLODA.position(0);
-		pineTreeIndicesBufferLODB.position(0);*/
 		pineTreeArrayBufferLODA = ByteBuffer
 				.allocateDirect(pineTreeArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -3116,19 +3113,6 @@ public class Ground
 		pineTreeArrayBufferLODB.position(0);
 
 
-
-		/*hugeTreeMatricesBuffer = ByteBuffer
-				.allocateDirect(hugeTreeMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(hugeTreeMatrices);
-		hugeTreeIndicesBuffer = ByteBuffer
-				.allocateDirect(hugeTreeIndices.length * BYTES_PER_INT)
-				.order(ByteOrder.nativeOrder())
-				.asIntBuffer()
-				.put(hugeTreeIndices);
-		hugeTreeMatricesBuffer.position(0);
-		hugeTreeIndicesBuffer.position(0);*/
 		hugeTreeArrayBufferLODA = ByteBuffer
 				.allocateDirect(hugeTreeArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -3144,18 +3128,21 @@ public class Ground
 		hugeTreeArrayBufferLODB.position(0);
 
 
-		/*fernPlantMatricesBuffer = ByteBuffer
-				.allocateDirect(fernPlantMatrices.length * BYTES_PER_FLOAT)
+		palmTreeArrayBufferLODA = ByteBuffer
+				.allocateDirect(palmTreeArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer()
-				.put(fernPlantMatrices);
-		fernPlantIndicesBuffer = ByteBuffer
-				.allocateDirect(fernPlantIndices.length * BYTES_PER_INT)
+				.put(palmTreeArrayLODA);
+		palmTreeArrayBufferLODA.position(0);
+
+		palmTreeArrayBufferLODB = ByteBuffer
+				.allocateDirect(palmTreeArrayLODB.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
-				.asIntBuffer()
-				.put(fernPlantIndices);
-		fernPlantMatricesBuffer.position(0);
-		fernPlantIndicesBuffer.position(0);*/
+				.asFloatBuffer()
+				.put(palmTreeArrayLODB);
+		palmTreeArrayBufferLODB.position(0);
+
+
 		fernPlantArrayBufferLODA = ByteBuffer
 				.allocateDirect(fernPlantArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -3171,18 +3158,6 @@ public class Ground
 		fernPlantArrayBufferLODB.position(0);
 
 
-		/*weedPlantMatricesBuffer = ByteBuffer
-				.allocateDirect(weedPlantMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(weedPlantMatrices);
-		weedPlantIndicesBuffer = ByteBuffer
-				.allocateDirect(weedPlantIndices.length * BYTES_PER_INT)
-				.order(ByteOrder.nativeOrder())
-				.asIntBuffer()
-				.put(weedPlantIndices);
-		weedPlantMatricesBuffer.position(0);
-		weedPlantIndicesBuffer.position(0);*/
 		weedPlantArrayBufferLODA = ByteBuffer
 				.allocateDirect(weedPlantArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -3227,53 +3202,44 @@ public class Ground
 				.put(rockBArrayLODB);
 		rockBArrayBufferLODB.position(0);
 
-		//glGenBuffers(2, pineTreeMatricesUbo, 0);
 		glGenBuffers(2, pineTreeArrayUbo, 0);
-		//glGenBuffers(1, hugeTreeMatricesUbo, 0);
 		glGenBuffers(2, hugeTreeArrayUbo, 0);
-		//glGenBuffers(1, fernPlantMatricesUbo, 0);
+		glGenBuffers(2, palmTreeArrayUbo, 0);
 		glGenBuffers(2, fernPlantArrayUbo, 0);
 		glGenBuffers(2, weedPlantArrayUbo, 0);
 		glGenBuffers(2, rockAArrayUbo, 0);
 		glGenBuffers(2, rockBArrayUbo, 0);
 
-		//glGenBuffers(1, weedPlantMatricesUbo, 0);
 
-		//glGenBuffers(2, pineTreeIndicesUbo, 0);
-		//glGenBuffers(1, hugeTreeIndicesUbo, 0);
-		//glGenBuffers(1, fernPlantIndicesUbo, 0);
-		//glGenBuffers(1, weedPlantIndicesUbo, 0);
-
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, pineTreeMatricesUbo[LOD_A]);
-		glBufferData(GL_UNIFORM_BUFFER, pineTreeMatricesBufferLODA.capacity() * BYTES_PER_FLOAT, pineTreeMatricesBufferLODA, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeMatricesUbo[LOD_B]);
-		glBufferData(GL_UNIFORM_BUFFER, pineTreeMatricesBufferLODB.capacity() * BYTES_PER_FLOAT, pineTreeMatricesBufferLODB, GL_STREAM_DRAW);*/
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, pineTreeArrayBufferLODA.capacity() * BYTES_PER_FLOAT, pineTreeArrayBufferLODA, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_B]);
 		glBufferData(GL_UNIFORM_BUFFER, pineTreeArrayBufferLODB.capacity() * BYTES_PER_FLOAT, pineTreeArrayBufferLODB, GL_DYNAMIC_DRAW);
 
-		/*glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, hugeTreeMatricesBuffer.capacity() * BYTES_PER_FLOAT, hugeTreeMatricesBuffer, GL_STREAM_DRAW);*/
+
 		glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, hugeTreeArrayBufferLODA.capacity() * BYTES_PER_FLOAT, hugeTreeArrayBufferLODA, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeArrayUbo[LOD_B]);
 		glBufferData(GL_UNIFORM_BUFFER, hugeTreeArrayBufferLODB.capacity() * BYTES_PER_FLOAT, hugeTreeArrayBufferLODB, GL_DYNAMIC_DRAW);
 
-		/*glBindBuffer(GL_UNIFORM_BUFFER, fernPlantMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, fernPlantMatricesBuffer.capacity() * BYTES_PER_FLOAT, fernPlantMatricesBuffer, GL_STREAM_DRAW);*/
+
+		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_A]);
+		glBufferData(GL_UNIFORM_BUFFER, palmTreeArrayBufferLODA.capacity() * BYTES_PER_FLOAT, palmTreeArrayBufferLODA, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_B]);
+		glBufferData(GL_UNIFORM_BUFFER, palmTreeArrayBufferLODB.capacity() * BYTES_PER_FLOAT, palmTreeArrayBufferLODB, GL_DYNAMIC_DRAW);
+
+
 		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, fernPlantArrayBufferLODA.capacity() * BYTES_PER_FLOAT, fernPlantArrayBufferLODA, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantArrayUbo[LOD_B]);
 		glBufferData(GL_UNIFORM_BUFFER, fernPlantArrayBufferLODB.capacity() * BYTES_PER_FLOAT, fernPlantArrayBufferLODB, GL_DYNAMIC_DRAW);
 
-		/*glBindBuffer(GL_UNIFORM_BUFFER, weedPlantMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, weedPlantMatricesBuffer.capacity() * BYTES_PER_FLOAT, weedPlantMatricesBuffer, GL_STREAM_DRAW);*/
+
 		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, weedPlantArrayBufferLODA.capacity() * BYTES_PER_FLOAT, weedPlantArrayBufferLODA, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantArrayUbo[LOD_B]);
 		glBufferData(GL_UNIFORM_BUFFER, weedPlantArrayBufferLODB.capacity() * BYTES_PER_FLOAT, weedPlantArrayBufferLODB, GL_DYNAMIC_DRAW);
+
 
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, rockAArrayBufferLODA.capacity() * BYTES_PER_FLOAT, rockAArrayBufferLODA, GL_DYNAMIC_DRAW);
@@ -3286,17 +3252,6 @@ public class Ground
 		glBindBuffer(GL_UNIFORM_BUFFER, rockBArrayUbo[LOD_B]);
 		glBufferData(GL_UNIFORM_BUFFER, rockBArrayBufferLODB.capacity() * BYTES_PER_FLOAT, rockBArrayBufferLODB, GL_DYNAMIC_DRAW);
 
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, pineTreeIndicesUbo[LOD_A]);
-		glBufferData(GL_UNIFORM_BUFFER, pineTreeIndicesBufferLODA.capacity() * BYTES_PER_INT, pineTreeIndicesBufferLODA, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeIndicesUbo[LOD_B]);
-		glBufferData(GL_UNIFORM_BUFFER, pineTreeIndicesBufferLODB.capacity() * BYTES_PER_INT, pineTreeIndicesBufferLODB, GL_STREAM_DRAW);*/
-		/*glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeIndicesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, hugeTreeIndicesBuffer.capacity() * BYTES_PER_INT, hugeTreeIndicesBuffer, GL_STREAM_DRAW);*/
-		/*glBindBuffer(GL_UNIFORM_BUFFER, fernPlantIndicesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, fernPlantIndicesBuffer.capacity() * BYTES_PER_INT, fernPlantIndicesBuffer, GL_STREAM_DRAW);*/
-		/*glBindBuffer(GL_UNIFORM_BUFFER, weedPlantIndicesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, weedPlantIndicesBuffer.capacity() * BYTES_PER_INT, weedPlantIndicesBuffer, GL_STREAM_DRAW);*/
 
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
@@ -3311,6 +3266,8 @@ public class Ground
 		int pineTreeOffsetLODB = 0;
 		int hugeTreeOffsetLODA = 0;
 		int hugeTreeOffsetLODB = 0;
+		int palmTreeOffsetLODA = 0;
+		int palmTreeOffsetLODB = 0;
 		int fernPlantOffsetLODA = 0;
 		int fernPlantOffsetLODB = 0;
 		int weedPlantOffsetLODA = 0;
@@ -3326,6 +3283,9 @@ public class Ground
 
 		hugeTreeNumInstances[LOD_A] = 0;
 		hugeTreeNumInstances[LOD_B] = 0;
+
+		palmTreeNumInstances[LOD_A] = 0;
+		palmTreeNumInstances[LOD_B] = 0;
 
 		fernPlantNumInstances[LOD_A] = 0;
 		fernPlantNumInstances[LOD_B] = 0;
@@ -3392,6 +3352,26 @@ public class Ground
 					numElements = numElements * 4;
 					System.arraycopy(objectsPatches[x][z].hugeTreePointsLODB, 0, hugeTreeArrayLODB, hugeTreeOffsetLODB, numElements);
 					hugeTreeOffsetLODB += numElements;
+				}
+
+				// palm tree
+
+				numElements = objectsPatches[x][z].palmTreeNumInstances[LOD_A];
+				if(numElements > 0)
+				{
+					palmTreeNumInstances[LOD_A] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].palmTreePointsLODA, 0, palmTreeArrayLODA, palmTreeOffsetLODA, numElements);
+					palmTreeOffsetLODA += numElements;
+				}
+
+				numElements = objectsPatches[x][z].palmTreeNumInstances[LOD_B];
+				if(numElements > 0)
+				{
+					palmTreeNumInstances[LOD_B] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].palmTreePointsLODB, 0, palmTreeArrayLODB, palmTreeOffsetLODB, numElements);
+					palmTreeOffsetLODB += numElements;
 				}
 
 				// fern plant
@@ -3492,6 +3472,14 @@ public class Ground
 		hugeTreeArrayBufferLODB.put(hugeTreeArrayLODB, 0, hugeTreeArrayLODB.length);
 		hugeTreeArrayBufferLODB.position(0);
 
+		palmTreeArrayBufferLODA.position(0);
+		palmTreeArrayBufferLODA.put(palmTreeArrayLODA, 0, palmTreeArrayLODA.length);
+		palmTreeArrayBufferLODA.position(0);
+
+		palmTreeArrayBufferLODB.position(0);
+		palmTreeArrayBufferLODB.put(palmTreeArrayLODB, 0, palmTreeArrayLODB.length);
+		palmTreeArrayBufferLODB.position(0);
+
 		fernPlantArrayBufferLODA.position(0);
 		fernPlantArrayBufferLODA.put(fernPlantArrayLODA, 0, fernPlantArrayLODA.length);
 		fernPlantArrayBufferLODA.position(0);
@@ -3541,6 +3529,14 @@ public class Ground
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, hugeTreeOffsetLODB * BYTES_PER_FLOAT, hugeTreeArrayBufferLODB);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_A]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmTreeOffsetLODA * BYTES_PER_FLOAT, palmTreeArrayBufferLODA);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_B]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmTreeOffsetLODB * BYTES_PER_FLOAT, palmTreeArrayBufferLODB);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
 		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, fernPlantOffsetLODA * BYTES_PER_FLOAT, fernPlantArrayBufferLODA);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -3572,28 +3568,6 @@ public class Ground
 		glBindBuffer(GL_UNIFORM_BUFFER, rockBArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockBOffsetLODB * BYTES_PER_FLOAT, rockBArrayBufferLODB);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		/*objectsPatchesModelMatricesBuffer.position(0);
-		objectsPatchesModelMatricesBuffer.put(objectsPatchesModelMatrices, 0, objectsPatchesModelMatrices.length);
-		objectsPatchesModelMatricesBuffer.position(0);
-
-		objectsPatchesMVPMatricesBuffer.position(0);
-		objectsPatchesMVPMatricesBuffer.put(objectsPatchesMVPMatrices, 0, objectsPatchesMVPMatrices.length);
-		objectsPatchesMVPMatricesBuffer.position(0);
-
-		objectsPatchesLightMVPMatricesBuffer.position(0);
-		objectsPatchesLightMVPMatricesBuffer.put(objectsPatchesLightMVPMatrices, 0, objectsPatchesLightMVPMatrices.length);
-		objectsPatchesLightMVPMatricesBuffer.position(0);
-
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesModelMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, objectsPatchesModelMatrices.length * BYTES_PER_FLOAT, objectsPatchesModelMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesMVPMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, objectsPatchesMVPMatrices.length * BYTES_PER_FLOAT, objectsPatchesMVPMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesLightMVPMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, objectsPatchesLightMVPMatrices.length * BYTES_PER_FLOAT, objectsPatchesLightMVPMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
 	}
 
 

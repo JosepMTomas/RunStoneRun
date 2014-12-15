@@ -51,6 +51,10 @@ public class Constants
 	public static final float HUGE_TREE_MAX_SCALE = 2.0f;
 	public static final float HUGE_TREE_SCALE_DIFFERENCE = HUGE_TREE_MAX_SCALE - HUGE_TREE_MIN_SCALE;
 
+	public static final float PALM_TREE_MIN_SCALE = 0.75f;
+	public static final float PALM_TREE_MAX_SCALE = 1.0f;
+	public static final float PALM_TREE_SCALE_DIFFERENCE = PALM_TREE_MAX_SCALE - PALM_TREE_MIN_SCALE;
+
 	public static final float FERN_PLANT_MIN_SCALE = 1.0f;
 	public static final float FERN_PLANT_MAX_SCALE = 1.7f;
 	public static final float FERN_PLANT_SCALE_DIFFERENCE = FERN_PLANT_MAX_SCALE - FERN_PLANT_MIN_SCALE;
