@@ -6,6 +6,8 @@ in float vGradient;
 
 // uniforms
 uniform sampler2D progressSampler;
+uniform vec3 color;
+uniform float opacity;
 uniform float percent;
 
 // shader output(s)
@@ -21,7 +23,7 @@ void main()
 	value = floor(value);
 	value += 0.5;
 	
-	fragColor = vec4(vec3(value), value * progressTex.w);
+	fragColor = vec4(color * value, value * progressTex.w * opacity);
 	
 	//fragColor = vec4(vec3(numbersTex.x + 0.25), numbersTex.x);
 	//fragColor = numbersTex;

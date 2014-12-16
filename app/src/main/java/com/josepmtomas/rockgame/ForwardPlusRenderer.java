@@ -132,6 +132,10 @@ public class ForwardPlusRenderer implements Renderer
 	private float fScore = 0f;
 	private int iScore = 0;
 
+	// PlaterRock state
+	private int previousState = PLAYER_ROCK_MOVING;
+	private int currentState = PLAYER_ROCK_MOVING;
+
 	// GameActivity
 	private GameActivity parent;
 
@@ -431,14 +435,12 @@ public class ForwardPlusRenderer implements Renderer
 			if (scoreMultiplierTime > 2f)
 			{
 				scoreMultiplierTime -= 2f;
-				//scoreMultiplierValue += 0.1f;
 				playerRock.scoreMultiplier += 0.1f;
 			}
 		}
-		else if(playerRock.state == PLAYER_ROCK_RECOVERING)
+		else if(playerRock.state == PLAYER_ROCK_RECOVERING || playerRock.state == PLAYER_ROCK_BOUNCING)
 		{
 			scoreMultiplierPercent = 0f;
-			//scoreMultiplierValue = 0f;
 			playerRock.scoreMultiplier = 0f;
 			scoreMultiplierTime = 0f;
 		}
@@ -447,7 +449,15 @@ public class ForwardPlusRenderer implements Renderer
 		fScore += playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 
 		// Update hud
-		hud.update((int)fScore, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS);
+		hud.update((int)fScore, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS, deltaTime);
+
+		// Game state
+		previousState = currentState;
+		currentState = playerRock.state;
+		if(previousState == PLAYER_ROCK_MOVING && currentState == PLAYER_ROCK_BOUNCING)
+		{
+			hud.hit();
+		}
 	}
 
 

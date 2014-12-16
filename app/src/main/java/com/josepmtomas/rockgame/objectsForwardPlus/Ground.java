@@ -188,10 +188,12 @@ public class Ground
 	private int brokenTreeTexture;
 	private BrokenTree brokenPineTree;
 	private BrokenTree brokenHugeTree;
+	private BrokenTree brokenPalmTree;
 
 	// Broken parameters & matrices
 	private float[] brokenTreeInitialRootY = {0f, 0f, 0f};
-	private float[] brokenTreeInitialTopY = {53.871f, 25f, 0.0f};
+	private float[] brokenTreeInitialTopY = {53.871f, 25f, 58.0f};
+	private float[] brokenTreeInitialForce = {1f, 1f, 2f};
 	private float brokenTreeDistanceZ = 0f;
 	private float brokenTreeForce = 0f;
 	private float brokenTreeScale = 0f;
@@ -482,6 +484,9 @@ public class Ground
 
 		brokenHugeTree = new BrokenTree(context, "models/huge_tree_broken_root.vbm", "models/huge_tree_broken_top.vbm");
 		brokenHugeTree.addShadowGeometry("models/huge_tree_broken_root_shadow.vbm", "models/huge_tree_broken_top_shadow.vbm");
+
+		brokenPalmTree = new BrokenTree(context, "models/palm_tree_broken_root.vbm", "models/palm_tree_broken_top.vbm");
+		brokenPalmTree.addShadowGeometry("models/palm_tree_broken_root_shadow.vbm", "models/palm_tree_broken_top_shadow.vbm");
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Shader programs
@@ -1947,7 +1952,7 @@ public class Ground
 							brokenTreeRootRotationAngle = 0f;
 							brokenTreeTopRotationAngle = 0f;
 							brokenTreeDistanceZ = 0f;
-							brokenTreeForce = 1.0f;
+							brokenTreeForce = brokenTreeInitialForce[treeType];
 							brokenTreeScale = scale;
 
 							if(treeType == 0)
@@ -1986,11 +1991,24 @@ public class Ground
 								brokenTreeTexture = hugeTreeTexture;
 								drawBrokenTree = true;
 							}
-							else
+							else //if(treeType == 2)
 							{
-								drawBrokenTree = false;
+								// Assign main geometry
+								brokenTreeRootVaoHandle = brokenPalmTree.rootVaoHandle[0];
+								brokenTreeTopVaoHandle = brokenPalmTree.topVaoHandle[0];
+								brokenTreeRootNumElementsToDraw = brokenPalmTree.numRootElementsToDraw;
+								brokenTreeTopNumElementsToDraw = brokenPalmTree.numTopElementsToDraw;
+
+								//Assign shadow geometry
+								brokenTreeRootShadowVaoHandle = brokenPalmTree.rootShadowVaoHandle[0];
+								brokenTreeTopShadowVaoHandle = brokenPalmTree.topShadowVaoHandle[0];
+								brokenTreeRootShadowNumElementsToDraw = brokenPalmTree.numRootShadowElementsToDraw;
+								brokenTreeTopShadowNumElementsToDraw = brokenPalmTree.numTopShadowElementsToDraw;
+
+								// Assign texture & make the broken tree drawable
+								brokenTreeTexture = palmTreeTexture;
+								drawBrokenTree = true;
 							}
-							//TODO: else
 						}
 						playerRock.hit(0);
 						break;

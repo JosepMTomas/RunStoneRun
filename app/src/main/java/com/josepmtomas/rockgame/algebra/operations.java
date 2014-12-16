@@ -7,6 +7,17 @@ import android.util.FloatMath;
  */
 public class operations
 {
+	//////////////////////////////////////////////////
+
+	public static float lerp(float a, float b, float alpha)
+	{
+		float oneMinus = 1f - alpha;
+
+		return (a * oneMinus) + (b * alpha);
+	}
+
+	//////////////////////////////////////////////////
+
 	public static vec2 add(vec2 a, vec2 b)
 	{
 		return new vec2(a.x + b.x, a.y + b.y);

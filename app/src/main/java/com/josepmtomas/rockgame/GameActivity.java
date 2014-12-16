@@ -311,12 +311,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	protected void onStop() {
 		super.onStop();
 
-		// release media players
-		backgroundMusicPlayer.release();
-		impactRockOnRockSoundEffect.release();
-		impactRockOnTreeSoundEffect.release();
-		treeFallingSoundEffect.release();
-
 		Log.d(TAG, "<<<<< ON STOP >>>>>");
 	}
 
@@ -324,6 +318,11 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+
+		backgroundMusicPlayer.release();
+		impactRockOnRockSoundEffect.release();
+		impactRockOnTreeSoundEffect.release();
+		treeFallingSoundEffect.release();
 
 		Log.d(TAG, "<<<<< ON DESTROY >>>>>");
 	}

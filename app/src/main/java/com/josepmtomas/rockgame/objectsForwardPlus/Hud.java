@@ -1,9 +1,11 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
+import android.util.FloatMath;
 
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
+import com.josepmtomas.rockgame.util.HudHelper;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
 import java.io.BufferedReader;
@@ -19,6 +21,7 @@ import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
 
 import static com.josepmtomas.rockgame.Constants.*;
+import static com.josepmtomas.rockgame.algebra.operations.*;
 
 /**
  * Created by Josep on 29/11/2014.
@@ -31,6 +34,12 @@ public class Hud
 	private static final int POSITION_BYTE_OFFSET = 0;
 	private static final int TEXCOORD_BYTE_OFFSET = 3 * BYTES_PER_FLOAT;
 	private static final int BYTE_STRIDE = 5 * BYTES_PER_FLOAT;
+
+	// States
+	private static final int OUT_OF_SCREEN = 0;
+	private static final int APPEARING = 1;
+	private static final int SHOWING = 2;
+	private static final int DISAPPEARING = 3;
 
 	// Matrices
 	private float[] view = new float[16];
@@ -69,6 +78,18 @@ public class Hud
 	private float multiplierProgressOffsetX = 0;
 	private float multiplierProgressOffsetY = 0;
 
+	// Recovering progress bar
+	private int recoveringProgressBarVaoHandle;
+	private int recoveringProgressBarState = OUT_OF_SCREEN;
+	private float recoveringProgressBarTimer = 0f;
+	private float recoveringProgressBarOpacity = 0f;
+	private float recoveringProgressBarPercent = 0f;
+	private float[] recoveringTimers = {0.5f, PLAYER_RECOVERING_TIME - 0.5f, 0.5f};
+	private float recoveringCurrentPositionY = 0f;
+	private float recoveringInitialPositionY = -500f;
+	private float recoveringFinalPositionY = 0f;
+
+
 
 	// Frames per second panel
 	private float[] fpsPositionOffsetsX = {-1572f, -1700f};
@@ -99,9 +120,11 @@ public class Hud
 		//multiplierTexture = TextureHelper.loadETC2Texture(context, "textures/hud/multiplier_9patch_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier progress bar
-		//createMultiplierProgressGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE);
-		createMultiplierProgressGeometry((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f);
+		multiplierProgressVaoHandle[0] = HudHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f, HUD_BASE_LEFT_CENTER);
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		// Recovering progress bar
+		recoveringProgressBarVaoHandle = HudHelper.makeProgressBar(800, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f, HUD_BASE_CENTER_CENTER);
 
 		// Positions
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -226,359 +249,6 @@ public class Hud
 	}
 
 
-	private void loadMultiplierGeometry(Context context, String fileName, float numberHeight)
-	{
-		int numVertices, numElements;
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
-
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Read geometry from file
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		try
-		{
-			InputStream inputStream = context.getResources().getAssets().open(fileName);
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-			String nextLine;
-
-			int verticesOffset = 0;
-			int elementsOffset = 0;
-
-			while((nextLine = bufferedReader.readLine()) != null)
-			{
-				// Split the line into tokens separated by spaces
-				String[] tokens = nextLine.split(" ");
-
-				// Check the first token of the line
-				if(tokens[0].equals("VERTICES"))
-				{
-					// Get the number of vertices and initialize the positions array
-					numVertices = Integer.parseInt(tokens[1]);
-					multiplierVertices = new float[5 * numVertices];
-				}
-				else if(tokens[0].equals("FACES"))
-				{
-					// Get the number of faces and initialize the elements array
-					numElements = Integer.parseInt(tokens[1]);
-					numMultiplierElementsToDraw = numElements * 3;
-					multiplierElements = new short[numMultiplierElementsToDraw];
-				}
-				else if(tokens[0].equals("VERTEX"))
-				{
-					// Read the vertex positions
-					multiplierVertices[verticesOffset++] = Float.parseFloat(tokens[1]) * numberHeight;;
-					multiplierVertices[verticesOffset++] = Float.parseFloat(tokens[2]) * numberHeight;;
-					multiplierVertices[verticesOffset++] = 0f;
-
-					// Read the vertex texture coordinates
-					multiplierVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					multiplierVertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
-				}
-				else if(tokens[0].equals("FACE"))
-				{
-					// Read the face indices (triangle)
-					multiplierElements[elementsOffset++] = Short.parseShort(tokens[1]);
-					multiplierElements[elementsOffset++] = Short.parseShort(tokens[2]);
-					multiplierElements[elementsOffset++] = Short.parseShort(tokens[3]);
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Buffers
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		verticesBuffer = ByteBuffer
-				.allocateDirect(multiplierVertices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(multiplierVertices);
-		verticesBuffer.position(0);
-
-		elementsBuffer = ByteBuffer
-				.allocateDirect(multiplierElements.length * BYTES_PER_SHORT)
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer()
-				.put(multiplierElements);
-		elementsBuffer.position(0);
-
-		// Create and populate the buffer objects
-		glGenBuffers(2, multiplierVboHandles, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierVboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierVboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
-
-		// Create the VAO
-		glGenVertexArrays(1, multiplierVaoHandle, 0);
-		glBindVertexArray(multiplierVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 5*BYTES_PER_FLOAT, 0);
-
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierVboHandles[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, false, 5*BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierVboHandles[1]);
-
-		glBindVertexArray(0);
-	}
-
-	private void createMultiplierProgressGeometry(float width, float height)
-	{
-		float[] percentagesX = new float[3];
-		float[] incrementsX = new float[3];
-		float[] uvsX = {0.25f, 0.75f, 1.0f};
-
-		float[] vertices = new float[48];
-		short[] elements = new short[18];
-		int verticesOffset = 0;
-
-		/*percentagesX[0] = height / (width * 0.5f);
-		percentagesX[1] = width - (percentagesX[0] * 2f);
-		percentagesX[2] = percentagesX[0];*/
-		/*percentagesX[0] = 0.25f;
-		percentagesX[1] = 0.75f;
-		percentagesX[2] = 1.0f;*/
-
-		percentagesX[0] = (height / width) * 0.5f;
-		percentagesX[1] = 1.0f - (percentagesX[0]);
-		percentagesX[2] = 1.0f;
-
-		/*incrementsX[0] = percentagesX[0] * width;
-		incrementsX[1] = (percentagesX[0] + percentagesX[1]) * width;
-		incrementsX[2] = width;*/
-		/*incrementsX[0] = 50f;
-		incrementsX[1] = 100f;
-		incrementsX[2] = 50f;*/
-		incrementsX[0] = percentagesX[0] * width;
-		incrementsX[1] = percentagesX[1] * width;
-		incrementsX[2] = percentagesX[2] * width;
-
-
-		// First position
-		vertices[verticesOffset++] = 0f;
-		vertices[verticesOffset++] = height;
-		vertices[verticesOffset++] = 0f;
-		// First texture coordinate
-		vertices[verticesOffset++] = 0f;
-		vertices[verticesOffset++] = 1f;
-		// First percentage
-		vertices[verticesOffset++] = 1f;
-
-		// Second position
-		vertices[verticesOffset++] = 0f;
-		vertices[verticesOffset++] = 0f;
-		vertices[verticesOffset++] = 0f;
-		// Second texture coordinate
-		vertices[verticesOffset++] = 0f;
-		vertices[verticesOffset++] = 0f;
-		// Second percentage
-		vertices[verticesOffset++] = 1f;
-
-		for(int i=0; i < 3; i++)
-		{
-			// First position
-			vertices[verticesOffset++] = incrementsX[i];
-			vertices[verticesOffset++] = height;
-			vertices[verticesOffset++] = 0f;
-			// First texture coordinate
-			vertices[verticesOffset++] = uvsX[i];
-			vertices[verticesOffset++] = 1f;
-			// First percentage
-			vertices[verticesOffset++] = 1f - percentagesX[i];
-
-			// Second position
-			vertices[verticesOffset++] = incrementsX[i];
-			vertices[verticesOffset++] = 0f;
-			vertices[verticesOffset++] = 0f;
-			// Second texture coordinate
-			vertices[verticesOffset++] = uvsX[i];
-			vertices[verticesOffset++] = 0f;
-			// Second percentage
-			vertices[verticesOffset++] = 1f - percentagesX[i];
-		}
-
-		elements[0] = 0;
-		elements[1] = 1;
-		elements[2] = 2;
-
-		elements[3] = 1;
-		elements[4] = 3;
-		elements[5] = 2;
-
-		elements[6] = 2;
-		elements[7] = 3;
-		elements[8] = 4;
-
-		elements[9] = 5;
-		elements[10] = 4;
-		elements[11] = 3;
-
-		elements[12] = 4;
-		elements[13] = 5;
-		elements[14] = 6;
-
-		elements[15] = 7;
-		elements[16] = 6;
-		elements[17] = 5;
-
-		// Java native buffers
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
-
-		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(vertices);
-		verticesBuffer.position(0);
-
-		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer()
-				.put(elements);
-		elementsBuffer.position(0);
-
-		// Create and populate the buffer objects
-		glGenBuffers(2, multiplierProgressVboHandles, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
-
-		// Create the VAO
-		glGenVertexArrays(1, multiplierProgressVaoHandle, 0);
-		glBindVertexArray(multiplierProgressVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
-
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
-
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glVertexAttribPointer(2, 1, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 5 * BYTES_PER_FLOAT);
-
-		// Elements
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
-
-		glBindVertexArray(0);
-	}
-
-
-	private void createMultiplierProgressGeometry(float numberSize)
-	{
-		float[] vertices = new float[20];
-		short[] elements = new short[6];
-
-		float bottom = 0f;
-		float left = 0f;
-		float width = numberSize * 4.0f;
-		float height = numberSize * 0.25f;
-
-		// D - C
-		// | \ |
-		// A - B
-
-		int offset = 0;
-
-		for(int y=0; y<2; y++)
-		{
-			for(int x=0; x<2; x++)
-			{
-				// Position
-				vertices[offset++] = left + ((float)x * width);
-				vertices[offset++] = bottom + ((float)y * height);
-				vertices[offset++] = 0.0f;
-
-				// Texture Coordinates
-				vertices[offset++] = (float)x;
-				vertices[offset++] = 1.0f - (float)y;
-				//vertices[offset++] = texCoordVstart + ((float)y * texCoordVincrement);
-			}
-		}
-
-		// Indices
-		elements[0] = 0;
-		elements[1] = 1;
-		elements[2] = 2;
-
-		elements[3] = 1;
-		elements[4] = 3;
-		elements[5] = 2;
-
-		// Java native buffers
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
-
-		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(vertices);
-		verticesBuffer.position(0);
-
-		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer()
-				.put(elements);
-		elementsBuffer.position(0);
-
-		// Create and populate the buffer objects
-		glGenBuffers(2, multiplierProgressVboHandles, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
-
-		// Create the VAO
-		glGenVertexArrays(1, multiplierProgressVaoHandle, 0);
-		glBindVertexArray(multiplierProgressVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
-
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, multiplierProgressVboHandles[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
-
-		// Elements
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, multiplierProgressVboHandles[1]);
-
-		glBindVertexArray(0);
-	}
-
-
 	private void setPositions(float screenWidth, float screenHeight, float numberWidth, float numberHeight)
 	{
 		float initialOffsetX = screenWidth - (numberWidth * 0.5f) - (numberWidth/2);
@@ -604,10 +274,13 @@ public class Hud
 
 		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
 		multiplierProgressOffsetX = scorePositionOffsetsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
+
+		recoveringInitialPositionY = -screenHeight;
+		recoveringFinalPositionY = -screenHeight * 0.5f;
 	}
 
 
-	public void update(int currentScore, int currentMultiplier, float multiplierPercent, int currentFps)
+	public void update(int currentScore, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
 	{
 		multiplierProgressValue = multiplierPercent;
 
@@ -639,6 +312,53 @@ public class Hud
 		number = number / 10;
 		averageFpsNumbers[1] = number;
 
+
+		// Recovering progress bar
+		if(recoveringProgressBarState == APPEARING)
+		{
+			recoveringProgressBarTimer += deltaTime;
+			recoveringProgressBarOpacity = Math.min(1f,recoveringProgressBarTimer / recoveringTimers[0]);
+			recoveringCurrentPositionY = lerp(recoveringInitialPositionY, recoveringFinalPositionY, recoveringProgressBarOpacity);
+			recoveringProgressBarPercent = recoveringTimers[0] / PLAYER_RECOVERING_TIME;
+			if(recoveringProgressBarTimer >= recoveringTimers[0])
+			{
+				recoveringProgressBarState = SHOWING;
+				recoveringProgressBarTimer -= recoveringTimers[0];
+			}
+		}
+		else if(recoveringProgressBarState == SHOWING)
+		{
+			recoveringProgressBarTimer += deltaTime;
+			recoveringProgressBarOpacity = 1f;
+			recoveringCurrentPositionY = recoveringFinalPositionY;
+			recoveringProgressBarPercent = (recoveringProgressBarTimer + recoveringTimers[0]) / PLAYER_RECOVERING_TIME;
+			if(recoveringProgressBarTimer >= recoveringTimers[1])
+			{
+				recoveringProgressBarState = DISAPPEARING;
+				recoveringProgressBarTimer -= recoveringTimers[1];
+			}
+		}
+		else if(recoveringProgressBarState == DISAPPEARING)
+		{
+			recoveringProgressBarTimer += deltaTime;
+			recoveringProgressBarOpacity = Math.max(0.0f, 1f - (recoveringProgressBarTimer / recoveringTimers[2]));
+			recoveringCurrentPositionY = lerp(recoveringInitialPositionY, recoveringFinalPositionY, recoveringProgressBarOpacity);
+			recoveringProgressBarPercent = 1f;
+			if(recoveringProgressBarTimer >= recoveringTimers[2])
+			{
+				recoveringProgressBarState = OUT_OF_SCREEN;
+				recoveringProgressBarTimer = 0f;
+			}
+		}
+	}
+
+
+	public void hit()
+	{
+		recoveringProgressBarState = APPEARING;
+		recoveringProgressBarTimer = 0f;
+
+		multiplierProgressValue = 0f;
 	}
 
 
@@ -678,23 +398,18 @@ public class Hud
 		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]]);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-
-		///// multiplier
-
-		/*scorePanelProgram.setCommonUniforms(viewProjection, multiplierTexture);
-		scorePanelProgram.setSpecificUniforms(multiplierBaseOffsetX, multiplierBaseOffsetY, 0f, 0f);
-
-		glBindVertexArray(multiplierVaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, numMultiplierElementsToDraw, GL_UNSIGNED_SHORT, 0);*/
-
-
 		/// Progress bar program
 
 		progressBarProgram.useProgram();
 		progressBarProgram.setCommonUniforms(viewProjection, multiplierProgressTexture);
-		progressBarProgram.setSpecificUniforms(multiplierProgressOffsetX, multiplierProgressOffsetY, multiplierProgressValue);
+		progressBarProgram.setSpecificUniforms(multiplierProgressOffsetX, multiplierProgressOffsetY, 1f, 1f, 1f, 1f, multiplierProgressValue);
 
 		glBindVertexArray(multiplierProgressVaoHandle[0]);
+		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+
+		progressBarProgram.setSpecificUniforms(0f, recoveringCurrentPositionY, 0f, 1f, 0f, recoveringProgressBarOpacity, recoveringProgressBarPercent);
+
+		glBindVertexArray(recoveringProgressBarVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 	}
 }

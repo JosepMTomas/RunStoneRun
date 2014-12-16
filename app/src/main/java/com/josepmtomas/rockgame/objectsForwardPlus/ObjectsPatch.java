@@ -258,7 +258,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 1.0f;// * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 2.9f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 1f;
 				numCollisionCylinders++;
 			}
@@ -272,10 +272,9 @@ public class ObjectsPatch extends BoundarySampler
 
 				hugeTreeCount++;
 
-				// TODO: collision cylinders (adjust radius)
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 1.0f;// * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 4.5f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 2f;
 				numCollisionCylinders++;
 			}
@@ -289,7 +288,11 @@ public class ObjectsPatch extends BoundarySampler
 
 				palmTreeCount++;
 
-				//TODO: collision cylinders
+				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
+				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
+				collisionCylinders[collisionCylindersOffset++] = 2.4f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 3f;
+				numCollisionCylinders++;
 			}
 			else if(randomValue < 0.6f)
 			{
@@ -433,7 +436,7 @@ public class ObjectsPatch extends BoundarySampler
 
 					collisionCylinders[collisionCylindersOffset++] = pointX;
 					collisionCylinders[collisionCylindersOffset++] = pointZ;
-					collisionCylinders[collisionCylindersOffset++] = 2.0f;
+					collisionCylinders[collisionCylindersOffset++] = 2.9f * scale;
 					collisionCylinders[collisionCylindersOffset++] = 0.0f;
 
 					countLODA++;
@@ -481,7 +484,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 2.0f;
+				collisionCylinders[collisionCylindersOffset++] = 4.5f * scale;
 				collisionCylinders[collisionCylindersOffset++] = 1.0f;
 
 				countLODA++;

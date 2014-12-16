@@ -14,6 +14,8 @@ public class ProgressBarProgram extends ShaderProgram
 	private final int texCoordOffsetLocation;
 
 	private final int progressSamplerLocation;
+	private final int colorLocation;
+	private final int opacityLocation;
 	private final int percentLocation;
 
 
@@ -26,6 +28,8 @@ public class ProgressBarProgram extends ShaderProgram
 		texCoordOffsetLocation = glGetUniformLocation(program, "texCoordOffset");
 
 		progressSamplerLocation = glGetUniformLocation(program, "progressSampler");
+		colorLocation = glGetUniformLocation(program, "color");
+		opacityLocation = glGetUniformLocation(program, "opacity");
 		percentLocation = glGetUniformLocation(program, "percent");
 	}
 
@@ -40,9 +44,11 @@ public class ProgressBarProgram extends ShaderProgram
 	}
 
 
-	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float percent)
+	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float colorX, float colorY, float colorZ, float opacity, float percent)
 	{
 		glUniform4f(positionOffsetLocation, positionOffsetX, positionOffsetY, 0f, 1f);
+		glUniform3f(colorLocation, colorX, colorY, colorZ);
+		glUniform1f(opacityLocation, opacity);
 		glUniform1f(percentLocation, percent);
 	}
 }

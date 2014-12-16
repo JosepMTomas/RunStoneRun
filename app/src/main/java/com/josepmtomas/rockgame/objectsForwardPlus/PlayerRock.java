@@ -128,6 +128,7 @@ public class PlayerRock
 	// State
 	public float scoreMultiplier = 1.0f;
 	public int state = PLAYER_ROCK_MOVING;
+	private float recoverTimer = 0f;
 
 	private PlayeRockState currentState = PlayeRockState.MOVING_FORWARD;
 
@@ -538,7 +539,7 @@ public class PlayerRock
 
 	public void update(float[] viewProjectionMatrix, float deltaTime)
 	{
-		if(state == PLAYER_ROCK_RECOVERING)
+		if(state == PLAYER_ROCK_BOUNCING)
 		{
 			previousPositionY = currentPositionY;
 
@@ -552,6 +553,17 @@ public class PlayerRock
 			}
 
 			if(previousPositionY == currentPositionY)
+			{
+				state = PLAYER_ROCK_RECOVERING;
+			}
+
+			recoverTimer += deltaTime;
+		}
+		else if(state == PLAYER_ROCK_RECOVERING)
+		{
+			recoverTimer += deltaTime;
+
+			if(recoverTimer >= PLAYER_RECOVERING_TIME)
 			{
 				state = PLAYER_ROCK_MOVING;
 				scoreMultiplier = 1.0f;
@@ -733,9 +745,10 @@ public class PlayerRock
 	{
 		if(state == PLAYER_ROCK_MOVING)
 		{
+			recoverTimer = 0f;
 			currentSpeed = currentSpeed * 0.5f;
 			initialForce = 3f;
-			state = PLAYER_ROCK_RECOVERING;
+			state = PLAYER_ROCK_BOUNCING;
 			scoreMultiplier = 0f;
 
 			if(type == 0)
@@ -748,7 +761,7 @@ public class PlayerRock
 				parent.playImpactRockOnRockSound();
 			}
 		}
-		else if(state == PLAYER_ROCK_RECOVERING)
+		else //if(state == PLAYER_ROCK_RECOVERING)
 		{
 			// nothing at this point
 		}

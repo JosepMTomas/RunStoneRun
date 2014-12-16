@@ -110,6 +110,20 @@ public class Constants
 
 	// PlayerRock states
 	public static final int PLAYER_ROCK_MOVING = 1;
-	public static final int PLAYER_ROCK_RECOVERING = 2;
-	public static final int PLAYER_ROCK_STOPPED = 3;
+	public static final int PLAYER_ROCK_BOUNCING = 2;
+	public static final int PLAYER_ROCK_RECOVERING = 3;
+	public static final int PLAYER_ROCK_STOPPED = 4;
+
+	public static final float PLAYER_RECOVERING_TIME = 3f;
+
+	// HUD base points (X_Y)
+	public static final int HUD_BASE_LEFT_TOP = 0;
+	public static final int HUD_BASE_LEFT_CENTER = 1;
+	public static final int HUD_BASE_LEFT_BOTTOM = 2;
+	public static final int HUD_BASE_CENTER_TOP = 3;
+	public static final int HUD_BASE_CENTER_CENTER = 4;
+	public static final int HUD_BASE_CENTER_BOTTOM = 5;
+	public static final int HUD_BASE_RIGHT_TOP = 6;
+	public static final int HUD_BASE_RIGHT_CENTER = 7;
+	public static final int HUD_BASE_RIGHT_BOTTOM = 8;
 }
