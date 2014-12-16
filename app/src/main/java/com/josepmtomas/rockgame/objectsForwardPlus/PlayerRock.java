@@ -115,7 +115,6 @@ public class PlayerRock
 	public float rockRadius = 10.0f;
 	private float rockLength = (float)Math.PI * 2.0f * rockRadius;
 	private float rockAngleLength = rockLength / 360.0f;
-	//private float displacement = 0.0f;
 	public float currentSpeed = 0.0f;
 	private float[] initialDirection = {0.0f, 0.0f, 1.0f, 1.0f};
 	private float[] currentDirection = {0.0f, 0.0f, 1.0f, 1.0f};
@@ -128,6 +127,7 @@ public class PlayerRock
 	// State
 	public float scoreMultiplier = 1.0f;
 	public int state = PLAYER_ROCK_MOVING;
+	public int lastObjectTypeHit = 0;
 	private float recoverTimer = 0f;
 
 	private PlayeRockState currentState = PlayeRockState.MOVING_FORWARD;
@@ -570,7 +570,7 @@ public class PlayerRock
 			}
 		}
 
-		currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + 10f);
+		if(state == PLAYER_ROCK_MOVING) currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + 10f);
 		//currentSpeed = 0f;
 		//currentSpeed += 1f;
 
@@ -750,6 +750,7 @@ public class PlayerRock
 			initialForce = 3f;
 			state = PLAYER_ROCK_BOUNCING;
 			scoreMultiplier = 0f;
+			lastObjectTypeHit = type;
 
 			if(type == 0)
 			{

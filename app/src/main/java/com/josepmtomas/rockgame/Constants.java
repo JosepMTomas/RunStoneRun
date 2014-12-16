@@ -115,6 +115,7 @@ public class Constants
 	public static final int PLAYER_ROCK_STOPPED = 4;
 
 	public static final float PLAYER_RECOVERING_TIME = 3f;
+	public static final float LIFE_RECOVERING_TIME = 5f;
 
 	// HUD base points (X_Y)
 	public static final int HUD_BASE_LEFT_TOP = 0;

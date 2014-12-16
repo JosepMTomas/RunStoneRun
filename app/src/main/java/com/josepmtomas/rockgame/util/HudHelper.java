@@ -122,8 +122,6 @@ public class HudHelper
 
 				currentX = currentX + incrementsX[x];
 				currentPercentage = currentPercentage - percentagesX[x];
-
-				Log.i("MakeProgressBar","CurrentX = " + currentX + " | CurrentY = " + currentY);
 			}
 			currentY = currentY - height;
 		}
@@ -193,7 +191,7 @@ public class HudHelper
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
 
-		// Vertex texture coordinates
+		// Vertex percentage
 		glEnableVertexAttribArray(2);
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(2, 1, GL_FLOAT, false, 6 * BYTES_PER_FLOAT, 5 * BYTES_PER_FLOAT);

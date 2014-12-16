@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.objectsForwardPlus.Ground;
+import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
 import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
 import com.josepmtomas.rockgame.objectsForwardPlus.LightInfo;
 import com.josepmtomas.rockgame.objectsForwardPlus.PlayerRock;
@@ -109,6 +110,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Objects
 	PlayerRock playerRock;
+	GroundShield groundShield;
 	Ground ground;
 	SkyDome skyDome;
 
@@ -175,6 +177,7 @@ public class ForwardPlusRenderer implements Renderer
 		lightInfo = new LightInfo();
 		// Create and initialize objects
 		playerRock = new PlayerRock(parent, lightInfo);
+		groundShield = new GroundShield(context);
 		ground = new Ground(context,
 				11, 9, 10, 10, 90f, 90f,
 				3, 3, 450f, 450f,
@@ -450,13 +453,15 @@ public class ForwardPlusRenderer implements Renderer
 
 		// Update hud
 		hud.update((int)fScore, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS, deltaTime);
+		groundShield.update(deltaTime);
 
 		// Game state
 		previousState = currentState;
 		currentState = playerRock.state;
 		if(previousState == PLAYER_ROCK_MOVING && currentState == PLAYER_ROCK_BOUNCING)
 		{
-			hud.hit();
+			hud.hit(playerRock.lastObjectTypeHit);
+			groundShield.hit();
 		}
 	}
 
@@ -578,6 +583,14 @@ public class ForwardPlusRenderer implements Renderer
 
 		skyDome.draw();
 		playerRock.draw(shadowMatrix, shadowMapTexID[0]);
+
+		if(groundShield.isVisible)
+		{
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+			groundShield.draw(viewProjection);
+			glDisable(GL_BLEND);
+		}
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}

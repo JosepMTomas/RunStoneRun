@@ -35,11 +35,20 @@ public class Hud
 	private static final int TEXCOORD_BYTE_OFFSET = 3 * BYTES_PER_FLOAT;
 	private static final int BYTE_STRIDE = 5 * BYTES_PER_FLOAT;
 
-	// States
+	// UI States
 	private static final int OUT_OF_SCREEN = 0;
 	private static final int APPEARING = 1;
 	private static final int SHOWING = 2;
 	private static final int DISAPPEARING = 3;
+
+	// Life states
+	private static final int LIFE_OK = 0;
+	private static final int LIFE_LOSING = 1;
+	private static final int LIFE_LOST = 2;
+
+	// Life timer states
+	private static final int LIVES_TIMER_IDLE = 0;
+	private static final int LIVES_TIMER_COUNTING = 1;
 
 	// Matrices
 	private float[] view = new float[16];
@@ -58,21 +67,12 @@ public class Hud
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
 
 	// Multiplier panel
-	private float[] multiplierVertices;
-	private short[] multiplierElements;
-	private int numMultiplierElementsToDraw;
-	private int[] multiplierVboHandles = new int[2];
-	private int[] multiplierVaoHandle = new int[1];
-	private int multiplierTexture;
-	private float multiplierBaseOffsetX;
-	private float multiplierBaseOffsetY;
 	private float[] multiplierNumbersOffsetsX = new float[4];
 	private float multiplierNumbersOffsetY;
 	private int[] multiplierNumbers = {0, 13, 0, 12};
 
 	// Multiplier progress bar
-	private int[] multiplierProgressVboHandles = new int[2];
-	private int[] multiplierProgressVaoHandle = new int[1];
+	private int multiplierProgressVaoHandle;
 	private int multiplierProgressTexture;
 	private float multiplierProgressValue = 0f;
 	private float multiplierProgressOffsetX = 0;
@@ -89,6 +89,16 @@ public class Hud
 	private float recoveringInitialPositionY = -500f;
 	private float recoveringFinalPositionY = 0f;
 
+	// Lives
+	private int lifeBarVaoHandle;
+	private int currentLife = 2;
+	private int livesCounterState = LIVES_TIMER_IDLE;
+	private int[] livesStates = {LIFE_OK, LIFE_OK, LIFE_OK, LIFE_LOST, LIFE_LOST};
+	private float[] livesPercents = {1f, 1f, 1f, 0f, 0f};
+	private float[] livesPositionsX = new float[5];
+	private float livesPositionY;
+	private float lifeRecoverPercent;
+	private float lifeRecoverTimer;
 
 
 	// Frames per second panel
@@ -107,6 +117,8 @@ public class Hud
 
 	public Hud(Context context, float screenWidth, float screenHeight, float numberWidth, float numberHeight)
 	{
+		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
+
 		// Common matrices
 		createMatrices(screenWidth, screenHeight);
 
@@ -120,11 +132,14 @@ public class Hud
 		//multiplierTexture = TextureHelper.loadETC2Texture(context, "textures/hud/multiplier_9patch_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier progress bar
-		multiplierProgressVaoHandle[0] = HudHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f, HUD_BASE_LEFT_CENTER);
+		multiplierProgressVaoHandle = HudHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, progressBarHeight, HUD_BASE_LEFT_CENTER);
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Recovering progress bar
-		recoveringProgressBarVaoHandle = HudHelper.makeProgressBar(800, screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f, HUD_BASE_CENTER_CENTER);
+		recoveringProgressBarVaoHandle = HudHelper.makeProgressBar(800, progressBarHeight, HUD_BASE_CENTER_CENTER);
+
+		// Life bars
+		lifeBarVaoHandle = HudHelper.makeProgressBar(200, progressBarHeight, HUD_BASE_CENTER_CENTER);
 
 		// Positions
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -263,8 +278,8 @@ public class Hud
 
 		/////////// multiplier
 
-		multiplierBaseOffsetX = screenWidth - (numberWidth / 2f);
-		multiplierBaseOffsetY = screenHeight - numberHeight * 4f;
+		float multiplierBaseOffsetX = screenWidth - (numberWidth / 2f);
+		float multiplierBaseOffsetY = screenHeight - numberHeight * 4f;
 
 		multiplierNumbersOffsetY = multiplierBaseOffsetY + numberHeight * 1.25f;
 		multiplierNumbersOffsetsX[0] = multiplierBaseOffsetX - (numberWidth * 0.75f);
@@ -275,8 +290,21 @@ public class Hud
 		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
 		multiplierProgressOffsetX = scorePositionOffsetsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
 
+		// Recovering
+
 		recoveringInitialPositionY = -screenHeight;
 		recoveringFinalPositionY = -screenHeight * 0.5f;
+
+		// Lives
+
+		float livesSpacing = screenWidth * 0.125f;
+		initialOffsetX = livesSpacing * -2f;
+
+		for(int i=0; i < 5; i++)
+		{
+			livesPositionsX[i] = initialOffsetX + (i * livesSpacing);
+		}
+		livesPositionY = screenHeight * -0.85f;
 	}
 
 
@@ -312,6 +340,19 @@ public class Hud
 		number = number / 10;
 		averageFpsNumbers[1] = number;
 
+		// Lives
+		if(livesCounterState == LIVES_TIMER_COUNTING)
+		{
+			lifeRecoverTimer = lifeRecoverTimer + deltaTime;
+			lifeRecoverPercent = lifeRecoverTimer / LIFE_RECOVERING_TIME;
+
+			if(lifeRecoverPercent >= 1f)
+			{
+				livesStates[currentLife] = LIFE_OK;
+				livesCounterState = LIVES_TIMER_IDLE;
+			}
+		}
+
 
 		// Recovering progress bar
 		if(recoveringProgressBarState == APPEARING)
@@ -336,6 +377,12 @@ public class Hud
 			{
 				recoveringProgressBarState = DISAPPEARING;
 				recoveringProgressBarTimer -= recoveringTimers[1];
+
+				if(livesStates[currentLife] == LIFE_LOSING)
+				{
+					lifeRecoverTimer = 0f;
+					livesCounterState = LIVES_TIMER_COUNTING;
+				}
 			}
 		}
 		else if(recoveringProgressBarState == DISAPPEARING)
@@ -350,15 +397,51 @@ public class Hud
 				recoveringProgressBarTimer = 0f;
 			}
 		}
+
+		for(int j=0; j < 5; j++)
+		{
+			if(livesStates[j] == LIFE_OK)
+			{
+				livesPercents[j] = 1f;
+			}
+			else
+			{
+				livesPercents[j] = 0f;
+			}
+		}
 	}
 
 
-	public void hit()
+	public void hit(int type)
 	{
 		recoveringProgressBarState = APPEARING;
 		recoveringProgressBarTimer = 0f;
 
 		multiplierProgressValue = 0f;
+
+		if(livesStates[currentLife] == LIFE_OK)
+		{
+			if(type == 0)
+			{
+				livesStates[currentLife] = LIFE_LOSING;
+				lifeRecoverPercent = 0f;
+				lifeRecoverTimer = 0f;
+			}
+			else
+			{
+				livesStates[currentLife] = LIFE_LOST;
+				currentLife--;
+			}
+		}
+		else if(livesStates[currentLife] == LIFE_LOSING)
+		{
+			livesCounterState = LIVES_TIMER_IDLE;
+			livesStates[currentLife] = LIFE_LOST;
+			currentLife--;
+		}
+
+		//TODO: temp (avoid exception)
+		currentLife = Math.max(currentLife, 0);
 	}
 
 
@@ -404,12 +487,27 @@ public class Hud
 		progressBarProgram.setCommonUniforms(viewProjection, multiplierProgressTexture);
 		progressBarProgram.setSpecificUniforms(multiplierProgressOffsetX, multiplierProgressOffsetY, 1f, 1f, 1f, 1f, multiplierProgressValue);
 
-		glBindVertexArray(multiplierProgressVaoHandle[0]);
+		glBindVertexArray(multiplierProgressVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 
 		progressBarProgram.setSpecificUniforms(0f, recoveringCurrentPositionY, 0f, 1f, 0f, recoveringProgressBarOpacity, recoveringProgressBarPercent);
 
 		glBindVertexArray(recoveringProgressBarVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+
+
+		glBindVertexArray(lifeBarVaoHandle);
+
+		for(int i=0; i < 5; i++)
+		{
+			progressBarProgram.setSpecificUniforms(livesPositionsX[i], livesPositionY, 1f, 1f, 1f, 1f, livesPercents[i]);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		}
+
+		if(livesStates[currentLife] == LIFE_LOSING)
+		{
+			progressBarProgram.setSpecificUniforms(livesPositionsX[currentLife], livesPositionY, 1f, 1f, 0f, 1f, lifeRecoverPercent);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		}
 	}
 }
