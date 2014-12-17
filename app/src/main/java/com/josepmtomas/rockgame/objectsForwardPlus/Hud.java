@@ -55,6 +55,10 @@ public class Hud
 	private float[] projection = new float[16];
 	private float[] viewProjection = new float[16];
 
+	// Colors
+	private float[] scoreColor = {1f, 1f, 1f};
+	private float[] recoveringColor = {0.75f, 1f, 0.75f};
+
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
@@ -62,6 +66,7 @@ public class Hud
 	private float scorePositionOffsetY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
+	private float scoreOpacity = 1f;
 	private int scoreNumbersTexture;
 	private int scoreNumbersNegativeTexture;
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
@@ -89,6 +94,17 @@ public class Hud
 	private float recoveringInitialPositionY = -500f;
 	private float recoveringFinalPositionY = 0f;
 
+	// "Get Ready" panel
+	private int getReadyPanelTexture;
+	private int getReadyPanelVaoHandle;
+	private int getReadyPanelState = OUT_OF_SCREEN;
+	private float getReadyPanelTimer = 0f;
+	private float getReadyPanelOpacity = 0f;
+	private float[] getReadyPanelTimers = {0.5f, PLAYER_RECOVERING_TIME - 0.5f, 0.5f};
+	private float getReadyPanelCurrentPositionY = 0f;
+	private float getReadyPanelInitialPositionY = -500f;
+	private float getReadyPanelFinalPositionY = 0f;
+
 	// Lives
 	private int lifeBarVaoHandle;
 	private int currentLife = 2;
@@ -115,9 +131,11 @@ public class Hud
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, float screenWidth, float screenHeight, float numberWidth, float numberHeight)
+	public Hud(Context context, float screenWidth, float screenHeight)
 	{
 		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
+		float numberHeight =  screenHeight * NUMBER_HEIGHT_PERCENTAGE;
+		float numberWidth = numberHeight * 0.7134f;
 
 		// Common matrices
 		createMatrices(screenWidth, screenHeight);
@@ -135,8 +153,10 @@ public class Hud
 		multiplierProgressVaoHandle = HudHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, progressBarHeight, HUD_BASE_LEFT_CENTER);
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
-		// Recovering progress bar
+		// Recovering
 		recoveringProgressBarVaoHandle = HudHelper.makeProgressBar(800, progressBarHeight, HUD_BASE_CENTER_CENTER);
+		getReadyPanelVaoHandle = HudHelper.makePanel(numberWidth * 9f, numberHeight * 0.9f, HUD_BASE_CENTER_CENTER);
+		getReadyPanelTexture = TextureHelper.loadETC2Texture(context, "textures/hud/get_ready.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Life bars
 		lifeBarVaoHandle = HudHelper.makeProgressBar(200, progressBarHeight, HUD_BASE_CENTER_CENTER);
@@ -295,6 +315,11 @@ public class Hud
 		recoveringInitialPositionY = -screenHeight;
 		recoveringFinalPositionY = -screenHeight * 0.5f;
 
+		// Get Ready panel
+
+		getReadyPanelInitialPositionY = -screenHeight;
+		getReadyPanelFinalPositionY = -screenHeight * 0.4f;
+
 		// Lives
 
 		float livesSpacing = screenWidth * 0.125f;
@@ -398,6 +423,41 @@ public class Hud
 			}
 		}
 
+		// Get Ready panel
+		if(getReadyPanelState == APPEARING)
+		{
+			getReadyPanelTimer += deltaTime;
+			getReadyPanelOpacity = Math.min(1f,getReadyPanelTimer / getReadyPanelTimers[0]);
+			getReadyPanelCurrentPositionY = lerp(getReadyPanelInitialPositionY, getReadyPanelFinalPositionY, getReadyPanelOpacity);
+			if(getReadyPanelTimer >= getReadyPanelTimers[0])
+			{
+				getReadyPanelTimer -= getReadyPanelTimers[0];
+				getReadyPanelState = SHOWING;
+			}
+		}
+		else if(getReadyPanelState == SHOWING)
+		{
+			getReadyPanelTimer += deltaTime;
+			getReadyPanelOpacity = 1f;
+			getReadyPanelCurrentPositionY = getReadyPanelFinalPositionY;
+			if(getReadyPanelTimer >= getReadyPanelTimers[1])
+			{
+				getReadyPanelTimer -= getReadyPanelTimers[1];
+				getReadyPanelState = DISAPPEARING;
+			}
+		}
+		else if(getReadyPanelState == DISAPPEARING)
+		{
+			getReadyPanelTimer += deltaTime;
+			getReadyPanelOpacity = Math.max(0.0f, 1.0f - (getReadyPanelTimer / getReadyPanelTimers[2]));
+			getReadyPanelCurrentPositionY = lerp(getReadyPanelInitialPositionY, getReadyPanelFinalPositionY, getReadyPanelOpacity);
+			if(getReadyPanelTimer >= getReadyPanelTimers[2])
+			{
+				getReadyPanelTimer -= getReadyPanelTimers[2];
+				getReadyPanelState = OUT_OF_SCREEN;
+			}
+		}
+
 		for(int j=0; j < 5; j++)
 		{
 			if(livesStates[j] == LIFE_OK)
@@ -416,6 +476,9 @@ public class Hud
 	{
 		recoveringProgressBarState = APPEARING;
 		recoveringProgressBarTimer = 0f;
+
+		getReadyPanelState = APPEARING;
+		getReadyPanelTimer = 0f;
 
 		multiplierProgressValue = 0f;
 
@@ -455,14 +518,16 @@ public class Hud
 
 		for(int i=0; i < 8; i++)
 		{
-			scorePanelProgram.setSpecificUniforms(scorePositionOffsetsX[i], scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[i]], scoreTexCoordOffsetsY[scoreNumbers[i]]);
+			scorePanelProgram.setSpecificUniforms(scorePositionOffsetsX[i], scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[i]], scoreTexCoordOffsetsY[scoreNumbers[i]],
+					scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 
 		//scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersNegativeTexture);
 		for(int i=0; i < 4; i++)
 		{
-			scorePanelProgram.setSpecificUniforms(multiplierNumbersOffsetsX[i], multiplierNumbersOffsetY, scoreTexCoordOffsetsX[multiplierNumbers[i]], scoreTexCoordOffsetsY[multiplierNumbers[i]]);
+			scorePanelProgram.setSpecificUniforms(multiplierNumbersOffsetsX[i], multiplierNumbersOffsetY, scoreTexCoordOffsetsX[multiplierNumbers[i]], scoreTexCoordOffsetsY[multiplierNumbers[i]],
+					scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 
@@ -470,16 +535,30 @@ public class Hud
 
 		// current FPS
 		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersTexture);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]]);
+		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]],
+				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[1]], scoreTexCoordOffsetsY[currentFpsNumbers[1]]);
+		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[1]], scoreTexCoordOffsetsY[currentFpsNumbers[1]],
+				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 		// average FPS
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[0]], scoreTexCoordOffsetsY[averageFpsNumbers[0]]);
+		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[0]], scoreTexCoordOffsetsY[averageFpsNumbers[0]],
+				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]]);
+		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]],
+				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+		// get ready panel
+
+		if(getReadyPanelState != OUT_OF_SCREEN)
+		{
+			scorePanelProgram.setCommonUniforms(viewProjection, getReadyPanelTexture);
+			scorePanelProgram.setSpecificUniforms(0f, getReadyPanelCurrentPositionY, 0f, 0f, recoveringColor[0], recoveringColor[1], recoveringColor[2], getReadyPanelOpacity);
+			glBindVertexArray(getReadyPanelVaoHandle);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
 
 		/// Progress bar program
 
@@ -490,7 +569,7 @@ public class Hud
 		glBindVertexArray(multiplierProgressVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 
-		progressBarProgram.setSpecificUniforms(0f, recoveringCurrentPositionY, 0f, 1f, 0f, recoveringProgressBarOpacity, recoveringProgressBarPercent);
+		progressBarProgram.setSpecificUniforms(0f, recoveringCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], recoveringProgressBarOpacity, recoveringProgressBarPercent);
 
 		glBindVertexArray(recoveringProgressBarVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);

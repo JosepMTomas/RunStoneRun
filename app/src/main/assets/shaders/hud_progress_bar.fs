@@ -22,6 +22,7 @@ void main()
 	//value = clamp(value, 0.0, 1.0);
 	value = floor(value);
 	value += 0.5;
+	value = clamp(value, 0.0, 1.0);
 	
 	fragColor = vec4(color * value, value * progressTex.w * opacity);
 	

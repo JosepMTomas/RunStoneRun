@@ -18,6 +18,144 @@ public class HudHelper
 {
 
 
+	public static int makePanel(float width, float height, int baseType)
+	{
+		int[] vboHandles = new int[2];
+		int[] vaoHandle = new int[1];
+
+		// Geometry construction variables
+		float initialX, initialY;
+		float currentX, currentY;
+
+		// Geometry information
+		float[] vertices = new float[48];
+		short[] elements = new short[18];
+		int verticesOffset = 0;
+
+		// initialize
+		switch(baseType)
+		{
+			case HUD_BASE_LEFT_TOP:
+				initialX = 0f;
+				initialY = 0f;
+				break;
+			case HUD_BASE_LEFT_CENTER:
+				initialX = 0f;
+				initialY = height * 0.5f;
+				break;
+			case HUD_BASE_LEFT_BOTTOM:
+				initialX = 0f;
+				initialY = height;
+				break;
+			case HUD_BASE_CENTER_TOP:
+				initialX = -width * 0.5f;
+				initialY = 0f;
+				break;
+			case HUD_BASE_CENTER_CENTER:
+				initialX = -width * 0.5f;
+				initialY = height * 0.5f;
+				break;
+			case HUD_BASE_CENTER_BOTTOM:
+				initialX = -width * 0.5f;
+				initialY = height;
+				break;
+			case HUD_BASE_RIGHT_TOP:
+				initialX = -width;
+				initialY = 0f;
+				break;
+			case HUD_BASE_RIGHT_CENTER:
+				initialX = -width;
+				initialY = height * 0.5f;
+				break;
+			case HUD_BASE_RIGHT_BOTTOM:
+				initialX = -width;
+				initialY = height;
+				break;
+			default:
+				initialX = 0f;
+				initialY = 0f;
+				break;
+		}
+
+		currentY = initialY;
+		for(int y=0; y < 2; y++)
+		{
+			currentX = initialX;
+			for(int x=0; x < 2; x++)
+			{
+				// positions
+				vertices[verticesOffset++] = currentX;
+				vertices[verticesOffset++] = currentY;
+				vertices[verticesOffset++] = 0f;
+
+				// texture coordinates
+				vertices[verticesOffset++] = (float)x;
+				vertices[verticesOffset++] = (float)y;
+
+				currentX = currentX + width;
+			}
+			currentY = currentY - height;
+		}
+
+		// Elements
+		elements[0] = 0;
+		elements[1] = 2;
+		elements[2] = 1;
+
+		elements[3] = 2;
+		elements[4] = 3;
+		elements[5] = 1;
+
+
+		// Java native buffers
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
+		verticesBuffer = ByteBuffer
+				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(vertices);
+		verticesBuffer.position(0);
+
+		elementsBuffer = ByteBuffer
+				.allocateDirect(elements.length * BYTES_PER_SHORT)
+				.order(ByteOrder.nativeOrder())
+				.asShortBuffer()
+				.put(elements);
+		elementsBuffer.position(0);
+
+		// Create and populate the buffer objects
+		glGenBuffers(2, vboHandles, 0);
+
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
+
+		// Create the VAO
+		glGenVertexArrays(1, vaoHandle, 0);
+		glBindVertexArray(vaoHandle[0]);
+
+		// Vertex positions
+		glEnableVertexAttribArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * BYTES_PER_FLOAT, 0);
+
+		// Vertex texture coordinates
+		glEnableVertexAttribArray(1);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
+		glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * BYTES_PER_FLOAT, 3 * BYTES_PER_FLOAT);
+
+		// Elements
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
+
+		glBindVertexArray(0);
+
+		return vaoHandle[0];
+	}
+
 	/**
 	 *
 	 * @param width width of the progress bar.

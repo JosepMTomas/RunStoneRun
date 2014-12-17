@@ -172,6 +172,7 @@ public class Ground
 	private Tree palmTree;
 	private Plant fernPlant;
 	private Plant weedPlant;
+	private Plant bushPlant;
 	private Rock rockA;
 	private Rock rockB;
 
@@ -231,6 +232,7 @@ public class Ground
 	private int palmTreeReflectionProxyTexture;
 	private int fernPlantTexture;
 	private int weedPlantTexture;
+	private int bushPlantTexture;
 	private int rockADiffuseTexture;
 	private int rockANormalTexture;
 	private int rockBDiffuseTexture;
@@ -322,6 +324,13 @@ public class Ground
 	private FloatBuffer weedPlantArrayBufferLODB;
 	private final int[] weedPlantArrayUbo;
 	private int[] weedPlantNumInstances = {0,0};
+
+	private float[] bushPlantArrayLODA;
+	private float[] bushPlantArrayLODB;
+	private FloatBuffer bushPlantArrayBufferLODA;
+	private FloatBuffer bushPlantArrayBufferLODB;
+	private final int[] bushPlantArrayUbo;
+	private int[] bushPlantNumInstances = {0,0};
 
 	private float[] rockAArrayLODA;
 	private float[] rockAArrayLODB;
@@ -472,6 +481,13 @@ public class Ground
 		weedPlant = new Plant(context, weedPlantLODs);
 		weedPlant.addShadowGeometry("models/weed_plant_shadow.vbm");
 
+		String[] bushPlantLODs = {
+				"models/bush_plant_lod_a.vbm",
+				"models/bush_plant_lod_b.vbm"
+		};
+		bushPlant = new Plant(context, bushPlantLODs);
+		bushPlant.addShadowGeometry("models/bush_plant_shadow.vbm");
+
 		rockA = new Rock(context, "models/rock_a_lod_a.vbm", "models/rock_a_lod_b.vbm");
 		rockA.addShadowGeometry("models/rock_a_lod_b.vbm");
 		rockA.addReflectionGeometry("models/rock_a_reflection.vbm");
@@ -602,6 +618,9 @@ public class Ground
 
 		weedPlantArrayUbo = new int[2];
 		weedPlantNumInstances = new int[2];
+
+		bushPlantArrayUbo = new int[2];
+		bushPlantNumInstances = new int[2];
 
 		rockAArrayUbo = new int[2];
 		rockANumInstances = new int[2];
@@ -741,8 +760,20 @@ public class Ground
 		Log.d(TAG, "Loading weeds plant texture");
 		weedPlantTexture = TextureHelper.loadETC2Texture(context, weedsPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
+		String[] bushPlantTextureMips = {
+				"textures/bush_plant/diffuse_mip_0.mp3",
+				"textures/bush_plant/diffuse_mip_1.mp3",
+				"textures/bush_plant/diffuse_mip_2.mp3",
+				"textures/bush_plant/diffuse_mip_3.mp3",
+				"textures/bush_plant/diffuse_mip_4.mp3",
+				"textures/bush_plant/diffuse_mip_5.mp3",
+				"textures/bush_plant/diffuse_mip_6.mp3",
+				"textures/bush_plant/diffuse_mip_7.mp3"
+		};
+		bushPlantTexture = TextureHelper.loadETC2Texture(context, bushPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		String[] rockADiffuseTextureMips = {
-				//"textures/rocks/rock_a_diffuse_mip_0.mp3",
+				"textures/rocks/rock_a_diffuse_mip_0.mp3",
 				"textures/rocks/rock_a_diffuse_mip_1.mp3",
 				"textures/rocks/rock_a_diffuse_mip_2.mp3",
 				"textures/rocks/rock_a_diffuse_mip_3.mp3",
@@ -756,7 +787,7 @@ public class Ground
 		rockADiffuseTexture = TextureHelper.loadETC2Texture(context, rockADiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockANormalTextureMips = {
-				//"textures/rocks/rock_a_normal_mip_0.mp3",
+				"textures/rocks/rock_a_normal_mip_0.mp3",
 				"textures/rocks/rock_a_normal_mip_1.mp3",
 				"textures/rocks/rock_a_normal_mip_2.mp3",
 				"textures/rocks/rock_a_normal_mip_3.mp3",
@@ -2208,6 +2239,7 @@ public class Ground
 		glBindVertexArray(palmTree.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
 
+
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, fernPlantArrayUbo[LOD_A]);
 		glBindVertexArray(fernPlant.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, fernPlant.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, fernPlantNumInstances[LOD_A]);
@@ -2216,21 +2248,10 @@ public class Ground
 		glBindVertexArray(weedPlant.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, weedPlant.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, weedPlantNumInstances[LOD_A]);
 
-		/**	treeProgram.setUniforms(viewProjection, shadowMatrix, pineTreeMatricesUbo[LOD_A], pineTreeIndicesUbo[LOD_A], objectsPatchesModelMatricesUbo[0], shadowMapSampler, pineBranchTexture, 0);
-		 glBindVertexArray(pineTree.vaoHandles[LOD_A]);
-		 glDrawElementsInstanced(GL_TRIANGLES, pineTree.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_A]);**/
+		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, bushPlantArrayUbo[LOD_A]);
+		glBindVertexArray(bushPlant.shadowVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_A]);
 
-		/*treeShadowPassProgram.setUniforms(lightViewProjection, hugeTreeMatricesUbo[0], hugeTreeIndicesUbo[0], objectsPatchesModelMatricesUbo[0]);
-		glBindVertexArray(hugeTree.shadowVaoHandle[0]);
-		glDrawElementsInstanced(GL_TRIANGLES, hugeTree.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, hugeTreeNumInstances);*/
-
-		/*treeShadowPassProgram.setUniforms(lightViewProjection, fernPlantMatricesUbo[0], fernPlantIndicesUbo[0], objectsPatchesModelMatricesUbo[0]);
-		glBindVertexArray(fernPlant.shadowVaoHandle[0]);
-		glDrawElementsInstanced(GL_TRIANGLES, fernPlant.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, fernPlantNumInstances);*/
-
-		/*treeShadowPassProgram.setUniforms(lightViewProjection, weedPlantMatricesUbo[0], weedPlantIndicesUbo[0], objectsPatchesModelMatricesUbo[0]);
-		glBindVertexArray(weedPlant.shadowVaoHandle[0]);
-		glDrawElementsInstanced(GL_TRIANGLES, weedPlant.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, weedPlantNumInstances);*/
 
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, rockAArrayUbo[LOD_A]);
 		glBindVertexArray(rockA.shadowVaoHandle[0]);
@@ -2262,14 +2283,6 @@ public class Ground
 			{
 				if(groundPatches[i][j].visible)
 				{
-					/*groundProgram.setUniforms(
-							groundPatches[i][j].getModelMatrix(),
-							groundPatches[i][j].getModelViewProjectionMatrix(),
-							shadowMatrix,
-							shadowMapSampler,
-							reflectionSampler,
-							waterTextures[0],
-							dimensions);*/
 					groundProgram.setPatchUniforms(groundPatches[i][j].getModelMatrix(), groundPatches[i][j].getModelViewProjectionMatrix(), groundPatches[i][j].currentLOD);
 
 					switch(groundPatches[i][j].type)
@@ -2441,6 +2454,18 @@ public class Ground
 		treeProgram.setSpecificUniforms(weedPlantArrayUbo[LOD_B]);
 		glBindVertexArray(weedPlant.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, weedPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, weedPlantNumInstances[LOD_B]);
+
+		////
+
+		treeProgram.setCommonUniforms(viewProjection, bushPlantTexture);
+
+		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_A]);
+		glBindVertexArray(bushPlant.vaoHandles[LOD_A]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_A]);
+
+		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_B]);
+		glBindVertexArray(bushPlant.vaoHandles[LOD_B]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_B]);
 
 		////
 
@@ -3028,6 +3053,9 @@ public class Ground
 		weedPlantArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		weedPlantArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
+		bushPlantArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+		bushPlantArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+
 		rockAArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		rockAArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
@@ -3090,6 +3118,17 @@ public class Ground
 			weedPlantArrayLODB[i*4 + 1] = 0f;
 			weedPlantArrayLODB[i*4 + 2] = 0f;
 			weedPlantArrayLODB[i*4 + 3] = 0f;
+
+
+			bushPlantArrayLODA[i*4] = 0f;
+			bushPlantArrayLODA[i*4 + 1] = 0f;
+			bushPlantArrayLODA[i*4 + 2] = 0f;
+			bushPlantArrayLODA[i*4 + 3] = 0f;
+
+			bushPlantArrayLODB[i*4] = 0f;
+			bushPlantArrayLODB[i*4 + 1] = 0f;
+			bushPlantArrayLODB[i*4 + 2] = 0f;
+			bushPlantArrayLODB[i*4 + 3] = 0f;
 
 
 			rockAArrayLODA[i*4] = 0f;
@@ -3191,6 +3230,21 @@ public class Ground
 		weedPlantArrayBufferLODB.position(0);
 
 
+		bushPlantArrayBufferLODA = ByteBuffer
+				.allocateDirect(bushPlantArrayLODA.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(bushPlantArrayLODA);
+		bushPlantArrayBufferLODA.position(0);
+
+		bushPlantArrayBufferLODB = ByteBuffer
+				.allocateDirect(bushPlantArrayLODB.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(bushPlantArrayLODB);
+		bushPlantArrayBufferLODB.position(0);
+
+
 		rockAArrayBufferLODA = ByteBuffer
 				.allocateDirect(rockAArrayLODA.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
@@ -3225,6 +3279,7 @@ public class Ground
 		glGenBuffers(2, palmTreeArrayUbo, 0);
 		glGenBuffers(2, fernPlantArrayUbo, 0);
 		glGenBuffers(2, weedPlantArrayUbo, 0);
+		glGenBuffers(2, bushPlantArrayUbo, 0);
 		glGenBuffers(2, rockAArrayUbo, 0);
 		glGenBuffers(2, rockBArrayUbo, 0);
 
@@ -3259,6 +3314,12 @@ public class Ground
 		glBufferData(GL_UNIFORM_BUFFER, weedPlantArrayBufferLODB.capacity() * BYTES_PER_FLOAT, weedPlantArrayBufferLODB, GL_DYNAMIC_DRAW);
 
 
+		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_A]);
+		glBufferData(GL_UNIFORM_BUFFER, bushPlantArrayBufferLODA.capacity() * BYTES_PER_FLOAT, bushPlantArrayBufferLODA, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_B]);
+		glBufferData(GL_UNIFORM_BUFFER, bushPlantArrayBufferLODB.capacity() * BYTES_PER_FLOAT, bushPlantArrayBufferLODB, GL_DYNAMIC_DRAW);
+
+
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_A]);
 		glBufferData(GL_UNIFORM_BUFFER, rockAArrayBufferLODA.capacity() * BYTES_PER_FLOAT, rockAArrayBufferLODA, GL_DYNAMIC_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_B]);
@@ -3290,6 +3351,8 @@ public class Ground
 		int fernPlantOffsetLODB = 0;
 		int weedPlantOffsetLODA = 0;
 		int weedPlantOffsetLODB = 0;
+		int bushPlantOffsetLODA = 0;
+		int bushPlantOffsetLODB = 0;
 		int rockAOffsetLODA = 0;
 		int rockAOffsetLODB = 0;
 		int rockBOffsetLODA = 0;
@@ -3310,6 +3373,9 @@ public class Ground
 
 		weedPlantNumInstances[LOD_A] = 0;
 		weedPlantNumInstances[LOD_B] = 0;
+
+		bushPlantNumInstances[LOD_A] = 0;
+		bushPlantNumInstances[LOD_B] = 0;
 
 		rockANumInstances[LOD_A] = 0;
 		rockANumInstances[LOD_B] = 0;
@@ -3432,6 +3498,26 @@ public class Ground
 					weedPlantOffsetLODB += numElements;
 				}
 
+				// bush plant
+
+				numElements = objectsPatches[x][z].bushPlantNumInstances[LOD_A];
+				if(numElements > 0)
+				{
+					bushPlantNumInstances[LOD_A] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].bushPlantPointsLODA, 0, bushPlantArrayLODA, bushPlantOffsetLODA, numElements);
+					bushPlantOffsetLODA += numElements;
+				}
+
+				numElements = objectsPatches[x][z].bushPlantNumInstances[LOD_B];
+				if(numElements > 0)
+				{
+					bushPlantNumInstances[LOD_B] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].bushPlantPointsLODB, 0, bushPlantArrayLODB, bushPlantOffsetLODB, numElements);
+					bushPlantOffsetLODB += numElements;
+				}
+
 				// rock A
 
 				numElements = objectsPatches[x][z].rockANumInstances[LOD_A];
@@ -3514,6 +3600,14 @@ public class Ground
 		weedPlantArrayBufferLODB.put(weedPlantArrayLODB, 0, weedPlantArrayLODB.length);
 		weedPlantArrayBufferLODB.position(0);
 
+		bushPlantArrayBufferLODA.position(0);
+		bushPlantArrayBufferLODA.put(bushPlantArrayLODA, 0, bushPlantArrayLODA.length);
+		bushPlantArrayBufferLODA.position(0);
+
+		bushPlantArrayBufferLODB.position(0);
+		bushPlantArrayBufferLODB.put(bushPlantArrayLODB, 0, bushPlantArrayLODB.length);
+		bushPlantArrayBufferLODB.position(0);
+
 		rockAArrayBufferLODA.position(0);
 		rockAArrayBufferLODA.put(rockAArrayLODA, 0, rockAArrayLODA.length);
 		rockAArrayBufferLODA.position(0);
@@ -3569,6 +3663,14 @@ public class Ground
 
 		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, weedPlantOffsetLODB * BYTES_PER_FLOAT, weedPlantArrayBufferLODB);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_A]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, bushPlantOffsetLODA * BYTES_PER_FLOAT, bushPlantArrayBufferLODA);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_B]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, bushPlantOffsetLODB * BYTES_PER_FLOAT, bushPlantArrayBufferLODB);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_A]);

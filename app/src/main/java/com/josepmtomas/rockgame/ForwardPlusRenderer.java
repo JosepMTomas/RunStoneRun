@@ -189,7 +189,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		screen = new Screen(context, 1, 1);
 		//hud = new Hud(context, renderWidth, renderHeight);
-		hud = new Hud(context, renderWidth, renderHeight, 107f, 150f);
+		hud = new Hud(context, renderWidth, renderHeight);
 
 
 

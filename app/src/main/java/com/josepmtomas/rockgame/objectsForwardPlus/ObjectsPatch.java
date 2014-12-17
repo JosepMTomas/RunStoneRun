@@ -68,6 +68,11 @@ public class ObjectsPatch extends BoundarySampler
 	public float[] weedPlantPointsLODA;
 	public float[] weedPlantPointsLODB;
 
+	public float[] bushPlantPoints;
+	public int bushPlantNumPoints;
+	public float[] bushPlantPointsLODA;
+	public float[] bushPlantPointsLODB;
+
 	public float[] rockAPoints;
 	public int rockANumPoints;
 	public float[] rockAPointsLODA;
@@ -84,6 +89,7 @@ public class ObjectsPatch extends BoundarySampler
 	public int[] palmTreeNumInstances = {0,0};
 	public int[] fernPlantNumInstances = {0,0};
 	public int[] weedPlantNumInstances = {0,0};
+	public int[] bushPlantNumInstances = {0,0};
 	public int[] rockANumInstances = {0,0};
 	public int[] rockBNumInstances = {0,0};
 
@@ -139,6 +145,10 @@ public class ObjectsPatch extends BoundarySampler
 		weedPlantPointsLODA = new float[1024];
 		weedPlantPointsLODB = new float[1024];
 
+		bushPlantPoints = new float[384];
+		bushPlantPointsLODA = new float[1024];
+		bushPlantPointsLODB = new float[1024];
+
 		rockAPoints = new float[384];
 		rockAPointsLODA = new float[1024];
 		rockAPointsLODB = new float[1024];
@@ -173,6 +183,7 @@ public class ObjectsPatch extends BoundarySampler
 			palmTreePoints[i] = 0f;
 			fernPlantPoints[i] = 0f;
 			weedPlantPoints[i] = 0f;
+			bushPlantPoints[i] = 0f;
 			rockAPoints[i] = 0f;
 			rockBPoints[i] = 0f;
 		}
@@ -189,6 +200,8 @@ public class ObjectsPatch extends BoundarySampler
 			fernPlantPointsLODB[i] = 0f;
 			weedPlantPointsLODA[i] = 0f;
 			weedPlantPointsLODB[i] = 0f;
+			bushPlantPointsLODA[i] = 0f;
+			bushPlantPointsLODB[i] = 0f;
 			rockAPointsLODA[i] = 0f;
 			rockAPointsLODB[i] = 0f;
 			rockBPointsLODA[i] = 0f;
@@ -210,6 +223,7 @@ public class ObjectsPatch extends BoundarySampler
 		int palmTreeCount = 0;
 		int fernPlantCount = 0;
 		int weedPlantCount = 0;
+		int bushPlantCount = 0;
 		int rockACount = 0;
 		int rockBCount = 0;
 
@@ -218,6 +232,7 @@ public class ObjectsPatch extends BoundarySampler
 		int palmTreeOffset = 0;
 		int fernPlantOffset = 0;
 		int weedPlantOffset = 0;
+		int bushPlantOffset = 0;
 		int rockAOffset = 0;
 		int rockBOffset = 0;
 
@@ -234,6 +249,7 @@ public class ObjectsPatch extends BoundarySampler
 		palmTreeNumPoints = 0;
 		fernPlantNumPoints = 0;
 		weedPlantNumPoints = 0;
+		bushPlantNumPoints = 0;
 		rockANumPoints = 0;
 		rockBNumPoints = 0;
 
@@ -304,7 +320,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				fernPlantCount++;
 			}
-			else if(randomValue < 0.8f)
+			else if(randomValue < 0.7f)
 			{
 				scaleValue = random.nextFloat() * WEED_PLANT_SCALE_DIFFERENCE + WEED_PLANT_MIN_SCALE;
 
@@ -314,7 +330,17 @@ public class ObjectsPatch extends BoundarySampler
 
 				weedPlantCount++;
 			}
-			else if(randomValue < 0.9)
+			else if(randomValue < 0.8f)
+			{
+				scaleValue = random.nextFloat() * BUSH_PLANT_SCALE_DIFFERENCE + BUSH_PLANT_MIN_SCALE;
+
+				bushPlantPoints[bushPlantOffset++] = currentPoint.x;
+				bushPlantPoints[bushPlantOffset++] = currentPoint.y;
+				bushPlantPoints[bushPlantOffset++] = scaleValue;
+
+				bushPlantCount++;
+			}
+			else if(randomValue < 0.9f)
 			{
 				scaleValue = random.nextFloat() * ROCK_A_SCALE_DIFFERENCE + ROCK_A_MIN_SCALE;
 
@@ -350,6 +376,7 @@ public class ObjectsPatch extends BoundarySampler
 		palmTreeNumPoints = palmTreeCount;
 		fernPlantNumPoints = fernPlantCount;
 		weedPlantNumPoints = weedPlantCount;
+		bushPlantNumPoints = bushPlantCount;
 		rockANumPoints = rockACount;
 		rockBNumPoints = rockBCount;
 	}
@@ -632,6 +659,47 @@ public class ObjectsPatch extends BoundarySampler
 
 		weedPlantNumInstances[LOD_A] = countLODA;
 		weedPlantNumInstances[LOD_B] = countLODB;
+
+		// bush plant
+
+		offsetLODA = 0;
+		offsetLODB = 0;
+		countLODA = 0;
+		countLODB = 0;
+
+		for(int i=0; i < bushPlantNumPoints; i++)
+		{
+			pointX = bushPlantPoints[i*3];
+			pointZ = bushPlantPoints[i*3 +1];
+			scale  = bushPlantPoints[i*3 +2];
+
+			pointX += currentPosition.x;
+			pointZ += currentPosition.z;
+
+			distance = distanceToOrigin(pointX, pointZ);
+
+			if(distance < TREE_LOD_A_MAX_DISTANCE)
+			{
+				bushPlantPointsLODA[offsetLODA++] = pointX;
+				bushPlantPointsLODA[offsetLODA++] = pointZ;
+				bushPlantPointsLODA[offsetLODA++] = scale;
+				bushPlantPointsLODA[offsetLODA++] = distance / 800f;
+
+				countLODA++;
+			}
+			else
+			{
+				bushPlantPointsLODB[offsetLODB++] = pointX;
+				bushPlantPointsLODB[offsetLODB++] = pointZ;
+				bushPlantPointsLODB[offsetLODB++] = scale;
+				bushPlantPointsLODB[offsetLODB++] = distance / 800f;
+
+				countLODB++;
+			}
+		}
+
+		bushPlantNumInstances[LOD_A] = countLODA;
+		bushPlantNumInstances[LOD_B] = countLODB;
 
 		// rock A
 

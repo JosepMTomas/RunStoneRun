@@ -14,6 +14,8 @@ public class ScorePanelProgram extends ShaderProgram
 	private final int texCoordOffsetLocation;
 
 	private final int numbersSamplerLocation;
+	private final int colorLocation;
+	private final int opacityLocation;
 
 
 	public ScorePanelProgram(Context context)
@@ -25,6 +27,8 @@ public class ScorePanelProgram extends ShaderProgram
 		texCoordOffsetLocation = glGetUniformLocation(program, "texCoordOffset");
 
 		numbersSamplerLocation = glGetUniformLocation(program, "numbersSampler");
+		colorLocation = glGetUniformLocation(program, "color");
+		opacityLocation = glGetUniformLocation(program, "opacity");
 	}
 
 
@@ -38,9 +42,11 @@ public class ScorePanelProgram extends ShaderProgram
 	}
 
 
-	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float texCoordOffsetX, float texCoordOffsetY)
+	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float texCoordOffsetX, float texCoordOffsetY, float colorX, float colorY, float colorZ, float opacity)
 	{
 		glUniform4f(positionOffsetLocation, positionOffsetX, positionOffsetY, 0f, 1f);
 		glUniform2f(texCoordOffsetLocation, texCoordOffsetX, texCoordOffsetY);
+		glUniform3f(colorLocation, colorX, colorY, colorZ);
+		glUniform1f(opacityLocation, opacity);
 	}
 }
