@@ -59,13 +59,17 @@ public class Constants
 	public static final float FERN_PLANT_MAX_SCALE = 1.7f;
 	public static final float FERN_PLANT_SCALE_DIFFERENCE = FERN_PLANT_MAX_SCALE - FERN_PLANT_MIN_SCALE;
 
-	public static final float WEED_PLANT_MIN_SCALE = 1f;
-	public static final float WEED_PLANT_MAX_SCALE = 1.5f;
+	public static final float WEED_PLANT_MIN_SCALE = 2.5f;
+	public static final float WEED_PLANT_MAX_SCALE = 4.0f;
 	public static final float WEED_PLANT_SCALE_DIFFERENCE = WEED_PLANT_MAX_SCALE - WEED_PLANT_MIN_SCALE;
 
 	public static final float BUSH_PLANT_MIN_SCALE = 1.5f;
 	public static final float BUSH_PLANT_MAX_SCALE = 2.0f;
 	public static final float BUSH_PLANT_SCALE_DIFFERENCE = BUSH_PLANT_MAX_SCALE - BUSH_PLANT_MIN_SCALE;
+
+	public static final float PALM_PLANT_MIN_SCALE = 1.0f;
+	public static final float PALM_PLANT_MAX_SCALE = 1.5f;
+	public static final float PALM_PLANT_SCALE_DIFFERENCE = PALM_PLANT_MAX_SCALE - PALM_PLANT_MIN_SCALE;
 
 	public static final float ROCK_A_MIN_SCALE = 0.75f;
 	public static final float ROCK_A_MAX_SCALE = 1.5f;

@@ -96,6 +96,8 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		}).start();*/
 
 		backgroundMusicPlayer = MediaPlayer.create(context, R.raw.art_of_gardens);
+		backgroundMusicPlayer.setLooping(true);
+
 		impactRockOnRockSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_rock);
 		impactRockOnTreeSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_tree);
 		treeFallingSoundEffect = MediaPlayer.create(context, R.raw.tree_falling);
