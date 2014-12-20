@@ -58,6 +58,11 @@ public class ObjectsPatch extends BoundarySampler
 	public float[] palmTreePointsLODA;
 	public float[] palmTreePointsLODB;
 
+	public float[] birchTreePoints;
+	public int birchTreeNumPoints;
+	public float[] birchTreePointsLODA;
+	public float[] birchTreePointsLODB;
+
 	public float[] fernPlantPoints;
 	public int fernPlantNumPoints;
 	public float[] fernPlantPointsLODA;
@@ -92,6 +97,7 @@ public class ObjectsPatch extends BoundarySampler
 	public int[] pineTreeNumInstances = {0,0};
 	public int[] hugeTreeNumInstances = {0,0};
 	public int[] palmTreeNumInstances = {0,0};
+	public int[] birchTreeNumInstances = {0,0};
 	public int[] fernPlantNumInstances = {0,0};
 	public int[] weedPlantNumInstances = {0,0};
 	public int[] bushPlantNumInstances = {0,0};
@@ -143,6 +149,10 @@ public class ObjectsPatch extends BoundarySampler
 		palmTreePointsLODA = new float[1024];
 		palmTreePointsLODB = new float[1024];
 
+		birchTreePoints = new float[384];
+		birchTreePointsLODA = new float[1024];
+		birchTreePointsLODB = new float[1024];
+
 		fernPlantPoints = new float[384];
 		fernPlantPointsLODA = new float[1024];
 		fernPlantPointsLODB = new float[1024];
@@ -191,6 +201,7 @@ public class ObjectsPatch extends BoundarySampler
 			pineTreePoints[i] = 0f;
 			hugeTreePoints[i] = 0f;
 			palmTreePoints[i] = 0f;
+			birchTreePoints[i] = 0f;
 			fernPlantPoints[i] = 0f;
 			weedPlantPoints[i] = 0f;
 			bushPlantPoints[i] = 0f;
@@ -207,6 +218,8 @@ public class ObjectsPatch extends BoundarySampler
 			hugeTreePointsLODB[i] = 0f;
 			palmTreePointsLODA[i] = 0f;
 			palmTreePointsLODB[i] = 0f;
+			birchTreePointsLODA[i] = 0f;
+			birchTreePointsLODB[i] = 0f;
 			fernPlantPointsLODA[i] = 0f;
 			fernPlantPointsLODB[i] = 0f;
 			weedPlantPointsLODA[i] = 0f;
@@ -234,6 +247,7 @@ public class ObjectsPatch extends BoundarySampler
 		int pineTreeCount = 0;
 		int hugeTreeCount = 0;
 		int palmTreeCount = 0;
+		int birchTreeCount = 0;
 		int fernPlantCount = 0;
 		int weedPlantCount = 0;
 		int bushPlantCount = 0;
@@ -244,6 +258,7 @@ public class ObjectsPatch extends BoundarySampler
 		int pineTreeOffset = 0;
 		int hugeTreeOffset = 0;
 		int palmTreeOffset = 0;
+		int birchTreeOffset = 0;
 		int fernPlantOffset = 0;
 		int weedPlantOffset = 0;
 		int bushPlantOffset = 0;
@@ -262,6 +277,7 @@ public class ObjectsPatch extends BoundarySampler
 		pineTreeNumPoints = 0;
 		hugeTreeNumPoints = 0;
 		palmTreeNumPoints = 0;
+		birchTreeNumPoints = 0;
 		fernPlantNumPoints = 0;
 		weedPlantNumPoints = 0;
 		bushPlantNumPoints = 0;
@@ -278,7 +294,7 @@ public class ObjectsPatch extends BoundarySampler
 			currentPoint = points.get(i);
 			randomValue = random.nextFloat();
 
-			if(randomValue < 0.15f)
+			if(randomValue < 0.1125f)
 			{
 				scaleValue = random.nextFloat() * PINE_TREE_SCALE_DIFFERENCE + PINE_TREE_MIN_SCALE;
 
@@ -294,7 +310,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = 1f;
 				numCollisionCylinders++;
 			}
-			else if(randomValue < 0.3f)
+			else if(randomValue < 0.225f)
 			{
 				scaleValue = random.nextFloat() * HUGE_TREE_SCALE_DIFFERENCE + HUGE_TREE_MIN_SCALE;
 
@@ -310,7 +326,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = 2f;
 				numCollisionCylinders++;
 			}
-			else if(randomValue < 0.45f)
+			else if(randomValue < 0.3375f)
 			{
 				scaleValue = random.nextFloat() * PALM_TREE_SCALE_DIFFERENCE + PALM_TREE_MIN_SCALE;
 
@@ -325,6 +341,18 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = 2.4f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 3f;
 				numCollisionCylinders++;
+			}
+			else if(randomValue < 0.45f)
+			{
+				scaleValue = random.nextFloat() * BIRCH_TREE_SCALE_DIFFERENCE + BIRCH_TREE_MIN_SCALE;
+
+				birchTreePoints[birchTreeOffset++] = currentPoint.x;
+				birchTreePoints[birchTreeOffset++] = currentPoint.y;
+				birchTreePoints[birchTreeOffset++] = scaleValue;
+
+				birchTreeCount++;
+
+				//TODO: collision cylinders
 			}
 			else if(randomValue < 0.6f)
 			{
@@ -400,6 +428,7 @@ public class ObjectsPatch extends BoundarySampler
 		pineTreeNumPoints = pineTreeCount;
 		hugeTreeNumPoints = hugeTreeCount;
 		palmTreeNumPoints = palmTreeCount;
+		birchTreeNumPoints = birchTreeCount;
 		fernPlantNumPoints = fernPlantCount;
 		weedPlantNumPoints = weedPlantCount;
 		bushPlantNumPoints = bushPlantCount;
@@ -604,6 +633,54 @@ public class ObjectsPatch extends BoundarySampler
 
 		palmTreeNumInstances[LOD_A] = countLODA;
 		palmTreeNumInstances[LOD_B] = countLODB;
+
+		// birch tree
+
+		offsetLODA = 0;
+		offsetLODB = 0;
+		countLODA = 0;
+		countLODB = 0;
+
+		for(int i=0; i < birchTreeNumPoints; i++)
+		{
+			pointX = birchTreePoints[i*3];
+			pointZ = birchTreePoints[i*3 + 1];
+			scale  = birchTreePoints[i*3 + 2];
+
+			pointX += currentPosition.x;
+			pointZ += currentPosition.z;
+
+			distance = distanceToOrigin(pointX, pointZ);
+
+			if(distance < TREE_LOD_A_MAX_DISTANCE)
+			{
+				birchTreePointsLODA[offsetLODA++] = pointX;
+				birchTreePointsLODA[offsetLODA++] = pointZ;
+				birchTreePointsLODA[offsetLODA++] = scale;
+				birchTreePointsLODA[offsetLODA++] = distance / 800f;
+
+				//TODO: collision cylinders
+				/*collisionCylinders[collisionCylindersOffset++] = pointX;
+				collisionCylinders[collisionCylindersOffset++] = pointZ;
+				collisionCylinders[collisionCylindersOffset++] = 2.4f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 2.0f;*/
+
+				countLODA++;
+				//collisionCylindersCount++;
+			}
+			else
+			{
+				birchTreePointsLODB[offsetLODB++] = pointX;
+				birchTreePointsLODB[offsetLODB++] = pointZ;
+				birchTreePointsLODB[offsetLODB++] = scale;
+				birchTreePointsLODB[offsetLODB++] = distance / 800f;
+
+				countLODB++;
+			}
+		}
+
+		birchTreeNumInstances[LOD_A] = countLODA;
+		birchTreeNumInstances[LOD_B] = countLODB;
 
 		// fern plant
 

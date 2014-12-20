@@ -119,8 +119,8 @@ public class Hud
 
 	// Frames per second panel
 	private float[] fpsPositionOffsetsX = {-1572f, -1700f};
-	private float currentFpsPositionOffsetY = 950;
-	private float averageFpsPositionOffsetY = 800;
+	private float currentFpsPositionOffsetY;
+	private float averageFpsPositionOffsetY;
 	private int[] currentFpsNumbers = {0, 0};
 	private int[] averageFpsNumbers = {0, 0};
 
@@ -330,6 +330,13 @@ public class Hud
 			livesPositionsX[i] = initialOffsetX + (i * livesSpacing);
 		}
 		livesPositionY = screenHeight * -0.85f;
+
+		// FPS
+
+		fpsPositionOffsetsX[1] = -screenWidth + numberWidth;
+		fpsPositionOffsetsX[0] = fpsPositionOffsetsX[1] + numberWidth;
+		currentFpsPositionOffsetY = screenHeight * 0.9f;
+		averageFpsPositionOffsetY = screenHeight * 0.75f;
 	}
 
 

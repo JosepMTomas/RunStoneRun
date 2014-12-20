@@ -20,7 +20,7 @@ void main()
 {	
 	lowp vec4 diffuseTex = texture(diffuseSampler, vTexCoord);
 	
-	if(diffuseTex.w < 0.6) discard;
+	if(diffuseTex.w < 0.5) discard;
 
 	fragColor = (diffuseTex * vDiffuse);
 	//fragColor = fragColor * vShadows;
