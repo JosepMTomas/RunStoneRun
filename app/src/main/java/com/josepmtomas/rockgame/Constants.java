@@ -41,7 +41,7 @@ public class Constants
 
 	public static final int MAX_GRASS_INSTANCES = 128;
 	public static final int MAX_TREE_INSTANCES = 128;
-	public static final int MAX_TREE_INSTANCES_TOTAL = 512;
+	public static final int MAX_TREE_INSTANCES_TOTAL = 64;
 
 	public static final float PINE_TREE_MIN_SCALE = 0.9f;
 	public static final float PINE_TREE_MAX_SCALE = 1.5f;

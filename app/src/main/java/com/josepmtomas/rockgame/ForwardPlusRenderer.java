@@ -183,7 +183,6 @@ public class ForwardPlusRenderer implements Renderer
 				3, 3, 450f, 450f,
 				perspectiveCamera, lightInfo);
 		ground.setPlayerRock(playerRock);
-		ground.setPerspectiveCamera(perspectiveCamera); //TODO: delete
 		skyDome = new SkyDome(context, lightInfo);
 		testTree = new TestTree(context);
 

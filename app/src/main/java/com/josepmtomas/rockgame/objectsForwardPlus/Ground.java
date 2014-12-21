@@ -192,11 +192,12 @@ public class Ground
 	private BrokenTree brokenPineTree;
 	private BrokenTree brokenHugeTree;
 	private BrokenTree brokenPalmTree;
+	private BrokenTree brokenBirchTree;
 
 	// Broken parameters & matrices
-	private float[] brokenTreeInitialRootY = {0f, 0f, 0f};
-	private float[] brokenTreeInitialTopY = {53.871f, 25f, 58.0f};
-	private float[] brokenTreeInitialForce = {1f, 1f, 2f};
+	private float[] brokenTreeInitialRootY = {0f, 0f, 0f, 0f};
+	private float[] brokenTreeInitialTopY = {53.871f, 25f, 58.0f, 30.0f};
+	private float[] brokenTreeInitialForce = {1f, 1f, 2f, 2f};
 	private float brokenTreeDistanceZ = 0f;
 	private float brokenTreeForce = 0f;
 	private float brokenTreeScale = 0f;
@@ -538,6 +539,9 @@ public class Ground
 		brokenPalmTree = new BrokenTree(context, "models/palm_tree_broken_root.vbm", "models/palm_tree_broken_top.vbm");
 		brokenPalmTree.addShadowGeometry("models/palm_tree_broken_root_shadow.vbm", "models/palm_tree_broken_top_shadow.vbm");
 
+		brokenBirchTree = new BrokenTree(context, "models/birch_tree_broken_root.vbm", "models/birch_tree_broken_top.vbm");
+		brokenBirchTree.addShadowGeometry("models/birch_tree_broken_root_shadow.vbm", "models/birch_tree_broken_top_shadow.vbm");
+
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Shader programs
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -637,36 +641,16 @@ public class Ground
 
 		/************************************** OBJECTS PATCHES ***********************************/
 
-		//TODO: numInstances reallocated
 		pineTreeArrayUbo = new int[2];
-		pineTreeNumInstances = new int[2];
-
 		hugeTreeArrayUbo = new int[2];
-		hugeTreeNumInstances = new int[2];
-
 		palmTreeArrayUbo = new int[2];
-		palmTreeNumInstances = new int[2];
-
 		birchTreeArrayUbo = new int[2];
-		birchTreeNumInstances = new int[2];
-
 		fernPlantArrayUbo = new int[2];
-		fernPlantNumInstances = new int[2];
-
 		weedPlantArrayUbo = new int[2];
-		weedPlantNumInstances = new int[2];
-
 		bushPlantArrayUbo = new int[2];
-		bushPlantNumInstances = new int[2];
-
 		palmPlantArrayUbo = new int[2];
-		palmPlantNumInstances = new int[2];
-
 		rockAArrayUbo = new int[2];
-		rockANumInstances = new int[2];
-
 		rockBArrayUbo = new int[2];
-		rockBNumInstances = new int[2];
 
 		this.objectsSpreadFactorX = objectsPatchWidth * 0.5f;
 		this.objectsSpreadFactorZ = objectsPatchHeight * 0.5f;
@@ -2098,7 +2082,7 @@ public class Ground
 								brokenTreeTexture = hugeTreeTexture;
 								drawBrokenTree = true;
 							}
-							else //if(treeType == 2)
+							else if(treeType == 2)
 							{
 								// Assign main geometry
 								brokenTreeRootVaoHandle = brokenPalmTree.rootVaoHandle[0];
@@ -2114,6 +2098,24 @@ public class Ground
 
 								// Assign texture & make the broken tree drawable
 								brokenTreeTexture = palmTreeTexture;
+								drawBrokenTree = true;
+							}
+							else //if(treeType == 3)
+							{
+								// Assign main geometry
+								brokenTreeRootVaoHandle = brokenBirchTree.rootVaoHandle[0];
+								brokenTreeTopVaoHandle = brokenBirchTree.topVaoHandle[0];
+								brokenTreeRootNumElementsToDraw = brokenBirchTree.numRootElementsToDraw;
+								brokenTreeTopNumElementsToDraw = brokenBirchTree.numTopElementsToDraw;
+
+								//Assign shadow geometry
+								brokenTreeRootShadowVaoHandle = brokenBirchTree.rootShadowVaoHandle[0];
+								brokenTreeTopShadowVaoHandle = brokenBirchTree.topShadowVaoHandle[0];
+								brokenTreeRootShadowNumElementsToDraw = brokenBirchTree.numRootShadowElementsToDraw;
+								brokenTreeTopShadowNumElementsToDraw = brokenBirchTree.numTopShadowElementsToDraw;
+
+								// Assign texture & make the broken tree drawable
+								brokenTreeTexture = birchTreeTexture;
 								drawBrokenTree = true;
 							}
 						}
@@ -2295,8 +2297,7 @@ public class Ground
 
 		treeShadowPassProgram.useProgram();
 
-		//TODO:
-		//treeShadowPassProgram.setUniforms(lightViewProjection, pineTreeMatricesUbo[LOD_A], pineTreeIndicesUbo[LOD_A], objectsPatchesLightMVPMatricesUbo[0]);
+
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, pineTreeArrayUbo[LOD_A]);
 		glBindVertexArray(pineTree.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_A]);
@@ -2436,25 +2437,6 @@ public class Ground
 		grassLowProgram.setSpecificUniforms(grassUbo[LOD_C]);
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, grassNumInstances[LOD_C]);
 
-		/*for(int i=0; i < numGroundPatchesX; i++)
-		{
-			for (int j=0; j < numGroundPatchesZ; j++)
-			{
-				if(groundPatches[i][j].visible)
-				{
-					if(groundPatches[i][j].type == GROUND_PATCH_GROUND)
-					{
-						//TODO: grass instanced rendering & uniform buffer binding
-						////grassProgram.setUniforms(viewProjection, groundPatches[i][j].getModelMatrix(), shadowMatrix, groundPatches[i][j].getGrassUbo(), shadowMapSampler, grassPatchTexture, groundPatches[i][j].currentLOD);
-
-						glBindVertexArray(grassVaoHandle);
-						glDrawElementsInstanced(GL_TRIANGLES, groundPatches[i][j].grassElementsToDraw, GL_UNSIGNED_SHORT, 0, groundPatches[i][j].getNumInstances());
-
-						////totalGrass += groundPatches[i][j].getNumInstances();
-					}
-				}
-			}
-		}*/
 
 		if(drawBrokenTree)
 		{
@@ -2474,16 +2456,24 @@ public class Ground
 		treeProgram.useProgram();
 		treeProgram.setCommonUniforms(viewProjection, pineBranchTexture);
 
-		//TODO:
-		//treeProgram.setUniforms(viewProjection, shadowMatrix, pineTreeMatricesUbo[LOD_A], pineTreeIndicesUbo[LOD_A], objectsPatchesMVPMatricesUbo[0], shadowMapSampler, pineBranchTexture, 0);
 		treeProgram.setSpecificUniforms(pineTreeArrayUbo[LOD_A]);
 		glBindVertexArray(pineTree.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_A]);
 
-		//treeProgram.setUniforms(viewProjection, shadowMatrix, pineTreeMatricesUbo[LOD_B], pineTreeIndicesUbo[LOD_B], objectsPatchesMVPMatricesUbo[0], shadowMapSampler, pineBranchTexture, 1);
 		treeProgram.setSpecificUniforms(pineTreeArrayUbo[LOD_B]);
 		glBindVertexArray(pineTree.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, pineTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, pineTreeNumInstances[LOD_B]);
+
+		////
+
+		treeProgram.setCommonUniforms(viewProjection, palmTreeTexture);
+		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_A]);
+		glBindVertexArray(palmTree.vaoHandles[LOD_A]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
+
+		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_B]);
+		glBindVertexArray(palmTree.vaoHandles[LOD_B]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_B]);
 
 		////
 
@@ -2561,28 +2551,18 @@ public class Ground
 		glBindVertexArray(bushPlant.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_B]);
 
-		////
-
-		treeProgram.setCommonUniforms(viewProjection, palmTreeTexture);
-		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_A]);
-		glBindVertexArray(palmTree.vaoHandles[LOD_A]);
-		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_A]);
-
-		treeProgram.setSpecificUniforms(palmTreeArrayUbo[LOD_B]);
-		glBindVertexArray(palmTree.vaoHandles[LOD_B]);
-		glDrawElementsInstanced(GL_TRIANGLES, palmTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, palmTreeNumInstances[LOD_B]);
 
 		////
 
 
 		rockProgram.useProgram();
-		rockProgram.setCommonUniforms(viewProjection, shadowMatrix, rockADiffuseTexture, rockANormalTexture, shadowMapSampler);
+		rockProgram.setCommonUniforms(viewProjection, rockADiffuseTexture, rockANormalTexture);
 		rockProgram.setSpecificUniforms(rockAArrayUbo[LOD_A]);
 
 		glBindVertexArray(rockA.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockA.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockANumInstances[LOD_A]);
 
-		rockProgram.setCommonUniforms(viewProjection, shadowMatrix, rockBDiffuseTexture, rockBNormalTexture, shadowMapSampler);
+		rockProgram.setCommonUniforms(viewProjection, rockBDiffuseTexture, rockBNormalTexture);
 		rockProgram.setSpecificUniforms(rockBArrayUbo[LOD_A]);
 		glBindVertexArray(rockB.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockB.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_A]);
@@ -2619,7 +2599,6 @@ public class Ground
 		current = groundLeftmostIndex;
 		previous = groundRightmostIndex;
 
-		//TODO: vertex colors
 		if(generatorState == GROUND_PATCH_GROUND)
 		{
 			groundPatches[current][groundLowerIndex].type = GROUND_PATCH_GROUND;
@@ -2737,30 +2716,6 @@ public class Ground
 
 			generatorState = GROUND_PATCH_GROUND;
 		}
-
-		/*groundPatches[current][groundLowerIndex].setCurrentPosition(
-				operations.subtract(groundPatches[current][groundUpperIndex].getCurrentPosition(), new vec3(0f, 0f, groundPatchHeight))
-		);
-		groundPatches[current][groundLowerIndex].reinitialize(
-				GroundPatchType.GROUND_UP,
-				groundPatches[current][groundUpperIndex].getVertexColors(GroundPatchType.GROUND_UP),
-				null
-		);
-
-		for(int x=1; x < numGroundPatchesX; x++)
-		{
-			current = (current + 1) % numGroundPatchesX;
-			previous = (previous + 1) % numGroundPatchesX;
-
-			groundPatches[current][groundLowerIndex].setCurrentPosition(
-					operations.subtract(groundPatches[current][groundUpperIndex].getCurrentPosition(), new vec3(0f, 0f, groundPatchHeight))
-			);
-			groundPatches[current][groundLowerIndex].reinitialize(
-					GroundPatchType.GROUND_UP_LEFT,
-					groundPatches[current][groundUpperIndex].getVertexColors(GroundPatchType.GROUND_UP),
-					groundPatches[previous][groundLowerIndex].getVertexColors(GroundPatchType.GROUND_RIGHT)
-			);
-		}*/
 
 		groundLowerIndex++;
 		groundLowerIndex = groundLowerIndex % numGroundPatchesZ;
@@ -3004,27 +2959,10 @@ public class Ground
 		objectsLeftmostIndex = objectsLeftmostIndex % numObjectsPatchesX;
 	}
 
-	/***************************************** CAMERA *********************************************/
-
-	//TODO: delete
-	public void setPerspectiveCamera(PerspectiveCamera perspectiveCamera)
-	{
-		this.perspectiveCamera = perspectiveCamera;
-
-		for(int x=0; x < numGroundPatchesX; x++)
-		{
-			for (int z = 0; z < numGroundPatchesZ; z++)
-			{
-				groundPatches[x][z].setPerspectiveCamera(perspectiveCamera);
-			}
-		}
-	}
-
 	/*************************************** OBJECTS PATCHES **************************************/
 
 	private void createObjectsPatches()
 	{
-		//TODO:
 		int index = 0;
 
 		float minimumX = -(float)((numObjectsPatchesX-1)/2) * objectsPatchWidth;
@@ -3063,16 +3001,6 @@ public class Ground
 				objectsPatches[x][z].setCullingPoints(pineTreeCullingPoints);
 			}
 		}
-
-		// Get the vertex array objects created by each patch
-		/**for(int x=0; x < numGroundPatchesX; x++)
-		{
-			for(int z=0; z < numGroundPatchesZ; z++)
-			{
-				groundVaoHandles[x][z] = groundPatches[x][z].getVaoHandle();
-				groundDepthPrePassVaoHandles[x][z] = groundPatches[x][z].getDepthPrePassVaoHandle();
-			}
-		}***/
 	}
 
 
@@ -3126,15 +3054,14 @@ public class Ground
 		objectsPatchesLightMVPMatricesBuffer.position(0);
 
 		//TODO: binding to 0 avoidable?
+		//TODO: matrices not used
 		glGenBuffers(1, objectsPatchesModelMatricesUbo, 0);
 		glGenBuffers(1, objectsPatchesMVPMatricesUbo, 0);
 		glGenBuffers(1, objectsPatchesLightMVPMatricesUbo, 0);
 		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesModelMatricesUbo[0]);
 		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesModelMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesModelMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesMVPMatricesUbo[0]);
 		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesMVPMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesMVPMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesLightMVPMatricesUbo[0]);
 		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesLightMVPMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesLightMVPMatricesBuffer, GL_STREAM_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -3867,83 +3794,53 @@ public class Ground
 		rockBArrayBufferLODB.put(rockBArrayLODB, 0, rockBArrayLODB.length);
 		rockBArrayBufferLODB.position(0);
 
-		//TODO: bindbuffer = 0 avoidable?
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeOffsetLODA * BYTES_PER_FLOAT, pineTreeArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeOffsetLODB * BYTES_PER_FLOAT, pineTreeArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, hugeTreeOffsetLODA * BYTES_PER_FLOAT, hugeTreeArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, hugeTreeOffsetLODB * BYTES_PER_FLOAT, hugeTreeArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmTreeOffsetLODA * BYTES_PER_FLOAT, palmTreeArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, palmTreeArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmTreeOffsetLODB * BYTES_PER_FLOAT, palmTreeArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, birchTreeArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, birchTreeOffsetLODA * BYTES_PER_FLOAT, birchTreeArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, birchTreeArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, birchTreeOffsetLODB * BYTES_PER_FLOAT, birchTreeArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, fernPlantOffsetLODA * BYTES_PER_FLOAT, fernPlantArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, fernPlantOffsetLODB * BYTES_PER_FLOAT, fernPlantArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, weedPlantOffsetLODA * BYTES_PER_FLOAT, weedPlantArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, weedPlantOffsetLODB * BYTES_PER_FLOAT, weedPlantArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, bushPlantOffsetLODA * BYTES_PER_FLOAT, bushPlantArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, bushPlantArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, bushPlantOffsetLODB * BYTES_PER_FLOAT, bushPlantArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, palmPlantArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmPlantOffsetLODA * BYTES_PER_FLOAT, palmPlantArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, palmPlantArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, palmPlantOffsetLODB * BYTES_PER_FLOAT, palmPlantArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockAOffsetLODA * BYTES_PER_FLOAT, rockAArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, rockAArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockAOffsetLODB * BYTES_PER_FLOAT, rockAArrayBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, rockBArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockBOffsetLODA * BYTES_PER_FLOAT, rockBArrayBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
 		glBindBuffer(GL_UNIFORM_BUFFER, rockBArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockBOffsetLODB * BYTES_PER_FLOAT, rockBArrayBufferLODB);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -3973,7 +3870,6 @@ public class Ground
 				currentPatchIndex = objectsPatches[x][z].index;
 				/*for(int i=0; i < arraySize; i++)
 				{
-					//TODO: Matrix calculations only on new patches !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 					// Get the point
 					currentPos = objectsPatches[x][z].pineTreePositions.get(i);
 

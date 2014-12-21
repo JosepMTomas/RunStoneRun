@@ -307,7 +307,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
 				collisionCylinders[collisionCylindersOffset++] = 2.9f * scaleValue;
-				collisionCylinders[collisionCylindersOffset++] = 1f;
+				collisionCylinders[collisionCylindersOffset++] = 0f;
 				numCollisionCylinders++;
 			}
 			else if(randomValue < 0.225f)
@@ -323,7 +323,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
 				collisionCylinders[collisionCylindersOffset++] = 4.5f * scaleValue;
-				collisionCylinders[collisionCylindersOffset++] = 2f;
+				collisionCylinders[collisionCylindersOffset++] = 1f;
 				numCollisionCylinders++;
 			}
 			else if(randomValue < 0.3375f)
@@ -339,7 +339,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
 				collisionCylinders[collisionCylindersOffset++] = 2.4f * scaleValue;
-				collisionCylinders[collisionCylindersOffset++] = 3f;
+				collisionCylinders[collisionCylindersOffset++] = 2f;
 				numCollisionCylinders++;
 			}
 			else if(randomValue < 0.45f)
@@ -352,7 +352,11 @@ public class ObjectsPatch extends BoundarySampler
 
 				birchTreeCount++;
 
-				//TODO: collision cylinders
+				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
+				collisionCylinders[collisionCylindersOffset++] = currentPosition.y + currentPoint.y;
+				collisionCylinders[collisionCylindersOffset++] = 1.5f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 3f;
+				numCollisionCylinders++;
 			}
 			else if(randomValue < 0.6f)
 			{
@@ -659,14 +663,13 @@ public class ObjectsPatch extends BoundarySampler
 				birchTreePointsLODA[offsetLODA++] = scale;
 				birchTreePointsLODA[offsetLODA++] = distance / 800f;
 
-				//TODO: collision cylinders
-				/*collisionCylinders[collisionCylindersOffset++] = pointX;
+				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 2.4f * scale;
-				collisionCylinders[collisionCylindersOffset++] = 2.0f;*/
+				collisionCylinders[collisionCylindersOffset++] = 1.5f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 3.0f;
 
 				countLODA++;
-				//collisionCylindersCount++;
+				collisionCylindersCount++;
 			}
 			else
 			{
@@ -961,11 +964,21 @@ public class ObjectsPatch extends BoundarySampler
 			hugeTreePoints[i * 3 + 2] = 0f;
 			return scale;
 		}
-		else
+
+		i = i - hugeTreeNumInstances[LOD_A];
+
+		if(i < palmTreeNumInstances[LOD_A])
 		{
-			i = i - hugeTreeNumInstances[LOD_A];
 			scale = palmTreePoints[i*3 + 2];
 			palmTreePoints[i*3 + 2] = 0f;
+			return scale;
+		}
+
+		else
+		{
+			i = i - palmTreeNumInstances[LOD_A];
+			scale = birchTreePoints[i*3 + 2];
+			birchTreePoints[i*3 + 2] = 0f;
 			return scale;
 		}
 	}

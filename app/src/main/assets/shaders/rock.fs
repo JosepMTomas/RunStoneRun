@@ -5,7 +5,6 @@ in vec3 vNormal;
 in vec3 vTangent;
 in vec3 vBinormal;
 in float vDistance;
-in float vShadows;
 
 layout (std140) uniform lightInfo
 {
@@ -32,7 +31,6 @@ void main()
 	
 	float diffuse = dot(normal, vLight);
 	diffuse = clamp(diffuse, 0.0, 1.0);
-	diffuse = diffuse * vShadows;
 	
 	vec4 color = vec4(diffuse) * diffuseTex * lightColor;
 	
