@@ -1,7 +1,5 @@
 package com.josepmtomas.rockgame.util;
 
-import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -14,7 +12,7 @@ import static com.josepmtomas.rockgame.Constants.*;
 /**
  * Created by Josep on 15/12/2014.
  */
-public class HudHelper
+public class UIHelper
 {
 
 
@@ -35,39 +33,39 @@ public class HudHelper
 		// initialize
 		switch(baseType)
 		{
-			case HUD_BASE_LEFT_TOP:
+			case UI_BASE_LEFT_TOP:
 				initialX = 0f;
 				initialY = 0f;
 				break;
-			case HUD_BASE_LEFT_CENTER:
+			case UI_BASE_LEFT_CENTER:
 				initialX = 0f;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_LEFT_BOTTOM:
+			case UI_BASE_LEFT_BOTTOM:
 				initialX = 0f;
 				initialY = height;
 				break;
-			case HUD_BASE_CENTER_TOP:
+			case UI_BASE_CENTER_TOP:
 				initialX = -width * 0.5f;
 				initialY = 0f;
 				break;
-			case HUD_BASE_CENTER_CENTER:
+			case UI_BASE_CENTER_CENTER:
 				initialX = -width * 0.5f;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_CENTER_BOTTOM:
+			case UI_BASE_CENTER_BOTTOM:
 				initialX = -width * 0.5f;
 				initialY = height;
 				break;
-			case HUD_BASE_RIGHT_TOP:
+			case UI_BASE_RIGHT_TOP:
 				initialX = -width;
 				initialY = 0f;
 				break;
-			case HUD_BASE_RIGHT_CENTER:
+			case UI_BASE_RIGHT_CENTER:
 				initialX = -width;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_RIGHT_BOTTOM:
+			case UI_BASE_RIGHT_BOTTOM:
 				initialX = -width;
 				initialY = height;
 				break;
@@ -186,39 +184,39 @@ public class HudHelper
 		// initialize
 		switch(baseType)
 		{
-			case HUD_BASE_LEFT_TOP:
+			case UI_BASE_LEFT_TOP:
 				initialX = 0f;
 				initialY = 0f;
 				break;
-			case HUD_BASE_LEFT_CENTER:
+			case UI_BASE_LEFT_CENTER:
 				initialX = 0f;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_LEFT_BOTTOM:
+			case UI_BASE_LEFT_BOTTOM:
 				initialX = 0f;
 				initialY = height;
 				break;
-			case HUD_BASE_CENTER_TOP:
+			case UI_BASE_CENTER_TOP:
 				initialX = -width * 0.5f;
 				initialY = 0f;
 				break;
-			case HUD_BASE_CENTER_CENTER:
+			case UI_BASE_CENTER_CENTER:
 				initialX = -width * 0.5f;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_CENTER_BOTTOM:
+			case UI_BASE_CENTER_BOTTOM:
 				initialX = -width * 0.5f;
 				initialY = height;
 				break;
-			case HUD_BASE_RIGHT_TOP:
+			case UI_BASE_RIGHT_TOP:
 				initialX = -width;
 				initialY = 0f;
 				break;
-			case HUD_BASE_RIGHT_CENTER:
+			case UI_BASE_RIGHT_CENTER:
 				initialX = -width;
 				initialY = height * 0.5f;
 				break;
-			case HUD_BASE_RIGHT_BOTTOM:
+			case UI_BASE_RIGHT_BOTTOM:
 				initialX = -width;
 				initialY = height;
 				break;

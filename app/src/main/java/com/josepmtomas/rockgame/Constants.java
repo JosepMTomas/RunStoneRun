@@ -130,13 +130,13 @@ public class Constants
 	public static final float LIFE_RECOVERING_TIME = 5f;
 
 	// HUD base points (X_Y)
-	public static final int HUD_BASE_LEFT_TOP = 0;
-	public static final int HUD_BASE_LEFT_CENTER = 1;
-	public static final int HUD_BASE_LEFT_BOTTOM = 2;
-	public static final int HUD_BASE_CENTER_TOP = 3;
-	public static final int HUD_BASE_CENTER_CENTER = 4;
-	public static final int HUD_BASE_CENTER_BOTTOM = 5;
-	public static final int HUD_BASE_RIGHT_TOP = 6;
-	public static final int HUD_BASE_RIGHT_CENTER = 7;
-	public static final int HUD_BASE_RIGHT_BOTTOM = 8;
+	public static final int UI_BASE_LEFT_TOP = 0;
+	public static final int UI_BASE_LEFT_CENTER = 1;
+	public static final int UI_BASE_LEFT_BOTTOM = 2;
+	public static final int UI_BASE_CENTER_TOP = 3;
+	public static final int UI_BASE_CENTER_CENTER = 4;
+	public static final int UI_BASE_CENTER_BOTTOM = 5;
+	public static final int UI_BASE_RIGHT_TOP = 6;
+	public static final int UI_BASE_RIGHT_CENTER = 7;
+	public static final int UI_BASE_RIGHT_BOTTOM = 8;
 }

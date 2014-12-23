@@ -141,7 +141,9 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 						}
 						else if(currentX < (width / 3.0f)*2f )
 						{
-							forwardPlusRenderer.scroll();
+							//forwardPlusRenderer.scroll();
+							forwardPlusRenderer.pressCenter(currentX, currentY);
+							forwardPlusRenderer.setPause(false);
 						}
 						else
 						{
@@ -284,18 +286,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		super.onResume();
 
 		backgroundMusicPlayer.start();
-		/*final MediaPlayer mediaPlayer = MediaPlayer.create(context, R.raw.the_metal);
-		//mediaPlayer.start();
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-				Log.e("Thread", "Ready to start");
-				mediaPlayer.start();
-			}
-		}).start();*/
+		//forwardPlusRenderer.setPause(false);
 	}
 
 	@Override
@@ -304,6 +295,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 		Log.d(TAG, "<<<<< ON PAUSE >>>>>");
 		backgroundMusicPlayer.pause();
+		forwardPlusRenderer.setPause(true);
 
 		forwardPlusRenderer.deleteGL();
 	}

@@ -1,17 +1,12 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
-import android.util.FloatMath;
 
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
-import com.josepmtomas.rockgame.util.HudHelper;
+import com.josepmtomas.rockgame.util.UIHelper;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -150,16 +145,16 @@ public class Hud
 		//multiplierTexture = TextureHelper.loadETC2Texture(context, "textures/hud/multiplier_9patch_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier progress bar
-		multiplierProgressVaoHandle = HudHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, progressBarHeight, HUD_BASE_LEFT_CENTER);
+		multiplierProgressVaoHandle = UIHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, progressBarHeight, UI_BASE_LEFT_CENTER);
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Recovering
-		recoveringProgressBarVaoHandle = HudHelper.makeProgressBar(800, progressBarHeight, HUD_BASE_CENTER_CENTER);
-		getReadyPanelVaoHandle = HudHelper.makePanel(numberWidth * 9f, numberHeight * 0.9f, HUD_BASE_CENTER_CENTER);
+		recoveringProgressBarVaoHandle = UIHelper.makeProgressBar(800, progressBarHeight, UI_BASE_CENTER_CENTER);
+		getReadyPanelVaoHandle = UIHelper.makePanel(numberWidth * 9f, numberHeight * 0.9f, UI_BASE_CENTER_CENTER);
 		getReadyPanelTexture = TextureHelper.loadETC2Texture(context, "textures/hud/get_ready.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Life bars
-		lifeBarVaoHandle = HudHelper.makeProgressBar(200, progressBarHeight, HUD_BASE_CENTER_CENTER);
+		lifeBarVaoHandle = UIHelper.makeProgressBar(200, progressBarHeight, UI_BASE_CENTER_CENTER);
 
 		// Positions
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);

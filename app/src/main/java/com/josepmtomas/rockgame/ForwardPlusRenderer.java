@@ -10,11 +10,13 @@ import com.josepmtomas.rockgame.objectsForwardPlus.Ground;
 import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
 import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
 import com.josepmtomas.rockgame.objectsForwardPlus.LightInfo;
+import com.josepmtomas.rockgame.objectsForwardPlus.MainMenu;
 import com.josepmtomas.rockgame.objectsForwardPlus.PlayerRock;
 import com.josepmtomas.rockgame.objectsForwardPlus.Screen;
 import com.josepmtomas.rockgame.objectsForwardPlus.SkyDome;
 import com.josepmtomas.rockgame.objectsForwardPlus.TestTree;
 import com.josepmtomas.rockgame.objectsForwardPlus.TestUI;
+import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.FPSCounter;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TouchState;
@@ -44,6 +46,8 @@ public class ForwardPlusRenderer implements Renderer
 	private int SHADOW_MAP_HEIGHT = 512;
 
 	private float FRAMEBUFFER_ASPECT_RATIO = 0.5625f;
+
+	private boolean isPaused = false;
 
 	private float[] framebufferDimensions = new float[2];
 
@@ -141,6 +145,10 @@ public class ForwardPlusRenderer implements Renderer
 	// GameActivity
 	private GameActivity parent;
 
+	// UI menus
+	private UIPanelProgram uiPanelProgram;
+	private MainMenu mainMenu;
+
 
 	public ForwardPlusRenderer(GameActivity parent, float width, float height, float resolutionPercentage)
 	{
@@ -190,8 +198,9 @@ public class ForwardPlusRenderer implements Renderer
 		//hud = new Hud(context, renderWidth, renderHeight);
 		hud = new Hud(context, renderWidth, renderHeight);
 
-
-
+		// UI
+		uiPanelProgram = new UIPanelProgram(context);
+		mainMenu = new MainMenu(parent, uiPanelProgram, renderWidth, renderHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -359,7 +368,8 @@ public class ForwardPlusRenderer implements Renderer
 		updateTime += endTime - startTime;
 
 		startTime = SystemClock.elapsedRealtime();*/
-		update(deltaTime);
+		if(!isPaused)//deltaTime=0;
+			update(deltaTime);
 		shadowMapPass();
 		reflectionPass();
 		//lightCullingPass();
@@ -606,6 +616,7 @@ public class ForwardPlusRenderer implements Renderer
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		hud.draw();
+		mainMenu.draw();
 		glDisable(GL_BLEND);
 	}
 
@@ -626,11 +637,17 @@ public class ForwardPlusRenderer implements Renderer
 	{
 		leftTouchState = TouchState.NOT_TOUCHING;
 		rightTouchState = TouchState.NOT_TOUCHING;
+		mainMenu.release();
+	}
+
+	public void pressCenter(float x, float y)
+	{
+		mainMenu.touch(x * 2.0f - renderWidth, (renderHeight - y) * 2.0f - renderHeight);
 	}
 
 	public void scroll()
 	{
-		//playerRock.hit();
+
 	}
 
 
@@ -643,6 +660,12 @@ public class ForwardPlusRenderer implements Renderer
 		else if(yRotation > 90) yRotation = 90;*/
 
 		//playerRock.currentPositionY += deltaY;
+	}
+
+
+	public void setPause(boolean value)
+	{
+		isPaused = value;
 	}
 
 
