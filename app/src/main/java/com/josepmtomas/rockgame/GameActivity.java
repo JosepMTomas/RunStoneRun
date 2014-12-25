@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.opengl.GLSurfaceView;
@@ -59,13 +60,16 @@ public class GameActivity extends Activity
 		this.width = (float)display.getWidth();
 		this.height = (float)display.getHeight();
 
+		Point realSizePoint = new Point();
+		display.getRealSize(realSizePoint);
+
 		// Check if the system supports OpenGL ES 3.0
 		final ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
 		final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
 		final GameRenderer gameRenderer = new GameRenderer(this, width, height);
 		deferredRenderer = new DeferredRenderer(this, width, height);
-		forwardPlusRenderer = new ForwardPlusRenderer(this, width, height, 0.75f);
+		forwardPlusRenderer = new ForwardPlusRenderer(this, width, height, (float)realSizePoint.x, (float)realSizePoint.y, 0.75f);
 
 		Log.v("ACTIVITY", "This device supports OpenGL ES up to " + configurationInfo.getGlEsVersion());
 

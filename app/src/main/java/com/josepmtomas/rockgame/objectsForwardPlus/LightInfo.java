@@ -194,7 +194,6 @@ public class LightInfo
 
 
 		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
-		//TODO: orthoM(shadowPerspective, 0, );
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 	}
 }

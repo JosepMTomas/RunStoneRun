@@ -28,6 +28,12 @@ public class MainMenu
 
 	// UI Panel
 	private int uiPanelVaoHandle;
+	private int ui9PatchPanelVaoHandle;
+
+	// Buttons back panel
+	private int buttonsBackPanelTexture;
+	private float[] buttonsBackPanelScale = {1f, 1f};
+	private float[] buttonsBackPanelPosition = new float[2];
 
 	// New game button
 	private int newGameButtonIdleTexture;
@@ -69,6 +75,7 @@ public class MainMenu
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
 
 		createButtons(screenWidth, screenHeight);
+		createButtonsBackPanel(screenWidth, screenHeight);
 	}
 
 
@@ -108,6 +115,7 @@ public class MainMenu
 		creditsButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/credits_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		creditsButtonCurrentTexture = creditsButtonIdleTexture;
 
+		buttonsBackPanelTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -122,6 +130,20 @@ public class MainMenu
 	}
 
 
+	public void createButtonsBackPanel(float screenWidth, float screenHeight)
+	{
+		float borderSize = screenHeight * 0.025f;
+		float cornerSize = screenHeight * 0.08f + borderSize;
+		float width = (screenWidth * 0.3f) + (borderSize * 2f);
+		float height = (screenHeight * 0.16f * 3f) + (borderSize * 2f);
+
+		ui9PatchPanelVaoHandle = UIHelper.make9PatchPanel(width, height, cornerSize, UI_BASE_CENTER_CENTER);
+
+		buttonsBackPanelPosition[0] = 0f;
+		buttonsBackPanelPosition[1] = optionsButtonPosition[1];
+	}
+
+
 	private void createNewGameButton(float width, float height)
 	{
 		newGameButtonPosition[0] = 0f;
@@ -131,10 +153,10 @@ public class MainMenu
 		newGameButtonScale[1] = height;
 
 		// left-right-bottom-top
-		newGameButtonLimits[0] = newGameButtonPosition[0] - newGameButtonScale[0];
-		newGameButtonLimits[1] = newGameButtonPosition[0] + newGameButtonScale[0];
-		newGameButtonLimits[2] = newGameButtonPosition[1] - newGameButtonScale[1];
-		newGameButtonLimits[3] = newGameButtonPosition[1] + newGameButtonScale[1];
+		newGameButtonLimits[0] = newGameButtonPosition[0] - (width * 0.5f);
+		newGameButtonLimits[1] = newGameButtonPosition[0] + (width * 0.5f);
+		newGameButtonLimits[2] = newGameButtonPosition[1] - (height * 0.5f);
+		newGameButtonLimits[3] = newGameButtonPosition[1] + (height * 0.5f);
 	}
 
 
@@ -146,10 +168,10 @@ public class MainMenu
 		optionsButtonScale[0] = width;
 		optionsButtonScale[1] = height;
 
-		optionsButtonLimits[0] = optionsButtonPosition[0] - optionsButtonScale[0];
-		optionsButtonLimits[1] = optionsButtonPosition[0] + optionsButtonScale[0];
-		optionsButtonLimits[2] = optionsButtonPosition[1] - optionsButtonScale[1];
-		optionsButtonLimits[3] = optionsButtonPosition[1] + optionsButtonScale[1];
+		optionsButtonLimits[0] = optionsButtonPosition[0] - (width * 0.5f);
+		optionsButtonLimits[1] = optionsButtonPosition[0] + (width * 0.5f);
+		optionsButtonLimits[2] = optionsButtonPosition[1] - (height * 0.5f);
+		optionsButtonLimits[3] = optionsButtonPosition[1] + (height * 0.5f);
 	}
 
 
@@ -161,19 +183,30 @@ public class MainMenu
 		creditsButtonScale[0] = width;
 		creditsButtonScale[1] = height;
 
-		creditsButtonLimits[0] = creditsButtonPosition[0] - creditsButtonScale[0];
-		creditsButtonLimits[1] = creditsButtonPosition[0] + creditsButtonScale[0];
-		creditsButtonLimits[2] = creditsButtonPosition[1] - creditsButtonScale[1];
-		creditsButtonLimits[3] = creditsButtonPosition[1] + creditsButtonScale[1];
+		creditsButtonLimits[0] = creditsButtonPosition[0] - (width * 0.5f);
+		creditsButtonLimits[1] = creditsButtonPosition[0] + (width * 0.5f);
+		creditsButtonLimits[2] = creditsButtonPosition[1] - (height * 0.5f);
+		creditsButtonLimits[3] = creditsButtonPosition[1] + (height * 0.5f);
 	}
 
 
 	public void touch(float x, float y)
 	{
+		float newY = y * 0.5f;
 		//Log.w("MainMenu", "Touch : x = " + x + " : y = " + y);
-		if(y >= newGameButtonLimits[2] && y <= newGameButtonLimits[3])
+		if(newY >= newGameButtonLimits[2] && newY <= newGameButtonLimits[3])
 		{
 			touchNewGameButton();
+		}
+
+		else if(newY >= optionsButtonLimits[2] && newY <= optionsButtonLimits[3])
+		{
+			touchOptionsButton();
+		}
+
+		else if(newY >= creditsButtonLimits[2] && newY <= creditsButtonLimits[3])
+		{
+			touchCreditsButton();
 		}
 	}
 
@@ -207,6 +240,12 @@ public class MainMenu
 	public void draw()
 	{
 		uiPanelProgram.useProgram();
+
+		glBindVertexArray(ui9PatchPanelVaoHandle);
+
+		uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, buttonsBackPanelTexture, 0.75f);
+		glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
+
 		glBindVertexArray(uiPanelVaoHandle);
 
 		uiPanelProgram.setUniforms(viewProjection, newGameButtonScale, newGameButtonPosition, newGameButtonCurrentTexture, 1f);

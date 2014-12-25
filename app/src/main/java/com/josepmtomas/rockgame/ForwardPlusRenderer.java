@@ -11,6 +11,7 @@ import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
 import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
 import com.josepmtomas.rockgame.objectsForwardPlus.LightInfo;
 import com.josepmtomas.rockgame.objectsForwardPlus.MainMenu;
+import com.josepmtomas.rockgame.objectsForwardPlus.OptionsMenu;
 import com.josepmtomas.rockgame.objectsForwardPlus.PlayerRock;
 import com.josepmtomas.rockgame.objectsForwardPlus.Screen;
 import com.josepmtomas.rockgame.objectsForwardPlus.SkyDome;
@@ -51,9 +52,12 @@ public class ForwardPlusRenderer implements Renderer
 
 	private float[] framebufferDimensions = new float[2];
 
-	private int renderWidth;			// Screen width resolution
-	private int renderHeight;			// Screen height resolution
-	private float renderAspectRatio;	// Screen aspect ratio (width / height)
+	private int renderWidth;			// Framebuffer width resolution
+	private int renderHeight;			// Framebuffer height resolution
+	private float renderAspectRatio;	// Framebuffer aspect ratio (width / height)
+
+	private float screenWidth;	// Screen width
+	private float screenHeight;	// Screen height
 
 	// Camera
 	private PerspectiveCamera perspectiveCamera;
@@ -148,9 +152,10 @@ public class ForwardPlusRenderer implements Renderer
 	// UI menus
 	private UIPanelProgram uiPanelProgram;
 	private MainMenu mainMenu;
+	private OptionsMenu optionsMenu;
 
 
-	public ForwardPlusRenderer(GameActivity parent, float width, float height, float resolutionPercentage)
+	public ForwardPlusRenderer(GameActivity parent, float width, float height, float realWidth, float realHeight, float resolutionPercentage)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
@@ -160,10 +165,12 @@ public class ForwardPlusRenderer implements Renderer
 		framebufferDimensions[0] = FRAMEBUFFER_WIDTH;
 		framebufferDimensions[1] = FRAMEBUFFER_HEIGHT;
 
-		//this.context = context;
 		this.renderWidth = (int)width;
 		this.renderHeight = (int)height;
 		this.renderAspectRatio = width / height;
+
+		this.screenWidth = realWidth;
+		this.screenHeight = realHeight;
 
 		fpsCounter = new FPSCounter();
 	}
@@ -201,6 +208,7 @@ public class ForwardPlusRenderer implements Renderer
 		// UI
 		uiPanelProgram = new UIPanelProgram(context);
 		mainMenu = new MainMenu(parent, uiPanelProgram, renderWidth, renderHeight);
+		optionsMenu = new OptionsMenu(parent, uiPanelProgram, renderWidth, renderHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -615,8 +623,9 @@ public class ForwardPlusRenderer implements Renderer
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		hud.draw();
-		mainMenu.draw();
+		//hud.draw();
+		//mainMenu.draw();
+		optionsMenu.draw();
 		glDisable(GL_BLEND);
 	}
 
@@ -642,7 +651,14 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void pressCenter(float x, float y)
 	{
-		mainMenu.touch(x * 2.0f - renderWidth, (renderHeight - y) * 2.0f - renderHeight);
+		float newX = x * 2.0f - renderWidth;
+		newX *= 0.5f;
+		float newY = (renderHeight - y) * 2.0f - renderHeight;
+		newY *= 0.5f;
+		//mainMenu.touch(x * 2.0f - screenWidth, (screenHeight - y) * 2.0f - screenHeight);
+		mainMenu.touch(newX, newY);
+		optionsMenu.touch(newX, newY);
+		//mainMenu.touch(x,y);
 	}
 
 	public void scroll()
