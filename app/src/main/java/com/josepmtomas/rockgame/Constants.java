@@ -139,4 +139,9 @@ public class Constants
 	public static final int UI_BASE_RIGHT_TOP = 6;
 	public static final int UI_BASE_RIGHT_CENTER = 7;
 	public static final int UI_BASE_RIGHT_BOTTOM = 8;
+
+	public static final int UI_STATE_NOT_VISIBLE = 0;
+	public static final int UI_STATE_APPEARING = 1;
+	public static final int UI_STATE_VISIBLE = 2;
+	public static final int UI_STATE_DISAPPEARING = 3;
 }

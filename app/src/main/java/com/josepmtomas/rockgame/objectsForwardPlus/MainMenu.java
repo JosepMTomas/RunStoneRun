@@ -3,6 +3,7 @@ package com.josepmtomas.rockgame.objectsForwardPlus;
 import android.content.Context;
 import android.util.Log;
 
+import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.TextureHelper;
@@ -19,7 +20,17 @@ import static android.opengl.Matrix.*;
 public class MainMenu
 {
 	private GameActivity parent;
+	private ForwardPlusRenderer renderer;
 	private Context context;
+
+	// State
+	private int currentState;
+
+	// Menu common attributes
+	private float menuAppearTime = 1f;
+	private float menuDisappearTime = 1f;
+	private float menuTimer = 0f;
+	private float menuOpacity = 1f;
 
 	// Matrices
 	private float[] view = new float[16];
@@ -63,11 +74,13 @@ public class MainMenu
 	UIPanelProgram uiPanelProgram;
 
 
-	public MainMenu(GameActivity parent, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
+	public MainMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
+		this.renderer = renderer;
 		this.context = parent.getApplicationContext();
 		this.uiPanelProgram = panelProgram;
+		this.currentState = UI_STATE_VISIBLE;
 
 		createMatrices(screenWidth, screenHeight);
 		loadTextures();
@@ -192,19 +205,27 @@ public class MainMenu
 
 	public void touch(float x, float y)
 	{
-		float newY = y * 0.5f;
 		//Log.w("MainMenu", "Touch : x = " + x + " : y = " + y);
-		if(newY >= newGameButtonLimits[2] && newY <= newGameButtonLimits[3])
+		if(	x >= newGameButtonLimits[0] &&
+			x <= newGameButtonLimits[1] &&
+			y >= newGameButtonLimits[2] &&
+			y <= newGameButtonLimits[3])
 		{
 			touchNewGameButton();
 		}
 
-		else if(newY >= optionsButtonLimits[2] && newY <= optionsButtonLimits[3])
+		else if(x >= optionsButtonLimits[0] &&
+				x <= optionsButtonLimits[1] &&
+				y >= optionsButtonLimits[2] &&
+				y <= optionsButtonLimits[3])
 		{
 			touchOptionsButton();
 		}
 
-		else if(newY >= creditsButtonLimits[2] && newY <= creditsButtonLimits[3])
+		else if(x >= optionsButtonLimits[0] &&
+				x <= optionsButtonLimits[1] &&
+				y >= creditsButtonLimits[2] &&
+				y <= creditsButtonLimits[3])
 		{
 			touchCreditsButton();
 		}
@@ -228,6 +249,8 @@ public class MainMenu
 	private void touchOptionsButton()
 	{
 		optionsButtonCurrentTexture = optionsButtonSelectedTexture;
+		renderer.changingToOptionsMenu();
+		currentState = UI_STATE_DISAPPEARING;
 	}
 
 
@@ -237,24 +260,68 @@ public class MainMenu
 	}
 
 
+	public void setAppearing()
+	{
+		currentState = UI_STATE_APPEARING;
+	}
+
+
+	public void setDisappearing()
+	{
+		currentState = UI_STATE_DISAPPEARING;
+	}
+
+
+	public void update(float deltaTime)
+	{
+		if(currentState == UI_STATE_APPEARING)
+		{
+			menuTimer += deltaTime;
+			menuOpacity = menuTimer / menuAppearTime;
+
+			if(menuTimer >= menuAppearTime)
+			{
+				currentState = UI_STATE_VISIBLE;
+				menuOpacity = 1f;
+				menuTimer = 0f;
+			}
+		}
+		else if(currentState == UI_STATE_DISAPPEARING)
+		{
+			menuTimer += deltaTime;
+			menuOpacity = 1f - (menuTimer / menuDisappearTime);
+
+			if(menuTimer >= menuAppearTime)
+			{
+				currentState = UI_STATE_NOT_VISIBLE;
+				menuOpacity = 0f;
+				menuTimer = 0f;
+			}
+		}
+	}
+
+
 	public void draw()
 	{
-		uiPanelProgram.useProgram();
+		if(currentState != UI_STATE_NOT_VISIBLE)
+		{
+			uiPanelProgram.useProgram();
 
-		glBindVertexArray(ui9PatchPanelVaoHandle);
+			glBindVertexArray(ui9PatchPanelVaoHandle);
 
-		uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, buttonsBackPanelTexture, 0.75f);
-		glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
+			uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, buttonsBackPanelTexture, 0.75f * menuOpacity);
+			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
 
-		glBindVertexArray(uiPanelVaoHandle);
+			glBindVertexArray(uiPanelVaoHandle);
 
-		uiPanelProgram.setUniforms(viewProjection, newGameButtonScale, newGameButtonPosition, newGameButtonCurrentTexture, 1f);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			uiPanelProgram.setUniforms(viewProjection, newGameButtonScale, newGameButtonPosition, newGameButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-		uiPanelProgram.setUniforms(viewProjection, optionsButtonScale, optionsButtonPosition, optionsButtonCurrentTexture, 1f);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			uiPanelProgram.setUniforms(viewProjection, optionsButtonScale, optionsButtonPosition, optionsButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-		uiPanelProgram.setUniforms(viewProjection, creditsButtonScale, creditsButtonPosition, creditsButtonCurrentTexture, 1f);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			uiPanelProgram.setUniforms(viewProjection, creditsButtonScale, creditsButtonPosition, creditsButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
 	}
 }

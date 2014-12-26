@@ -3,6 +3,8 @@ package com.josepmtomas.rockgame.objectsForwardPlus;
 import android.content.Context;
 
 import com.josepmtomas.rockgame.Constants;
+import com.josepmtomas.rockgame.programsForwardPlus.PostProcessHighProgram;
+import com.josepmtomas.rockgame.programsForwardPlus.PostProcessLowProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScreenProgram;
 
 import java.nio.ByteBuffer;
@@ -29,14 +31,20 @@ public class Screen
 	private int[] vboHandles = new int[2];
 	private int[] vaoHandle = new int[1];
 
-	// TODO: shader program
-	ScreenProgram screenProgram;
+	// Current level of detail
+	private int currentDetail = 0;
 
-	private int[] buffers;
+	// Shaders
+	ScreenProgram screenProgram;
+	PostProcessLowProgram postProcessLowProgram;
+	PostProcessHighProgram postProcessHighProgram;
+
 
 	public Screen(Context context, float width, float height)
 	{
 		screenProgram = new ScreenProgram(context);
+		postProcessLowProgram = new PostProcessLowProgram(context);
+		postProcessHighProgram = new PostProcessHighProgram(context);
 
 		createScreenPlane(width, height);
 		initialize();
@@ -141,46 +149,45 @@ public class Screen
 	}
 
 
-	public void setBuffers(int[] buffers)
-	{
-		this.buffers = buffers;
-	}
-
-
 	public void draw(int colorBuffer, float speedFactor)
 	{
-		screenProgram.useProgram();
-		screenProgram.setUniforms(colorBuffer, speedFactor);
+		if(currentDetail == 0)
+		{
+			screenProgram.useProgram();
+			screenProgram.setUniforms(colorBuffer);
+		}
+		else if(currentDetail == 1)
+		{
+			postProcessLowProgram.useProgram();
+			postProcessLowProgram.setUniforms(colorBuffer, speedFactor);
+		}
+		else if(currentDetail == 2)
+		{
+			postProcessHighProgram.useProgram();
+			postProcessHighProgram.setUniforms(colorBuffer, speedFactor);
+		}
+
+
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, elements.length, GL_UNSIGNED_SHORT, 0);
 	}
 
 
-	public void draw(float[] inverseViewProjection, float[] inverseProjection, int index)
+	public void setNoPostProcess()
 	{
-		//deferredScreenShaderProgram.useProgram();
-		//deferredScreenShaderProgram.setUniforms(inverseViewProjection, inverseProjection, buffers, index);
-
-		glBindVertexArray(vaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, elements.length, GL_UNSIGNED_SHORT, 0);
+		currentDetail = 0;
 	}
 
 
-
-	public void drawPostProcess(int colorBuffer, int depthBuffer, float[] VPInverse, float[] previousVP)
+	public void setLowPostProcess()
 	{
-		//postProcessShaderProgram.useProgram();
-		//postProcessShaderProgram.setUniforms(colorBuffer, depthBuffer, VPInverse, previousVP);
-
-		glBindVertexArray(vaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, elements.length, GL_UNSIGNED_SHORT, 0);
+		currentDetail = 1;
 	}
 
 
-	public void deleteGL()
+	public void setHighPostProcess()
 	{
-		glDeleteBuffers(2, vboHandles, 0);
-		glDeleteVertexArrays(1, vaoHandle, 0);
+		currentDetail = 2;
 	}
 }

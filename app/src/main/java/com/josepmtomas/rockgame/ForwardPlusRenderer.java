@@ -37,7 +37,17 @@ public class ForwardPlusRenderer implements Renderer
 {
 	private static final String TAG = "Forward+";
 
+	// States
+	private static final int RENDERER_STATE_PLAYING = 0;
+	private static final int RENDERER_STATE_PAUSED = 1;
+	private static final int RENDERER_STATE_MAIN_MENU = 2;
+	private static final int RENDERER_STATE_OPTIONS_MENU = 3;
+	private static final int RENDERER_STATE_CREDITS_MENU = 4;
+	private static final int RENDERER_STATE_CHANGING_MENU = 5;
+	private int rendererState = RENDERER_STATE_MAIN_MENU;
+
 	private static final int SHADOWMAP_SIZE = 256;
+
 
 	private int FRAMEBUFFER_WIDTH = 1280; // 1794
 	private int FRAMEBUFFER_HEIGHT = 720;	//1104
@@ -76,9 +86,11 @@ public class ForwardPlusRenderer implements Renderer
 	private float[] viewProjection = new float[16];
 
 	// Main framebuffer objects
-	private final int[] fboID = new int[1];
-	private final int[] rboID = new int[1];
-	private final int[] fboTexID = new int[1];
+	private final int[] fboID = new int[4];
+	private final int[] rboID = new int[4];
+	private final int[] fboTexIDs = new int[4];
+	private int currentResolution = 0;
+	private final float[] resolutionPercentages = {1f, 0.75f, 0.5f, 0.25f};
 	private final int[] drawBuffers = {GL_COLOR_ATTACHMENT0};
 
 	// Reflection framebuffer
@@ -155,13 +167,13 @@ public class ForwardPlusRenderer implements Renderer
 	private OptionsMenu optionsMenu;
 
 
-	public ForwardPlusRenderer(GameActivity parent, float width, float height, float realWidth, float realHeight, float resolutionPercentage)
+	public ForwardPlusRenderer(GameActivity parent, float width, float height, float resolutionPercentage)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
 
-		this.FRAMEBUFFER_WIDTH = (int)(width * resolutionPercentage);
-		this.FRAMEBUFFER_HEIGHT = (int)(height * resolutionPercentage);
+		this.FRAMEBUFFER_WIDTH = (int)width;//(int)(width * resolutionPercentage);
+		this.FRAMEBUFFER_HEIGHT = (int)height; //(int)(height * resolutionPercentage);
 		framebufferDimensions[0] = FRAMEBUFFER_WIDTH;
 		framebufferDimensions[1] = FRAMEBUFFER_HEIGHT;
 
@@ -169,8 +181,8 @@ public class ForwardPlusRenderer implements Renderer
 		this.renderHeight = (int)height;
 		this.renderAspectRatio = width / height;
 
-		this.screenWidth = realWidth;
-		this.screenHeight = realHeight;
+		this.screenWidth = (int)width;
+		this.screenHeight = (int)height;
 
 		fpsCounter = new FPSCounter();
 	}
@@ -203,12 +215,12 @@ public class ForwardPlusRenderer implements Renderer
 
 		screen = new Screen(context, 1, 1);
 		//hud = new Hud(context, renderWidth, renderHeight);
-		hud = new Hud(context, renderWidth, renderHeight);
+		hud = new Hud(context, screenWidth, screenHeight);
 
 		// UI
 		uiPanelProgram = new UIPanelProgram(context);
-		mainMenu = new MainMenu(parent, uiPanelProgram, renderWidth, renderHeight);
-		optionsMenu = new OptionsMenu(parent, uiPanelProgram, renderWidth, renderHeight);
+		mainMenu = new MainMenu(parent, this, uiPanelProgram,  screenWidth, screenHeight);
+		optionsMenu = new OptionsMenu(parent,this, uiPanelProgram,  screenWidth, screenHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -314,18 +326,20 @@ public class ForwardPlusRenderer implements Renderer
 		multiplyMM(shadowMatrix, 0, shadowBiasProjection, 0, shadowView, 0);
 
 
-		/********************************** MAIN RENDER FRAMEBUFFER *******************************/
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// 100 % resolution framebuffer
+		////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Create the main render Framebuffer & Renderbuffer
-		glGenFramebuffers(1, fboID, 0);
+		glGenFramebuffers(4, fboID, 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[0]);
-		glGenRenderbuffers(1, rboID, 0);
+		glGenRenderbuffers(4, rboID, 0);
 		glBindRenderbuffer(GL_RENDERBUFFER, rboID[0]);
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);
 
 		// Generate the texture on which FBO will render to
-		glGenTextures(1, fboTexID, 0);
-		glBindTexture(GL_TEXTURE_2D, fboTexID[0]);
+		glGenTextures(4, fboTexIDs, 0);
+		glBindTexture(GL_TEXTURE_2D, fboTexIDs[0]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
@@ -333,17 +347,110 @@ public class ForwardPlusRenderer implements Renderer
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		// Attach Renderbuffer to the bound Framebuffer object and check for Framebuffer completeness
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexID[0], 0);
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexIDs[0], 0);
 		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[0]);
 
 		int mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
 		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
 		{
-			Log.d(TAG, "Main Framebuffer: OK");
+			Log.d(TAG, "Main Framebuffer (100): OK");
 		}
 		else
 		{
-			Log.e(TAG, "Main Framebuffer: ERROR");
+			Log.e(TAG, "Main Framebuffer (100): ERROR");
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// 75 % resolution framebuffer
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Create the main render Framebuffer & Renderbuffer
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[1]);
+		glBindRenderbuffer(GL_RENDERBUFFER, rboID[1]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (int)(FRAMEBUFFER_WIDTH * 0.75f), (int)(FRAMEBUFFER_HEIGHT * 0.75f));
+
+		// Generate the texture on which FBO will render to
+		glBindTexture(GL_TEXTURE_2D, fboTexIDs[1]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (int)(FRAMEBUFFER_WIDTH * 0.75f), (int)(FRAMEBUFFER_HEIGHT * 0.75f), 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Attach Renderbuffer to the bound Framebuffer object and check for Framebuffer completeness
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexIDs[1], 0);
+		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[1]);
+
+		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
+		{
+			Log.d(TAG, "Main Framebuffer (75): OK");
+		}
+		else
+		{
+			Log.e(TAG, "Main Framebuffer (75): ERROR");
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// 50 % resolution framebuffer
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Create the main render Framebuffer & Renderbuffer
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[2]);
+		glBindRenderbuffer(GL_RENDERBUFFER, rboID[2]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (int)(FRAMEBUFFER_WIDTH * 0.5f), (int)(FRAMEBUFFER_HEIGHT * 0.5f));
+
+		// Generate the texture on which FBO will render to
+		glBindTexture(GL_TEXTURE_2D, fboTexIDs[2]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (int)(FRAMEBUFFER_WIDTH * 0.5f), (int)(FRAMEBUFFER_HEIGHT * 0.5f), 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Attach Renderbuffer to the bound Framebuffer object and check for Framebuffer completeness
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexIDs[2], 0);
+		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[2]);
+
+		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
+		{
+			Log.d(TAG, "Main Framebuffer (50): OK");
+		}
+		else
+		{
+			Log.e(TAG, "Main Framebuffer (50): ERROR");
+		}
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// 25 % resolution framebuffer
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		// Create the main render Framebuffer & Renderbuffer
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[3]);
+		glBindRenderbuffer(GL_RENDERBUFFER, rboID[3]);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32F, (int)(FRAMEBUFFER_WIDTH * 0.25f), (int)(FRAMEBUFFER_HEIGHT * 0.25f));
+
+		// Generate the texture on which FBO will render to
+		glBindTexture(GL_TEXTURE_2D, fboTexIDs[3]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (int)(FRAMEBUFFER_WIDTH * 0.25f), (int)(FRAMEBUFFER_HEIGHT * 0.25f), 0, GL_RGBA, GL_UNSIGNED_BYTE, null);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Attach Renderbuffer to the bound Framebuffer object and check for Framebuffer completeness
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fboTexIDs[3], 0);
+		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[3]);
+
+		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
+		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
+		{
+			Log.d(TAG, "Main Framebuffer (25): OK");
+		}
+		else
+		{
+			Log.e(TAG, "Main Framebuffer (25): ERROR");
 		}
 
 		startTime = System.nanoTime();
@@ -370,13 +477,8 @@ public class ForwardPlusRenderer implements Renderer
 		// Clear everything
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		/*startTime = SystemClock.elapsedRealtime();
-		update();
-		endTime = SystemClock.elapsedRealtime();
-		updateTime += endTime - startTime;
 
-		startTime = SystemClock.elapsedRealtime();*/
-		if(!isPaused)//deltaTime=0;
+		//if(!isPaused)//deltaTime=0;
 			update(deltaTime);
 		shadowMapPass();
 		reflectionPass();
@@ -385,12 +487,6 @@ public class ForwardPlusRenderer implements Renderer
 		depthPrePass();
 		shadingPass();
 		postProcessPass();
-		//endTime = SystemClock.elapsedRealtime();
-		//drawTime += endTime - startTime;
-
-		/*timeToFrame = framePeriodNS - (endTime - startTime);
-		SystemClock.sleep(timeToFrame/1000000);
-		fpsCounter.logFrame();*/
 
 		currentFPS = fpsCounter.logFrameWithAverage();
 
@@ -414,10 +510,6 @@ public class ForwardPlusRenderer implements Renderer
 		rotateM(view, 0, xRotation, 0f, 1f, 0f);
 
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
-
-		/*rotateM(shadowView, 0, 10f, 0f, 1f, 0f);
-		multiplyMM(shadowViewProjection, 0, shadowProjection, 0, shadowView, 0);
-		multiplyMM(shadowMatrix, 0, shadowBiasProjection, 0, shadowView, 0);*/
 
 		// Update View-Projection matrix on objects
 		playerRock.update(viewProjection, deltaTime);
@@ -480,6 +572,9 @@ public class ForwardPlusRenderer implements Renderer
 			hud.hit(playerRock.lastObjectTypeHit);
 			groundShield.hit();
 		}
+
+		mainMenu.update(deltaTime);
+		optionsMenu.update(deltaTime);
 	}
 
 
@@ -526,10 +621,10 @@ public class ForwardPlusRenderer implements Renderer
 
 	private void depthPrePass()
 	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[0]);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[currentResolution]);
 		glDrawBuffers(GL_DRAW_FRAMEBUFFER, drawBuffers, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, FRAMEBUFFER_WIDTH, FRAMEBUFFER_HEIGHT);
+		glViewport(0, 0, renderWidth, renderHeight);
 
 		// Z pre-pass
 		glEnable(GL_DEPTH_TEST);	// We want depth test
@@ -616,15 +711,15 @@ public class ForwardPlusRenderer implements Renderer
 	private void postProcessPass()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, renderWidth, renderHeight);
+		glViewport(0, 0, (int)screenWidth, (int)screenHeight);
 
-		screen.draw(fboTexID[0], playerRock.currentSpeed * MAX_PLAYER_SPEED_FACTOR);
+		screen.draw(fboTexIDs[currentResolution], playerRock.currentSpeed * MAX_PLAYER_SPEED_FACTOR);
 		//screen.draw(reflectionTexID[0]);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		//hud.draw();
-		//mainMenu.draw();
+		mainMenu.draw();
 		optionsMenu.draw();
 		glDisable(GL_BLEND);
 	}
@@ -661,6 +756,58 @@ public class ForwardPlusRenderer implements Renderer
 		//mainMenu.touch(x,y);
 	}
 
+	public void touch(float x, float y)
+	{
+		float newX = (x * 2.0f) - screenWidth;
+		newX = newX * 0.5f;
+		float newY = (screenHeight - y) * 2.0f - screenHeight;
+		newY = newY * 0.5f;
+
+		if(rendererState == RENDERER_STATE_PLAYING)
+		{
+			if(x < 0)
+			{
+				leftTouchState = TouchState.TOUCHING;
+				rightTouchState = TouchState.NOT_TOUCHING;
+			}
+			else
+			{
+				leftTouchState = TouchState.NOT_TOUCHING;
+				rightTouchState = TouchState.TOUCHING;
+			}
+		}
+		else if(rendererState == RENDERER_STATE_MAIN_MENU)
+		{
+			mainMenu.touch(newX, newY);
+		}
+		else if(rendererState == RENDERER_STATE_OPTIONS_MENU)
+		{
+			optionsMenu.touch(newX, newY);
+		}
+	}
+
+	public void changingToOptionsMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		optionsMenu.setAppearing();
+	}
+
+	public void changedToOptionMenu()
+	{
+		rendererState = RENDERER_STATE_OPTIONS_MENU;
+	}
+
+	public void changingFromOptionsMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		mainMenu.setAppearing();
+	}
+
+	public void changedFromOptionsMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_MAIN_MENU;
+	}
+
 	public void scroll()
 	{
 
@@ -679,6 +826,64 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 
+	public void setResolution25()
+	{
+		currentResolution = 3;
+		renderWidth = (int)(screenWidth * 0.25f);
+		renderHeight = (int)(screenHeight * 0.25f);
+		framebufferDimensions[0] = renderWidth;
+		framebufferDimensions[1] = renderHeight;
+	}
+
+
+	public void setResolution50()
+	{
+		currentResolution = 2;
+		renderWidth = (int)(screenWidth * 0.5f);
+		renderHeight = (int)(screenHeight * 0.5f);
+		framebufferDimensions[0] = renderWidth;
+		framebufferDimensions[1] = renderHeight;
+	}
+
+
+	public void setResolution75()
+	{
+		currentResolution = 1;
+		renderWidth = (int)(screenWidth * 0.75f);
+		renderHeight = (int)(screenHeight * 0.75f);
+		framebufferDimensions[0] = renderWidth;
+		framebufferDimensions[1] = renderHeight;
+	}
+
+
+	public void setResolution100()
+	{
+		currentResolution = 0;
+		renderWidth = (int)screenWidth;
+		renderHeight = (int)screenHeight;
+		framebufferDimensions[0] = renderWidth;
+		framebufferDimensions[1] = renderHeight;
+	}
+
+
+	public void setNoPostProcessDetail()
+	{
+		screen.setNoPostProcess();
+	}
+
+
+	public void setLowPostProcessDetail()
+	{
+		screen.setLowPostProcess();
+	}
+
+
+	public void setHighPostProcessDetail()
+	{
+		screen.setHighPostProcess();
+	}
+
+
 	public void setPause(boolean value)
 	{
 		isPaused = value;
@@ -687,7 +892,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void deleteGL()
 	{
-		skyDome.deleteGL();
+		/*skyDome.deleteGL();
 		ground.deleteGL();
 		playerRock.deleteGL();
 
@@ -704,7 +909,7 @@ public class ForwardPlusRenderer implements Renderer
 		// Textures
 		glDeleteTextures(1, fboTexID, 0);
 		glDeleteTextures(1, reflectionTexID, 0);
-		glDeleteTextures(1, shadowMapTexID, 0);
+		glDeleteTextures(1, shadowMapTexID, 0);*/
 	}
 
 

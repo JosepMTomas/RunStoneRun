@@ -69,7 +69,7 @@ public class GameActivity extends Activity
 		final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
 		final GameRenderer gameRenderer = new GameRenderer(this, width, height);
 		deferredRenderer = new DeferredRenderer(this, width, height);
-		forwardPlusRenderer = new ForwardPlusRenderer(this, width, height, (float)realSizePoint.x, (float)realSizePoint.y, 0.75f);
+		forwardPlusRenderer = new ForwardPlusRenderer(this, width, height, 0.75f);
 
 		Log.v("ACTIVITY", "This device supports OpenGL ES up to " + configurationInfo.getGlEsVersion());
 
@@ -138,7 +138,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 						//Log.d(TAG, "X = " + currentX);
 
-						if (currentX < width / 3.0f)
+						/*if (currentX < width / 3.0f)
 						{
 							//gameRenderer.pressLeft();
 							forwardPlusRenderer.pressLeft();
@@ -153,7 +153,9 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 						{
 							//gameRenderer.pressRight();
 							forwardPlusRenderer.pressRight();
-						}
+						}*/
+
+						forwardPlusRenderer.touch(currentX,currentY);
 
 						//deferredRenderer.handleTouch();
 

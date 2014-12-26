@@ -10,23 +10,19 @@ import static android.opengl.GLES30.*;
 public class ScreenProgram extends ShaderProgram
 {
 	private final int colorSamplerLocation;
-	private final int speedFactorLocation;
 
 	public ScreenProgram(Context context)
 	{
 		super(context, "shaders/screen.vs", "shaders/screen.fs");
 
 		colorSamplerLocation = glGetUniformLocation(program, "colorSampler");
-		speedFactorLocation = glGetUniformLocation(program, "speedFactor");
 	}
 
 
-	public void setUniforms(int colorSampler, float speedFactor)
+	public void setUniforms(int colorSampler)
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, colorSampler);
 		glUniform1i(colorSamplerLocation, 0);
-
-		glUniform1f(speedFactorLocation, speedFactor);
 	}
 }
