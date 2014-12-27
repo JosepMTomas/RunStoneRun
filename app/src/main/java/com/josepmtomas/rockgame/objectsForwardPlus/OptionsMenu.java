@@ -716,7 +716,7 @@ public class OptionsMenu
 	{
 		resetMusicCurrentTextures();
 		musicEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
-		renderer.enableMusic();
+		parent.enableBackgroundMusic(true);
 	}
 
 
@@ -724,7 +724,7 @@ public class OptionsMenu
 	{
 		resetMusicCurrentTextures();
 		musicDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
-		renderer.disableMusic();
+		parent.enableBackgroundMusic(false);
 	}
 
 
@@ -732,7 +732,7 @@ public class OptionsMenu
 	{
 		resetEffectsCurrentTextures();
 		effectsEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
-		renderer.enableSoundEffects();
+		parent.enableSoundEffects(true);
 	}
 
 
@@ -740,7 +740,7 @@ public class OptionsMenu
 	{
 		resetEffectsCurrentTextures();
 		effectsDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
-		renderer.disableSoundEffects();
+		parent.enableSoundEffects(false);
 	}
 
 

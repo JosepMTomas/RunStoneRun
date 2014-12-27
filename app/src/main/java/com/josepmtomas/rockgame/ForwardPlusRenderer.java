@@ -866,30 +866,6 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 
-	public void enableMusic()
-	{
-		parent.enableBackgroundMusic(true);
-	}
-
-
-	public void disableMusic()
-	{
-		parent.enableBackgroundMusic(false);
-	}
-
-
-	public void enableSoundEffects()
-	{
-		parent.enableSoundEffects(true);
-	}
-
-
-	public void disableSoundEffects()
-	{
-		parent.enableSoundEffects(false);
-	}
-
-
 	public void setNoPostProcessDetail()
 	{
 		screen.setNoPostProcess();
