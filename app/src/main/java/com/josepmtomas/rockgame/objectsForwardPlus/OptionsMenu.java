@@ -35,6 +35,7 @@ public class OptionsMenu
 
 	// Geometry
 	private int uiPanelVaoHandle;
+	private int ui9PatchVaoHandle;
 
 	// Menu common parameters
 	private float menuAppearTime = 1f;
@@ -42,11 +43,19 @@ public class OptionsMenu
 	private float menuTimer = 0f;
 	private float menuOpacity = 0f;
 
+	// Background
+	private float[] background9PatchScale = {1f,1f};
+	private float[] background9PatchPosition = {0f,0f};
+
 	// Titles
 	private float[] screenResolutionTitleScale = new float[2];
 	private float[] screenResolutionTitlePosition = new float[2];
 	private float[] postProcessDetailTitleScale = new float[2];
 	private float[] postProcessDetailTitlePosition = new float[2];
+	private float[] musicTitleScale = new float[2];
+	private float[] musicTitlePosition = new float[2];
+	private float[] effectsTitleScale = new float[2];
+	private float[] effectsTitlePosition = new float[2];
 
 	// Resolution percentage buttons
 	private float[] resolutionPercentageButtonScale = new float[2];
@@ -68,14 +77,32 @@ public class OptionsMenu
 	private float[] postProcessLowDetailButtonLimits = new float[4];
 	private float[] postProcessHighDetailButtonLimits = new float[4];
 
+	// Music buttons
+	private float[] musicButtonScale = new float[2];
+	private float[] musicEnableButtonPosition = new float[2];
+	private float[] musicDisableButtonPosition = new float[2];
+	private float[] musicEnableButtonLimits = new float[4];
+	private float[] musicDisableButtonLimits = new float[4];
+
+	// Sound effects buttons
+	private float[] effectsButtonScale = new float[2];
+	private float[] effectsEnableButtonPosition = new float[2];
+	private float[] effectsDisableButtonPosition = new float[2];
+	private float[] effectsEnableButtonLimits = new float[4];
+	private float[] effectsDisableButtonLimits = new float[4];
+
 	// Back button
 	private float[] backButtonScale = new float[2];
 	private float[] backButtonPosition = new float[2];
 	private float[] backButtonLimits = new float[4];
 
 	// Textures
+	private int background9PatchTexture;
+
 	private int screenResolutionTitleTexture;
 	private int postProcessDetailTitleTexture;
+	private int musicTitleTexture;
+	private int effectsTitleTexture;
 
 	private int backButtonCurrentTexture;
 	private int backButtonIdleTexture;
@@ -106,6 +133,15 @@ public class OptionsMenu
 	private int postProcessHighDetailButtonIdleTexture;
 	private int postProcessHighDetailButtonSelectedTexture;
 
+	private int soundEnableButtonIdleTexture;
+	private int soundEnableButtonSelectedTexture;
+	private int soundDisableButtonIdleTexture;
+	private int soundDisableButtonSelectedTexture;
+	private int musicEnableButtonCurrentTexture;
+	private int musicDisableButtonCurrentTexture;
+	private int effectsEnableButtonCurrentTexture;
+	private int effectsDisableButtonCurrentTexture;
+
 
 	public OptionsMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
 	{
@@ -116,6 +152,7 @@ public class OptionsMenu
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenWidth, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
 		loadTextures(context);
@@ -147,8 +184,12 @@ public class OptionsMenu
 
 	private void loadTextures(Context context)
 	{
+		background9PatchTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		screenResolutionTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/screen_resolution_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		postProcessDetailTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/post_process_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		musicTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/music_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		effectsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/effects_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		backButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		backButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
@@ -171,9 +212,17 @@ public class OptionsMenu
 		postProcessLowDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/low_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		postProcessHighDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/high_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
+		soundEnableButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_enabled_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		soundEnableButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_enabled_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		soundDisableButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_disabled_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		soundDisableButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_disabled_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		resetBackButtonCurrentTexture();
 		resetResolutionPercentageCurrentTextures();
 		resetPostProcessCurrentTextures();
+		resetMusicCurrentTextures();
+		resetEffectsCurrentTextures();
 	}
 
 
@@ -200,6 +249,20 @@ public class OptionsMenu
 	}
 
 
+	private void resetMusicCurrentTextures()
+	{
+		musicEnableButtonCurrentTexture = soundEnableButtonIdleTexture;
+		musicDisableButtonCurrentTexture = soundDisableButtonIdleTexture;
+	}
+
+
+	private void resetEffectsCurrentTextures()
+	{
+		effectsEnableButtonCurrentTexture = soundEnableButtonIdleTexture;
+		effectsDisableButtonCurrentTexture = soundDisableButtonIdleTexture;
+	}
+
+
 	private void setPositions(float screenWidth, float screenHeight)
 	{
 		//float optionButtonWidth = screenWidth * 0.175f;
@@ -209,10 +272,10 @@ public class OptionsMenu
 		float optionButtonWidthHalf = optionButtonWidth * 0.5f;
 		float optionButtonHeightHalf = optionButtonHeight * 0.5f;
 
-		// Scales
+		float soundButtonSize = optionButtonHeight * 1.5f;
+		float soundButtonSizeHalf = soundButtonSize * 0.5f;
 
-		backButtonScale[0] = optionButtonWidth;
-		backButtonScale[1] = optionButtonHeight;
+		// Scales
 
 		screenResolutionTitleScale[0] = optionButtonHeight * 7f;
 		screenResolutionTitleScale[1] = optionButtonHeight;
@@ -226,33 +289,69 @@ public class OptionsMenu
 		postProcessDetailButtonScale[0] = optionButtonWidth;
 		postProcessDetailButtonScale[1] = optionButtonHeight;
 
+		musicTitleScale[0] = optionButtonHeight * 2f;
+		musicTitleScale[1] = optionButtonHeight;
+
+		musicButtonScale[0] = optionButtonHeight * 1.5f;
+		musicButtonScale[1] = optionButtonHeight * 1.5f;
+
+		effectsTitleScale[0] = optionButtonHeight * 3f;
+		effectsTitleScale[1] = optionButtonHeight;
+
+		effectsButtonScale[0] = optionButtonHeight * 1.5f;
+		effectsButtonScale[1] = optionButtonHeight * 1.5f;
+
+		backButtonScale[0] = optionButtonWidth;
+		backButtonScale[1] = optionButtonHeight;
+
 		// Positions
 
-		resolutionPercentageButton25Position[0] = optionButtonWidth * -1.5f;
-		resolutionPercentageButton25Position[1] = 0f;
-		resolutionPercentageButton50Position[0] = optionButtonWidth * -0.5f;
-		resolutionPercentageButton50Position[1] = 0f;
-		resolutionPercentageButton75Position[0] = optionButtonWidth * 0.5f;
-		resolutionPercentageButton75Position[1] = 0f;
-		resolutionPercentageButton100Position[0] = optionButtonWidth * 1.5f;
-		resolutionPercentageButton100Position[1] = 0f;
-
-		postProcessNoDetailButtonPosition[0] = -optionButtonWidth;
-		postProcessNoDetailButtonPosition[1] = -optionButtonHeight * 2f;
-		postProcessLowDetailButtonPosition[0] = 0f;
-		postProcessLowDetailButtonPosition[1] = -optionButtonHeight * 2f;
-		postProcessHighDetailButtonPosition[0] = optionButtonWidth;
-		postProcessHighDetailButtonPosition[1] = -optionButtonHeight * 2f;
-
 		screenResolutionTitlePosition[0] = 0f;
-		screenResolutionTitlePosition[1] = optionButtonHeight;
+		screenResolutionTitlePosition[1] = optionButtonHeight * 3;
+
+		resolutionPercentageButton25Position[0] = optionButtonWidth * -1.5f;
+		resolutionPercentageButton25Position[1] = optionButtonHeight * 2.25f;
+		resolutionPercentageButton50Position[0] = optionButtonWidth * -0.5f;
+		resolutionPercentageButton50Position[1] = optionButtonHeight * 2.25f;
+		resolutionPercentageButton75Position[0] = optionButtonWidth * 0.5f;
+		resolutionPercentageButton75Position[1] = optionButtonHeight * 2.25f;
+		resolutionPercentageButton100Position[0] = optionButtonWidth * 1.5f;
+		resolutionPercentageButton100Position[1] = optionButtonHeight * 2.25f;
+
 
 		postProcessDetailTitlePosition[0] = 0f;
-		postProcessDetailTitlePosition[1] = -optionButtonHeight * 1f;
+		postProcessDetailTitlePosition[1] = optionButtonHeight * 1.25f;
+
+		postProcessNoDetailButtonPosition[0] = -optionButtonWidth;
+		postProcessNoDetailButtonPosition[1] = optionButtonHeight * 0.5f;
+		postProcessLowDetailButtonPosition[0] = 0f;
+		postProcessLowDetailButtonPosition[1] = optionButtonHeight * 0.5f;
+		postProcessHighDetailButtonPosition[0] = optionButtonWidth;
+		postProcessHighDetailButtonPosition[1] = optionButtonHeight * 0.5f;
+
+
+		musicTitlePosition[0] = -optionButtonWidth;
+		musicTitlePosition[1] = optionButtonHeight * -1.0f;
+
+		musicEnableButtonPosition[0] = 0f;
+		musicEnableButtonPosition[1] = optionButtonHeight * -1.0f;
+
+		musicDisableButtonPosition[0] = optionButtonHeight * 2.0f;
+		musicDisableButtonPosition[1] = optionButtonHeight * -1.0f;
+
+
+		effectsTitlePosition[0] = -optionButtonWidth;
+		effectsTitlePosition[1] = optionButtonHeight * -2.5f;
+
+		effectsEnableButtonPosition[0] = 0f;
+		effectsEnableButtonPosition[1] = optionButtonHeight * -2.5f;
+
+		effectsDisableButtonPosition[0] = optionButtonHeight * 2.0f;
+		effectsDisableButtonPosition[1] = optionButtonHeight * -2.5f;
+
 
 		backButtonPosition[0] = 0f;
 		backButtonPosition[1] = -optionButtonHeight * 4f;
-
 
 		// Limits (left-right-bottom-top)
 		resolutionPercentageButton25Limits[0] = resolutionPercentageButton25Position[0] - optionButtonWidthHalf;
@@ -289,6 +388,26 @@ public class OptionsMenu
 		postProcessHighDetailButtonLimits[1] = postProcessHighDetailButtonPosition[0] + optionButtonWidthHalf;
 		postProcessHighDetailButtonLimits[2] = postProcessHighDetailButtonPosition[1] - optionButtonHeightHalf;
 		postProcessHighDetailButtonLimits[3] = postProcessHighDetailButtonPosition[1] + optionButtonHeightHalf;
+
+		musicEnableButtonLimits[0] = musicEnableButtonPosition[0] - soundButtonSizeHalf;
+		musicEnableButtonLimits[1] = musicEnableButtonPosition[0] + soundButtonSizeHalf;
+		musicEnableButtonLimits[2] = musicEnableButtonPosition[1] - soundButtonSizeHalf;
+		musicEnableButtonLimits[3] = musicEnableButtonPosition[1] + soundButtonSizeHalf;
+
+		musicDisableButtonLimits[0] = musicDisableButtonPosition[0] - soundButtonSizeHalf;
+		musicDisableButtonLimits[1] = musicDisableButtonPosition[0] + soundButtonSizeHalf;
+		musicDisableButtonLimits[2] = musicDisableButtonPosition[1] - soundButtonSizeHalf;
+		musicDisableButtonLimits[3] = musicDisableButtonPosition[1] + soundButtonSizeHalf;
+
+		effectsEnableButtonLimits[0] = effectsEnableButtonPosition[0] - soundButtonSizeHalf;
+		effectsEnableButtonLimits[1] = effectsEnableButtonPosition[0] + soundButtonSizeHalf;
+		effectsEnableButtonLimits[2] = effectsEnableButtonPosition[1] - soundButtonSizeHalf;
+		effectsEnableButtonLimits[3] = effectsEnableButtonPosition[1] + soundButtonSizeHalf;
+
+		effectsDisableButtonLimits[0] = effectsDisableButtonPosition[0] - soundButtonSizeHalf;
+		effectsDisableButtonLimits[1] = effectsDisableButtonPosition[0] + soundButtonSizeHalf;
+		effectsDisableButtonLimits[2] = effectsDisableButtonPosition[1] - soundButtonSizeHalf;
+		effectsDisableButtonLimits[3] = effectsDisableButtonPosition[1] + soundButtonSizeHalf;
 
 		backButtonLimits[0] = backButtonPosition[0] - optionButtonWidthHalf;
 		backButtonLimits[1] = backButtonPosition[0] + optionButtonWidthHalf;
@@ -335,6 +454,11 @@ public class OptionsMenu
 		{
 			uiPanelProgram.useProgram();
 
+			// Background
+			glBindVertexArray(ui9PatchVaoHandle);
+			uiPanelProgram.setUniforms(viewProjection, background9PatchScale, background9PatchPosition, background9PatchTexture, menuOpacity * 0.75f);
+			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
+
 			glBindVertexArray(uiPanelVaoHandle);
 
 			// Screen Resolution title
@@ -372,6 +496,32 @@ public class OptionsMenu
 
 			// High post-process button
 			uiPanelProgram.setUniforms(viewProjection, postProcessDetailButtonScale, postProcessHighDetailButtonPosition, postProcessHighDetailButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+
+			// Music title
+			uiPanelProgram.setUniforms(viewProjection, musicTitleScale, musicTitlePosition, musicTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Music enable button
+			uiPanelProgram.setUniforms(viewProjection, musicButtonScale, musicEnableButtonPosition, musicEnableButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Music enable button
+			uiPanelProgram.setUniforms(viewProjection, musicButtonScale, musicDisableButtonPosition, musicDisableButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+
+			// Effects title
+			uiPanelProgram.setUniforms(viewProjection, effectsTitleScale, effectsTitlePosition, effectsTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Effects enable button
+			uiPanelProgram.setUniforms(viewProjection, effectsButtonScale, effectsEnableButtonPosition, effectsEnableButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Effects enable button
+			uiPanelProgram.setUniforms(viewProjection, effectsButtonScale, effectsDisableButtonPosition, effectsDisableButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 
@@ -445,6 +595,42 @@ public class OptionsMenu
 				y <= postProcessHighDetailButtonLimits[3])
 		{
 			touchedHighPostProcessDetailButton();
+		}
+
+		// Enable music button
+		else if(x >= musicEnableButtonLimits[0] &&
+				x <= musicEnableButtonLimits[1] &&
+				y >= musicEnableButtonLimits[2] &&
+				y <= musicEnableButtonLimits[3])
+		{
+			touchedMusicEnableButton();
+		}
+
+		// Disable music button
+		else if(x >= musicDisableButtonLimits[0] &&
+				x <= musicDisableButtonLimits[1] &&
+				y >= musicDisableButtonLimits[2] &&
+				y <= musicDisableButtonLimits[3])
+		{
+			touchedMusicDisableButton();
+		}
+
+		// Enable effects button
+		else if(x >= effectsEnableButtonLimits[0] &&
+				x <= effectsEnableButtonLimits[1] &&
+				y >= effectsEnableButtonLimits[2] &&
+				y <= effectsEnableButtonLimits[3])
+		{
+			touchedEffectsEnableButton();
+		}
+
+		// Disable effects button
+		else if(x >= effectsDisableButtonLimits[0] &&
+				x <= effectsDisableButtonLimits[1] &&
+				y >= effectsDisableButtonLimits[2] &&
+				y <= effectsDisableButtonLimits[3])
+		{
+			touchedEffectsDisableButton();
 		}
 
 		// Back button
@@ -523,6 +709,38 @@ public class OptionsMenu
 		resetPostProcessCurrentTextures();
 		postProcessHighDetailButtonCurrentTexture = postProcessHighDetailButtonSelectedTexture;
 		renderer.setHighPostProcessDetail();
+	}
+
+
+	private void touchedMusicEnableButton()
+	{
+		resetMusicCurrentTextures();
+		musicEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
+		renderer.enableMusic();
+	}
+
+
+	private void touchedMusicDisableButton()
+	{
+		resetMusicCurrentTextures();
+		musicDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
+		renderer.disableMusic();
+	}
+
+
+	private void touchedEffectsEnableButton()
+	{
+		resetEffectsCurrentTextures();
+		effectsEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
+		renderer.enableSoundEffects();
+	}
+
+
+	private void touchedEffectsDisableButton()
+	{
+		resetEffectsCurrentTextures();
+		effectsDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
+		renderer.disableSoundEffects();
 	}
 
 

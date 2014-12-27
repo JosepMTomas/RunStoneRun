@@ -23,6 +23,8 @@ public class GameActivity extends Activity
 
 	private GLSurfaceView glSurfaceView;
 
+	private boolean soundEffectsEnabled = true;
+
 	private float height;
 	private float width;
 
@@ -252,40 +254,69 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 	public void playImpactRockOnRockSound()
 	{
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-				Log.d("SoundFX thread", "Ready to start: impact rock on rock sound effect");
-				impactRockOnRockSoundEffect.start();
-			}
-		}).start();
+		if(soundEffectsEnabled)
+		{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+					//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+					Log.d("SoundFX thread", "Ready to start: impact rock on rock sound effect");
+					impactRockOnRockSoundEffect.start();
+				}
+			}).start();
+		}
 	}
 
 	public void playImpactRockOnTreeSound()
 	{
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-				//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
-				Log.d("SoundFX thread", "Ready to start: impact rock on tree sound effect");
-				impactRockOnTreeSoundEffect.start();
-			}
-		}).start();
+		if(soundEffectsEnabled)
+		{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+					//am.setStreamVolume(AudioManager.STREAM_MUSIC, am.getStreamMaxVolume(AudioManager.STREAM_MUSIC), 0);
+					Log.d("SoundFX thread", "Ready to start: impact rock on tree sound effect");
+					impactRockOnTreeSoundEffect.start();
+				}
+			}).start();
+		}
 	}
 
 	public void playTreeFallingSound()
 	{
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				Log.d("SoundFX thread", "Ready to start: tree falling sound effect");
-				treeFallingSoundEffect.start();
-			}
-		}).start();
+		if(soundEffectsEnabled)
+		{
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					Log.d("SoundFX thread", "Ready to start: tree falling sound effect");
+					treeFallingSoundEffect.start();
+				}
+			}).start();
+		}
 	}
+
+
+	public void enableBackgroundMusic(boolean value)
+	{
+		if(value)
+		{
+			backgroundMusicPlayer.setVolume(1f,1f);
+		}
+		else
+		{
+			backgroundMusicPlayer.setVolume(0f,0f);
+		}
+	}
+
+
+	public void enableSoundEffects(boolean value)
+	{
+		soundEffectsEnabled = value;
+	}
+
 
 	@Override
 	protected void onResume() {
