@@ -10,6 +10,7 @@ import com.josepmtomas.rockgame.util.TextureHelper;
 import com.josepmtomas.rockgame.util.UIHelper;
 
 import static com.josepmtomas.rockgame.Constants.*;
+import static com.josepmtomas.rockgame.algebra.operations.*;
 
 import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
@@ -27,8 +28,8 @@ public class MainMenu
 	private int currentState;
 
 	// Menu common attributes
-	private float menuAppearTime = 1f;
-	private float menuDisappearTime = 1f;
+	private static final float menuAppearTime = 0.5f;
+	private static final float menuDisappearTime = 0.5f;
 	private float menuTimer = 0f;
 	private float menuOpacity = 1f;
 
@@ -53,6 +54,8 @@ public class MainMenu
 	private float[] newGameButtonPosition = new float[2];
 	private float[] newGameButtonScale = new float[2];
 	private float[] newGameButtonLimits = new float[4];
+	private float[] newGameButtonCurrentPosition = new float[2];
+	private float[] newGameButtonCurrentScale = new float[2];
 
 	// Options button
 	private int optionsButtonIdleTexture;
@@ -61,6 +64,8 @@ public class MainMenu
 	private float[] optionsButtonPosition = new float[2];
 	private float[] optionsButtonScale = new float[2];
 	private float[] optionsButtonLimits = new float[4];
+	private float[] optionsButtonCurrentPosition = new float[2];
+	private float[] optionsButtonCurrentScale = new float[2];
 
 	// Credits button
 	private int creditsButtonIdleTexture;
@@ -69,6 +74,8 @@ public class MainMenu
 	private float[] creditsButtonPosition = new float[2];
 	private float[] creditsButtonScale = new float[2];
 	private float[] creditsButtonLimits = new float[4];
+	private float[] creditsButtonCurrentPosition = new float[2];
+	private float[] creditsButtonCurrentScale = new float[2];
 
 	// renderer ui programs
 	UIPanelProgram uiPanelProgram;
@@ -140,6 +147,7 @@ public class MainMenu
 		createNewGameButton(width, height);
 		createOptionsButton(width, height);
 		createCreditsButton(width, height);
+		setCurrentPositions();
 	}
 
 
@@ -203,6 +211,25 @@ public class MainMenu
 	}
 
 
+	private void setCurrentPositions()
+	{
+		newGameButtonCurrentPosition[0] = newGameButtonPosition[0];
+		newGameButtonCurrentPosition[1] = newGameButtonPosition[1];
+		newGameButtonCurrentScale[0] = newGameButtonScale[0];
+		newGameButtonCurrentScale[1] = newGameButtonScale[1];
+
+		optionsButtonCurrentPosition[0] = optionsButtonPosition[0];
+		optionsButtonCurrentPosition[1] = optionsButtonPosition[1];
+		optionsButtonCurrentScale[0] = optionsButtonScale[0];
+		optionsButtonCurrentScale[1] = optionsButtonScale[1];
+
+		creditsButtonCurrentPosition[0] = creditsButtonPosition[0];
+		creditsButtonCurrentPosition[1] = creditsButtonPosition[1];
+		creditsButtonCurrentScale[0] = creditsButtonScale[0];
+		creditsButtonCurrentScale[1] = creditsButtonScale[1];
+	}
+
+
 	public void touch(float x, float y)
 	{
 		//Log.w("MainMenu", "Touch : x = " + x + " : y = " + y);
@@ -257,18 +284,14 @@ public class MainMenu
 	private void touchCreditsButton()
 	{
 		creditsButtonCurrentTexture = creditsButtonSelectedTexture;
+		renderer.changingToCreditsMenu();
+		currentState = UI_STATE_DISAPPEARING;
 	}
 
 
 	public void setAppearing()
 	{
 		currentState = UI_STATE_APPEARING;
-	}
-
-
-	public void setDisappearing()
-	{
-		currentState = UI_STATE_DISAPPEARING;
 	}
 
 
@@ -279,17 +302,46 @@ public class MainMenu
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
 
+			newGameButtonCurrentScale[0] = lerp(newGameButtonScale[0] * 2f, newGameButtonScale[0], menuOpacity);
+			newGameButtonCurrentScale[1] = lerp(newGameButtonScale[1] * 2f, newGameButtonScale[1], menuOpacity);
+			optionsButtonCurrentScale[0] = lerp(optionsButtonScale[0] * 2f, optionsButtonScale[0], menuOpacity);
+			optionsButtonCurrentScale[1] = lerp(optionsButtonScale[1] * 2f, optionsButtonScale[1], menuOpacity);
+			creditsButtonCurrentScale[0] = lerp(creditsButtonScale[0] * 2f, creditsButtonScale[0], menuOpacity);
+			creditsButtonCurrentScale[1] = lerp(creditsButtonScale[1] * 2f, creditsButtonScale[1], menuOpacity);
+
+			newGameButtonCurrentPosition[0] = lerp(newGameButtonPosition[0] * 2f, newGameButtonPosition[0], menuOpacity);
+			newGameButtonCurrentPosition[1] = lerp(newGameButtonPosition[1] * 2f, newGameButtonPosition[1], menuOpacity);
+			optionsButtonCurrentPosition[0] = lerp(optionsButtonPosition[0] * 2f, optionsButtonPosition[0], menuOpacity);
+			optionsButtonCurrentPosition[1] = lerp(optionsButtonPosition[1] * 2f, optionsButtonPosition[1], menuOpacity);
+			creditsButtonCurrentPosition[0] = lerp(creditsButtonPosition[0] * 2f, creditsButtonPosition[0], menuOpacity);
+			creditsButtonCurrentPosition[1] = lerp(creditsButtonPosition[1] * 2f, creditsButtonPosition[1], menuOpacity);
+
 			if(menuTimer >= menuAppearTime)
 			{
 				currentState = UI_STATE_VISIBLE;
 				menuOpacity = 1f;
 				menuTimer = 0f;
+				setCurrentPositions();
 			}
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
+
+			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
+			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
+			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
+			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
+			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
+			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
+
+			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
+			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
+			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
+			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
+			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
+			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
 
 			if(menuTimer >= menuAppearTime)
 			{
@@ -314,13 +366,13 @@ public class MainMenu
 
 			glBindVertexArray(uiPanelVaoHandle);
 
-			uiPanelProgram.setUniforms(viewProjection, newGameButtonScale, newGameButtonPosition, newGameButtonCurrentTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, newGameButtonCurrentScale, newGameButtonCurrentPosition, newGameButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, optionsButtonScale, optionsButtonPosition, optionsButtonCurrentTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, optionsButtonCurrentScale, optionsButtonCurrentPosition, optionsButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, creditsButtonScale, creditsButtonPosition, creditsButtonCurrentTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, creditsButtonCurrentScale, creditsButtonCurrentPosition, creditsButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}

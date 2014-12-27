@@ -3,6 +3,7 @@ package com.josepmtomas.rockgame;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Point;
 import android.media.AudioManager;
@@ -44,6 +45,8 @@ public class GameActivity extends Activity
 	private MediaPlayer impactRockOnRockSoundEffect;
 	private MediaPlayer treeFallingSoundEffect;
 
+	private SharedPreferences sharedPreferences;
+
 	private Context context;
 
     @Override
@@ -52,6 +55,8 @@ public class GameActivity extends Activity
         super.onCreate(savedInstanceState);
 
 		context = this;
+
+		loadShadedPreferences();
 
 		glSurfaceView = new GLSurfaceView(this);
 		//glSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
@@ -68,10 +73,10 @@ public class GameActivity extends Activity
 		// Check if the system supports OpenGL ES 3.0
 		final ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
-		final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
-		final GameRenderer gameRenderer = new GameRenderer(this, width, height);
-		deferredRenderer = new DeferredRenderer(this, width, height);
-		forwardPlusRenderer = new ForwardPlusRenderer(this, width, height, 0.75f);
+		//final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
+		//final GameRenderer gameRenderer = new GameRenderer(this, width, height);
+		//deferredRenderer = new DeferredRenderer(this, width, height);
+		forwardPlusRenderer = new ForwardPlusRenderer(this, sharedPreferences, width, height, 0.75f);
 
 		Log.v("ACTIVITY", "This device supports OpenGL ES up to " + configurationInfo.getGlEsVersion());
 
@@ -120,6 +125,9 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 		backgroundMusicThread.start();
 
+		// Shared preferences music settings
+		enableBackgroundMusic(sharedPreferences.getBoolean("Music", true));
+		enableSoundEffects(sharedPreferences.getBoolean("Effects", true));
 
 		/*****************/
 
@@ -356,5 +364,11 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		treeFallingSoundEffect.release();
 
 		Log.d(TAG, "<<<<< ON DESTROY >>>>>");
+	}
+
+
+	private void loadShadedPreferences()
+	{
+		sharedPreferences = getSharedPreferences("RockGamePreferences", Context.MODE_PRIVATE);
 	}
 }

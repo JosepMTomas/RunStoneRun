@@ -1,11 +1,12 @@
 package com.josepmtomas.rockgame;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView.Renderer;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.josepmtomas.rockgame.algebra.vec3;
+import com.josepmtomas.rockgame.objectsForwardPlus.CreditsMenu;
 import com.josepmtomas.rockgame.objectsForwardPlus.Ground;
 import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
 import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
@@ -16,7 +17,6 @@ import com.josepmtomas.rockgame.objectsForwardPlus.PlayerRock;
 import com.josepmtomas.rockgame.objectsForwardPlus.Screen;
 import com.josepmtomas.rockgame.objectsForwardPlus.SkyDome;
 import com.josepmtomas.rockgame.objectsForwardPlus.TestTree;
-import com.josepmtomas.rockgame.objectsForwardPlus.TestUI;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.FPSCounter;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
@@ -165,12 +165,17 @@ public class ForwardPlusRenderer implements Renderer
 	private UIPanelProgram uiPanelProgram;
 	private MainMenu mainMenu;
 	private OptionsMenu optionsMenu;
+	private CreditsMenu creditsMenu;
+
+	// Shared preferences
+	private SharedPreferences sharedPreferences;
 
 
-	public ForwardPlusRenderer(GameActivity parent, float width, float height, float resolutionPercentage)
+	public ForwardPlusRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height, float resolutionPercentage)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
+		this.sharedPreferences = sharedPreferences;
 
 		this.FRAMEBUFFER_WIDTH = (int)width;//(int)(width * resolutionPercentage);
 		this.FRAMEBUFFER_HEIGHT = (int)height; //(int)(height * resolutionPercentage);
@@ -220,7 +225,8 @@ public class ForwardPlusRenderer implements Renderer
 		// UI
 		uiPanelProgram = new UIPanelProgram(context);
 		mainMenu = new MainMenu(parent, this, uiPanelProgram,  screenWidth, screenHeight);
-		optionsMenu = new OptionsMenu(parent,this, uiPanelProgram,  screenWidth, screenHeight);
+		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram,  screenWidth, screenHeight);
+		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, screenWidth, screenHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -575,6 +581,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		mainMenu.update(deltaTime);
 		optionsMenu.update(deltaTime);
+		creditsMenu.update(deltaTime);
 	}
 
 
@@ -721,6 +728,7 @@ public class ForwardPlusRenderer implements Renderer
 		//hud.draw();
 		mainMenu.draw();
 		optionsMenu.draw();
+		creditsMenu.draw();
 		glDisable(GL_BLEND);
 	}
 
@@ -784,6 +792,21 @@ public class ForwardPlusRenderer implements Renderer
 		{
 			optionsMenu.touch(newX, newY);
 		}
+		else if(rendererState == RENDERER_STATE_CREDITS_MENU)
+		{
+			creditsMenu.touch(newX, newY);
+		}
+	}
+
+	public void changingToCreditsMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		creditsMenu.setAppearing();
+	}
+
+	public void changedToCreditsMenu()
+	{
+		rendererState = RENDERER_STATE_CREDITS_MENU;
 	}
 
 	public void changingToOptionsMenu()
@@ -797,10 +820,21 @@ public class ForwardPlusRenderer implements Renderer
 		rendererState = RENDERER_STATE_OPTIONS_MENU;
 	}
 
+	public void changingFromCreditsMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		mainMenu.setAppearing();
+	}
+
 	public void changingFromOptionsMenuToMainMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
 		mainMenu.setAppearing();
+	}
+
+	public void changedFromCreditsMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_MAIN_MENU;
 	}
 
 	public void changedFromOptionsMenuToMainMenu()
