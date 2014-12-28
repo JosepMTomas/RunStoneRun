@@ -302,7 +302,7 @@ public class MainMenu
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
 
-			newGameButtonCurrentScale[0] = lerp(newGameButtonScale[0] * 2f, newGameButtonScale[0], menuOpacity);
+			/*newGameButtonCurrentScale[0] = lerp(newGameButtonScale[0] * 2f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(newGameButtonScale[1] * 2f, newGameButtonScale[1], menuOpacity);
 			optionsButtonCurrentScale[0] = lerp(optionsButtonScale[0] * 2f, optionsButtonScale[0], menuOpacity);
 			optionsButtonCurrentScale[1] = lerp(optionsButtonScale[1] * 2f, optionsButtonScale[1], menuOpacity);
@@ -314,7 +314,21 @@ public class MainMenu
 			optionsButtonCurrentPosition[0] = lerp(optionsButtonPosition[0] * 2f, optionsButtonPosition[0], menuOpacity);
 			optionsButtonCurrentPosition[1] = lerp(optionsButtonPosition[1] * 2f, optionsButtonPosition[1], menuOpacity);
 			creditsButtonCurrentPosition[0] = lerp(creditsButtonPosition[0] * 2f, creditsButtonPosition[0], menuOpacity);
-			creditsButtonCurrentPosition[1] = lerp(creditsButtonPosition[1] * 2f, creditsButtonPosition[1], menuOpacity);
+			creditsButtonCurrentPosition[1] = lerp(creditsButtonPosition[1] * 2f, creditsButtonPosition[1], menuOpacity);*/
+
+			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
+			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
+			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
+			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
+			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
+			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
+
+			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
+			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
+			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
+			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
+			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
+			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
 
 			if(menuTimer >= menuAppearTime)
 			{
