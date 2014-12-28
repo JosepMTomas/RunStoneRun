@@ -752,18 +752,6 @@ public class ForwardPlusRenderer implements Renderer
 		mainMenu.release();
 	}
 
-	public void pressCenter(float x, float y)
-	{
-		float newX = x * 2.0f - renderWidth;
-		newX *= 0.5f;
-		float newY = (renderHeight - y) * 2.0f - renderHeight;
-		newY *= 0.5f;
-		//mainMenu.touch(x * 2.0f - screenWidth, (screenHeight - y) * 2.0f - screenHeight);
-		mainMenu.touch(newX, newY);
-		optionsMenu.touch(newX, newY);
-		//mainMenu.touch(x,y);
-	}
-
 	public void touch(float x, float y)
 	{
 		float newX = (x * 2.0f) - screenWidth;

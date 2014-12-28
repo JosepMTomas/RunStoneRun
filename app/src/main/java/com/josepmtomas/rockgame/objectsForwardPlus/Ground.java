@@ -5,7 +5,6 @@ import android.util.FloatMath;
 import android.util.Log;
 
 import static com.josepmtomas.rockgame.Constants.*;
-import static com.josepmtomas.rockgame.algebra.operations.*;
 
 import com.josepmtomas.rockgame.R;
 import com.josepmtomas.rockgame.algebra.operations;
@@ -34,7 +33,6 @@ import com.josepmtomas.rockgame.util.TextureHelper;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.Random;
 
@@ -236,9 +234,13 @@ public class Ground
 	private int birchTreeTexture;
 	private int birchTreeReflectionProxyTexture;
 	private int fernPlantTexture;
+	private int fernPlantReflectionProxyTexture;
 	private int weedPlantTexture;
+	private int weedPlantReflectionProxyTexture;
 	private int bushPlantTexture;
+	private int bushPlantReflectionProxyTexture;
 	private int palmPlantTexture;
+	private int palmPlantReflectionProxyTexture;
 	private int rockADiffuseTexture;
 	private int rockANormalTexture;
 	private int rockBDiffuseTexture;
@@ -496,11 +498,12 @@ public class Ground
 		birchTree.addReflectionGeometry("models/birch_tree_reflection_proxy.vbm");
 
 		String[] fernPlantLODs = {
-				"models/fern_plant_low.vbm",
+				"models/fern_plant_lod_a.vbm",
 				"models/fern_plant_lod_b.vbm"
 		};
 		fernPlant = new Plant(context, fernPlantLODs);
-		fernPlant.addShadowGeometry("models/fern_plant_shadow_low.vbm");
+		fernPlant.addShadowGeometry("models/fern_plant_shadow.vbm");
+		fernPlant.addReflectionGeometry("models/fern_plant_reflection_proxy.vbm");
 
 		String[] weedPlantLODs = {
 				"models/weed_plant_lod_a.vbm",
@@ -508,6 +511,7 @@ public class Ground
 		};
 		weedPlant = new Plant(context, weedPlantLODs);
 		weedPlant.addShadowGeometry("models/weed_plant_shadow.vbm");
+		weedPlant.addReflectionGeometry("models/weed_plant_reflection.vbm");
 
 		String[] bushPlantLODs = {
 				"models/bush_plant_lod_a.vbm",
@@ -515,13 +519,15 @@ public class Ground
 		};
 		bushPlant = new Plant(context, bushPlantLODs);
 		bushPlant.addShadowGeometry("models/bush_plant_shadow.vbm");
+		bushPlant.addReflectionGeometry("models/bush_plant_reflection.vbm");
 
 		String[] palmPlantLODs = {
 				"models/palm_plant_lod_a.vbm",
 				"models/palm_plant_lod_b.vbm"
 		};
 		palmPlant = new Plant(context, palmPlantLODs);
-		palmPlant.addShadowGeometry("models/bush_plant_shadow.vbm");
+		palmPlant.addShadowGeometry("models/palm_plant_lod_a.vbm");
+		palmPlant.addReflectionGeometry("models/palm_plant_reflection.vbm");
 
 		rockA = new Rock(context, "models/rock_a_lod_a.vbm", "models/rock_a_lod_b.vbm");
 		rockA.addShadowGeometry("models/rock_a_lod_b.vbm");
@@ -795,7 +801,19 @@ public class Ground
 		Log.d(TAG, "Loading fern plant texture");
 		fernPlantTexture = TextureHelper.loadETC2Texture(context, fernPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
-		String[] weedsPlantTextureMips = {
+		String[] fernPlantReflectionProxyTextureMips = {
+				"textures/fern_plant/reflection_proxy_mip_0.mp3",
+				"textures/fern_plant/reflection_proxy_mip_1.mp3",
+				"textures/fern_plant/reflection_proxy_mip_2.mp3",
+				"textures/fern_plant/reflection_proxy_mip_3.mp3",
+				"textures/fern_plant/reflection_proxy_mip_4.mp3",
+				"textures/fern_plant/reflection_proxy_mip_5.mp3",
+				"textures/fern_plant/reflection_proxy_mip_6.mp3",
+				"textures/fern_plant/reflection_proxy_mip_7.mp3"
+		};
+		fernPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, fernPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		String[] weedPlantTextureMips = {
 				"textures/weed_plant/diffuse_mip_0.mp3",
 				"textures/weed_plant/diffuse_mip_1.mp3",
 				"textures/weed_plant/diffuse_mip_2.mp3",
@@ -806,7 +824,19 @@ public class Ground
 				"textures/weed_plant/diffuse_mip_7.mp3"
 		};
 		Log.d(TAG, "Loading weeds plant texture");
-		weedPlantTexture = TextureHelper.loadETC2Texture(context, weedsPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		weedPlantTexture = TextureHelper.loadETC2Texture(context, weedPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		String[] weedPlantReflectionProxyTextureMips = {
+				"textures/weed_plant/reflection_proxy_mip_0.mp3",
+				"textures/weed_plant/reflection_proxy_mip_1.mp3",
+				"textures/weed_plant/reflection_proxy_mip_2.mp3",
+				"textures/weed_plant/reflection_proxy_mip_3.mp3",
+				"textures/weed_plant/reflection_proxy_mip_4.mp3",
+				"textures/weed_plant/reflection_proxy_mip_5.mp3",
+				"textures/weed_plant/reflection_proxy_mip_6.mp3",
+				"textures/weed_plant/reflection_proxy_mip_7.mp3"
+		};
+		weedPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, weedPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] bushPlantTextureMips = {
 				"textures/bush_plant/diffuse_mip_0.mp3",
@@ -820,6 +850,18 @@ public class Ground
 		};
 		bushPlantTexture = TextureHelper.loadETC2Texture(context, bushPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
+		String[] bushPlantReflectionProxyTextureMips = {
+				"textures/bush_plant/reflection_proxy_mip_0.mp3",
+				"textures/bush_plant/reflection_proxy_mip_1.mp3",
+				"textures/bush_plant/reflection_proxy_mip_2.mp3",
+				"textures/bush_plant/reflection_proxy_mip_3.mp3",
+				"textures/bush_plant/reflection_proxy_mip_4.mp3",
+				"textures/bush_plant/reflection_proxy_mip_5.mp3",
+				"textures/bush_plant/reflection_proxy_mip_6.mp3",
+				"textures/bush_plant/reflection_proxy_mip_7.mp3"
+		};
+		bushPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, bushPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		String[] palmPlantTextureMips = {
 				"textures/palm_plant/diffuse_mip_0.mp3",
 				"textures/palm_plant/diffuse_mip_1.mp3",
@@ -831,6 +873,18 @@ public class Ground
 				"textures/palm_plant/diffuse_mip_7.mp3"
 		};
 		palmPlantTexture = TextureHelper.loadETC2Texture(context, palmPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		String[] palmPlantReflectionProxyTextureMips = {
+				"textures/palm_plant/reflection_proxy_mip_0.mp3",
+				"textures/palm_plant/reflection_proxy_mip_1.mp3",
+				"textures/palm_plant/reflection_proxy_mip_2.mp3",
+				"textures/palm_plant/reflection_proxy_mip_3.mp3",
+				"textures/palm_plant/reflection_proxy_mip_4.mp3",
+				"textures/palm_plant/reflection_proxy_mip_5.mp3",
+				"textures/palm_plant/reflection_proxy_mip_6.mp3",
+				"textures/palm_plant/reflection_proxy_mip_7.mp3"
+		};
+		palmPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] rockADiffuseTextureMips = {
 				"textures/rocks/rock_a_diffuse_mip_0.mp3",
@@ -2200,23 +2254,6 @@ public class Ground
 
 	public void drawReflections()
 	{
-		/**grassProgram.useProgram();
-
-		for(int i=0; i < numGroundPatchesX; i++)
-		{
-			for(int j=0; j < numGroundPatchesZ; j++)
-			{
-				if(groundPatches[i][j].visible && (groundPatches[i][j].type == GROUND_PATCH_RIVER_ENTRY || groundPatches[i][j].type == GROUND_PATCH_RIVER_EXIT))
-				{
-					grassProgram.setUniforms(viewProjection, groundPatches[i][j].getModelMatrix(), shadowMatrix, groundPatches[i][j].riverWeedMatricesUbo[0], shadowMapSampler, weedPlantTexture);
-
-					glBindVertexArray(riverWeedPlant.reflectionVaoHandle[0]);
-					glDrawElementsInstanced(GL_TRIANGLES, riverWeedPlant.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, groundPatches[i][j].numRiverWeedInstances);
-				}
-			}
-		}**/
-
-		//treeProgram.useProgram();
 		treeReflectionProgram.useProgram();
 
 		treeReflectionProgram.setCommonUniforms(viewProjection, pineTreeReflectionProxyTexture);
@@ -2242,6 +2279,25 @@ public class Ground
 		glBindVertexArray(birchTree.reflectionVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, birchTree.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, birchTreeNumInstances[LOD_A]);
 
+		treeReflectionProgram.setCommonUniforms(viewProjection, fernPlantReflectionProxyTexture);
+		treeReflectionProgram.setSpecificUniforms(fernPlantArrayUbo[LOD_A]);
+		glBindVertexArray(fernPlant.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, fernPlant.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, fernPlantNumInstances[LOD_A]);
+
+		treeReflectionProgram.setCommonUniforms(viewProjection, weedPlantReflectionProxyTexture);
+		treeReflectionProgram.setSpecificUniforms(weedPlantArrayUbo[LOD_A]);
+		glBindVertexArray(weedPlant.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, weedPlant.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, weedPlantNumInstances[LOD_A]);
+
+		treeReflectionProgram.setCommonUniforms(viewProjection, bushPlantReflectionProxyTexture);
+		treeReflectionProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_A]);
+		glBindVertexArray(bushPlant.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_A]);
+
+		treeReflectionProgram.setCommonUniforms(viewProjection, palmPlantReflectionProxyTexture);
+		treeReflectionProgram.setSpecificUniforms(palmPlantArrayUbo[LOD_A]);
+		glBindVertexArray(palmPlant.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, palmPlant.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, palmPlantNumInstances[LOD_A]);
 
 		glEnable(GL_CULL_FACE);
 

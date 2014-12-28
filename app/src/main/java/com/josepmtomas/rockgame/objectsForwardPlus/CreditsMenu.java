@@ -48,6 +48,12 @@ public class CreditsMenu
 	private float[] backgroundPanelPosition = new float[2];
 	private float[] backgroundPanelCurrentScale = new float[2];
 
+	// Credits title
+	private float[] creditsTitleScale = new float[2];
+	private float[] creditsTitlePosition  = new float[2];
+	private float[] creditsTitleCurrentScale = new float[2];
+	private float[] creditsTitleCurrentPosition = new float[2];
+
 	// Developer title
 	private float[] developerTitleScale = new float[2];
 	private float[] developerTitlePosition = new float[2];
@@ -66,6 +72,12 @@ public class CreditsMenu
 	private float[] effectsTitleCurrentScale = new float[2];
 	private float[] effectsTitleCurrentPosition = new float[2];
 
+	// Font type title
+	private float[] fontTitleScale = new float[2];
+	private float[] fontTitlePosition = new float[2];
+	private float[] fontTitleCurrentScale = new float[2];
+	private float[] fontTitleCurrentPosition = new float[2];
+
 	// Back button
 	private float[] backButtonScale = new float[2];
 	private float[] backButtonPosition = new float[2];
@@ -76,9 +88,12 @@ public class CreditsMenu
 	// Textures
 	private int background9PatchTexture;
 
+	private int creditsTitleTexture;
+
 	private int developerTitleTexture;
 	private int composerTitleTexture;
 	private int effectsTitleTexture;
+	private int fontTitleTexture;
 
 	private int backButtonIdleTexture;
 	private int backButtonSelectedTexture;
@@ -93,7 +108,7 @@ public class CreditsMenu
 		this.uiPanelProgram = panelProgram;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f,1f,UI_BASE_CENTER_CENTER);
-		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenWidth * 0.5f, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.1f, screenHeight * 1.0f, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
 
@@ -131,9 +146,12 @@ public class CreditsMenu
 	{
 		background9PatchTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
+		creditsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/credits_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		developerTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/developer_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		composerTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/composer_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		effectsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/sound_effects_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		fontTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/font_type_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		backButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		backButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
@@ -160,23 +178,35 @@ public class CreditsMenu
 		backgroundPanelPosition[0] = 0f;
 		backgroundPanelPosition[1] = 0f;
 
+		// Credits title
+		creditsTitleScale[0] = buttonHeight * 10f;
+		creditsTitleScale[1] = buttonHeight;
+		creditsTitlePosition[0] = 0f;
+		creditsTitlePosition[1] = buttonHeight * 4.0f;
+
 		// Developer title
 		developerTitleScale[0] = buttonHeight * 4f; //6
 		developerTitleScale[1] = buttonHeight * 1.0f;
 		developerTitlePosition[0] = 0f;
-		developerTitlePosition[1] = buttonHeight * 3.5f;
+		developerTitlePosition[1] = buttonHeight * 2.75f;
 
 		// Composer title
 		composerTitleScale[0] = buttonHeight * 3.3333f; //5
 		composerTitleScale[1] = buttonHeight * 1.0f;
 		composerTitlePosition[0] = 0f;
-		composerTitlePosition[1] = buttonHeight * 2f;
+		composerTitlePosition[1] = buttonHeight * 1.5f;
 
 		// Sound effects title
 		effectsTitleScale[0] = buttonHeight * 4.666667f; // 7
 		effectsTitleScale[1] = buttonHeight * 1.0f;
 		effectsTitlePosition[0] = 0f;
-		effectsTitlePosition[1] = buttonHeight * 0.5f;
+		effectsTitlePosition[1] = buttonHeight * 0.25f;
+
+		// Font type title
+		fontTitleScale[0] = buttonHeight * 4.666667f;
+		fontTitleScale[1] = buttonHeight * 1f;
+		fontTitlePosition[0] = 0f;
+		fontTitlePosition[1] = buttonHeight * -1.0f;
 
 		// Back button
 		backButtonScale[0] = buttonWidth;
@@ -192,6 +222,12 @@ public class CreditsMenu
 
 	private void setCurrentPositions()
 	{
+		// Credits title
+		creditsTitleCurrentScale[0] = creditsTitleScale[0];
+		creditsTitleCurrentScale[1] = creditsTitleScale[1];
+		creditsTitleCurrentPosition[0] = creditsTitlePosition[0];
+		creditsTitleCurrentPosition[1] = creditsTitlePosition[1];
+
 		// Developer title
 		developerTitleCurrentScale[0] = developerTitleScale[0];
 		developerTitleCurrentScale[1] = developerTitleScale[1];
@@ -209,6 +245,12 @@ public class CreditsMenu
 		effectsTitleCurrentScale[1] = effectsTitleScale[1];
 		effectsTitleCurrentPosition[0] = effectsTitlePosition[0];
 		effectsTitleCurrentPosition[1] = effectsTitlePosition[1];
+
+		// Font type title
+		fontTitleCurrentScale[0] = fontTitleScale[0];
+		fontTitleCurrentScale[1] = fontTitleScale[1];
+		fontTitleCurrentPosition[0] = fontTitlePosition[0];
+		fontTitleCurrentPosition[1] = fontTitlePosition[1];
 
 		// Back button
 		backButtonCurrentScale[0] = backButtonScale[0];
@@ -231,14 +273,22 @@ public class CreditsMenu
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
 
-			/*backButtonCurrentScale[0] = lerp(backButtonScale[0] * 2f, backButtonScale[0], menuOpacity);
-			backButtonCurrentScale[1] = lerp(backButtonScale[1] * 2f, backButtonScale[1], menuOpacity);
-
-			backButtonCurrentPosition[0] = lerp(backButtonPosition[0] * 2f, backButtonPosition[0], menuOpacity);
-			backButtonCurrentPosition[1] = lerp(backButtonPosition[1] * 2f, backButtonPosition[1], menuOpacity);*/
+			if(menuTimer >= menuAppearTime)
+			{
+				menuOpacity = 1.0f;
+				menuTimer = 0f;
+				currentState = UI_STATE_VISIBLE;
+				renderer.changedToCreditsMenu();
+				setCurrentPositions();
+			}
 
 			backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], menuOpacity);
 			backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], menuOpacity);
+
+			creditsTitleCurrentScale[0] = lerp(0f, creditsTitleScale[0], menuOpacity);
+			creditsTitleCurrentScale[1] = lerp(0f, creditsTitleScale[1], menuOpacity);
+			creditsTitleCurrentPosition[0] = lerp(0f, creditsTitlePosition[0], menuOpacity);
+			creditsTitleCurrentPosition[1] = lerp(0f, creditsTitlePosition[1], menuOpacity);
 
 			developerTitleCurrentScale[0] = lerp(0f, developerTitleScale[0], menuOpacity);
 			developerTitleCurrentScale[1] = lerp(0f, developerTitleScale[1], menuOpacity);
@@ -255,19 +305,15 @@ public class CreditsMenu
 			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
 			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
 
+			fontTitleCurrentScale[0] = lerp(0f, fontTitleScale[0], menuOpacity);
+			fontTitleCurrentScale[1] = lerp(0f, fontTitleScale[1], menuOpacity);
+			fontTitleCurrentPosition[0] = lerp(0f, fontTitlePosition[0], menuOpacity);
+			fontTitleCurrentPosition[1] = lerp(0f, fontTitlePosition[1], menuOpacity);
+
 			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
 			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
 			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
 			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
-
-			if(menuTimer >= menuAppearTime)
-			{
-				menuOpacity = 1.0f;
-				menuTimer = 0f;
-				currentState = UI_STATE_VISIBLE;
-				renderer.changedToCreditsMenu();
-				setCurrentPositions();
-			}
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -277,6 +323,11 @@ public class CreditsMenu
 			backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], menuOpacity);
 			backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], menuOpacity);
 
+			creditsTitleCurrentScale[0] = lerp(0f, creditsTitleScale[0], menuOpacity);
+			creditsTitleCurrentScale[1] = lerp(0f, creditsTitleScale[1], menuOpacity);
+			creditsTitleCurrentPosition[0] = lerp(0f, creditsTitlePosition[0], menuOpacity);
+			creditsTitleCurrentPosition[1] = lerp(0f, creditsTitlePosition[1], menuOpacity);
+
 			developerTitleCurrentScale[0] = lerp(0f, developerTitleScale[0], menuOpacity);
 			developerTitleCurrentScale[1] = lerp(0f, developerTitleScale[1], menuOpacity);
 			developerTitleCurrentPosition[0] = lerp(0f, developerTitlePosition[0], menuOpacity);
@@ -291,6 +342,11 @@ public class CreditsMenu
 			effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], menuOpacity);
 			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
 			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
+
+			fontTitleCurrentScale[0] = lerp(0f, fontTitleScale[0], menuOpacity);
+			fontTitleCurrentScale[1] = lerp(0f, fontTitleScale[1], menuOpacity);
+			fontTitleCurrentPosition[0] = lerp(0f, fontTitlePosition[0], menuOpacity);
+			fontTitleCurrentPosition[1] = lerp(0f, fontTitlePosition[1], menuOpacity);
 
 			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
 			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
@@ -322,6 +378,9 @@ public class CreditsMenu
 
 			glBindVertexArray(uiPanelVaoHandle);
 
+			uiPanelProgram.setUniforms(viewProjection, creditsTitleCurrentScale, creditsTitleCurrentPosition, creditsTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
 			uiPanelProgram.setUniforms(viewProjection, developerTitleCurrentScale, developerTitleCurrentPosition, developerTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
@@ -329,6 +388,9 @@ public class CreditsMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, effectsTitleCurrentScale, effectsTitleCurrentPosition, effectsTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, fontTitleCurrentScale, fontTitleCurrentPosition, fontTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, backButtonCurrentScale, backButtonCurrentPosition, backButtonCurrentTexture, menuOpacity);
