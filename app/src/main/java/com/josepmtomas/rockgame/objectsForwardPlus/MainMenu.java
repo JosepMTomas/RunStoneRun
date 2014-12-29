@@ -270,6 +270,8 @@ public class MainMenu
 	private void touchNewGameButton()
 	{
 		newGameButtonCurrentTexture = newGameButtonSelectedTexture;
+		renderer.newGame();
+		currentState = UI_STATE_DISAPPEARING;
 	}
 
 

@@ -30,12 +30,6 @@ public class Hud
 	private static final int TEXCOORD_BYTE_OFFSET = 3 * BYTES_PER_FLOAT;
 	private static final int BYTE_STRIDE = 5 * BYTES_PER_FLOAT;
 
-	// UI States
-	private static final int OUT_OF_SCREEN = 0;
-	private static final int APPEARING = 1;
-	private static final int SHOWING = 2;
-	private static final int DISAPPEARING = 3;
-
 	// Life states
 	private static final int LIFE_OK = 0;
 	private static final int LIFE_LOSING = 1;
@@ -57,30 +51,55 @@ public class Hud
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
-	private float[] scorePositionOffsetsX = new float[8];//{1700f, 1572f, 1444f, 1316f, 1188f, 1060f, 932f, 804f};
-	private float scorePositionOffsetY = 0;
+	private float[] scorePositionsX = new float[8];//{1700f, 1572f, 1444f, 1316f, 1188f, 1060f, 932f, 804f};
+	private float scorePositionY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
 	private float scoreOpacity = 1f;
 	private int scoreNumbersTexture;
-	private int scoreNumbersNegativeTexture;
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
 
+	// Score panel state control
+	private int scoreCurrentState = UI_STATE_NOT_VISIBLE;
+	private float scoreCurrentScale = 1f;
+	private float[] scoreCurrentPositionsX = new float[8];
+	private float scoreCurrentPositionY = 0f;
+	private float scoreTimer = 0f;
+	private float scoreAppearTime = 0.5f;
+
 	// Multiplier panel
-	private float[] multiplierNumbersOffsetsX = new float[4];
-	private float multiplierNumbersOffsetY;
+	private float[] multiplierNumbersPositionsX = new float[4];
+	private float multiplierNumbersPositionY;
 	private int[] multiplierNumbers = {0, 13, 0, 12};
+
+	// Multiplier panel state control
+	private int multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
+	private float multiplierNumbersCurrentScale = 1f;
+	private float[] multiplierNumbersCurrentPositionsX = new float[4];
+	private float multiplierNumbersCurrentPositionY = 0f;
+	private float multiplierNumbersTimer = 0f;
+	private float multiplierNumbersAppearTime = 0.5f;
+	private float multiplierNumbersOpacity = 1f;
 
 	// Multiplier progress bar
 	private int multiplierProgressVaoHandle;
 	private int multiplierProgressTexture;
 	private float multiplierProgressValue = 0f;
-	private float multiplierProgressOffsetX = 0;
-	private float multiplierProgressOffsetY = 0;
+	private float multiplierProgressPositionX = 0;
+	private float multiplierProgressPositionY = 0;
+
+	// Multiplier progress bar state control
+	private int multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
+	private float multiplierProgressCurrentScale = 1f;
+	private float multiplierProgressCurrentPositionX = 0f;
+	private float multiplierProgressCurrentPositionY = 0f;
+	private float multiplierProgressTimer = 0f;
+	private float multiplierProgressAppearTime = 0.5f;
+	private float multiplierProgressOpacity = 1f;
 
 	// Recovering progress bar
 	private int recoveringProgressBarVaoHandle;
-	private int recoveringProgressBarState = OUT_OF_SCREEN;
+	private int recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
 	private float recoveringProgressBarTimer = 0f;
 	private float recoveringProgressBarOpacity = 0f;
 	private float recoveringProgressBarPercent = 0f;
@@ -92,7 +111,7 @@ public class Hud
 	// "Get Ready" panel
 	private int getReadyPanelTexture;
 	private int getReadyPanelVaoHandle;
-	private int getReadyPanelState = OUT_OF_SCREEN;
+	private int getReadyPanelState = UI_STATE_NOT_VISIBLE;
 	private float getReadyPanelTimer = 0f;
 	private float getReadyPanelOpacity = 0f;
 	private float[] getReadyPanelTimers = {0.5f, PLAYER_RECOVERING_TIME - 0.5f, 0.5f};
@@ -138,7 +157,6 @@ public class Hud
 		// Score panel
 		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
 		scoreNumbersTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		scoreNumbersNegativeTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas_negative_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier panel
 		//loadMultiplierGeometry(context, "models/hud_multiplier_base.vbm", screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -283,12 +301,15 @@ public class Hud
 	{
 		float initialOffsetX = screenWidth - (numberWidth * 0.5f) - (numberWidth/2);
 
-		scorePositionOffsetY = screenHeight - (numberHeight * 0.5f) - (numberWidth/2);
-		scorePositionOffsetsX[0] = initialOffsetX;
+		scorePositionY = screenHeight - (numberHeight * 0.5f) - (numberWidth/2);
+		scoreCurrentPositionY = scorePositionY;
+		scorePositionsX[0] = initialOffsetX;
+		scoreCurrentPositionsX[0] = scorePositionsX[0];
 
 		for(int i=1; i < 8; i++)
 		{
-			scorePositionOffsetsX[i] = initialOffsetX - ((float)i * numberWidth);
+			scorePositionsX[i] = initialOffsetX - ((float)i * numberWidth);
+			scoreCurrentPositionsX[i] = scorePositionsX[i];
 		}
 
 		/////////// multiplier
@@ -296,14 +317,23 @@ public class Hud
 		float multiplierBaseOffsetX = screenWidth - (numberWidth / 2f);
 		float multiplierBaseOffsetY = screenHeight - numberHeight * 4f;
 
-		multiplierNumbersOffsetY = multiplierBaseOffsetY + numberHeight * 1.25f;
-		multiplierNumbersOffsetsX[0] = multiplierBaseOffsetX - (numberWidth * 0.75f);
-		multiplierNumbersOffsetsX[1] = multiplierNumbersOffsetsX[0] - numberWidth * 0.75f;
-		multiplierNumbersOffsetsX[2] = multiplierNumbersOffsetsX[1] - numberWidth * 0.75f;
-		multiplierNumbersOffsetsX[3] = multiplierNumbersOffsetsX[2] - numberWidth;
+		multiplierNumbersPositionY = multiplierBaseOffsetY + numberHeight * 1.25f;
+		multiplierNumbersPositionsX[0] = multiplierBaseOffsetX - (numberWidth * 0.75f);
+		multiplierNumbersPositionsX[1] = multiplierNumbersPositionsX[0] - numberWidth * 0.75f;
+		multiplierNumbersPositionsX[2] = multiplierNumbersPositionsX[1] - numberWidth * 0.75f;
+		multiplierNumbersPositionsX[3] = multiplierNumbersPositionsX[2] - numberWidth;
 
-		multiplierProgressOffsetY = multiplierBaseOffsetY + numberHeight * 2f;
-		multiplierProgressOffsetX = scorePositionOffsetsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
+		multiplierNumbersCurrentPositionY = multiplierNumbersPositionY;
+		multiplierNumbersCurrentPositionsX[0] = multiplierNumbersPositionsX[0];
+		multiplierNumbersCurrentPositionsX[1] = multiplierNumbersPositionsX[1];
+		multiplierNumbersCurrentPositionsX[2] = multiplierNumbersPositionsX[2];
+		multiplierNumbersCurrentPositionsX[3] = multiplierNumbersPositionsX[3];
+
+		multiplierProgressPositionY = multiplierBaseOffsetY + numberHeight * 2.25f;
+		multiplierProgressPositionX = scorePositionsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
+
+		multiplierProgressCurrentPositionY = multiplierProgressPositionY;
+		multiplierProgressCurrentPositionX = multiplierProgressPositionX;
 
 		// Recovering
 
@@ -335,14 +365,28 @@ public class Hud
 	}
 
 
+	public void setAppearing()
+	{
+		scoreCurrentState = UI_STATE_APPEARING;
+		multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
+		multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
+	}
+
+
 	public void update(int currentScore, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
 	{
 		multiplierProgressValue = multiplierPercent;
 
-		int i=0;
+		int i;
 		boolean end = false;
 		int number;
 		int nextScore = currentScore;
+
+		for(i=0; i<8; i++)
+		{
+			scoreNumbers[i] = 0;
+		}
+		i=0;
 
 		while(i < 8 && !end)
 		{
@@ -367,6 +411,71 @@ public class Hud
 		number = number / 10;
 		averageFpsNumbers[1] = number;
 
+		// Score Panel
+		if(scoreCurrentState == UI_STATE_APPEARING)
+		{
+			scoreTimer += deltaTime;
+			scoreOpacity = scoreTimer / scoreAppearTime;
+
+			if(scoreTimer >= scoreAppearTime)
+			{
+				scoreTimer = 0f;
+				scoreOpacity = 1f;
+				scoreCurrentState = UI_STATE_VISIBLE;
+				multiplierProgressCurrentState = UI_STATE_APPEARING;
+			}
+
+			scoreCurrentScale = lerp(2f, 1f, scoreOpacity);
+			scoreCurrentPositionY = lerp(scorePositionY * 2f, scorePositionY, scoreOpacity);
+
+			for(i=0; i<8; i++)
+			{
+				scoreCurrentPositionsX[i] = lerp(scorePositionsX[i] * 2f, scorePositionsX[i], scoreOpacity);
+			}
+		}
+
+		// Multiplier progress bar
+		if(multiplierProgressCurrentState == UI_STATE_APPEARING)
+		{
+			multiplierProgressTimer += deltaTime;
+			multiplierProgressOpacity = multiplierProgressTimer / multiplierProgressAppearTime;
+
+			if(multiplierProgressTimer >= multiplierProgressAppearTime)
+			{
+				multiplierProgressTimer = 0f;
+				multiplierProgressOpacity = 1f;
+				multiplierProgressCurrentState = UI_STATE_VISIBLE;
+				multiplierNumbersCurrentState = UI_STATE_APPEARING;
+			}
+
+			multiplierProgressCurrentScale = lerp(2f, 1f, multiplierProgressOpacity);
+			multiplierProgressCurrentPositionX = lerp(multiplierProgressPositionX * 2f, multiplierProgressPositionX, multiplierProgressOpacity);
+			multiplierProgressCurrentPositionY = lerp(multiplierProgressPositionY * 2f, multiplierProgressPositionY, multiplierProgressOpacity);
+		}
+
+		// Score multiplier numbers
+		if(multiplierNumbersCurrentState == UI_STATE_APPEARING)
+		{
+			multiplierNumbersTimer += deltaTime;
+			multiplierNumbersOpacity = multiplierNumbersTimer / multiplierNumbersAppearTime;
+
+			if(multiplierNumbersTimer >= multiplierNumbersAppearTime)
+			{
+				multiplierNumbersTimer = 0f;
+				multiplierNumbersOpacity = 1f;
+				multiplierNumbersCurrentState = UI_STATE_VISIBLE;
+			}
+
+			multiplierNumbersCurrentScale = lerp(2f, 1f, multiplierNumbersOpacity);
+			multiplierNumbersCurrentPositionY = lerp(multiplierNumbersPositionY * 2f, multiplierNumbersPositionY, multiplierNumbersOpacity);
+
+			for(i=0; i<4; i++)
+			{
+				multiplierNumbersCurrentPositionsX[i] = lerp(multiplierNumbersPositionsX[i] * 2f, multiplierNumbersPositionsX[i], multiplierNumbersOpacity);
+			}
+		}
+
+
 		// Lives
 		if(livesCounterState == LIVES_TIMER_COUNTING)
 		{
@@ -382,7 +491,7 @@ public class Hud
 
 
 		// Recovering progress bar
-		if(recoveringProgressBarState == APPEARING)
+		if(recoveringProgressBarState == UI_STATE_APPEARING)
 		{
 			recoveringProgressBarTimer += deltaTime;
 			recoveringProgressBarOpacity = Math.min(1f,recoveringProgressBarTimer / recoveringTimers[0]);
@@ -390,11 +499,11 @@ public class Hud
 			recoveringProgressBarPercent = recoveringTimers[0] / PLAYER_RECOVERING_TIME;
 			if(recoveringProgressBarTimer >= recoveringTimers[0])
 			{
-				recoveringProgressBarState = SHOWING;
+				recoveringProgressBarState = UI_STATE_VISIBLE;
 				recoveringProgressBarTimer -= recoveringTimers[0];
 			}
 		}
-		else if(recoveringProgressBarState == SHOWING)
+		else if(recoveringProgressBarState == UI_STATE_VISIBLE)
 		{
 			recoveringProgressBarTimer += deltaTime;
 			recoveringProgressBarOpacity = 1f;
@@ -402,7 +511,7 @@ public class Hud
 			recoveringProgressBarPercent = (recoveringProgressBarTimer + recoveringTimers[0]) / PLAYER_RECOVERING_TIME;
 			if(recoveringProgressBarTimer >= recoveringTimers[1])
 			{
-				recoveringProgressBarState = DISAPPEARING;
+				recoveringProgressBarState = UI_STATE_DISAPPEARING;
 				recoveringProgressBarTimer -= recoveringTimers[1];
 
 				if(livesStates[currentLife] == LIFE_LOSING)
@@ -412,7 +521,7 @@ public class Hud
 				}
 			}
 		}
-		else if(recoveringProgressBarState == DISAPPEARING)
+		else if(recoveringProgressBarState == UI_STATE_DISAPPEARING)
 		{
 			recoveringProgressBarTimer += deltaTime;
 			recoveringProgressBarOpacity = Math.max(0.0f, 1f - (recoveringProgressBarTimer / recoveringTimers[2]));
@@ -420,13 +529,13 @@ public class Hud
 			recoveringProgressBarPercent = 1f;
 			if(recoveringProgressBarTimer >= recoveringTimers[2])
 			{
-				recoveringProgressBarState = OUT_OF_SCREEN;
+				recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
 				recoveringProgressBarTimer = 0f;
 			}
 		}
 
 		// Get Ready panel
-		if(getReadyPanelState == APPEARING)
+		if(getReadyPanelState == UI_STATE_APPEARING)
 		{
 			getReadyPanelTimer += deltaTime;
 			getReadyPanelOpacity = Math.min(1f,getReadyPanelTimer / getReadyPanelTimers[0]);
@@ -434,10 +543,10 @@ public class Hud
 			if(getReadyPanelTimer >= getReadyPanelTimers[0])
 			{
 				getReadyPanelTimer -= getReadyPanelTimers[0];
-				getReadyPanelState = SHOWING;
+				getReadyPanelState = UI_STATE_VISIBLE;
 			}
 		}
-		else if(getReadyPanelState == SHOWING)
+		else if(getReadyPanelState == UI_STATE_VISIBLE)
 		{
 			getReadyPanelTimer += deltaTime;
 			getReadyPanelOpacity = 1f;
@@ -445,10 +554,10 @@ public class Hud
 			if(getReadyPanelTimer >= getReadyPanelTimers[1])
 			{
 				getReadyPanelTimer -= getReadyPanelTimers[1];
-				getReadyPanelState = DISAPPEARING;
+				getReadyPanelState = UI_STATE_DISAPPEARING;
 			}
 		}
-		else if(getReadyPanelState == DISAPPEARING)
+		else if(getReadyPanelState == UI_STATE_DISAPPEARING)
 		{
 			getReadyPanelTimer += deltaTime;
 			getReadyPanelOpacity = Math.max(0.0f, 1.0f - (getReadyPanelTimer / getReadyPanelTimers[2]));
@@ -456,7 +565,7 @@ public class Hud
 			if(getReadyPanelTimer >= getReadyPanelTimers[2])
 			{
 				getReadyPanelTimer -= getReadyPanelTimers[2];
-				getReadyPanelState = OUT_OF_SCREEN;
+				getReadyPanelState = UI_STATE_NOT_VISIBLE;
 			}
 		}
 
@@ -476,10 +585,10 @@ public class Hud
 
 	public void hit(int type)
 	{
-		recoveringProgressBarState = APPEARING;
+		recoveringProgressBarState = UI_STATE_APPEARING;
 		recoveringProgressBarTimer = 0f;
 
-		getReadyPanelState = APPEARING;
+		getReadyPanelState = UI_STATE_APPEARING;
 		getReadyPanelTimer = 0f;
 
 		multiplierProgressValue = 0f;
@@ -518,46 +627,55 @@ public class Hud
 
 		glBindVertexArray(scoreVaoHandle[0]);
 
-		for(int i=0; i < 8; i++)
+		if(scoreCurrentState != UI_STATE_NOT_VISIBLE)
 		{
-			scorePanelProgram.setSpecificUniforms(scorePositionOffsetsX[i], scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[i]], scoreTexCoordOffsetsY[scoreNumbers[i]],
-					scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			for(int i=0; i < 8; i++)
+			{
+				scorePanelProgram.setSpecificUniforms(scoreCurrentScale,
+						scoreCurrentPositionsX[i], scoreCurrentPositionY,
+						scoreTexCoordOffsetsX[scoreNumbers[i]], scoreTexCoordOffsetsY[scoreNumbers[i]],
+						scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
 		}
 
-		//scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersNegativeTexture);
-		for(int i=0; i < 4; i++)
+		if(multiplierNumbersCurrentState != UI_STATE_NOT_VISIBLE)
 		{
-			scorePanelProgram.setSpecificUniforms(multiplierNumbersOffsetsX[i], multiplierNumbersOffsetY, scoreTexCoordOffsetsX[multiplierNumbers[i]], scoreTexCoordOffsetsY[multiplierNumbers[i]],
-					scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			for(int i=0; i < 4; i++)
+			{
+				scorePanelProgram.setSpecificUniforms(multiplierNumbersCurrentScale,
+						multiplierNumbersCurrentPositionsX[i], multiplierNumbersCurrentPositionY,
+						scoreTexCoordOffsetsX[multiplierNumbers[i]], scoreTexCoordOffsetsY[multiplierNumbers[i]],
+						scoreColor[0], scoreColor[1], scoreColor[2], multiplierNumbersOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
 		}
 
 		//scorePanelProgram.setSpecificUniforms(scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[0]], scoreTexCoordOffsetsY[scoreNumbers[0]]);
 
 		// current FPS
 		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersTexture);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]],
+		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[1]], scoreTexCoordOffsetsY[currentFpsNumbers[1]],
+		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[1], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[1]], scoreTexCoordOffsetsY[currentFpsNumbers[1]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 		// average FPS
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[0], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[0]], scoreTexCoordOffsetsY[averageFpsNumbers[0]],
+		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[0], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[0]], scoreTexCoordOffsetsY[averageFpsNumbers[0]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-		scorePanelProgram.setSpecificUniforms(fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]],
+		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 		// get ready panel
 
-		if(getReadyPanelState != OUT_OF_SCREEN)
+		if(getReadyPanelState != UI_STATE_NOT_VISIBLE)
 		{
 			scorePanelProgram.setCommonUniforms(viewProjection, getReadyPanelTexture);
-			scorePanelProgram.setSpecificUniforms(0f, getReadyPanelCurrentPositionY, 0f, 0f, recoveringColor[0], recoveringColor[1], recoveringColor[2], getReadyPanelOpacity);
+			scorePanelProgram.setSpecificUniforms(1f, 0f, getReadyPanelCurrentPositionY, 0f, 0f, recoveringColor[0], recoveringColor[1], recoveringColor[2], getReadyPanelOpacity);
 			glBindVertexArray(getReadyPanelVaoHandle);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
@@ -566,12 +684,16 @@ public class Hud
 
 		progressBarProgram.useProgram();
 		progressBarProgram.setCommonUniforms(viewProjection, multiplierProgressTexture);
-		progressBarProgram.setSpecificUniforms(multiplierProgressOffsetX, multiplierProgressOffsetY, 1f, 1f, 1f, 1f, multiplierProgressValue);
 
-		glBindVertexArray(multiplierProgressVaoHandle);
-		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		if(multiplierProgressCurrentState != UI_STATE_NOT_VISIBLE)
+		{
+			progressBarProgram.setSpecificUniforms(multiplierProgressCurrentScale, multiplierProgressCurrentPositionX, multiplierProgressCurrentPositionY,
+					1f, 1f, 1f, multiplierProgressOpacity, multiplierProgressValue);
+			glBindVertexArray(multiplierProgressVaoHandle);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		}
 
-		progressBarProgram.setSpecificUniforms(0f, recoveringCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], recoveringProgressBarOpacity, recoveringProgressBarPercent);
+		progressBarProgram.setSpecificUniforms(1f, 0f, recoveringCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], recoveringProgressBarOpacity, recoveringProgressBarPercent);
 
 		glBindVertexArray(recoveringProgressBarVaoHandle);
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
@@ -581,13 +703,13 @@ public class Hud
 
 		for(int i=0; i < 5; i++)
 		{
-			progressBarProgram.setSpecificUniforms(livesPositionsX[i], livesPositionY, 1f, 1f, 1f, 1f, livesPercents[i]);
+			progressBarProgram.setSpecificUniforms(1f, livesPositionsX[i], livesPositionY, 1f, 1f, 1f, 1f, livesPercents[i]);
 			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 		}
 
 		if(livesStates[currentLife] == LIFE_LOSING)
 		{
-			progressBarProgram.setSpecificUniforms(livesPositionsX[currentLife], livesPositionY, 1f, 1f, 0f, 1f, lifeRecoverPercent);
+			progressBarProgram.setSpecificUniforms(1f, livesPositionsX[currentLife], livesPositionY, 1f, 1f, 0f, 1f, lifeRecoverPercent);
 			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 		}
 	}

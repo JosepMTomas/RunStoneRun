@@ -2173,7 +2173,7 @@ public class Ground
 								drawBrokenTree = true;
 							}
 						}
-						playerRock.hit(0);
+						//TODO(enable): playerRock.hit(0);
 						break;
 					}
 				}
@@ -2190,7 +2190,7 @@ public class Ground
 
 					if(distance <= (radius + playerRock.rockRadius))
 					{
-						playerRock.hit(1);
+						//TODO(enable): playerRock.hit(1);
 						break;
 					}
 				}
@@ -4254,6 +4254,26 @@ public class Ground
 
 		Log.d("GrassLODCount", "A("+grassCountMax[LOD_A]+") B("+grassCountMax[LOD_B]+") C("+grassCountMax[LOD_C]+")");*/
 	}
+
+
+	public void newGame()
+	{
+		float displacementZ = objectsPatchHeight * 5f;
+		vec3 currentPos;
+
+		riverWaitCount = RIVER_WAIT * 2;
+
+		for(int z=0; z < numObjectsPatchesZ; z++)
+		{
+			for(int x=0; x < numObjectsPatchesX; x++)
+			{
+				currentPos = objectsPatches[x][z].getCurrentPosition();
+				objectsPatches[x][z].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - displacementZ);
+				objectsPatches[x][z].reinitialize();
+			}
+		}
+	}
+
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////

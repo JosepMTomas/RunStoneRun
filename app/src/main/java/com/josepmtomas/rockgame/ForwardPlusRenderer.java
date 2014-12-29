@@ -725,7 +725,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//hud.draw();
+		hud.draw();
 		mainMenu.draw();
 		optionsMenu.draw();
 		creditsMenu.draw();
@@ -784,6 +784,16 @@ public class ForwardPlusRenderer implements Renderer
 		{
 			creditsMenu.touch(newX, newY);
 		}
+	}
+
+	public void newGame()
+	{
+		ground.newGame();
+		hud.setAppearing();
+
+		playerRock.resetMultiplier();
+		iScore = 0;
+		fScore = 0f;
 	}
 
 	public void changingToCreditsMenu()

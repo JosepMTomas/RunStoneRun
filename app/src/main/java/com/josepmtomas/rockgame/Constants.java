@@ -117,7 +117,7 @@ public class Constants
 	public static final int NUM_OBJECTS_PATCHES_Z = 3;
 
 
-	public static final float MAX_PLAYER_SPEED = 500f;//2500f;
+	public static final float MAX_PLAYER_SPEED = 2500f;
 	public static final float MAX_PLAYER_SPEED_FACTOR = 0.0003333f;
 
 	// PlayerRock states

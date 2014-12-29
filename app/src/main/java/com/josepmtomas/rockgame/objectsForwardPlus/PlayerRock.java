@@ -736,6 +736,10 @@ public class PlayerRock
 		currentState = PlayeRockState.RETURNING_CENTER;
 	}
 
+	public void resetMultiplier()
+	{
+		scoreMultiplier = 1.0f;
+	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// Collision
@@ -768,12 +772,5 @@ public class PlayerRock
 		}
 
 		//currentSpeed = Math.max(0f, currentSpeed - 10f);
-	}
-
-	public void deleteGL()
-	{
-		playerRockProgram.deleteProgram();
-		depthPrePassProgram.deleteProgram();
-		shadowPassProgram.deleteProgram();
 	}
 }

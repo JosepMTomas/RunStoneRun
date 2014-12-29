@@ -10,8 +10,8 @@ import static android.opengl.GLES30.*;
 public class ProgressBarProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;
-	private final int positionOffsetLocation;
-	private final int texCoordOffsetLocation;
+	private final int scaleLocation;
+	private final int positionLocation;
 
 	private final int progressSamplerLocation;
 	private final int colorLocation;
@@ -24,8 +24,8 @@ public class ProgressBarProgram extends ShaderProgram
 		super(context, "shaders/hud_progress_bar.vs", "shaders/hud_progress_bar.fs");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
-		positionOffsetLocation = glGetUniformLocation(program, "positionOffset");
-		texCoordOffsetLocation = glGetUniformLocation(program, "texCoordOffset");
+		scaleLocation = glGetUniformLocation(program, "scale");
+		positionLocation = glGetUniformLocation(program, "position");
 
 		progressSamplerLocation = glGetUniformLocation(program, "progressSampler");
 		colorLocation = glGetUniformLocation(program, "color");
@@ -44,9 +44,10 @@ public class ProgressBarProgram extends ShaderProgram
 	}
 
 
-	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float colorX, float colorY, float colorZ, float opacity, float percent)
+	public void setSpecificUniforms(float scale, float positionX, float positionY, float colorX, float colorY, float colorZ, float opacity, float percent)
 	{
-		glUniform4f(positionOffsetLocation, positionOffsetX, positionOffsetY, 0f, 1f);
+		glUniform4f(scaleLocation, scale, scale, 1f, 1f);
+		glUniform4f(positionLocation, positionX, positionY, 0f, 1f);
 		glUniform3f(colorLocation, colorX, colorY, colorZ);
 		glUniform1f(opacityLocation, opacity);
 		glUniform1f(percentLocation, percent);

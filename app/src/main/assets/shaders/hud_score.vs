@@ -6,7 +6,8 @@ layout (location = 1) in vec2 aTexCoord;
 
 // uniforms
 uniform mat4 viewProjection;
-uniform vec4 positionOffset;
+uniform vec4 scale;
+uniform vec4 position;
 uniform vec2 texCoordOffset;
 
 // shader output(s)
@@ -16,7 +17,7 @@ out vec2 vTexCoord;
 void main()
 {
 	// final position
-	vec4 position = aPosition + positionOffset;
+	vec4 position = (aPosition * scale) + position;
 	
 	// final texture coordinates
 	vTexCoord = aTexCoord + texCoordOffset;

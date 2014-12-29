@@ -10,7 +10,8 @@ import static android.opengl.GLES30.*;
 public class ScorePanelProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;
-	private final int positionOffsetLocation;
+	private final int scaleLocation;
+	private final int positionLocation;
 	private final int texCoordOffsetLocation;
 
 	private final int numbersSamplerLocation;
@@ -23,7 +24,8 @@ public class ScorePanelProgram extends ShaderProgram
 		super(context, "shaders/hud_score.vs", "shaders/hud_score.fs");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
-		positionOffsetLocation = glGetUniformLocation(program, "positionOffset");
+		scaleLocation = glGetUniformLocation(program, "scale");
+		positionLocation = glGetUniformLocation(program, "position");
 		texCoordOffsetLocation = glGetUniformLocation(program, "texCoordOffset");
 
 		numbersSamplerLocation = glGetUniformLocation(program, "numbersSampler");
@@ -42,9 +44,10 @@ public class ScorePanelProgram extends ShaderProgram
 	}
 
 
-	public void setSpecificUniforms(float positionOffsetX, float positionOffsetY, float texCoordOffsetX, float texCoordOffsetY, float colorX, float colorY, float colorZ, float opacity)
+	public void setSpecificUniforms(float scale, float positionX, float positionY, float texCoordOffsetX, float texCoordOffsetY, float colorX, float colorY, float colorZ, float opacity)
 	{
-		glUniform4f(positionOffsetLocation, positionOffsetX, positionOffsetY, 0f, 1f);
+		glUniform4f(scaleLocation, scale, scale, 1f, 1f);
+		glUniform4f(positionLocation, positionX, positionY, 0f, 1f);
 		glUniform2f(texCoordOffsetLocation, texCoordOffsetX, texCoordOffsetY);
 		glUniform3f(colorLocation, colorX, colorY, colorZ);
 		glUniform1f(opacityLocation, opacity);

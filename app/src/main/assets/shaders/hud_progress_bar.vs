@@ -7,7 +7,8 @@ layout (location = 2) in float aGradient;
 
 // uniforms
 uniform mat4 viewProjection;
-uniform vec4 positionOffset;
+uniform vec4 scale;
+uniform vec4 position;
 uniform vec2 texCoordOffset;
 
 // shader output(s)
@@ -18,7 +19,7 @@ out float vGradient;
 void main()
 {
 	// final position
-	vec4 position = aPosition + positionOffset;
+	vec4 position = (aPosition * scale) + position;
 	
 	// final texture coordinates
 	vTexCoord = aTexCoord;
