@@ -2,6 +2,7 @@ package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
 
+import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
@@ -25,6 +26,8 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
 public class Hud
 {
 	private static String TAG = "HUD";
+
+	private ForwardPlusRenderer renderer;
 
 	// Geometry attributes constants
 	private static final int POSITION_BYTE_OFFSET = 0;
@@ -158,8 +161,9 @@ public class Hud
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, UIPanelProgram uiPanelProgram, float screenWidth, float screenHeight)
+	public Hud(Context context, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, float screenWidth, float screenHeight)
 	{
+		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;
 
 		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
@@ -242,9 +246,9 @@ public class Hud
 
 		// left-right-bottom-top
 		pauseButtonLimits[0] = pauseButtonPosition[0] - buttonWidthHalf;
-		pauseButtonLimits[1] = pauseButtonPosition[1] + buttonWidthHalf;
-		pauseButtonLimits[0] = pauseButtonPosition[0] - buttonHeightHalf;
-		pauseButtonLimits[1] = pauseButtonPosition[1] + buttonHeightHalf;
+		pauseButtonLimits[1] = pauseButtonPosition[0] + buttonWidthHalf;
+		pauseButtonLimits[2] = pauseButtonPosition[1] - buttonHeightHalf;
+		pauseButtonLimits[3] = pauseButtonPosition[1] + buttonHeightHalf;
 
 		pauseButtonVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
 
@@ -378,7 +382,7 @@ public class Hud
 		multiplierNumbersCurrentPositionsX[2] = multiplierNumbersPositionsX[2];
 		multiplierNumbersCurrentPositionsX[3] = multiplierNumbersPositionsX[3];
 
-		multiplierProgressPositionY = multiplierBaseOffsetY + numberHeight * 2.25f;
+		multiplierProgressPositionY = multiplierBaseOffsetY + numberHeight * 2.25f - (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.075f);
 		multiplierProgressPositionX = scorePositionsX[7] - numberWidth * 0.5f; //multiplierBaseOffsetX - numberHeight * 4.25f;
 
 		multiplierProgressCurrentPositionY = multiplierProgressPositionY;
@@ -419,6 +423,20 @@ public class Hud
 		scoreCurrentState = UI_STATE_APPEARING;
 		multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
 		multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
+	}
+
+
+	public boolean touch(float x, float y)
+	{
+		if(	x >= pauseButtonLimits[0] &&
+			x <= pauseButtonLimits[1] &&
+			y >= pauseButtonLimits[2] &&
+			y <= pauseButtonLimits[3])
+		{
+			renderer.setPause();
+			return true;
+		}
+		return false;
 	}
 
 

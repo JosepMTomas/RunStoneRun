@@ -224,7 +224,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		// UI
 		uiPanelProgram = new UIPanelProgram(context);
-		hud = new Hud(context, uiPanelProgram, screenWidth, screenHeight);
+		hud = new Hud(context, this, uiPanelProgram, screenWidth, screenHeight);
 		mainMenu = new MainMenu(parent, this, uiPanelProgram,  screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram,  screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, screenWidth, screenHeight);
@@ -485,7 +485,7 @@ public class ForwardPlusRenderer implements Renderer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		//if(!isPaused)//deltaTime=0;
+		if(!isPaused)//deltaTime=0;
 			update(deltaTime);
 		shadowMapPass();
 		reflectionPass();
@@ -762,17 +762,20 @@ public class ForwardPlusRenderer implements Renderer
 
 		if(rendererState == RENDERER_STATE_PLAYING)
 		{
-			if(newX < 0)
+			if(!hud.touch(newX, newY))
 			{
-				leftTouchState = TouchState.TOUCHING;
-				rightTouchState = TouchState.NOT_TOUCHING;
-				playerRock.turnLeft();
-			}
-			else
-			{
-				leftTouchState = TouchState.NOT_TOUCHING;
-				rightTouchState = TouchState.TOUCHING;
-				playerRock.turnRight();
+				if(newX < 0)
+				{
+					leftTouchState = TouchState.TOUCHING;
+					rightTouchState = TouchState.NOT_TOUCHING;
+					playerRock.turnLeft();
+				}
+				else
+				{
+					leftTouchState = TouchState.NOT_TOUCHING;
+					rightTouchState = TouchState.TOUCHING;
+					playerRock.turnRight();
+				}
 			}
 		}
 		else if(rendererState == RENDERER_STATE_MAIN_MENU)
@@ -924,6 +927,12 @@ public class ForwardPlusRenderer implements Renderer
 	public void setPause(boolean value)
 	{
 		isPaused = value;
+	}
+
+
+	public void setPause()
+	{
+		isPaused = !isPaused;
 	}
 
 

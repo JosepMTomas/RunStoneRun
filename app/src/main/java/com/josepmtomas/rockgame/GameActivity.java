@@ -340,9 +340,9 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 		Log.d(TAG, "<<<<< ON PAUSE >>>>>");
 		backgroundMusicPlayer.pause();
-		forwardPlusRenderer.setPause(true);
+		//forwardPlusRenderer.setPause(true);
 
-		forwardPlusRenderer.deleteGL();
+		//forwardPlusRenderer.deleteGL();
 	}
 
 
