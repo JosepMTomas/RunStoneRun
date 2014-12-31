@@ -2173,7 +2173,7 @@ public class Ground
 								drawBrokenTree = true;
 							}
 						}
-						//TODO(enable): playerRock.hit(0);
+						playerRock.hit(0);
 						break;
 					}
 				}
@@ -2190,7 +2190,7 @@ public class Ground
 
 					if(distance <= (radius + playerRock.rockRadius))
 					{
-						//TODO(enable): playerRock.hit(1);
+						playerRock.hit(1);
 						break;
 					}
 				}

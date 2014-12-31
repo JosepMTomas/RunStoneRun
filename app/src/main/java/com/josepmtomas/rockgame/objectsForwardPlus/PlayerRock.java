@@ -7,15 +7,14 @@ import android.util.Log;
 import static com.josepmtomas.rockgame.Constants.*;
 
 import com.josepmtomas.rockgame.GameActivity;
-import com.josepmtomas.rockgame.R;
 import com.josepmtomas.rockgame.algebra.operations;
 import com.josepmtomas.rockgame.algebra.vec3;
-import com.josepmtomas.rockgame.collision.CollisionCylinder;
-import com.josepmtomas.rockgame.collision.CollisionSphere;
 import com.josepmtomas.rockgame.objectsES30.PlayeRockState;
 import com.josepmtomas.rockgame.programsForwardPlus.DepthPrePassProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.PlayerRockProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ShadowPassProgram;
+
+import static com.josepmtomas.rockgame.algebra.operations.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -85,6 +84,12 @@ public class PlayerRock
 	ShadowPassProgram shadowPassProgram;
 	PlayerRockProgram playerRockProgram;
 
+	// Player rock state
+	private float playerRockTimer = 0f;
+	private final float playerRockAppearTime = 1f;
+	private float playerRockTimerPercent = 0f;
+	private float currentPositionZ = 0f;
+
 	// Position
 	public float previousPositionY = 10f;
 	public float currentPositionY = 10f;
@@ -126,7 +131,7 @@ public class PlayerRock
 
 	// State
 	public float scoreMultiplier = 1.0f;
-	public int state = PLAYER_ROCK_MOVING;
+	public int state = PLAYER_ROCK_NOT_VISIBLE;
 	public int lastObjectTypeHit = 0;
 	private float recoverTimer = 0f;
 
@@ -539,6 +544,26 @@ public class PlayerRock
 
 	public void update(float[] viewProjectionMatrix, float deltaTime)
 	{
+		if(state == PLAYER_ROCK_NOT_VISIBLE)
+		{
+			currentSpeed = 500f;
+			currentPositionZ = 50f;
+		}
+		else if(state == PLAYER_ROCK_APPEARING)
+		{
+			playerRockTimer += deltaTime;
+			playerRockTimerPercent = playerRockTimer / playerRockAppearTime;
+
+			if(playerRockTimer >= playerRockAppearTime)
+			{
+				playerRockTimer = 0f;
+				playerRockTimerPercent = 1f;
+				state = PLAYER_ROCK_MOVING;
+			}
+
+			currentPositionZ = lerp(50f, 0f, playerRockTimerPercent);
+			currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + PLAYER_SPEED_INCREMENT * deltaTime);
+		}
 		if(state == PLAYER_ROCK_BOUNCING)
 		{
 			previousPositionY = currentPositionY;
@@ -570,7 +595,11 @@ public class PlayerRock
 			}
 		}
 
-		if(state == PLAYER_ROCK_MOVING) currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + 10f);
+		if(state == PLAYER_ROCK_MOVING)
+		{
+			//currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + 10f);
+			currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + PLAYER_SPEED_INCREMENT * deltaTime);
+		}
 		//currentSpeed = 0f;
 		//currentSpeed += 1f;
 
@@ -622,7 +651,8 @@ public class PlayerRock
 
 		//Log.e(TAG, "RotationVector (" + rotationVector[0] + ", " + rotationVector[1] + ", " + rotationVector[2] + ")");
 
-		rotationX -= (currentSpeed * deltaTime);
+		//rotationX -= (currentSpeed * deltaTime);
+		rotationX -= lerp(currentSpeed * 2f * deltaTime, currentSpeed * deltaTime, playerRockTimerPercent);
 
 		//displacement = rockAngleLength * currentSpeed;
 		//Log.d("RockAngleLength", "= " + rockAngleLength);
@@ -637,7 +667,7 @@ public class PlayerRock
 		//rotateM(rotationMatrix, 0, rotationX, rotationVector[0], rotationVector[1], rotationVector[2]);
 
 		//rotateM(modelMatrix, 0, rotationX, 1.0f, 0.0f, 0.0f);
-		translateM(model, 0, 0.0f, currentPositionY, 0.0f);
+		translateM(model, 0, 0.0f, currentPositionY, currentPositionZ);
 		//scaleM(model, 0, 2f, 2f, 2f);
 		//rotateM(modelMatrix, 0, rotationY, 0.0f, 1.0f, 0.0f);
 		//rotateM(modelMatrix, 0, rotationX, rotationVector[0], rotationVector[1], rotationVector[2]);
@@ -715,6 +745,12 @@ public class PlayerRock
 	}
 
 
+	public void setAppearing()
+	{
+		state = PLAYER_ROCK_APPEARING;
+	}
+
+
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// Control
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -736,9 +772,10 @@ public class PlayerRock
 		currentState = PlayeRockState.RETURNING_CENTER;
 	}
 
-	public void resetMultiplier()
+	public void newGame()
 	{
 		scoreMultiplier = 1.0f;
+		currentSpeed = 0f;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////

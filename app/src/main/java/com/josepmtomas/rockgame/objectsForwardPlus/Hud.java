@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
+import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
@@ -47,6 +48,17 @@ public class Hud
 	// Colors
 	private float[] scoreColor = {1f, 1f, 1f};
 	private float[] recoveringColor = {0.75f, 1f, 0.75f};
+
+	// Pause button
+	private int pauseButtonVaoHandle;
+	private int pauseButtonIdleTexture;
+	private int pauseButtonSelectedTexture;
+	private int pauseButtonCurrentTexture;
+	private float[] pauseButtonPosition = new float[2];
+	private float[] pauseButtonScale = new float[2];
+	private float[] pauseButtonLimits = new float[4];
+	private float[] pauseButtonCurrentPosition = new float[2];
+	private float[] pauseButtonCurrentScale = new float[2];
 
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
@@ -139,20 +151,26 @@ public class Hud
 	private int[] averageFpsNumbers = {0, 0};
 
 	// Programs
+	UIPanelProgram uiPanelProgram;
 	ScorePanelProgram scorePanelProgram;
 	ProgressBarProgram progressBarProgram;
 
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, float screenWidth, float screenHeight)
+	public Hud(Context context, UIPanelProgram uiPanelProgram, float screenWidth, float screenHeight)
 	{
+		this.uiPanelProgram = uiPanelProgram;
+
 		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
 		float numberHeight =  screenHeight * NUMBER_HEIGHT_PERCENTAGE;
 		float numberWidth = numberHeight * 0.7134f;
 
 		// Common matrices
 		createMatrices(screenWidth, screenHeight);
+
+		// Pause button
+		createPauseButton(context, screenWidth, screenHeight);
 
 		// Score panel
 		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -202,6 +220,37 @@ public class Hud
 
 		// Calculate view x projection matrix
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
+	}
+
+
+	private void createPauseButton(Context context, float screenWidth, float screenHeight)
+	{
+		float buttonHeight = screenHeight * 0.1f;
+		float buttonWidth = buttonHeight * 3f;
+		float buttonHeightHalf = buttonHeight * 0.5f;
+		float buttonWidthHalf = buttonWidth * 0.5f;
+
+		pauseButtonScale[0] = buttonWidth;
+		pauseButtonScale[1] = buttonHeight;
+		pauseButtonCurrentScale[0] = pauseButtonScale[0];
+		pauseButtonCurrentScale[1] = pauseButtonScale[1];
+
+		pauseButtonPosition[0] = screenWidth * 0.5f - buttonWidthHalf;
+		pauseButtonPosition[1] = screenHeight * -0.5f + buttonHeightHalf;
+		pauseButtonCurrentPosition[0] = pauseButtonPosition[0];
+		pauseButtonCurrentPosition[1] = pauseButtonPosition[1];
+
+		// left-right-bottom-top
+		pauseButtonLimits[0] = pauseButtonPosition[0] - buttonWidthHalf;
+		pauseButtonLimits[1] = pauseButtonPosition[1] + buttonWidthHalf;
+		pauseButtonLimits[0] = pauseButtonPosition[0] - buttonHeightHalf;
+		pauseButtonLimits[1] = pauseButtonPosition[1] + buttonHeightHalf;
+
+		pauseButtonVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
+
+		pauseButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/hud/pause_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		pauseButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/hud/pause_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		pauseButtonCurrentTexture = pauseButtonIdleTexture;
 	}
 
 
@@ -621,6 +670,12 @@ public class Hud
 
 	public void draw()
 	{
+		// Pause button
+		uiPanelProgram.useProgram();
+		uiPanelProgram.setUniforms(viewProjection, pauseButtonCurrentScale, pauseButtonCurrentPosition, pauseButtonCurrentTexture, 0.5f);
+		glBindVertexArray(pauseButtonVaoHandle);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
 		// Score panel
 		scorePanelProgram.useProgram();
 		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersTexture);

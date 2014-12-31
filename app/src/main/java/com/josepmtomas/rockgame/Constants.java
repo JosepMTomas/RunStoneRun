@@ -117,14 +117,17 @@ public class Constants
 	public static final int NUM_OBJECTS_PATCHES_Z = 3;
 
 
+	public static final float PLAYER_SPEED_INCREMENT = 625f;
 	public static final float MAX_PLAYER_SPEED = 2500f;
 	public static final float MAX_PLAYER_SPEED_FACTOR = 0.0003333f;
 
 	// PlayerRock states
-	public static final int PLAYER_ROCK_MOVING = 1;
-	public static final int PLAYER_ROCK_BOUNCING = 2;
-	public static final int PLAYER_ROCK_RECOVERING = 3;
-	public static final int PLAYER_ROCK_STOPPED = 4;
+	public static final int PLAYER_ROCK_NOT_VISIBLE = 0;
+	public static final int PLAYER_ROCK_APPEARING = 1;
+	public static final int PLAYER_ROCK_MOVING = 2;
+	public static final int PLAYER_ROCK_BOUNCING = 3;
+	public static final int PLAYER_ROCK_RECOVERING = 4;
+	public static final int PLAYER_ROCK_STOPPED = 5;
 
 	public static final float PLAYER_RECOVERING_TIME = 3f;
 	public static final float LIFE_RECOVERING_TIME = 5f;

@@ -220,10 +220,11 @@ public class ForwardPlusRenderer implements Renderer
 
 		screen = new Screen(context, 1, 1);
 		//hud = new Hud(context, renderWidth, renderHeight);
-		hud = new Hud(context, screenWidth, screenHeight);
+
 
 		// UI
 		uiPanelProgram = new UIPanelProgram(context);
+		hud = new Hud(context, uiPanelProgram, screenWidth, screenHeight);
 		mainMenu = new MainMenu(parent, this, uiPanelProgram,  screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram,  screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, screenWidth, screenHeight);
@@ -761,15 +762,17 @@ public class ForwardPlusRenderer implements Renderer
 
 		if(rendererState == RENDERER_STATE_PLAYING)
 		{
-			if(x < 0)
+			if(newX < 0)
 			{
 				leftTouchState = TouchState.TOUCHING;
 				rightTouchState = TouchState.NOT_TOUCHING;
+				playerRock.turnLeft();
 			}
 			else
 			{
 				leftTouchState = TouchState.NOT_TOUCHING;
 				rightTouchState = TouchState.TOUCHING;
+				playerRock.turnRight();
 			}
 		}
 		else if(rendererState == RENDERER_STATE_MAIN_MENU)
@@ -788,10 +791,12 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void newGame()
 	{
+		rendererState = RENDERER_STATE_PLAYING;
 		ground.newGame();
 		hud.setAppearing();
 
-		playerRock.resetMultiplier();
+		playerRock.newGame();
+		playerRock.setAppearing();
 		iScore = 0;
 		fScore = 0f;
 	}
