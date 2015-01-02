@@ -47,7 +47,8 @@ public class ForwardPlusRenderer implements Renderer
 	private static final int RENDERER_STATE_OPTIONS_MENU = 3;
 	private static final int RENDERER_STATE_CREDITS_MENU = 4;
 	private static final int RENDERER_STATE_PAUSE_MENU = 5;
-	private static final int RENDERER_STATE_CHANGING_MENU = 6;
+	private static final int RENDERER_STATE_END_GAME_MENU = 6;
+	private static final int RENDERER_STATE_CHANGING_MENU = 7;
 	private int rendererState = RENDERER_STATE_MAIN_MENU;
 
 	private static final int SHADOWMAP_SIZE = 256;
@@ -502,6 +503,7 @@ public class ForwardPlusRenderer implements Renderer
 		optionsMenu.update(deltaTime);
 		creditsMenu.update(deltaTime);
 		pauseMenu.update(deltaTime);
+		endGameMenu.update(deltaTime);
 
 		shadowMapPass();
 		reflectionPass();
@@ -743,7 +745,6 @@ public class ForwardPlusRenderer implements Renderer
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		//TODO (re-enable):
 		hud.draw();
 		mainMenu.draw();
 		optionsMenu.draw();
@@ -780,8 +781,6 @@ public class ForwardPlusRenderer implements Renderer
 		newX = newX * 0.5f;
 		float newY = (screenHeight - y) * 2.0f - screenHeight;
 		newY = newY * 0.5f;
-
-		//pauseMenu.touch(newX, newY);
 
 		if(rendererState == RENDERER_STATE_PLAYING)
 		{
@@ -822,6 +821,10 @@ public class ForwardPlusRenderer implements Renderer
 		{
 			creditsMenu.touch(newX, newY);
 		}
+		else if(rendererState == RENDERER_STATE_END_GAME_MENU)
+		{
+			endGameMenu.touch(newX, newY);
+		}
 
 	}
 
@@ -830,6 +833,7 @@ public class ForwardPlusRenderer implements Renderer
 		rendererState = RENDERER_STATE_PLAYING;
 		isPaused = false;
 		ground.newGame();
+		hud.newGame();
 		hud.setAppearing();
 
 		playerRock.newGame();
@@ -838,15 +842,37 @@ public class ForwardPlusRenderer implements Renderer
 		fScore = 0f;
 	}
 
+	public void endGame()
+	{
+		playerRock.endGame();
+		hud.setDisappearing();
+	}
+
+	public void gameOver()
+	{
+
+	}
+
 	public void changingToCreditsMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
 		creditsMenu.setAppearing();
 	}
 
+	public void changingToEndGameMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		endGameMenu.setAppearing();
+	}
+
 	public void changedToCreditsMenu()
 	{
 		rendererState = RENDERER_STATE_CREDITS_MENU;
+	}
+
+	public void changedToEndGameMenu()
+	{
+		rendererState = RENDERER_STATE_END_GAME_MENU;
 	}
 
 	public void changedToOptionMenu()
@@ -877,6 +903,19 @@ public class ForwardPlusRenderer implements Renderer
 		mainMenu.setAppearing();
 	}
 
+	public void changingFromEndGameMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		mainMenu.setAppearing();
+		isPaused = false;
+	}
+
+	public void changingFromEndGameMenuToPauseMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		pauseMenu.setAppearing();
+	}
+
 	public void changingFromOptionsMenuToMainMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
@@ -892,6 +931,16 @@ public class ForwardPlusRenderer implements Renderer
 	public void changedFromCreditsMenuToMainMenu()
 	{
 		rendererState = RENDERER_STATE_MAIN_MENU;
+	}
+
+	public void changedFromEndGameMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_MAIN_MENU;
+	}
+
+	public void changedFromEndGameMenuToPauseMenu()
+	{
+		rendererState = RENDERER_STATE_PAUSE_MENU;
 	}
 
 	public void changedFromOptionsMenuToMainMenu()
@@ -981,6 +1030,7 @@ public class ForwardPlusRenderer implements Renderer
 		if(!isPaused)
 		{
 			rendererState = RENDERER_STATE_PLAYING;
+			hud.resume();
 		}
 	}
 

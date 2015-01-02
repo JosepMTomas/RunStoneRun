@@ -18,7 +18,7 @@ layout (std140) uniform lightInfo
 uniform sampler2DShadow shadowMapSampler;
 uniform mat4 shadowMatrix;
 uniform mat4 viewProjection;
-uniform int lod;
+//uniform int lod;
 
 out vec2 vTexCoords;
 out float vDistance;

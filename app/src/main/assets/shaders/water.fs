@@ -28,19 +28,20 @@ void main()
 	vec4 normalTex = texture(waterNormalSampler, vTexCoord);
 	normalTex = normalTex * 2.0 - 1.0;
 	
-	vec2 normalDistort = normalTex.xy * 0.025;
+	//vec2 normalDistort = normalTex.xy * 0.025;
+	vec2 normalDistort = normalTex.xy * 0.05;
 	
 	float shadow = textureProj(shadowMapSampler, vShadowCoords);
 	shadow += 0.25;
 	shadow = clamp(shadow, 0.0, 1.0);
 	
-	vec3 vEye = normalize(eyePos - vPosition.xyz);
+	/*vec3 vEye = normalize(eyePos - vPosition.xyz);
 	vec3 vReflected = reflect(vNormal, vLight);
 	float specular = dot(vReflected, vEye);
 	specular = clamp(specular, 0.0, 1.0);
-	specular = pow(specular, 15.0);
+	specular = pow(specular, 15.0);*/
 	
 	//fragColor = vec4(0.0,0.5,1.0,1.0);
 	fragColor = texture(reflectionSampler, screen + normalDistort) * 0.75;
-	fragColor = fragColor + specular;
+	//fragColor = fragColor + specular;
 }

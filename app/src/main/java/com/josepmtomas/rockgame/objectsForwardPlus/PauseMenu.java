@@ -290,6 +290,8 @@ public class PauseMenu
 	private void touchedEndGameButton()
 	{
 		endGameButtonCurrentTexture = textures.endGameButtonSelectedTexture;
+		renderer.changingToEndGameMenu();
+		currentState = UI_STATE_DISAPPEARING;
 	}
 
 

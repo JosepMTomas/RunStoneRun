@@ -247,6 +247,7 @@ public class Ground
 	private int rockBNormalTexture;
 	private int[] groundTextures;
 	private int[] groundNormalTextures;
+	private int riverWaterTexture;
 
 	// Shadow map
 	private float[] shadowMatrix;
@@ -607,6 +608,8 @@ public class Ground
 
 		waterTextures = new int[1];
 		waterTextures[0] = TextureHelper.loadETC2Texture(context, waterTexture, GL_COMPRESSED_RGB8_ETC2, false, true);
+
+		riverWaterTexture = TextureHelper.loadETC2Texture(context, "textures/water/water.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		//int compressedTexture = TextureHelper.loadETC2Texture(context,"textures/grass_color_mip_0.pkm", GL_COMPRESSED_RGBA8_ETC2_EAC, false, false);
 
@@ -2437,8 +2440,6 @@ public class Ground
 						default:
 							break;
 					}
-					//glBindVertexArray(groundVaoHandles[i][j]);
-					//glDrawElements(GL_TRIANGLES, patchElements.length, GL_UNSIGNED_SHORT, 0);
 				}
 			}
 		}
@@ -2446,6 +2447,7 @@ public class Ground
 		// River water
 		waterProgram.useProgram();
 		waterProgram.setCommonUniforms(shadowMatrix, dimensions, shadowMapSampler, reflectionSampler, waterTextures[0]);
+		glBindVertexArray(riverMiddleVaoHandle[0]);
 
 		for(int i=0; i < numGroundPatchesX; i++)
 		{
@@ -2456,18 +2458,8 @@ public class Ground
 					if(groundPatches[i][j].type != GROUND_PATCH_GROUND)
 					{
 						waterProgram.setSpecificUniforms(groundPatches[i][j].getModelMatrix(), groundPatches[i][j].getModelViewProjectionMatrix());
-
-						glBindVertexArray(riverMiddleVaoHandle[0]);
 						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 					}
-					/*totalGrass++;
-					if(groundPatches[i][j].currentLOD == LOD_A){
-						countLODA++;
-					}else if(groundPatches[i][j].currentLOD == LOD_B){
-						countLODB++;
-					}else{
-						countLODC++;
-					}*/
 				}
 			}
 		}
@@ -2479,7 +2471,7 @@ public class Ground
 
 		glBindVertexArray(grassVaoHandle);
 
-		grassProgram.setSpecificUniforms(grassUbo[LOD_A], 0);
+		grassProgram.setSpecificUniforms(grassUbo[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0, grassNumInstances[LOD_A]);
 
 		grassLowProgram.useProgram();
@@ -4275,13 +4267,13 @@ public class Ground
 		float minimumZ = groundPatchHeight;
 
 		// FIRST LANE
-		//groundPatches[0][0].type = GROUND_PATCH_GROUND;
+		groundPatches[0][0].type = GROUND_PATCH_GROUND;
 		groundPatches[0][0].reinitialize(GROUND_PATCH_ROOT, null, null);
 		groundPatches[0][0].setCurrentPosition(minimumX, 0.0f, minimumZ);
 
 		for(int z=1; z < numGroundPatchesZ; z++)
 		{
-			//groundPatches[0][z].type = GROUND_PATCH_GROUND;
+			groundPatches[0][z].type = GROUND_PATCH_GROUND;
 			groundPatches[0][z].reinitialize(
 					GROUND_PATCH_UP,
 					groundPatches[0][z-1].getVertexColors(GROUND_PATCH_UP),
@@ -4292,7 +4284,7 @@ public class Ground
 		// NEXT LANES
 		for(int x=1; x < numGroundPatchesX; x++)
 		{
-			//groundPatches[x][0].type = GROUND_PATCH_GROUND;
+			groundPatches[x][0].type = GROUND_PATCH_GROUND;
 			groundPatches[x][0].reinitialize(
 					GROUND_PATCH_LEFT,
 					null,
@@ -4301,7 +4293,7 @@ public class Ground
 
 			for(int z=1; z < numGroundPatchesZ; z++)
 			{
-				//groundPatches[x][z].type = GROUND_PATCH_GROUND;
+				groundPatches[x][z].type = GROUND_PATCH_GROUND;
 				groundPatches[x][z].reinitialize(
 						GROUND_PATCH_UP_LEFT,
 						groundPatches[x][z-1].getVertexColors(GROUND_PATCH_UP),
@@ -4314,7 +4306,14 @@ public class Ground
 
 	private void restartObjectsPatches()
 	{
-		float displacementZ = objectsPatchHeight * 5f;
+		float displacementZ = objectsPatches[0][objectsLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
+
+		objectsLeftmostIndex = 0;
+		objectsRightmostIndex = numObjectsPatchesX - 1;
+		objectsLowerIndex = 0;
+		objectsUpperIndex = numObjectsPatchesZ - 1;
+
+		//float displacementZ = objectsPatchHeight * 5f;
 		vec3 currentPos;
 
 		riverWaitCount = RIVER_WAIT * 2;
@@ -4324,7 +4323,7 @@ public class Ground
 			for(int x=0; x < numObjectsPatchesX; x++)
 			{
 				currentPos = objectsPatches[x][z].getCurrentPosition();
-				objectsPatches[x][z].setCurrentPosition(currentPos.x, currentPos.y, /*currentPos.z*/ -displacementZ - ((float)z * objectsPatchHeight));
+				objectsPatches[x][z].setCurrentPosition(currentPos.x, currentPos.y, /*currentPos.z*/ displacementZ - ((float)z * objectsPatchHeight));
 				objectsPatches[x][z].reinitialize();
 			}
 		}

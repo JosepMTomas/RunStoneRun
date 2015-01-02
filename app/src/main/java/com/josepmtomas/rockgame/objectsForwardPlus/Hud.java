@@ -1,6 +1,7 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.programsForwardPlus.ProgressBarProgram;
@@ -57,11 +58,18 @@ public class Hud
 	private int pauseButtonIdleTexture;
 	private int pauseButtonSelectedTexture;
 	private int pauseButtonCurrentTexture;
-	private float[] pauseButtonPosition = new float[2];
 	private float[] pauseButtonScale = new float[2];
+	private float[] pauseButtonPosition = new float[2];
 	private float[] pauseButtonLimits = new float[4];
-	private float[] pauseButtonCurrentPosition = new float[2];
+
+	// Pause button state control
+	private int pauseButtonState = UI_STATE_NOT_VISIBLE;
 	private float[] pauseButtonCurrentScale = new float[2];
+	private float[] pauseButtonCurrentPosition = new float[2];
+	private float pauseButtonTimer = 0f;
+	private float pauseButtonOpacity = 0f;
+	private float pauseButtonAppearTime = 0.5f;
+	private float pauseButtonDisappearTime = 0.5f;
 
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
@@ -70,7 +78,7 @@ public class Hud
 	private float scorePositionY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
-	private float scoreOpacity = 1f;
+	private float scoreOpacity = 0f;
 	private int scoreNumbersTexture;
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -81,6 +89,7 @@ public class Hud
 	private float scoreCurrentPositionY = 0f;
 	private float scoreTimer = 0f;
 	private float scoreAppearTime = 0.5f;
+	private float scoreDisappearTime = 0.5f;
 
 	// Multiplier panel
 	private float[] multiplierNumbersPositionsX = new float[4];
@@ -94,6 +103,7 @@ public class Hud
 	private float multiplierNumbersCurrentPositionY = 0f;
 	private float multiplierNumbersTimer = 0f;
 	private float multiplierNumbersAppearTime = 0.5f;
+	private float multiplierNumbersDisappearTime = 0.5f;
 	private float multiplierNumbersOpacity = 1f;
 
 	// Multiplier progress bar
@@ -110,6 +120,7 @@ public class Hud
 	private float multiplierProgressCurrentPositionY = 0f;
 	private float multiplierProgressTimer = 0f;
 	private float multiplierProgressAppearTime = 0.5f;
+	private float multiplierProgressDisappearTime = 0.5f;
 	private float multiplierProgressOpacity = 1f;
 
 	// Recovering progress bar
@@ -129,7 +140,7 @@ public class Hud
 	private int getReadyPanelState = UI_STATE_NOT_VISIBLE;
 	private float getReadyPanelTimer = 0f;
 	private float getReadyPanelOpacity = 0f;
-	private float[] getReadyPanelTimers = {0.5f, PLAYER_RECOVERING_TIME - 0.5f, 0.5f};
+	private float[] getReadyPanelTimers = {0.5f, PLAYER_RECOVERING_TIME - 0.5f, 0.25f};
 	private float getReadyPanelCurrentPositionY = 0f;
 	private float getReadyPanelInitialPositionY = -500f;
 	private float getReadyPanelFinalPositionY = 0f;
@@ -144,6 +155,16 @@ public class Hud
 	private float livesPositionY;
 	private float lifeRecoverPercent;
 	private float lifeRecoverTimer;
+
+	// Lives state control
+	private int livesState = UI_STATE_NOT_VISIBLE;
+	private float livesTimer = 0f;
+	private float livesAppearTime = 0.5f;
+	private float livesDisappearTime = 0.5f;
+	private float livesOpacity = 0f;
+	private float livesCurrentScale = 1f;
+	private float livesCurrentPositionY;
+	private float[] livesCurrentPositionsX = new float[5];
 
 
 	// Frames per second panel
@@ -406,8 +427,10 @@ public class Hud
 		for(int i=0; i < 5; i++)
 		{
 			livesPositionsX[i] = initialOffsetX + (i * livesSpacing);
+			livesCurrentPositionsX[i] = livesPositionsX[i];
 		}
 		livesPositionY = screenHeight * -0.85f;
+		livesCurrentPositionY = livesPositionY;
 
 		// FPS
 
@@ -418,11 +441,55 @@ public class Hud
 	}
 
 
+	private void resetPauseButtonTexture()
+	{
+		pauseButtonCurrentTexture = pauseButtonIdleTexture;
+	}
+
+
+	public void newGame()
+	{
+		livesPercents[0] = 1f;
+		livesPercents[1] = 1f;
+		livesPercents[2] = 1f;
+		livesPercents[3] = 0f;
+		livesPercents[4] = 0f;
+
+		livesStates[0] = LIFE_OK;
+		livesStates[1] = LIFE_OK;
+		livesStates[2] = LIFE_OK;
+		livesStates[3] = LIFE_LOST;
+		livesStates[4] = LIFE_LOST;
+
+		currentLife = 2;
+
+		livesCounterState = LIVES_TIMER_IDLE;
+	}
+
+
+	public void resume()
+	{
+		resetPauseButtonTexture();
+	}
+
+
 	public void setAppearing()
 	{
+		resetPauseButtonTexture();
 		scoreCurrentState = UI_STATE_APPEARING;
 		multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
 		multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
+		livesState = UI_STATE_NOT_VISIBLE;
+		pauseButtonState = UI_STATE_NOT_VISIBLE;
+	}
+
+	public void setDisappearing()
+	{
+		scoreCurrentState = UI_STATE_DISAPPEARING;
+		multiplierProgressCurrentState = UI_STATE_DISAPPEARING;
+		multiplierNumbersCurrentState = UI_STATE_DISAPPEARING;
+		livesState = UI_STATE_DISAPPEARING;
+		pauseButtonState = UI_STATE_DISAPPEARING;
 	}
 
 
@@ -434,6 +501,7 @@ public class Hud
 			y <= pauseButtonLimits[3])
 		{
 			renderer.setPause(true);
+			pauseButtonCurrentTexture = pauseButtonSelectedTexture;
 			return true;
 		}
 		return false;
@@ -500,6 +568,26 @@ public class Hud
 				scoreCurrentPositionsX[i] = lerp(scorePositionsX[i] * 2f, scorePositionsX[i], scoreOpacity);
 			}
 		}
+		else if(scoreCurrentState == UI_STATE_DISAPPEARING)
+		{
+			scoreTimer += deltaTime;
+			scoreOpacity = 1f - (scoreTimer / scoreDisappearTime);
+
+			if(scoreTimer >= scoreDisappearTime)
+			{
+				scoreTimer = 0f;
+				scoreOpacity = 0f;
+				scoreCurrentState = UI_STATE_NOT_VISIBLE;
+			}
+
+			scoreCurrentScale = lerp(1f, 2f, scoreOpacity);
+			scoreCurrentPositionY = lerp(scorePositionY * 2f, scorePositionY, scoreOpacity);
+
+			for(i=0; i<8; i++)
+			{
+				scoreCurrentPositionsX[i] = lerp(scorePositionsX[i] * 2f, scorePositionsX[i], scoreOpacity);
+			}
+		}
 
 		// Multiplier progress bar
 		if(multiplierProgressCurrentState == UI_STATE_APPEARING)
@@ -519,6 +607,22 @@ public class Hud
 			multiplierProgressCurrentPositionX = lerp(multiplierProgressPositionX * 2f, multiplierProgressPositionX, multiplierProgressOpacity);
 			multiplierProgressCurrentPositionY = lerp(multiplierProgressPositionY * 2f, multiplierProgressPositionY, multiplierProgressOpacity);
 		}
+		else if(multiplierProgressCurrentState == UI_STATE_DISAPPEARING)
+		{
+			multiplierProgressTimer += deltaTime;
+			multiplierProgressOpacity = 1f - (multiplierProgressTimer / multiplierProgressDisappearTime);
+
+			if(multiplierProgressTimer >= multiplierProgressDisappearTime)
+			{
+				multiplierProgressTimer = 0f;
+				multiplierProgressOpacity = 0f;
+				multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
+			}
+
+			multiplierProgressCurrentScale = lerp(2f, 1f, multiplierProgressOpacity);
+			multiplierProgressCurrentPositionX = lerp(multiplierProgressPositionX * 2f, multiplierProgressPositionX, multiplierProgressOpacity);
+			multiplierProgressCurrentPositionY = lerp(multiplierProgressPositionY * 2f, multiplierProgressPositionY, multiplierProgressOpacity);
+		}
 
 		// Score multiplier numbers
 		if(multiplierNumbersCurrentState == UI_STATE_APPEARING)
@@ -531,6 +635,27 @@ public class Hud
 				multiplierNumbersTimer = 0f;
 				multiplierNumbersOpacity = 1f;
 				multiplierNumbersCurrentState = UI_STATE_VISIBLE;
+				livesState = UI_STATE_APPEARING;
+			}
+
+			multiplierNumbersCurrentScale = lerp(2f, 1f, multiplierNumbersOpacity);
+			multiplierNumbersCurrentPositionY = lerp(multiplierNumbersPositionY * 2f, multiplierNumbersPositionY, multiplierNumbersOpacity);
+
+			for(i=0; i<4; i++)
+			{
+				multiplierNumbersCurrentPositionsX[i] = lerp(multiplierNumbersPositionsX[i] * 2f, multiplierNumbersPositionsX[i], multiplierNumbersOpacity);
+			}
+		}
+		else if(multiplierNumbersCurrentState == UI_STATE_DISAPPEARING)
+		{
+			multiplierNumbersTimer += deltaTime;
+			multiplierNumbersOpacity = 1f - (multiplierNumbersTimer / multiplierNumbersDisappearTime);
+
+			if(multiplierNumbersTimer >= multiplierNumbersDisappearTime)
+			{
+				multiplierNumbersTimer = 0f;
+				multiplierNumbersOpacity = 0f;
+				multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
 			}
 
 			multiplierNumbersCurrentScale = lerp(2f, 1f, multiplierNumbersOpacity);
@@ -542,6 +667,48 @@ public class Hud
 			}
 		}
 
+		// Lives (UI state)
+		if(livesState == UI_STATE_APPEARING)
+		{
+			livesTimer += deltaTime;
+			livesOpacity = livesTimer / livesAppearTime;
+
+			if(livesTimer >= livesAppearTime)
+			{
+				livesTimer = 0f;
+				livesOpacity = 1f;
+				livesState = UI_STATE_VISIBLE;
+				pauseButtonState = UI_STATE_APPEARING;
+			}
+
+			livesCurrentScale = lerp(2f, 1f, livesOpacity);
+			livesCurrentPositionY = lerp(livesPositionY * 2f, livesPositionY, livesOpacity);
+
+			for(i=0; i<5; i++)
+			{
+				livesCurrentPositionsX[i] = lerp(livesPositionsX[i] * 2f, livesPositionsX[i], livesOpacity);
+			}
+		}
+		else if(livesState == UI_STATE_DISAPPEARING)
+		{
+			livesTimer += deltaTime;
+			livesOpacity = 1f - (livesTimer / livesDisappearTime);
+
+			if(livesTimer >= livesDisappearTime)
+			{
+				livesTimer = 0f;
+				livesOpacity = 0f;
+				livesState = UI_STATE_NOT_VISIBLE;
+			}
+
+			livesCurrentScale = lerp(2f, 1f, livesOpacity);
+			livesCurrentPositionY = lerp(livesPositionY * 2f, livesPositionY, livesOpacity);
+
+			for(i=0; i<5; i++)
+			{
+				livesCurrentPositionsX[i] = lerp(livesPositionsX[i] * 2f, livesPositionsX[i], livesOpacity);
+			}
+		}
 
 		// Lives
 		if(livesCounterState == LIVES_TIMER_COUNTING)
@@ -554,6 +721,43 @@ public class Hud
 				livesStates[currentLife] = LIFE_OK;
 				livesCounterState = LIVES_TIMER_IDLE;
 			}
+		}
+
+
+		// Pause button
+		if(pauseButtonState == UI_STATE_APPEARING)
+		{
+			pauseButtonTimer += deltaTime;
+			pauseButtonOpacity = pauseButtonTimer / pauseButtonAppearTime;
+
+			if(pauseButtonTimer >= pauseButtonAppearTime)
+			{
+				pauseButtonTimer = 0f;
+				pauseButtonOpacity = 1f;
+				pauseButtonState = UI_STATE_VISIBLE;
+			}
+
+			pauseButtonCurrentScale[0] = lerp(pauseButtonScale[0] * 2f, pauseButtonScale[0], pauseButtonOpacity);
+			pauseButtonCurrentScale[1] = lerp(pauseButtonScale[1] * 2f, pauseButtonScale[1], pauseButtonOpacity);
+			pauseButtonCurrentPosition[0] = lerp(pauseButtonPosition[0] * 2f, pauseButtonPosition[0], pauseButtonOpacity);
+			pauseButtonCurrentPosition[1] = lerp(pauseButtonPosition[1] * 2f, pauseButtonPosition[1], pauseButtonOpacity);
+		}
+		else if(pauseButtonState == UI_STATE_DISAPPEARING)
+		{
+			pauseButtonTimer += deltaTime;
+			pauseButtonOpacity = 1f - (pauseButtonTimer / pauseButtonDisappearTime);
+
+			if(pauseButtonTimer >= pauseButtonDisappearTime)
+			{
+				pauseButtonTimer = 0f;
+				pauseButtonOpacity = 0f;
+				pauseButtonState = UI_STATE_NOT_VISIBLE;
+			}
+
+			pauseButtonCurrentScale[0] = lerp(pauseButtonScale[0] * 2f, pauseButtonScale[0], pauseButtonOpacity);
+			pauseButtonCurrentScale[1] = lerp(pauseButtonScale[1] * 2f, pauseButtonScale[1], pauseButtonOpacity);
+			pauseButtonCurrentPosition[0] = lerp(pauseButtonPosition[0] * 2f, pauseButtonPosition[0], pauseButtonOpacity);
+			pauseButtonCurrentPosition[1] = lerp(pauseButtonPosition[1] * 2f, pauseButtonPosition[1], pauseButtonOpacity);
 		}
 
 
@@ -689,10 +893,15 @@ public class Hud
 	public void draw()
 	{
 		// Pause button
-		uiPanelProgram.useProgram();
-		uiPanelProgram.setUniforms(viewProjection, pauseButtonCurrentScale, pauseButtonCurrentPosition, pauseButtonCurrentTexture, 0.5f);
-		glBindVertexArray(pauseButtonVaoHandle);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		if(pauseButtonState != UI_STATE_NOT_VISIBLE)
+		{
+			uiPanelProgram.useProgram();
+			uiPanelProgram.setUniforms(viewProjection, pauseButtonCurrentScale, pauseButtonCurrentPosition, pauseButtonCurrentTexture, 0.5f * pauseButtonOpacity);
+			glBindVertexArray(pauseButtonVaoHandle);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			//Log.w("PauseButton", "Drawing");
+		}
+
 
 		// Score panel
 		scorePanelProgram.useProgram();
@@ -772,18 +981,21 @@ public class Hud
 		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 
 
-		glBindVertexArray(lifeBarVaoHandle);
-
-		for(int i=0; i < 5; i++)
+		if(livesState != UI_STATE_NOT_VISIBLE)
 		{
-			progressBarProgram.setSpecificUniforms(1f, livesPositionsX[i], livesPositionY, 1f, 1f, 1f, 1f, livesPercents[i]);
-			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
-		}
+			glBindVertexArray(lifeBarVaoHandle);
 
-		if(livesStates[currentLife] == LIFE_LOSING)
-		{
-			progressBarProgram.setSpecificUniforms(1f, livesPositionsX[currentLife], livesPositionY, 1f, 1f, 0f, 1f, lifeRecoverPercent);
-			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+			for(int i=0; i < 5; i++)
+			{
+				progressBarProgram.setSpecificUniforms(livesCurrentScale, livesCurrentPositionsX[i], livesCurrentPositionY, 1f, 1f, 1f, 1f, livesPercents[i] * livesOpacity);
+				glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+			}
+
+			if(livesStates[currentLife] == LIFE_LOSING)
+			{
+				progressBarProgram.setSpecificUniforms(livesCurrentScale, livesCurrentPositionsX[currentLife], livesCurrentPositionY, 1f, 1f, 0f, 1f, lifeRecoverPercent * livesOpacity);
+				glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+			}
 		}
 	}
 }

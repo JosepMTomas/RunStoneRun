@@ -128,6 +128,7 @@ public class Constants
 	public static final int PLAYER_ROCK_BOUNCING = 3;
 	public static final int PLAYER_ROCK_RECOVERING = 4;
 	public static final int PLAYER_ROCK_STOPPED = 5;
+	public static final int PLAYER_ROCK_DISAPPEARING = 6;
 
 	public static final float PLAYER_RECOVERING_TIME = 3f;
 	public static final float LIFE_RECOVERING_TIME = 5f;

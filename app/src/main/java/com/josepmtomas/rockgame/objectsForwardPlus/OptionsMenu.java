@@ -167,7 +167,7 @@ public class OptionsMenu
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
-		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenWidth, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.3f, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
 		loadTextures(context);
@@ -294,7 +294,7 @@ public class OptionsMenu
 
 	private void resetPostProcessCurrentTextures()
 	{
-		postProcessNoDetailButtonCurrentTexture = textures.postProcessNoDetailButtonIdleTexture;
+		postProcessNoDetailButtonCurrentTexture = textures.noButtonIdleTexture;
 		postProcessLowDetailButtonCurrentTexture = textures.postProcessLowDetailButtonIdleTexture;
 		postProcessHighDetailButtonCurrentTexture = textures.postProcessHighDetailButtonIdleTexture;
 	}
@@ -961,7 +961,7 @@ public class OptionsMenu
 	{
 		postProcessQuality = 0;
 		resetPostProcessCurrentTextures();
-		postProcessNoDetailButtonCurrentTexture = textures.postProcessNoDetailButtonSelectedTexture;
+		postProcessNoDetailButtonCurrentTexture = textures.noButtonSelectedTexture;
 		renderer.setNoPostProcessDetail();
 		savePreferences();
 	}

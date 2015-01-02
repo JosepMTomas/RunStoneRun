@@ -302,6 +302,15 @@ public class CreditsMenu
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
 
+			if(menuTimer >= menuDisappearTime)
+			{
+				menuOpacity = 0.0f;
+				menuTimer = 0f;
+				currentState = UI_STATE_NOT_VISIBLE;
+				renderer.changedFromCreditsMenuToMainMenu();
+				resetCurrentTextures();
+			}
+
 			backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], menuOpacity);
 			backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], menuOpacity);
 
@@ -334,15 +343,6 @@ public class CreditsMenu
 			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
 			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
 			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
-
-			if(menuTimer >= menuDisappearTime)
-			{
-				menuOpacity = 1.0f;
-				menuTimer = 0f;
-				currentState = UI_STATE_NOT_VISIBLE;
-				renderer.changedFromCreditsMenuToMainMenu();
-				resetCurrentTextures();
-			}
 		}
 	}
 

@@ -44,8 +44,11 @@ public class MenuTextures
 	public final int resolutionPercentageButton75SelectedTexture;
 	public final int resolutionPercentageButton100SelectedTexture;
 
-	public final int postProcessNoDetailButtonIdleTexture;
-	public final int postProcessNoDetailButtonSelectedTexture;
+	public final int noButtonIdleTexture;
+	public final int noButtonSelectedTexture;
+	public final int yesButtonIdleTexture;
+	public final int yesButtonSelectedTexture;
+
 	public final int postProcessLowDetailButtonIdleTexture;
 	public final int postProcessLowDetailButtonSelectedTexture;
 	public final int postProcessHighDetailButtonIdleTexture;
@@ -118,11 +121,13 @@ public class MenuTextures
 		resolutionPercentageButton75SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/resolution_75_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		resolutionPercentageButton100SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/resolution_100_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
-		postProcessNoDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/no_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		noButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/no_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		yesButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/yes_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		noButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/no_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		yesButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/yes_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		postProcessLowDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/low_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		postProcessHighDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/high_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		postProcessNoDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/no_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		postProcessLowDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/low_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		postProcessHighDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/high_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 

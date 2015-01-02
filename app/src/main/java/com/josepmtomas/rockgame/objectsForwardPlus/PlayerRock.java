@@ -87,6 +87,7 @@ public class PlayerRock
 	// Player rock state
 	private float playerRockTimer = 0f;
 	private final float playerRockAppearTime = 1f;
+	private final float playerRockDisappearTime = 1f;
 	private float playerRockTimerPercent = 0f;
 	private float currentPositionZ = 0f;
 
@@ -548,6 +549,8 @@ public class PlayerRock
 		{
 			currentSpeed = 500f;
 			currentPositionZ = 50f;
+			currentPositionY = 10f;
+			initialForce = 0f;
 		}
 		else if(state == PLAYER_ROCK_APPEARING)
 		{
@@ -564,7 +567,23 @@ public class PlayerRock
 			currentPositionZ = lerp(50f, 0f, playerRockTimerPercent);
 			currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + PLAYER_SPEED_INCREMENT * deltaTime);
 		}
-		if(state == PLAYER_ROCK_BOUNCING)
+		else if(state == PLAYER_ROCK_DISAPPEARING)
+		{
+			playerRockTimer += deltaTime;
+			playerRockTimerPercent = playerRockTimer / playerRockDisappearTime;
+
+			if(playerRockTimer >= playerRockDisappearTime)
+			{
+				playerRockTimer = 0f;
+				playerRockTimerPercent = 1f;
+				state = PLAYER_ROCK_NOT_VISIBLE;
+			}
+
+			currentPositionY = lerp(currentPositionY, 10f, playerRockTimerPercent);
+			currentPositionZ = lerp(0f, 50f, playerRockTimerPercent);;
+			currentSpeed = lerp(currentSpeed, 500f, playerRockTimerPercent);
+		}
+		else if(state == PLAYER_ROCK_BOUNCING)
 		{
 			previousPositionY = currentPositionY;
 
@@ -678,7 +697,7 @@ public class PlayerRock
 
 		// TODO: mirrored proxy
 		setIdentityM(proxyModel, 0);
-		translateM(proxyModel, 0, 0.0f, -10.0f, 0.0f);
+		translateM(proxyModel, 0, 0.0f, -currentPositionY, currentPositionZ);
 		rotateM(proxyModel, 0, rotationY, 0f, 1f, 0f);
 		rotateM(proxyModel, 0, -rotationX, 1f, 0f, 0f); // +180f
 	}
@@ -776,6 +795,11 @@ public class PlayerRock
 	{
 		scoreMultiplier = 1.0f;
 		currentSpeed = 0f;
+	}
+
+	public void endGame()
+	{
+		state = PLAYER_ROCK_DISAPPEARING;
 	}
 
 	////////////////////////////////////////////////////////////////////////////////////////////////
