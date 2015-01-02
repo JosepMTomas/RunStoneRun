@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.objectsForwardPlus.CreditsMenu;
+import com.josepmtomas.rockgame.objectsForwardPlus.EndGameMenu;
 import com.josepmtomas.rockgame.objectsForwardPlus.Ground;
 import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
 import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
@@ -171,7 +172,7 @@ public class ForwardPlusRenderer implements Renderer
 	private OptionsMenu optionsMenu;
 	private CreditsMenu creditsMenu;
 	private PauseMenu pauseMenu;
-	//private EndGameDialog endGameDialog;
+	private EndGameMenu endGameMenu;
 
 	// Shared preferences
 	private SharedPreferences sharedPreferences;
@@ -236,7 +237,7 @@ public class ForwardPlusRenderer implements Renderer
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		pauseMenu = new PauseMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
-		//endGameDialog = new EndGameDialog(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		endGameMenu = new EndGameMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -748,7 +749,7 @@ public class ForwardPlusRenderer implements Renderer
 		optionsMenu.draw();
 		creditsMenu.draw();
 		pauseMenu.draw();
-		//endGameDialog.draw();
+		endGameMenu.draw();
 		glDisable(GL_BLEND);
 	}
 
