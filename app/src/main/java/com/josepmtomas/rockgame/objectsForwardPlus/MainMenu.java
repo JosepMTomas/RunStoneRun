@@ -1,12 +1,10 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
-import com.josepmtomas.rockgame.util.TextureHelper;
 import com.josepmtomas.rockgame.util.UIHelper;
 
 import static com.josepmtomas.rockgame.Constants.*;
@@ -23,6 +21,7 @@ public class MainMenu
 	private GameActivity parent;
 	private ForwardPlusRenderer renderer;
 	private Context context;
+	private MenuTextures textures;
 
 	// State
 	private int currentState;
@@ -43,13 +42,10 @@ public class MainMenu
 	private int ui9PatchPanelVaoHandle;
 
 	// Buttons back panel
-	private int buttonsBackPanelTexture;
 	private float[] buttonsBackPanelScale = {1f, 1f};
 	private float[] buttonsBackPanelPosition = new float[2];
 
 	// New game button
-	private int newGameButtonIdleTexture;
-	private int newGameButtonSelectedTexture;
 	private int newGameButtonCurrentTexture;
 	private float[] newGameButtonPosition = new float[2];
 	private float[] newGameButtonScale = new float[2];
@@ -58,8 +54,6 @@ public class MainMenu
 	private float[] newGameButtonCurrentScale = new float[2];
 
 	// Options button
-	private int optionsButtonIdleTexture;
-	private int optionsButtonSelectedTexture;
 	private int optionsButtonCurrentTexture;
 	private float[] optionsButtonPosition = new float[2];
 	private float[] optionsButtonScale = new float[2];
@@ -68,8 +62,6 @@ public class MainMenu
 	private float[] optionsButtonCurrentScale = new float[2];
 
 	// Credits button
-	private int creditsButtonIdleTexture;
-	private int creditsButtonSelectedTexture;
 	private int creditsButtonCurrentTexture;
 	private float[] creditsButtonPosition = new float[2];
 	private float[] creditsButtonScale = new float[2];
@@ -81,11 +73,12 @@ public class MainMenu
 	UIPanelProgram uiPanelProgram;
 
 
-	public MainMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
+	public MainMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.renderer = renderer;
 		this.context = parent.getApplicationContext();
+		this.textures = textures;
 		this.uiPanelProgram = panelProgram;
 		this.currentState = UI_STATE_VISIBLE;
 
@@ -123,19 +116,9 @@ public class MainMenu
 
 	private void loadTextures()
 	{
-		newGameButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/new_game_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		newGameButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/new_game_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		newGameButtonCurrentTexture = newGameButtonIdleTexture;
-
-		optionsButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/options_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		optionsButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/options_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		optionsButtonCurrentTexture = optionsButtonIdleTexture;
-
-		creditsButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/credits_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		creditsButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/credits_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		creditsButtonCurrentTexture = creditsButtonIdleTexture;
-
-		buttonsBackPanelTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		newGameButtonCurrentTexture = textures.newGameButtonIdleTexture;
+		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
+		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
 	}
 
 
@@ -259,17 +242,17 @@ public class MainMenu
 	}
 
 
-	public void release()
+	public void releaseTouch()
 	{
-		newGameButtonCurrentTexture = newGameButtonIdleTexture;
-		optionsButtonCurrentTexture = optionsButtonIdleTexture;
-		creditsButtonCurrentTexture = creditsButtonIdleTexture;
+		newGameButtonCurrentTexture = textures.newGameButtonIdleTexture;
+		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
+		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
 	}
 
 
 	private void touchNewGameButton()
 	{
-		newGameButtonCurrentTexture = newGameButtonSelectedTexture;
+		newGameButtonCurrentTexture = textures.newGameButtonSelectedTexture;
 		renderer.newGame();
 		currentState = UI_STATE_DISAPPEARING;
 	}
@@ -277,15 +260,15 @@ public class MainMenu
 
 	private void touchOptionsButton()
 	{
-		optionsButtonCurrentTexture = optionsButtonSelectedTexture;
-		renderer.changingToOptionsMenu();
+		optionsButtonCurrentTexture = textures.optionsButtonSelectedTexture;
+		renderer.changingToOptionsMenuFromMainMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
 
 
 	private void touchCreditsButton()
 	{
-		creditsButtonCurrentTexture = creditsButtonSelectedTexture;
+		creditsButtonCurrentTexture = textures.creditsButtonSelectedTexture;
 		renderer.changingToCreditsMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
@@ -330,7 +313,7 @@ public class MainMenu
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
 
-			if(menuTimer >= menuAppearTime)
+			if(menuTimer >= menuDisappearTime)
 			{
 				currentState = UI_STATE_NOT_VISIBLE;
 				menuOpacity = 0f;
@@ -362,7 +345,7 @@ public class MainMenu
 
 			glBindVertexArray(ui9PatchPanelVaoHandle);
 
-			uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, buttonsBackPanelTexture, 0.75f * menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, textures.background9PatchPanelTexture, 0.75f * menuOpacity);
 			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
 
 			glBindVertexArray(uiPanelVaoHandle);

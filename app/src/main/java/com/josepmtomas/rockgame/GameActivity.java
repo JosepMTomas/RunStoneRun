@@ -350,6 +350,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	protected void onStop() {
 		super.onStop();
 
+		forwardPlusRenderer.setPause(true);
 		Log.d(TAG, "<<<<< ON STOP >>>>>");
 	}
 

@@ -2,12 +2,10 @@ package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
-import com.josepmtomas.rockgame.util.TextureHelper;
 import com.josepmtomas.rockgame.util.UIHelper;
 
 import static com.josepmtomas.rockgame.Constants.*;
@@ -26,6 +24,7 @@ public class OptionsMenu
 	private Context context;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
+	private MenuTextures textures;
 
 	// Preferences
 	private int resolution;
@@ -34,6 +33,7 @@ public class OptionsMenu
 	private boolean effectsEnabled;
 
 	// State
+	private int previousMenu;
 	private int currentState;
 
 	// Matrices
@@ -135,47 +135,18 @@ public class OptionsMenu
 	private float[] backButtonLimits = new float[4];
 
 	// Textures
-	private int background9PatchTexture;
-
-	private int optionsTitleTexture;
-	private int screenResolutionTitleTexture;
-	private int postProcessDetailTitleTexture;
-	private int musicTitleTexture;
-	private int effectsTitleTexture;
 
 	private int backButtonCurrentTexture;
-	private int backButtonIdleTexture;
-	private int backButtonSelectedTexture;
 
 	private int resolutionPercentageButton25CurrentTexture;
 	private int resolutionPercentageButton50CurrentTexture;
 	private int resolutionPercentageButton75CurrentTexture;
 	private int resolutionPercentageButton100CurrentTexture;
-	private int resolutionPercentageButton25IdleTexture;
-	private int resolutionPercentageButton50IdleTexture;
-	private int resolutionPercentageButton75IdleTexture;
-	private int resolutionPercentageButton100IdleTexture;
-	private int resolutionPercentageButton25SelectedTexture;
-	private int resolutionPercentageButton50SelectedTexture;
-	private int resolutionPercentageButton75SelectedTexture;
-	private int resolutionPercentageButton100SelectedTexture;
 
 	private int postProcessNoDetailButtonCurrentTexture;
-	private int postProcessNoDetailButtonIdleTexture;
-	private int postProcessNoDetailButtonSelectedTexture;
-
 	private int postProcessLowDetailButtonCurrentTexture;
-	private int postProcessLowDetailButtonIdleTexture;
-	private int postProcessLowDetailButtonSelectedTexture;
-
 	private int postProcessHighDetailButtonCurrentTexture;
-	private int postProcessHighDetailButtonIdleTexture;
-	private int postProcessHighDetailButtonSelectedTexture;
 
-	private int soundEnableButtonIdleTexture;
-	private int soundEnableButtonSelectedTexture;
-	private int soundDisableButtonIdleTexture;
-	private int soundDisableButtonSelectedTexture;
 	private int musicEnableButtonCurrentTexture;
 	private int musicDisableButtonCurrentTexture;
 	private int effectsEnableButtonCurrentTexture;
@@ -185,12 +156,13 @@ public class OptionsMenu
 	private SharedPreferences sharedPreferences;
 
 
-	public OptionsMenu(GameActivity parent, ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
+	public OptionsMenu(GameActivity parent, ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
 		this.sharedPreferences = sharedPreferences;
 		this.uiPanelProgram = panelProgram;
+		this.textures = textures;
 		this.renderer = renderer;
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
@@ -229,41 +201,6 @@ public class OptionsMenu
 
 	private void loadTextures(Context context)
 	{
-		background9PatchTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		optionsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/options_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		screenResolutionTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/screen_resolution_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		postProcessDetailTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/post_process_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		musicTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/music_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		effectsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/effects_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		backButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		backButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		resolutionPercentageButton25IdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_25_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton50IdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_50_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton75IdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_75_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton100IdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_100_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		resolutionPercentageButton25SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_25_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton50SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_50_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton75SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_75_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		resolutionPercentageButton100SelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/resolution_100_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		postProcessNoDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/no_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		postProcessLowDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/low_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		postProcessHighDetailButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/high_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		postProcessNoDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/no_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		postProcessLowDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/low_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		postProcessHighDetailButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/high_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		soundEnableButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_enabled_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		soundEnableButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_enabled_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		soundDisableButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_disabled_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		soundDisableButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/sound_disabled_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
 		resetBackButtonCurrentTexture();
 		resetResolutionPercentageCurrentTextures();
 		resetPostProcessCurrentTextures();
@@ -342,38 +279,38 @@ public class OptionsMenu
 
 	private void resetBackButtonCurrentTexture()
 	{
-		backButtonCurrentTexture = backButtonIdleTexture;
+		backButtonCurrentTexture = textures.backButtonIdleTexture;
 	}
 
 
 	private void resetResolutionPercentageCurrentTextures()
 	{
-		resolutionPercentageButton25CurrentTexture = resolutionPercentageButton25IdleTexture;
-		resolutionPercentageButton50CurrentTexture = resolutionPercentageButton50IdleTexture;
-		resolutionPercentageButton75CurrentTexture = resolutionPercentageButton75IdleTexture;
-		resolutionPercentageButton100CurrentTexture = resolutionPercentageButton100IdleTexture;
+		resolutionPercentageButton25CurrentTexture = textures.resolutionPercentageButton25IdleTexture;
+		resolutionPercentageButton50CurrentTexture = textures.resolutionPercentageButton50IdleTexture;
+		resolutionPercentageButton75CurrentTexture = textures.resolutionPercentageButton75IdleTexture;
+		resolutionPercentageButton100CurrentTexture = textures.resolutionPercentageButton100IdleTexture;
 	}
 
 
 	private void resetPostProcessCurrentTextures()
 	{
-		postProcessNoDetailButtonCurrentTexture = postProcessNoDetailButtonIdleTexture;
-		postProcessLowDetailButtonCurrentTexture = postProcessLowDetailButtonIdleTexture;
-		postProcessHighDetailButtonCurrentTexture = postProcessHighDetailButtonIdleTexture;
+		postProcessNoDetailButtonCurrentTexture = textures.postProcessNoDetailButtonIdleTexture;
+		postProcessLowDetailButtonCurrentTexture = textures.postProcessLowDetailButtonIdleTexture;
+		postProcessHighDetailButtonCurrentTexture = textures.postProcessHighDetailButtonIdleTexture;
 	}
 
 
 	private void resetMusicCurrentTextures()
 	{
-		musicEnableButtonCurrentTexture = soundEnableButtonIdleTexture;
-		musicDisableButtonCurrentTexture = soundDisableButtonIdleTexture;
+		musicEnableButtonCurrentTexture = textures.soundEnableButtonIdleTexture;
+		musicDisableButtonCurrentTexture = textures.soundDisableButtonIdleTexture;
 	}
 
 
 	private void resetEffectsCurrentTextures()
 	{
-		effectsEnableButtonCurrentTexture = soundEnableButtonIdleTexture;
-		effectsDisableButtonCurrentTexture = soundDisableButtonIdleTexture;
+		effectsEnableButtonCurrentTexture = textures.soundEnableButtonIdleTexture;
+		effectsDisableButtonCurrentTexture = textures.soundDisableButtonIdleTexture;
 	}
 
 
@@ -775,17 +712,17 @@ public class OptionsMenu
 
 			// Background
 			glBindVertexArray(ui9PatchVaoHandle);
-			uiPanelProgram.setUniforms(viewProjection, background9PatchCurrentScale, background9PatchPosition, background9PatchTexture, menuOpacity * 0.75f);
+			uiPanelProgram.setUniforms(viewProjection, background9PatchCurrentScale, background9PatchPosition, textures.background9PatchPanelTexture, menuOpacity * 0.75f);
 			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
 
 			glBindVertexArray(uiPanelVaoHandle);
 
 			// Options title
-			uiPanelProgram.setUniforms(viewProjection, optionsTitleCurrentScale, optionsTitleCurrentPosition, optionsTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, optionsTitleCurrentScale, optionsTitleCurrentPosition, textures.optionsTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Screen Resolution title
-			uiPanelProgram.setUniforms(viewProjection, screenResolutionTitleCurrentScale, screenResolutionTitleCurrentPosition, screenResolutionTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, screenResolutionTitleCurrentScale, screenResolutionTitleCurrentPosition, textures.screenResolutionTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Draw resolution percentage 25% button
@@ -806,7 +743,7 @@ public class OptionsMenu
 
 
 			// Post-process title
-			uiPanelProgram.setUniforms(viewProjection, postProcessDetailTitleCurrentScale, postProcessDetailTitleCurrentPosition, postProcessDetailTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, postProcessDetailTitleCurrentScale, postProcessDetailTitleCurrentPosition, textures.postProcessDetailTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// No post-process button
@@ -823,7 +760,7 @@ public class OptionsMenu
 
 
 			// Music title
-			uiPanelProgram.setUniforms(viewProjection, musicTitleCurrentScale, musicTitleCurrentPosition, musicTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, musicTitleCurrentScale, musicTitleCurrentPosition, textures.musicTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Music enable button
@@ -836,7 +773,7 @@ public class OptionsMenu
 
 
 			// Effects title
-			uiPanelProgram.setUniforms(viewProjection, effectsTitleCurrentScale, effectsTitleCurrentPosition, effectsTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, effectsTitleCurrentScale, effectsTitleCurrentPosition, textures.soundEffectsTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Effects enable button
@@ -967,8 +904,9 @@ public class OptionsMenu
 	}
 
 
-	public void setAppearing()
+	public void setAppearing(int previousMenu)
 	{
+		this.previousMenu = previousMenu;
 		currentState = UI_STATE_APPEARING;
 	}
 
@@ -983,7 +921,7 @@ public class OptionsMenu
 	{
 		resolution = 3;
 		resetResolutionPercentageCurrentTextures();
-		resolutionPercentageButton25CurrentTexture = resolutionPercentageButton25SelectedTexture;
+		resolutionPercentageButton25CurrentTexture = textures.resolutionPercentageButton25SelectedTexture;
 		renderer.setResolution25();
 		savePreferences();
 	}
@@ -993,7 +931,7 @@ public class OptionsMenu
 	{
 		resolution = 2;
 		resetResolutionPercentageCurrentTextures();
-		resolutionPercentageButton50CurrentTexture = resolutionPercentageButton50SelectedTexture;
+		resolutionPercentageButton50CurrentTexture = textures.resolutionPercentageButton50SelectedTexture;
 		renderer.setResolution50();
 		savePreferences();
 	}
@@ -1003,7 +941,7 @@ public class OptionsMenu
 	{
 		resolution = 1;
 		resetResolutionPercentageCurrentTextures();
-		resolutionPercentageButton75CurrentTexture = resolutionPercentageButton75SelectedTexture;
+		resolutionPercentageButton75CurrentTexture = textures.resolutionPercentageButton75SelectedTexture;
 		renderer.setResolution75();
 		savePreferences();
 	}
@@ -1013,7 +951,7 @@ public class OptionsMenu
 	{
 		resolution = 0;
 		resetResolutionPercentageCurrentTextures();
-		resolutionPercentageButton100CurrentTexture = resolutionPercentageButton100SelectedTexture;
+		resolutionPercentageButton100CurrentTexture = textures.resolutionPercentageButton100SelectedTexture;
 		renderer.setResolution100();
 		savePreferences();
 	}
@@ -1023,7 +961,7 @@ public class OptionsMenu
 	{
 		postProcessQuality = 0;
 		resetPostProcessCurrentTextures();
-		postProcessNoDetailButtonCurrentTexture = postProcessNoDetailButtonSelectedTexture;
+		postProcessNoDetailButtonCurrentTexture = textures.postProcessNoDetailButtonSelectedTexture;
 		renderer.setNoPostProcessDetail();
 		savePreferences();
 	}
@@ -1033,7 +971,7 @@ public class OptionsMenu
 	{
 		postProcessQuality = 1;
 		resetPostProcessCurrentTextures();
-		postProcessLowDetailButtonCurrentTexture = postProcessLowDetailButtonSelectedTexture;
+		postProcessLowDetailButtonCurrentTexture = textures.postProcessLowDetailButtonSelectedTexture;
 		renderer.setLowPostProcessDetail();
 		savePreferences();
 	}
@@ -1043,7 +981,7 @@ public class OptionsMenu
 	{
 		postProcessQuality = 2;
 		resetPostProcessCurrentTextures();
-		postProcessHighDetailButtonCurrentTexture = postProcessHighDetailButtonSelectedTexture;
+		postProcessHighDetailButtonCurrentTexture = textures.postProcessHighDetailButtonSelectedTexture;
 		renderer.setHighPostProcessDetail();
 		savePreferences();
 	}
@@ -1053,7 +991,7 @@ public class OptionsMenu
 	{
 		musicEnabled = true;
 		resetMusicCurrentTextures();
-		musicEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
+		musicEnableButtonCurrentTexture = textures.soundEnableButtonSelectedTexture;
 		parent.enableBackgroundMusic(true);
 		savePreferences();
 	}
@@ -1063,7 +1001,7 @@ public class OptionsMenu
 	{
 		musicEnabled = false;
 		resetMusicCurrentTextures();
-		musicDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
+		musicDisableButtonCurrentTexture = textures.soundDisableButtonSelectedTexture;
 		parent.enableBackgroundMusic(false);
 		savePreferences();
 	}
@@ -1073,7 +1011,7 @@ public class OptionsMenu
 	{
 		effectsEnabled = true;
 		resetEffectsCurrentTextures();
-		effectsEnableButtonCurrentTexture = soundEnableButtonSelectedTexture;
+		effectsEnableButtonCurrentTexture = textures.soundEnableButtonSelectedTexture;
 		parent.enableSoundEffects(true);
 		savePreferences();
 	}
@@ -1083,7 +1021,7 @@ public class OptionsMenu
 	{
 		effectsEnabled = false;
 		resetEffectsCurrentTextures();
-		effectsDisableButtonCurrentTexture = soundDisableButtonSelectedTexture;
+		effectsDisableButtonCurrentTexture = textures.soundDisableButtonSelectedTexture;
 		parent.enableSoundEffects(false);
 		savePreferences();
 	}
@@ -1091,9 +1029,17 @@ public class OptionsMenu
 
 	private void touchedBackButton()
 	{
-		backButtonCurrentTexture = backButtonSelectedTexture;
-		renderer.changingFromOptionsMenuToMainMenu();
+		backButtonCurrentTexture = textures.backButtonSelectedTexture;
 		currentState = UI_STATE_DISAPPEARING;
+
+		if(previousMenu == MAIN_MENU)
+		{
+			renderer.changingFromOptionsMenuToMainMenu();
+		}
+		else
+		{
+			renderer.changingFromOptionsMenuToPauseMenu();
+		}
 	}
 
 }

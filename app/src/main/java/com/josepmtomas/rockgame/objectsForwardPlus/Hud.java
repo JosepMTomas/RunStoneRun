@@ -433,7 +433,7 @@ public class Hud
 			y >= pauseButtonLimits[2] &&
 			y <= pauseButtonLimits[3])
 		{
-			renderer.setPause();
+			renderer.setPause(true);
 			return true;
 		}
 		return false;

@@ -5,7 +5,6 @@ import android.content.Context;
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
-import com.josepmtomas.rockgame.util.TextureHelper;
 import com.josepmtomas.rockgame.util.UIHelper;
 
 import static com.josepmtomas.rockgame.Constants.*;
@@ -24,6 +23,7 @@ public class CreditsMenu
 	private Context context;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
+	private MenuTextures textures;
 
 	// State
 	private int currentState = UI_STATE_NOT_VISIBLE;
@@ -86,26 +86,18 @@ public class CreditsMenu
 	private float[] backButtonLimits = new float[4];
 
 	// Textures
-	private int background9PatchTexture;
 
-	private int creditsTitleTexture;
 
-	private int developerTitleTexture;
-	private int composerTitleTexture;
-	private int effectsTitleTexture;
-	private int fontTitleTexture;
-
-	private int backButtonIdleTexture;
-	private int backButtonSelectedTexture;
 	private int backButtonCurrentTexture;
 
 
-	public CreditsMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, float screenWidth, float screenHeight)
+	public CreditsMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
 		this.renderer = renderer;
 		this.uiPanelProgram = panelProgram;
+		this.textures = textures;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f,1f,UI_BASE_CENTER_CENTER);
 		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.1f, screenHeight * 1.0f, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
@@ -144,23 +136,13 @@ public class CreditsMenu
 
 	private void loadTextures()
 	{
-		background9PatchTexture = TextureHelper.loadETC2Texture(context, "textures/main_menu/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
-		creditsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/credits_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		developerTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/developer_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		composerTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/composer_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		effectsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/sound_effects_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		fontTitleTexture = TextureHelper.loadETC2Texture(context, "textures/credits_menu/font_type_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		backButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		backButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/options_menu/back_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
 	private void resetCurrentTextures()
 	{
-		backButtonCurrentTexture = backButtonIdleTexture;
+		backButtonCurrentTexture = textures.backButtonIdleTexture;
 	}
 
 
@@ -373,24 +355,24 @@ public class CreditsMenu
 
 			glBindVertexArray(ui9PatchVaoHandle);
 
-			uiPanelProgram.setUniforms(viewProjection, backgroundPanelCurrentScale, backgroundPanelPosition, background9PatchTexture, menuOpacity * 0.75f);
+			uiPanelProgram.setUniforms(viewProjection, backgroundPanelCurrentScale, backgroundPanelPosition, textures.background9PatchPanelTexture, menuOpacity * 0.75f);
 			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
 
 			glBindVertexArray(uiPanelVaoHandle);
 
-			uiPanelProgram.setUniforms(viewProjection, creditsTitleCurrentScale, creditsTitleCurrentPosition, creditsTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, creditsTitleCurrentScale, creditsTitleCurrentPosition, textures.creditsTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, developerTitleCurrentScale, developerTitleCurrentPosition, developerTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, developerTitleCurrentScale, developerTitleCurrentPosition, textures.developerTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, composerTitleCurrentScale, composerTitleCurrentPosition, composerTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, composerTitleCurrentScale, composerTitleCurrentPosition, textures.composerTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, effectsTitleCurrentScale, effectsTitleCurrentPosition, effectsTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, effectsTitleCurrentScale, effectsTitleCurrentPosition, textures.effectsTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			uiPanelProgram.setUniforms(viewProjection, fontTitleCurrentScale, fontTitleCurrentPosition, fontTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, fontTitleCurrentScale, fontTitleCurrentPosition, textures.fontTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, backButtonCurrentScale, backButtonCurrentPosition, backButtonCurrentTexture, menuOpacity);
@@ -413,7 +395,7 @@ public class CreditsMenu
 
 	private void touchedBackButton()
 	{
-		backButtonCurrentTexture = backButtonSelectedTexture;
+		backButtonCurrentTexture = textures.backButtonSelectedTexture;
 		renderer.changingFromCreditsMenuToMainMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}

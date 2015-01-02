@@ -4258,6 +4258,62 @@ public class Ground
 
 	public void newGame()
 	{
+		//TODO: broken
+		//restartGroundPatches();
+		restartObjectsPatches();
+	}
+
+
+	private void restartGroundPatches()
+	{
+		groundLeftmostIndex = 0;
+		groundRightmostIndex = numGroundPatchesX-1;
+		groundUpperIndex = numGroundPatchesZ-1;
+		groundLowerIndex = 0;
+
+		float minimumX = -(float)((numGroundPatchesX-1)/2) * groundPatchWidth;
+		float minimumZ = groundPatchHeight;
+
+		// FIRST LANE
+		//groundPatches[0][0].type = GROUND_PATCH_GROUND;
+		groundPatches[0][0].reinitialize(GROUND_PATCH_ROOT, null, null);
+		groundPatches[0][0].setCurrentPosition(minimumX, 0.0f, minimumZ);
+
+		for(int z=1; z < numGroundPatchesZ; z++)
+		{
+			//groundPatches[0][z].type = GROUND_PATCH_GROUND;
+			groundPatches[0][z].reinitialize(
+					GROUND_PATCH_UP,
+					groundPatches[0][z-1].getVertexColors(GROUND_PATCH_UP),
+					null);
+			groundPatches[0][z].setCurrentPosition(minimumX, 0.0f, minimumZ - (float)z*groundPatchHeight);
+		}
+
+		// NEXT LANES
+		for(int x=1; x < numGroundPatchesX; x++)
+		{
+			//groundPatches[x][0].type = GROUND_PATCH_GROUND;
+			groundPatches[x][0].reinitialize(
+					GROUND_PATCH_LEFT,
+					null,
+					groundPatches[x-1][0].getVertexColors(GROUND_PATCH_RIGHT));
+			groundPatches[x][0].setCurrentPosition(minimumX + x*groundPatchWidth, 0.0f, minimumZ);
+
+			for(int z=1; z < numGroundPatchesZ; z++)
+			{
+				//groundPatches[x][z].type = GROUND_PATCH_GROUND;
+				groundPatches[x][z].reinitialize(
+						GROUND_PATCH_UP_LEFT,
+						groundPatches[x][z-1].getVertexColors(GROUND_PATCH_UP),
+						groundPatches[x-1][z].getVertexColors(GROUND_PATCH_RIGHT));
+				groundPatches[x][z].setCurrentPosition(minimumX + x*groundPatchWidth, 0.0f, minimumZ - z*groundPatchHeight);
+			}
+		}
+	}
+
+
+	private void restartObjectsPatches()
+	{
 		float displacementZ = objectsPatchHeight * 5f;
 		vec3 currentPos;
 
@@ -4268,7 +4324,7 @@ public class Ground
 			for(int x=0; x < numObjectsPatchesX; x++)
 			{
 				currentPos = objectsPatches[x][z].getCurrentPosition();
-				objectsPatches[x][z].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - displacementZ);
+				objectsPatches[x][z].setCurrentPosition(currentPos.x, currentPos.y, /*currentPos.z*/ -displacementZ - ((float)z * objectsPatchHeight));
 				objectsPatches[x][z].reinitialize();
 			}
 		}

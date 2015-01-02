@@ -132,6 +132,12 @@ public class Constants
 	public static final float PLAYER_RECOVERING_TIME = 3f;
 	public static final float LIFE_RECOVERING_TIME = 5f;
 
+	// Menus
+	public static final int MAIN_MENU = 0;
+	public static final int OPTIONS_MENU = 1;
+	public static final int CREDITS_MENU = 2;
+	public static final int PAUSE_MENU = 3;
+
 	// HUD base points (X_Y)
 	public static final int UI_BASE_LEFT_TOP = 0;
 	public static final int UI_BASE_LEFT_CENTER = 1;
