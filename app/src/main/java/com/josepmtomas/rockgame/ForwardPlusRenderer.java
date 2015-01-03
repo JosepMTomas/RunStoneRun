@@ -42,7 +42,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	// States
 	private static final int RENDERER_STATE_PLAYING = 0;
-	private static final int RENDERER_STATE_PAUSED = 1;
+	private static final int RENDERER_STATE_RESUMING = 1;
 	private static final int RENDERER_STATE_MAIN_MENU = 2;
 	private static final int RENDERER_STATE_OPTIONS_MENU = 3;
 	private static final int RENDERER_STATE_CREDITS_MENU = 4;
@@ -177,6 +177,10 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Shared preferences
 	private SharedPreferences sharedPreferences;
+
+	// Timer
+	private float resumeTimer = 0;
+	private float resumeTime = 2.0f;
 
 
 	public ForwardPlusRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height, float resolutionPercentage)
@@ -495,6 +499,15 @@ public class ForwardPlusRenderer implements Renderer
 		// Clear everything
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		if(rendererState == RENDERER_STATE_RESUMING)
+		{
+			resumeTimer += deltaTime;
+			if(resumeTimer >= resumeTime)
+			{
+				isPaused = false;
+				currentState = RENDERER_STATE_PLAYING;
+			}
+		}
 
 		if(!isPaused)//deltaTime=0;
 			update(deltaTime);
@@ -1026,11 +1039,18 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void setPause(boolean value)
 	{
-		isPaused = value;
-		if(!isPaused)
+		//isPaused = value;
+		if(!value)
 		{
-			rendererState = RENDERER_STATE_PLAYING;
+			//rendererState = RENDERER_STATE_PLAYING;
+			rendererState = RENDERER_STATE_RESUMING;
+			resumeTimer = 0f;
 			hud.resume();
+		}
+		else
+		{
+			pauseMenu.setAppearing();
+			isPaused = true;
 		}
 	}
 
