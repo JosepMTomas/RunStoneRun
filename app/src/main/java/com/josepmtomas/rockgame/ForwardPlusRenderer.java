@@ -505,7 +505,7 @@ public class ForwardPlusRenderer implements Renderer
 			if(resumeTimer >= resumeTime)
 			{
 				isPaused = false;
-				currentState = RENDERER_STATE_PLAYING;
+				rendererState = RENDERER_STATE_PLAYING;
 			}
 		}
 

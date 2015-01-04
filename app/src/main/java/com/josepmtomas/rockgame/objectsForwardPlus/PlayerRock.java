@@ -580,7 +580,7 @@ public class PlayerRock
 			}
 
 			currentPositionY = lerp(currentPositionY, 10f, playerRockTimerPercent);
-			currentPositionZ = lerp(0f, 50f, playerRockTimerPercent);;
+			currentPositionZ = lerp(0f, 50f, playerRockTimerPercent);
 			currentSpeed = lerp(currentSpeed, 500f, playerRockTimerPercent);
 		}
 		else if(state == PLAYER_ROCK_BOUNCING)
@@ -831,7 +831,5 @@ public class PlayerRock
 		{
 			// nothing at this point
 		}
-
-		//currentSpeed = Math.max(0f, currentSpeed - 10f);
 	}
 }

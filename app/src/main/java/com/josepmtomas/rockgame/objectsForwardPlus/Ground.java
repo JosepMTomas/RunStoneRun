@@ -46,11 +46,6 @@ public class Ground
 {
 	private final static String TAG = "Ground";
 
-	/*private final static int GROUND_PATCH_GROUND = 1;
-	private final static int GROUND_PATCH_RIVER_ENTRY = 2;
-	private final static int GROUND_PATCH_RIVER_MIDDLE = 3;
-	private final static int GROUND_PATCH_RIVER_EXIT = 4;*/
-
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
 	private static final int NORMAL_COMPONENTS = 3;
@@ -247,7 +242,6 @@ public class Ground
 	private int rockBNormalTexture;
 	private int[] groundTextures;
 	private int[] groundNormalTextures;
-	private int riverWaterTexture;
 
 	// Shadow map
 	private float[] shadowMatrix;
@@ -286,7 +280,7 @@ public class Ground
 	private float objectsSpreadFactorX;
 	private float objectsSpreadFactorZ;
 
-	// TODO: change
+	// TODO: change/delete
 	private float[] objectsPatchesModelMatrices;
 	private FloatBuffer objectsPatchesModelMatricesBuffer;
 	private int[] objectsPatchesModelMatricesUbo;
@@ -385,11 +379,6 @@ public class Ground
 	// Debug Plane
 	public int[] debugPlaneVboHandles = new int[2];
 	public int[] debugPlaneVaoHandle = new int[1];
-
-	//TODO: Debug grass count
-	private int[] grassCountMax = {0, 0, 0};
-	private int[] grassCountMin = {99999, 99999, 99999};
-
 
 
 	/**********************************************************************************************/
@@ -609,8 +598,6 @@ public class Ground
 		waterTextures = new int[1];
 		waterTextures[0] = TextureHelper.loadETC2Texture(context, waterTexture, GL_COMPRESSED_RGB8_ETC2, false, true);
 
-		riverWaterTexture = TextureHelper.loadETC2Texture(context, "textures/water/water.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
 		//int compressedTexture = TextureHelper.loadETC2Texture(context,"textures/grass_color_mip_0.pkm", GL_COMPRESSED_RGBA8_ETC2_EAC, false, false);
 
 		// Common attributes arrays (static information)
@@ -670,7 +657,6 @@ public class Ground
 		Log.d(TAG, "Created objects buffers");
 		this.updateObjectsPatchesBuffer();	// Update the patches reference positions
 		Log.d(TAG, "Updated objects patches buffers");
-		this.updateObjectsBuffers();		// Update the positions all the objects inside the patches
 		Log.d(TAG, "Updated objects buffers");
 
 		/*************************************** TEXTURES *****************************************/
@@ -1262,9 +1248,7 @@ public class Ground
 		int byteStride = (POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS) * BYTES_PER_FLOAT;
 
 		final float minimumX = groundPatchWidth * -0.5f;
-		final float maximumX = groundPatchWidth * 0.5f;
 		final float minimumZ = groundPatchHeight * 0.5f;
-		final float maximumZ = groundPatchHeight * -0.5f;
 		final float y = -10.0f;
 
 		float[] vertices = new float[12 * numVerticesX * numVerticesZ];
@@ -1305,26 +1289,6 @@ public class Ground
 		// Create polygons
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		/*for(int z=1; z < numVerticesZ; z++)
-		{
-			for (int x=1; x < numVerticesX; x++)
-			{
-				index = x + (z * numVerticesX);
-				indexLeft = (x-1) + (z * numVerticesX);
-				indexDown = x + ((z-1) * numVerticesX);
-				indexLeftDown = (x-1) + ((z-1) * numVerticesX);
-
-				// First face
-				elements[elementsOffset++] = (short)index;
-				elements[elementsOffset++] = (short)indexLeftDown;
-				elements[elementsOffset++] = (short)indexDown;
-
-				// Second face
-				elements[elementsOffset++] = (short)index;
-				elements[elementsOffset++] = (short)indexLeft;
-				elements[elementsOffset++] = (short)indexLeftDown;
-			}
-		}*/
 		for(int i=1; i < numVerticesZ; i++)
 		{
 			for (int j=1; j < numVerticesX; j++)
@@ -1566,17 +1530,11 @@ public class Ground
 		final int numArcPolygons = GROUND_RIVER_PATCH_VERTICES_Z - 1;
 		final float arcIncrement = ((float)Math.PI * 0.5f) / numArcPolygons;
 		final float arcStart = ((float)Math.PI * 1.5f);
-		final float texCoordIncrement = 0.5f / numArcPolygons;
 		final float yLength = groundPatchHeight * 0.5f;
 		final float zLength = groundPatchHeight * -0.5f;
 
 		float[] positions = new float[numGroundVerticesX * GROUND_RIVER_PATCH_VERTICES_Z * POSITION_COMPONENTS];
 		float[] normals = new float[numGroundVerticesX * GROUND_RIVER_PATCH_VERTICES_Z * NORMAL_COMPONENTS];
-
-		int index;
-		int indexLeft;
-		int indexDown;
-		int indexLeftDown;
 
 		int positionsOffset = 0;
 		int texCoordsOffset = 0;
@@ -1614,10 +1572,7 @@ public class Ground
 		}
 
 		FloatBuffer positionsBuffer;
-		FloatBuffer texCoordsBuffer;
 		FloatBuffer normalsBuffer;
-		FloatBuffer tangentsBuffer;
-		ShortBuffer elementsBuffer;
 
 		// Build the client buffers in native memory
 		positionsBuffer = ByteBuffer
@@ -1844,7 +1799,6 @@ public class Ground
 
 		float minimumX = -(float)((numGroundPatchesX-1)/2) * groundPatchWidth;
 		float minimumZ = groundPatchHeight;
-		//float minimumZ = (float)((numPatchesZ-1)/2) * patchHeight;
 
 		// Patches
 		groundPatches = new GroundPatch[numGroundPatchesX][numGroundPatchesZ];
@@ -1905,10 +1859,6 @@ public class Ground
 
 	public void update(float[] viewProjection, float[] lightViewProjection, vec3 displacement, float[] shadowMatrix, int shadowMapSampler, float deltaTime)
 	{
-		//float sideDisplacement = FloatMath.sin(time) * 2.0f;
-		//vec3 displacement = new vec3(sideDisplacement, 0.0f, 2f);
-		//vec3 displacement = new vec3(0.0f);
-
 		this.viewProjection = viewProjection;
 		this.lightViewProjection = lightViewProjection;
 		this.displacement = displacement;
@@ -1989,8 +1939,6 @@ public class Ground
 			Log.d(TAG, "NEW UP OBJECTS PATCH");
 		}
 
-		//updateObjectsPatchesBuffer();
-
 
 		boolean rebuildLOD = false;
 
@@ -2002,13 +1950,6 @@ public class Ground
 			}
 		}
 
-		//Log.d("ObjectsPatch(LOD count)", "A = "+countA+" | B = "+countB);
-
-		if(newPatch || rebuildLOD)
-		{
-			//updateObjectsBuffers();
-		}
-
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Ground patches
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -2018,8 +1959,7 @@ public class Ground
 			for(int z=0; z < numGroundPatchesZ; z++)
 			{
 				groundPatches[x][z].update(viewProjection, displacement);
-				groundPatches[x][z].updateLOD();
-				//groundPatches[x][z].updateGrassPointsArray(displacement.x, displacement.y);
+				//groundPatches[x][z].updateLOD();//TODO: unnecessary
 			}
 		}
 
@@ -2039,30 +1979,6 @@ public class Ground
 		}
 
 		updateGrassBuffers();
-
-		/**int sumGrassA = 0;
-		int sumGrassB = 0;
-		int sumGrassC = 0;
-
-		for(int x=0; x < numGroundPatchesX; x++)
-		{
-			for(int z=0; z < numGroundPatchesZ; z++)
-			{
-				sumGrassA += groundPatches[x][z].grassPointsInLOD[LOD_A];
-				sumGrassB += groundPatches[x][z].grassPointsInLOD[LOD_B];
-				sumGrassC += groundPatches[x][z].grassPointsInLOD[LOD_C];
-			}
-		}
-
-		grassCountMax[LOD_A] = Math.max(grassCountMax[LOD_A], sumGrassA);
-		grassCountMax[LOD_B] = Math.max(grassCountMax[LOD_B], sumGrassB);
-		grassCountMax[LOD_C] = Math.max(grassCountMax[LOD_C], sumGrassC);
-		grassCountMin[LOD_A] = Math.min(grassCountMin[LOD_A], sumGrassA);
-		grassCountMin[LOD_B] = Math.min(grassCountMin[LOD_B], sumGrassB);
-		grassCountMin[LOD_C] = Math.min(grassCountMin[LOD_C], sumGrassC);
-
-		Log.d("Grass LOD count", "A(" + grassCountMax[LOD_A] + ") B(" + grassCountMax[LOD_B] + ") C(" + grassCountMax[LOD_C] + ")");
-		**/
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Objects collisions
@@ -2197,16 +2113,10 @@ public class Ground
 						break;
 					}
 				}
-
-				/*treeCount += objectsPatches[x][z].pineTreeNumInstances[LOD_A];
-				treeCount += objectsPatches[x][z].hugeTreeNumInstances[LOD_A];
-				collisionCount += objectsPatches[x][z].numCollisionCylinders;*/
 			}
 		}
 
 		updateObjectsPatchesBuffer();
-		//Log.d("Trees/Collisions", "("+treeCount+"),("+collisionCount+")");
-
 	}
 
 
@@ -2228,30 +2138,6 @@ public class Ground
 				}
 			}
 		}
-
-		/*shadowPassInstancedProgram.useProgram();
-		for(int x=0; x < numObjectsPatchesX; x++)
-		{
-			for(int z=0; z < numObjectsPatchesZ; z++)
-			{
-				shadowPassInstancedProgram.setUniforms(objectsPatches[x][z].model, objectsPatches[x][z].model, objectsPatches[x][z].treeMatricesUbo[0]);
-
-				glBindVertexArray(tree.trunkVaoHandle[0]);
-				glDrawElementsInstanced(GL_TRIANGLES, tree.trunkNumElements*3, GL_UNSIGNED_SHORT, 0, objectsPatches[x][z].numTreeInstances);
-			}
-		}*/
-
-		/*for(int x=0; x < numObjectsPatchesX; x++)
-		{
-			for(int z=0; z < numObjectsPatchesZ; z++)
-			{
-				//shadowPassInstancedProgram.setUniforms(objectsPatches[x][z].model, lightViewProjection, objectsPatches[x][z].treeMatricesUbo[0]);
-				//depthPrePassInstancedProgram
-
-				glBindVertexArray(tree.trunkVaoHandle[0]);
-				glDrawElementsInstanced(GL_TRIANGLES, tree.trunkNumElements*3, GL_UNSIGNED_SHORT, 0, objectsPatches[x][z].numTreeInstances);
-			}
-		}*/
 	}
 
 
@@ -2405,12 +2291,6 @@ public class Ground
 
 	public void draw(int reflectionSampler, float[] dimensions)
 	{
-		int totalGrass = 0;
-		int totalTrees = 0;
-		int countLODA = 0;
-		int countLODB = 0;
-		int countLODC = 0;
-
 		groundProgram.useProgram();
 		groundProgram.setCommonUniforms(groundTextures, groundNormalTextures[0], shadowMapSampler, reflectionSampler, waterTextures[0], shadowMatrix, dimensions);
 
@@ -2463,7 +2343,6 @@ public class Ground
 				}
 			}
 		}
-		//Log.i(TAG,"Patches drawn = " + totalGrass + " | LOD count = ("+countLODA+")("+countLODB+")("+countLODC+")");
 
 		// Grass
 		grassProgram.useProgram();
@@ -2477,11 +2356,9 @@ public class Ground
 		grassLowProgram.useProgram();
 		grassLowProgram.setCommonUniforms(viewProjection, grassPatchTexture);
 
-		//grassProgram.setSpecificUniforms(grassUbo[LOD_B], 1);
 		grassLowProgram.setSpecificUniforms(grassUbo[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, 12, GL_UNSIGNED_SHORT, 0, grassNumInstances[LOD_B]);
 
-		//grassProgram.setSpecificUniforms(grassUbo[LOD_C], 2);
 		grassLowProgram.setSpecificUniforms(grassUbo[LOD_C]);
 		glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0, grassNumInstances[LOD_C]);
 
@@ -2545,7 +2422,7 @@ public class Ground
 		glBindVertexArray(palmPlant.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, palmPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, palmPlantNumInstances[LOD_B]);
 
-		////Log.e("Number of pine trees","A("+pineTreeNumInstances[LOD_A]+") B("+pineTreeNumInstances[LOD_B]+")");
+		////
 
 		glEnable(GL_CULL_FACE);
 
@@ -2630,22 +2507,8 @@ public class Ground
 
 	private void newUpGroundPatch()
 	{
-		Random random = new Random();
-		float randomValue = random.nextFloat();
-		randomValue = randomValue * 2.0f - 1.0f;
-
-		//maximumVariance = maximumVariance + (randomValue * 0.05f);
-		//maximumVariance = Math.min(Math.max(maximumVariance + (randomValue * 0.05f),0.0f),0.5f);
-		//Log.d(TAG, "MaximumVariance = " + maximumVariance);
-
-		/*********************/
-
-		int current, previous;
-
-		/*********************/
-
-		current = groundLeftmostIndex;
-		previous = groundRightmostIndex;
+		int current = groundLeftmostIndex;
+		int previous = groundRightmostIndex;
 
 		if(generatorState == GROUND_PATCH_GROUND)
 		{
@@ -2805,8 +2668,6 @@ public class Ground
 					objectsPatches[current][objectsLowerIndex].reinitialize();
 				}
 
-				//updateObjectsBuffers();
-
 				objectsLowerIndex++;
 				objectsLowerIndex = objectsLowerIndex % numObjectsPatchesZ;
 
@@ -2830,8 +2691,6 @@ public class Ground
 					objectsPatches[current][objectsLowerIndex].reinitialize();
 				}
 
-				//updateObjectsBuffers();
-
 				objectsLowerIndex++;
 				objectsLowerIndex = objectsLowerIndex % numObjectsPatchesZ;
 
@@ -2839,42 +2698,6 @@ public class Ground
 				objectsUpperIndex = objectsUpperIndex % numObjectsPatchesZ;
 			}
 		}
-
-		//updateObjectsBuffers();
-
-		// Update LOD information
-		/**for(int z=0; z < numObjectsPatchesZ; z++)
-		{
-			for(int x=0; x < numObjectsPatchesX; x++)
-			{
-				objectsPatches[x][z].updateLOD();
-			}
-		}**/
-
-		/*int current = objectsLeftmostIndex;
-
-		vec3 currentPos;
-
-		currentPos = objectsPatches[current][objectsUpperIndex].getCurrentPosition();
-		objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - objectsPatchHeight);
-		objectsPatches[current][objectsLowerIndex].reinitialize();
-
-		for(int x=1; x < numObjectsPatchesX; x++)
-		{
-			current = (current + 1) % numObjectsPatchesX;
-			currentPos = objectsPatches[current][objectsUpperIndex].getCurrentPosition();
-
-			objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - objectsPatchHeight);
-			objectsPatches[current][objectsLowerIndex].reinitialize();
-		}
-
-		updateObjectsBuffers();
-
-		objectsLowerIndex++;
-		objectsLowerIndex = objectsLowerIndex % numObjectsPatchesZ;
-
-		objectsUpperIndex++;
-		objectsUpperIndex = objectsUpperIndex % numObjectsPatchesZ;*/
 	}
 
 
@@ -3101,7 +2924,6 @@ public class Ground
 				.put(objectsPatchesLightMVPMatrices);
 		objectsPatchesLightMVPMatricesBuffer.position(0);
 
-		//TODO: binding to 0 avoidable?
 		//TODO: matrices not used
 		glGenBuffers(1, objectsPatchesModelMatricesUbo, 0);
 		glGenBuffers(1, objectsPatchesMVPMatricesUbo, 0);
@@ -3490,8 +3312,6 @@ public class Ground
 
 	private void updateObjectsPatchesBuffer()
 	{
-		vec3 currentPos;
-
 		int numElements;
 		int pineTreeOffsetLODA = 0;
 		int pineTreeOffsetLODB = 0;
@@ -3549,15 +3369,6 @@ public class Ground
 		{
 			for(int z=0; z < numObjectsPatchesZ; z++)
 			{
-				//currentPos = objectsPatches[x][z].getCurrentPosition();
-				/**System.arraycopy(objectsPatches[x][z].model, 0, objectsPatchesModelMatrices, objectsPatches[x][z].index*16, 16);
-				System.arraycopy(objectsPatches[x][z].modelViewProjection, 0, objectsPatchesMVPMatrices, objectsPatches[x][z].index*16, 16);
-				System.arraycopy(objectsPatches[x][z].lightModelViewProjection, 0, objectsPatchesLightMVPMatrices, objectsPatches[x][z].index*16, 16);**/
-				//setIdentityM(objectsPatchesModelMatrices, objectsPatches[x][z].index * 16);
-				//translateM(objectsPatchesModelMatrices, objectsPatches[x][z].index*16, currentPos.x, currentPos.y, currentPos.z);
-
-				//Log.e(TAG, "Patch["+x+"]["+z+"] (index " + objectsPatches[x][z].index + ") = ("+currentPos.x +", "+currentPos.y+", "+currentPos.z+")");
-
 				objectsPatches[x][z].updateObjectsArrays();
 
 				// pine tree
@@ -3895,211 +3706,9 @@ public class Ground
 	}
 
 
-	private void updateObjectsBuffers()
-	{
-		int pineTreeArrayIndexLODA = 0;
-		int pineTreeArrayIndexLODB = 0;
-		int hugeTreeArrayIndex = 0;
-		int fernPlantArrayIndex = 0;
-		int weedPlantArrayIndex = 0;
-
-		int currentPatchIndex;
-		int arraySize;
-		vec2 currentPos;
-
-		int count = 0;
-
-		for(int x=0; x < numObjectsPatchesX; x++)
-		{
-			for(int z=0; z < numObjectsPatchesZ; z++)
-			{
-				//arraySize = objectsPatches[x][z].pineTreePositions.size();
-				////arraySize = objectsPatches[x][z].pineTreeNumInstances;
-				currentPatchIndex = objectsPatches[x][z].index;
-				/*for(int i=0; i < arraySize; i++)
-				{
-					// Get the point
-					currentPos = objectsPatches[x][z].pineTreePositions.get(i);
-
-					// Calculate its matrix
-					setIdentityM(pineTreeMatrices, pineTreeArrayIndex * 16);
-					translateM(pineTreeMatrices, pineTreeArrayIndex * 16, currentPos.x * objectsSpreadFactorX, 0f, currentPos.y * objectsSpreadFactorZ);
-
-					// Indicate its patch index
-					pineTreeIndices[pineTreeArrayIndex*4] = currentPatchIndex;
-
-					pineTreeArrayIndex++;
-
-					////System.arraycopy(objectsPatches[x][z].model, 0, objectsPatchesModelMatrices, objectsPatches[x][z].index*16, 16);
-
-					Log.d(TAG, "Patch["+x+"]["+z+"] has " + objectsPatches[x][z].pineTreeNumInstances + " pine trees");
-
-					System.arraycopy(objectsPatches[x][z].pineTreeMatrices, 0, pineTreeMatrices, pineTreeArrayIndex*16, objectsPatches[x][z].pineTreeNumInstances*16);
-
-					pineTreeIndices[pineTreeArrayIndex*4] = currentPatchIndex;
-
-					pineTreeArrayIndex += objectsPatches[x][z].pineTreeNumInstances;
-					Log.d(TAG, "Pine array = " + pineTreeArrayIndex);
-				}*/
-
-				/**System.arraycopy(objectsPatches[x][z].pineTreeMatrices, 0, pineTreeMatrices, pineTreeArrayIndex*16, objectsPatches[x][z].pineTreeNumInstances*16);
-				for(int i=0; i < objectsPatches[x][z].pineTreeNumInstances; i++)
-				{
-					pineTreeIndices[pineTreeArrayIndex*4] = currentPatchIndex;
-					pineTreeArrayIndex++;
-				}**/
-
-				/*if(objectsPatches[x][z].currentLOD == LOD_A)
-				{
-					System.arraycopy(objectsPatches[x][z].pineTreeMatrices, 0, pineTreeMatricesLODA, pineTreeArrayIndexLODA*16, objectsPatches[x][z].pineTreeNumInstances*16);
-					for(int i=0; i < objectsPatches[x][z].pineTreeNumInstances; i++)
-					{
-						pineTreeIndicesLODA[pineTreeArrayIndexLODA*4] = currentPatchIndex;
-						pineTreeArrayIndexLODA++;
-					}
-				}
-				else
-				{
-					System.arraycopy(objectsPatches[x][z].pineTreeMatrices, 0, pineTreeMatricesLODB, pineTreeArrayIndexLODB*16, objectsPatches[x][z].pineTreeNumInstances*16);
-					for(int i=0; i < objectsPatches[x][z].pineTreeNumInstances; i++)
-					{
-						pineTreeIndicesLODB[pineTreeArrayIndexLODB*4] = currentPatchIndex;
-						pineTreeArrayIndexLODB++;
-					}
-				}*/
-
-				//pineTreeArrayIndex += objectsPatches[x][z].pineTreeNumInstances;
-
-				/*System.arraycopy(objectsPatches[x][z].hugeTreeMatrices, 0, hugeTreeMatrices, hugeTreeArrayIndex*16, objectsPatches[x][z].hugeTreeNumInstances*16);
-				for(int i=0; i < objectsPatches[x][z].hugeTreeNumInstances; i++)
-				{
-					hugeTreeIndices[hugeTreeArrayIndex * 4] = currentPatchIndex;
-					hugeTreeArrayIndex++;
-				}*/
-				//hugeTreeArrayIndex += objectsPatches[x][z].hugeTreeNumInstances;
-
-				/*System.arraycopy(objectsPatches[x][z].fernPlantMatrices, 0, fernPlantMatrices, fernPlantArrayIndex*16, objectsPatches[x][z].fernPlantNumInstances*16);
-				for(int i=0; i < objectsPatches[x][z].fernPlantNumInstances; i++)
-				{
-					fernPlantIndices[fernPlantArrayIndex * 4] = currentPatchIndex;
-					fernPlantArrayIndex++;
-				}*/
-				//fernPlantArrayIndex += objectsPatches[x][z].fernPlantNumInstances;
-
-				/*System.arraycopy(objectsPatches[x][z].weedPlantMatrices, 0, weedPlantMatrices, weedPlantArrayIndex*16, objectsPatches[x][z].weedPlantNumInstances*16);
-				for(int i=0; i < objectsPatches[x][z].weedPlantNumInstances; i++)
-				{
-					weedPlantIndices[weedPlantArrayIndex * 4] = currentPatchIndex;
-					weedPlantArrayIndex++;
-				}*/
-			}
-		}
-
-		////pineTreeNumInstances[LOD_A] = pineTreeArrayIndexLODA;
-		////pineTreeNumInstances[LOD_B] = pineTreeArrayIndexLODB;
-		////hugeTreeNumInstances = hugeTreeArrayIndex;
-		////fernPlantNumInstances = fernPlantArrayIndex;
-		////weedPlantNumInstances = weedPlantArrayIndex;
-
-		//pineTreeMatricesBuffer.position(0);
-		/*pineTreeMatricesBufferLODA.put(pineTreeMatricesLODA, 0, pineTreeNumInstances[LOD_A]*16);
-		pineTreeMatricesBufferLODA.position(0);
-		pineTreeMatricesBufferLODB.put(pineTreeMatricesLODB, 0, pineTreeNumInstances[LOD_B]*16);
-		pineTreeMatricesBufferLODB.position(0);*/
-		//pineTreeIndicesBuffer.position(0);
-		/*pineTreeIndicesBufferLODA.put(pineTreeIndicesLODA, 0, pineTreeNumInstances[LOD_A]*4);
-		pineTreeIndicesBufferLODA.position(0);
-		pineTreeIndicesBufferLODB.put(pineTreeIndicesLODB, 0, pineTreeNumInstances[LOD_B]*4);
-		pineTreeIndicesBufferLODB.position(0);*/
-
-		//hugeTreeMatricesBuffer.position(0);
-		////hugeTreeMatricesBuffer.put(hugeTreeMatrices, 0, hugeTreeNumInstances * 16);
-		////hugeTreeMatricesBuffer.position(0);
-		//hugeTreeIndicesBuffer.position(0);
-		////hugeTreeIndicesBuffer.put(hugeTreeIndices, 0, hugeTreeNumInstances * 4);
-		////hugeTreeIndicesBuffer.position(0);
-
-		//fernPlantMatricesBuffer.position(0);
-		/*fernPlantMatricesBuffer.put(fernPlantMatrices, 0, fernPlantNumInstances * 16);
-		fernPlantMatricesBuffer.position(0);*/
-		//fernPlantIndicesBuffer.position(0);
-		/*fernPlantIndicesBuffer.put(fernPlantIndices, 0, fernPlantNumInstances * 4);
-		fernPlantIndicesBuffer.position(0);*/
-
-		//weedPlantMatricesBuffer.position(0);
-		/*weedPlantMatricesBuffer.put(weedPlantMatrices, 0, weedPlantNumInstances * 16);
-		weedPlantMatricesBuffer.position(0);*/
-		//weedPlantIndicesBuffer.position(0);
-		/*weedPlantIndicesBuffer.put(weedPlantIndices, 0, weedPlantNumInstances * 4);
-		weedPlantIndicesBuffer.position(0);*/
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, pineTreeMatricesUbo[LOD_A]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeNumInstances[LOD_A] * 16 * BYTES_PER_FLOAT, pineTreeMatricesBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeMatricesUbo[LOD_B]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeNumInstances[LOD_B] * 16 * BYTES_PER_FLOAT, pineTreeMatricesBufferLODB);
-		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeIndicesUbo[LOD_A]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeNumInstances[LOD_A] * 4 * BYTES_PER_INT, pineTreeIndicesBufferLODA);
-		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeIndicesUbo[LOD_B]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeNumInstances[LOD_B] * 4 * BYTES_PER_INT, pineTreeIndicesBufferLODB);*/
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, hugeTreeNumInstances * 16 * BYTES_PER_FLOAT, hugeTreeMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, hugeTreeIndicesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, hugeTreeNumInstances * 4 * BYTES_PER_INT, hugeTreeIndicesBuffer);*/
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, fernPlantMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, fernPlantNumInstances * 16 * BYTES_PER_FLOAT, fernPlantMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, fernPlantIndicesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, fernPlantNumInstances * 4 * BYTES_PER_INT, fernPlantIndicesBuffer);*/
-
-		/*glBindBuffer(GL_UNIFORM_BUFFER, weedPlantMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, weedPlantNumInstances * 16 * BYTES_PER_FLOAT, weedPlantMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, weedPlantIndicesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, weedPlantNumInstances * 4 * BYTES_PER_INT, weedPlantIndicesBuffer);
-
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);*/
-	}
-
-
 	public void setPlayerRock(PlayerRock playerRock)
 	{
 		this.playerRock = playerRock;
-	}
-
-
-	public void deleteGL()
-	{
-		for(int x=0; x < numGroundPatchesX; x++)
-		{
-			for(int z=0; z < numGroundPatchesZ; z++)
-			{
-				groundPatches[x][z].deleteGL();
-			}
-		}
-
-		grassPatch.deleteGL();
-		pineTree.deleteGL();
-
-		glDeleteBuffers(5, vboHandles, 0);
-
-		glDeleteBuffers(2, vboShadowHandles, 0);
-		glDeleteVertexArrays(1, vaoShadowHandle, 0);
-
-		glDeleteBuffers(1, objectsPatchesModelMatricesUbo, 0);
-		glDeleteBuffers(1, objectsPatchesMVPMatricesUbo, 0);
-		////glDeleteBuffers(1, pineTreeIndicesUbo, 0);
-		////glDeleteBuffers(1, pineTreeMatricesUbo, 0);
-
-
-		depthPrePassProgram.deleteProgram();
-		shadowPassProgram.deleteProgram();
-		shadowPassInstancedProgram.deleteProgram();
-		grassProgram.deleteProgram();
-		groundProgram.deleteProgram();
-		treeProgram.deleteProgram();
-		treeShadowPassProgram.deleteProgram();
-		treeTrunkProgram.deleteProgram();
-		treeLeavesProgram.deleteProgram();
 	}
 
 
@@ -4160,16 +3769,6 @@ public class Ground
 		int sumLODB = 0;
 		int sumLODC = 0;
 		int numPoints;
-
-		/**for(int x=0; x < numObjectsPatchesX; x++)
-		 {
-			 for(int z=0; z < numObjectsPatchesZ; z++)
-			 {
-			 System.arraycopy(objectsPatches[x][z].model, 0, objectsPatchesModelMatrices, currentIndex*16, 16);
-			 System.arraycopy(objectsPatches[x][z].modelViewProjection, 0, objectsPatchesMVPMatrices, currentIndex*16, 16);
-			 System.arraycopy(objectsPatches[x][z].lightModelViewProjection, 0, objectsPatchesLightMVPMatrices, currentIndex*16, 16);
-			 }
-		 }**/
 
 		for(int z=0; z < numGroundPatchesZ; z++)
 		{
@@ -4250,7 +3849,6 @@ public class Ground
 
 	public void newGame()
 	{
-		//TODO: broken
 		//restartGroundPatches();
 		restartObjectsPatches();
 	}
@@ -4308,8 +3906,8 @@ public class Ground
 	{
 		float displacementZ = objectsPatches[0][objectsLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
 
-		objectsLeftmostIndex = 0;
-		objectsRightmostIndex = numObjectsPatchesX - 1;
+		//objectsLeftmostIndex = 0;
+		//objectsRightmostIndex = numObjectsPatchesX - 1;
 		objectsLowerIndex = 0;
 		objectsUpperIndex = numObjectsPatchesZ - 1;
 

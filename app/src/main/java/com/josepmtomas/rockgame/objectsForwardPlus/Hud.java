@@ -145,6 +145,17 @@ public class Hud
 	private float getReadyPanelInitialPositionY = -500f;
 	private float getReadyPanelFinalPositionY = 0f;
 
+	// "Resuming" panel
+	private int resumingPanelTexture;
+	private int resumingPanelVaoHandle;
+	private int resumingPanelState = UI_STATE_NOT_VISIBLE;
+	private float resumingPanelTimer = 0f;
+	private float resumingPanelOpacity = 0f;
+	private float[] resumingPanelTimes = {0.25f, PLAYER_RESUMING_TIME - 0.25f, 0.25f};
+	private float resumingPanelCurrentPositionY = 0f;
+	private float resumingPanelInitialPositionY = -500f;
+	private float resumingPanelFinalPositionY = 0f;
+
 	// Lives
 	private int lifeBarVaoHandle;
 	private int currentLife = 2;
@@ -188,6 +199,7 @@ public class Hud
 		this.uiPanelProgram = uiPanelProgram;
 
 		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
+		float progressBarWidth = screenHeight * 0.9f;
 		float numberHeight =  screenHeight * NUMBER_HEIGHT_PERCENTAGE;
 		float numberWidth = numberHeight * 0.7134f;
 
@@ -210,12 +222,16 @@ public class Hud
 		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Recovering
-		recoveringProgressBarVaoHandle = UIHelper.makeProgressBar(800, progressBarHeight, UI_BASE_CENTER_CENTER);
+		recoveringProgressBarVaoHandle = UIHelper.makeProgressBar(progressBarWidth, progressBarHeight, UI_BASE_CENTER_CENTER);
 		getReadyPanelVaoHandle = UIHelper.makePanel(numberWidth * 9f, numberHeight * 0.9f, UI_BASE_CENTER_CENTER);
 		getReadyPanelTexture = TextureHelper.loadETC2Texture(context, "textures/hud/get_ready.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
+		// Resuming
+		resumingPanelVaoHandle = getReadyPanelVaoHandle;
+		resumingPanelTexture = TextureHelper.loadETC2Texture(context, "textures/hud/resuming.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		// Life bars
-		lifeBarVaoHandle = UIHelper.makeProgressBar(200, progressBarHeight, UI_BASE_CENTER_CENTER);
+		lifeBarVaoHandle = UIHelper.makeProgressBar(progressBarWidth * 0.2f, progressBarHeight, UI_BASE_CENTER_CENTER);
 
 		// Positions
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -289,9 +305,6 @@ public class Hud
 		float width = numberWidth;
 		float height = numberHeight;
 
-		float texCoordVstart = 0.1f;
-		float texCoordVincrement = -0.1f;
-
 		// D - C
 		// | \ |
 		// A - B
@@ -310,7 +323,6 @@ public class Hud
 				// Texture Coordinates
 				vertices[offset++] = (float)x * 0.25f;
 				vertices[offset++] = 1.0f - (float)y * 0.25f;
-				//vertices[offset++] = texCoordVstart + ((float)y * texCoordVincrement);
 			}
 		}
 
@@ -419,6 +431,11 @@ public class Hud
 		getReadyPanelInitialPositionY = -screenHeight;
 		getReadyPanelFinalPositionY = -screenHeight * 0.4f;
 
+		// Resuming panel
+
+		resumingPanelInitialPositionY = -screenHeight;
+		resumingPanelFinalPositionY = -screenHeight * 0.4f;
+
 		// Lives
 
 		float livesSpacing = screenWidth * 0.125f;
@@ -470,6 +487,8 @@ public class Hud
 	public void resume()
 	{
 		resetPauseButtonTexture();
+		resumingPanelTimer = 0f;
+		resumingPanelState = UI_STATE_APPEARING;
 	}
 
 
@@ -840,6 +859,41 @@ public class Hud
 			}
 		}
 
+		// Resuming Panel
+		if(resumingPanelState == UI_STATE_APPEARING)
+		{
+			resumingPanelTimer += deltaTime;
+			resumingPanelOpacity = Math.min(1f, resumingPanelTimer / resumingPanelTimes[0]);
+			resumingPanelCurrentPositionY = lerp(resumingPanelInitialPositionY, resumingPanelFinalPositionY, resumingPanelOpacity);
+			if(resumingPanelTimer >= resumingPanelTimes[0])
+			{
+				resumingPanelTimer -= resumingPanelTimes[0];
+				resumingPanelState = UI_STATE_VISIBLE;
+			}
+		}
+		else if(resumingPanelState == UI_STATE_VISIBLE)
+		{
+			resumingPanelTimer += deltaTime;
+			resumingPanelOpacity = 1.0f;
+			resumingPanelCurrentPositionY = resumingPanelFinalPositionY;
+			if(resumingPanelTimer >= resumingPanelTimes[1])
+			{
+				resumingPanelTimer -= resumingPanelTimes[1];
+				resumingPanelState = UI_STATE_DISAPPEARING;
+			}
+		}
+		else if(resumingPanelState == UI_STATE_DISAPPEARING)
+		{
+			resumingPanelTimer += deltaTime;
+			resumingPanelOpacity = Math.min(0.0f, 1.0f - (resumingPanelTimer / resumingPanelTimes[2]));
+			resumingPanelCurrentPositionY = lerp(resumingPanelInitialPositionY, resumingPanelFinalPositionY, resumingPanelOpacity);
+			if(resumingPanelTimer >= resumingPanelTimes[2])
+			{
+				resumingPanelTimer = 0f;
+				resumingPanelState = UI_STATE_NOT_VISIBLE;
+			}
+		}
+
 		for(int j=0; j < 5; j++)
 		{
 			if(livesStates[j] == LIFE_OK)
@@ -959,6 +1013,16 @@ public class Hud
 			scorePanelProgram.setCommonUniforms(viewProjection, getReadyPanelTexture);
 			scorePanelProgram.setSpecificUniforms(1f, 0f, getReadyPanelCurrentPositionY, 0f, 0f, recoveringColor[0], recoveringColor[1], recoveringColor[2], getReadyPanelOpacity);
 			glBindVertexArray(getReadyPanelVaoHandle);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
+
+		// Resuming panel
+
+		if(resumingPanelState != UI_STATE_NOT_VISIBLE)
+		{
+			scorePanelProgram.setCommonUniforms(viewProjection, resumingPanelTexture);
+			scorePanelProgram.setSpecificUniforms(1f, 0f, resumingPanelCurrentPositionY, 0f, 0f, recoveringColor[0], recoveringColor[1], recoveringColor[2], resumingPanelOpacity);
+			glBindVertexArray(resumingPanelVaoHandle);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 

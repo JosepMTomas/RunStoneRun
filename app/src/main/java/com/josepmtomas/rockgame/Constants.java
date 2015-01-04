@@ -131,6 +131,7 @@ public class Constants
 	public static final int PLAYER_ROCK_DISAPPEARING = 6;
 
 	public static final float PLAYER_RECOVERING_TIME = 3f;
+	public static final float PLAYER_RESUMING_TIME = 3f;
 	public static final float LIFE_RECOVERING_TIME = 5f;
 
 	// Menus

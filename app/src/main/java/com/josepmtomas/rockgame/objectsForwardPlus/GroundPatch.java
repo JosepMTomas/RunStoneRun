@@ -87,8 +87,6 @@ public class GroundPatch extends BoundarySampler
 	private FloatBuffer riverExitColorsBuffer;
 	private Float maximumVariance;
 
-	//private float patchWidth;
-	//private float patchHeight;
 	private final float spreadFactorX;
 	private final float spreadFactorZ;
 
@@ -143,7 +141,6 @@ public class GroundPatch extends BoundarySampler
 		this.cullingPointsRadius = Math.max(patchWidth, patchHeight) * 0.5f;
 
 		this.indexNum = indexNum;
-		////this.numGrassInstances = 0;
 
 		this.spreadFactorX = patchWidth / 2f;
 		this.spreadFactorZ = patchHeight / 2f;
@@ -165,8 +162,6 @@ public class GroundPatch extends BoundarySampler
 		groundColorsLeft = new float[numVerticesZ * COLOR_COMPONENTS];
 		groundColorsRight = new float[numVerticesZ * COLOR_COMPONENTS];
 		groundColorGrid = new float[numPolygonsX * numPolygonsZ * COLOR_COMPONENTS];
-
-		////grassMatrices = new float[16 * MAX_GRASS_INSTANCES];
 	}
 
 
@@ -183,8 +178,6 @@ public class GroundPatch extends BoundarySampler
 		// Generate the base vertex colors for each type of ground patch
 		generateGroundVertexColors(patchColorType, downColors, sideColors);
 		initializeRiverVertexColors();
-		//generateRiverEntryVertexColors(patchColorType, downColors, sideColors);
-		//generateRiverEntryVertexColors(patchColorType, downColors, sideColors);
 
 		// Create the buffers for the color vertices (ground, entry & exit)
 		createColorsBuffers();
@@ -195,17 +188,12 @@ public class GroundPatch extends BoundarySampler
 		createRiverExitVertexArrayObject();
 		createRiverExitReflectionVertexArrayObject();
 
-		// Create this patch
-		////createGrassUniformBuffer();
-
 		// Boundary sampler
 		complete();
 		filterGrassPoints();
-		////updateGrassUniformBuffer();
 
 		// new grass
 		initializeGrassPointsArray();
-		//newGrassPointsArray();
 	}
 
 
@@ -269,32 +257,19 @@ public class GroundPatch extends BoundarySampler
 			case GROUND_PATCH_GROUND:
 				generateGroundVertexColors(patchColorsType, downColors, sideColors);
 				updateGroundColorsBuffer();
-				updateGroundVertexArrayObject();//TODO: disposable?
 				filterGrassPoints();
-				////updateGrassUniformBuffer();
 				break;
 
 			case GROUND_PATCH_RIVER_ENTRY:
 				generateRiverEntryVertexColors(patchColorsType, downColors, sideColors);
 				updateRiverEntryColorsBuffer();
-				updateRiverEntryVertexArrayObject();//TODO: disposable?
 				break;
 
 			case GROUND_PATCH_RIVER_EXIT:
 				generateRiverExitVertexColors(patchColorsType, sideColors);
 				updateRiverExitColorsBuffer();
-				updateRiverExitVertexArrayObject();//TODO: disposable?
 				break;
 		}
-
-
-		// Boundary sampler
-		/**reset();
-		complete();
-		filterGrassPoints();
-		updateGrassUniformBuffer();**/
-		/*filterGrassPoints();
-		updateGrassUniformBuffer();*/
 	}
 
 
@@ -567,88 +542,6 @@ public class GroundPatch extends BoundarySampler
 
 		glBindVertexArray(0);*/
 	}
-
-
-	private void updateGroundVertexArrayObject()
-	{
-		glBindVertexArray(groundVaoHandle[0]);
-
-		// Vertex colors
-		glEnableVertexAttribArray(4);
-		glBindBuffer(GL_ARRAY_BUFFER, groundColorVboHandle[0]);
-		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
-
-		glBindVertexArray(0);
-	}
-
-
-	private void updateRiverEntryVertexArrayObject()
-	{
-		glBindVertexArray(riverEntryVaoHandle[0]);
-
-		// Vertex colors
-		glEnableVertexAttribArray(4);
-		glBindBuffer(GL_ARRAY_BUFFER, riverEntryColorVboHandle[0]);
-		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
-
-		glBindVertexArray(0);
-	}
-
-
-	private void updateRiverExitVertexArrayObject()
-	{
-		glBindVertexArray(riverExitVaoHandle[0]);
-
-		// Vertex colors
-		glEnableVertexAttribArray(4);
-		glBindBuffer(GL_ARRAY_BUFFER, riverExitColorVboHandle[0]);
-		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
-
-		glBindVertexArray(0);
-	}
-
-
-	/*private void createGrassUniformBuffer()
-	{
-		for(int i=0; i < MAX_GRASS_INSTANCES; i++)
-		{
-			setIdentityM(grassMatrices, i*16);
-		}
-
-		grassMatricesBuffer = ByteBuffer
-				.allocateDirect(grassMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(grassMatrices);
-		grassMatricesBuffer.position(0);
-
-		glGenBuffers(1, grassMatricesUbo, 0);
-		glBindBuffer(GL_UNIFORM_BUFFER, grassMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, grassMatricesBuffer.capacity() * BYTES_PER_FLOAT, grassMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	}
-
-
-	private void updateGrassUniformBuffer()
-	{
-		int numInstances = Math.min(currentPoints.size(), MAX_GRASS_INSTANCES);
-		int numBytes = numInstances * 16;
-
-		for(int i=0; i < numInstances; i++)
-		{
-			setIdentityM(grassMatrices, i*16);
-			translateM(grassMatrices, i*16, currentPoints.get(i).x * spreadFactorX, 0.0f, currentPoints.get(i).y * spreadFactorZ);
-			//rotateM(grassMatrices, i*16, random.nextFloat()*180f, 0f, 1f, 0f);
-			scaleM(grassMatrices, i*16, 1f, random.nextFloat() * 0.5f + 1.0f, 1f);
-		}
-
-		grassMatricesBuffer.put(grassMatrices, 0, numBytes);
-		grassMatricesBuffer.position(0);
-
-		glBindBuffer(GL_UNIFORM_BUFFER, grassMatricesUbo[0]);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, numBytes * BYTES_PER_FLOAT, grassMatricesBuffer);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	}*/
 
 	private void generateGroundVertexColors(int patchColors, float[] downColors, float[] sideColors)
 	{
@@ -1064,7 +957,7 @@ public class GroundPatch extends BoundarySampler
 		}
 	}
 
-	//TODO:
+
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// River Entry Color generation
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1279,7 +1172,6 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	//TODO:
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// River Exit Color generation
 	////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2090,15 +1982,6 @@ public class GroundPatch extends BoundarySampler
 			}*/
 			i++;
 		}
-	}
-
-
-	public void deleteGL()
-	{
-		//TODO:
-		glDeleteBuffers(1, groundColorVboHandle, 0);
-		glDeleteVertexArrays(1, groundVaoHandle, 0);
-		glDeleteVertexArrays(1, depthPrePassVaoHandle, 0);
 	}
 }
 

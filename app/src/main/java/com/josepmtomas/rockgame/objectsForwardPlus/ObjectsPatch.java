@@ -191,6 +191,7 @@ public class ObjectsPatch extends BoundarySampler
 	public void reinitialize()
 	{
 		filterPoints();
+		updateObjectsArrays();
 	}
 
 
