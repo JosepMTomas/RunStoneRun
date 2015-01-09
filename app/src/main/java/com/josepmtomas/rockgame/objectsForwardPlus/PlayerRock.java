@@ -1,7 +1,6 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 
 import static com.josepmtomas.rockgame.Constants.*;
@@ -9,7 +8,6 @@ import static com.josepmtomas.rockgame.Constants.*;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.algebra.operations;
 import com.josepmtomas.rockgame.algebra.vec3;
-import com.josepmtomas.rockgame.objectsES30.PlayeRockState;
 import com.josepmtomas.rockgame.programsForwardPlus.DepthPrePassProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.PlayerRockProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ShadowPassProgram;
@@ -23,20 +21,26 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
 
 /**
- * Created by Josep on 05/09/2014.
+ * Created by Josep M. Tomas on 05/09/2014.
+ * @author Josep
  */
 public class PlayerRock
 {
 	private static final String TAG = "PlayerRock";
+
+	// Player rock movement states
+	private static final int MOVING_FORWARD = 0;
+	private static final int MOVING_LEFT = 1;
+	private static final int MOVING_RIGHT = 2;
+	private static final int TURNING_LEFT = 3;
+	private static final int TURNING_RIGHT = 4;
+	private static final int RETURNING_CENTER = 5;
 
 	// Mesh constants
 	private static final int POSITION_COMPONENTS = 3;
@@ -86,8 +90,8 @@ public class PlayerRock
 
 	// Player rock state
 	private float playerRockTimer = 0f;
-	private final float playerRockAppearTime = 1f;
-	private final float playerRockDisappearTime = 1f;
+	private static final float PLAYER_ROCK_APPEAR_TIME = 1f;
+	private static final float PLAYER_ROCK_DISAPPEAR_TIME = 1f;
 	private float playerRockTimerPercent = 0f;
 	private float currentPositionZ = 0f;
 
@@ -106,7 +110,6 @@ public class PlayerRock
 	private float[] model = new float[16];
 	private float[] rotationMatrix = new float[16];
 
-	private float[] modelView = new float[16];
 	private float[] viewProjection;
 	private float[] modelViewProjection = new float[16];
 
@@ -116,7 +119,6 @@ public class PlayerRock
 
 	private float rotationX = 0;
 	private float rotationY = 0;
-	private float rotationYtemp = 0;
 
 	public float rockRadius = 10.0f;
 	private float rockLength = (float)Math.PI * 2.0f * rockRadius;
@@ -128,7 +130,6 @@ public class PlayerRock
 
 	// "Physics"
 	private float initialForce = 0f;
-	private float currentDisplacement = 0f;
 
 	// State
 	public float scoreMultiplier = 1.0f;
@@ -136,7 +137,7 @@ public class PlayerRock
 	public int lastObjectTypeHit = 0;
 	private float recoverTimer = 0f;
 
-	private PlayeRockState currentState = PlayeRockState.MOVING_FORWARD;
+	private int currentState = MOVING_FORWARD;
 
 	private LightInfo lightInfo;
 
@@ -555,9 +556,9 @@ public class PlayerRock
 		else if(state == PLAYER_ROCK_APPEARING)
 		{
 			playerRockTimer += deltaTime;
-			playerRockTimerPercent = playerRockTimer / playerRockAppearTime;
+			playerRockTimerPercent = playerRockTimer / PLAYER_ROCK_APPEAR_TIME;
 
-			if(playerRockTimer >= playerRockAppearTime)
+			if(playerRockTimer >= PLAYER_ROCK_APPEAR_TIME)
 			{
 				playerRockTimer = 0f;
 				playerRockTimerPercent = 1f;
@@ -570,9 +571,9 @@ public class PlayerRock
 		else if(state == PLAYER_ROCK_DISAPPEARING)
 		{
 			playerRockTimer += deltaTime;
-			playerRockTimerPercent = playerRockTimer / playerRockDisappearTime;
+			playerRockTimerPercent = playerRockTimer / PLAYER_ROCK_DISAPPEAR_TIME;
 
-			if(playerRockTimer >= playerRockDisappearTime)
+			if(playerRockTimer >= PLAYER_ROCK_DISAPPEAR_TIME)
 			{
 				playerRockTimer = 0f;
 				playerRockTimerPercent = 1f;
@@ -634,7 +635,7 @@ public class PlayerRock
 				if(rotationY > 75f)
 				{
 					rotationY = 75f;
-					currentState = PlayeRockState.MOVING_LEFT;
+					currentState = MOVING_LEFT;
 				}
 				break;
 
@@ -644,14 +645,14 @@ public class PlayerRock
 				if(rotationY < -75f)
 				{
 					rotationY = -75f;
-					currentState = PlayeRockState.MOVING_RIGHT;
+					currentState = MOVING_RIGHT;
 				}
 				break;
 
 			case RETURNING_CENTER:
 				if(rotationY > 0) rotationY -= 75f * deltaTime;
 				if(rotationY < 0) rotationY += 75f * deltaTime;
-				if(rotationY == 0) currentState = PlayeRockState.MOVING_FORWARD;
+				if(rotationY == 0) currentState = MOVING_FORWARD;
 				break;
 
 			default:
@@ -776,19 +777,19 @@ public class PlayerRock
 
 	public void turnLeft()
 	{
-		currentState = PlayeRockState.TURNING_LEFT;
+		currentState = TURNING_LEFT;
 	}
 
 
 	public void turnRight()
 	{
-		currentState = PlayeRockState.TURNING_RIGHT;
+		currentState = TURNING_RIGHT;
 	}
 
 
 	public void releaseTouch()
 	{
-		currentState = PlayeRockState.RETURNING_CENTER;
+		currentState = RETURNING_CENTER;
 	}
 
 	public void newGame()
@@ -831,5 +832,33 @@ public class PlayerRock
 		{
 			// nothing at this point
 		}
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// State save / load
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void saveState(StringBuilder builder)
+	{
+		builder.append("PLAYER_ROCK ");
+		builder.append(currentSpeed);		builder.append(" ");
+		builder.append(currentPositionY);	builder.append(" ");
+		builder.append(rotationX);			builder.append(" ");
+		builder.append(rotationY);			builder.append(" ");
+		builder.append(scoreMultiplier);	builder.append(" ");
+		builder.append(state);				builder.append(" ");
+		builder.append(currentState);		builder.append("\n");
+	}
+
+	public  void loadState(String[] tokens)
+	{
+		currentSpeed = Float.parseFloat(tokens[1]);
+		currentPositionY = Float.parseFloat(tokens[2]);
+		rotationX = Float.parseFloat(tokens[3]);
+		rotationY = Float.parseFloat(tokens[4]);
+		scoreMultiplier = Float.parseFloat(tokens[5]);
+		state = Integer.parseInt(tokens[6]);
+		currentState = Integer.parseInt(tokens[7]);
 	}
 }

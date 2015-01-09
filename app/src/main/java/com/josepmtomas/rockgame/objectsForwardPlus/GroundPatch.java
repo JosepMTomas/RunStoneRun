@@ -10,6 +10,8 @@ import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -1586,10 +1588,6 @@ public class GroundPatch extends BoundarySampler
 		translateM(model, 0, currentPosition.x , currentPosition.y, currentPosition.z);
 
 		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
-
-		//updateGrassPoints(displacement);
-
-		//updateGrassPointsArray(displacement.x, displacement.z);
 	}
 
 
@@ -1907,13 +1905,14 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	private void updateGrassPoints(vec3 displacement)
+	//TODO: delete
+	/*private void updateGrassPoints(vec3 displacement)
 	{
 		for(vec2 point : currentPoints)
 		{
 			point.add(displacement.x, displacement.z);
 		}
-	}
+	}*/
 
 
 	public void updateGrassPointsArray()
@@ -1982,6 +1981,117 @@ public class GroundPatch extends BoundarySampler
 			}*/
 			i++;
 		}
+	}
+
+
+	public void saveState(FileOutputStream outputStream) throws IOException
+	{
+		int numPoints;
+		vec2 currentPoint;
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("PROPERTIES ");
+		builder.append(type);		builder.append(" ");
+		builder.append(visible);	builder.append(" ");
+		builder.append(currentPosition.x);	builder.append(" ");
+		builder.append(currentPosition.y);	builder.append(" ");
+		builder.append(currentPosition.z);	builder.append(" ");
+		builder.append(numGrassPointsPerLOD[LOD_A]);	builder.append(" ");
+		builder.append(numGrassPointsPerLOD[LOD_B]);	builder.append(" ");
+		builder.append(numGrassPointsPerLOD[LOD_C]);	builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("SAMPLER_POINTS");
+		numPoints = points.size();
+		builder.append(" ");	builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			currentPoint = points.get(i);
+			builder.append(" ");	builder.append(currentPoint.x);
+			builder.append(" ");	builder.append(currentPoint.y);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("CURRENT_POINTS");
+		numPoints = currentPoints.size();
+		builder.append(" ");	builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			currentPoint = currentPoints.get(i);
+			builder.append(" ");	builder.append(currentPoint.x);
+			builder.append(" ");	builder.append(currentPoint.y);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("GROUND_COLORS ");
+		numPoints = groundColors.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(groundColors[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("RIVER_ENTRY_COLORS ");
+		numPoints = riverEntryColors.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(riverEntryColors[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("RIVER_EXIT_COLORS ");
+		numPoints = riverExitColors.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(riverExitColors[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("GRASS_POINTS_LOD_A ");
+		numPoints = grassPointsLODA.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(grassPointsLODA[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("GRASS_POINTS_LOD_B ");
+		numPoints = grassPointsLODB.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(grassPointsLODB[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("GRASS_POINTS_LOD_C ");
+		numPoints = grassPointsLODC.length;
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(grassPointsLODC[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
 	}
 }
 

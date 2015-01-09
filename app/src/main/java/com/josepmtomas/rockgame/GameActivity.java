@@ -356,7 +356,10 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
+		forwardPlusRenderer.onDestroy();
+
 		super.onDestroy();
 
 		backgroundMusicPlayer.release();

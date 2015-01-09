@@ -9,6 +9,8 @@ import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -31,7 +33,7 @@ public class ObjectsPatch extends BoundarySampler
 	private PerspectiveCamera perspectiveCamera;
 
 	// LOD
-	public int currentLOD = LOD_A;
+	//public int currentLOD = LOD_A;
 
 	// Patch properties
 	private final float patchWidth;
@@ -985,31 +987,78 @@ public class ObjectsPatch extends BoundarySampler
 	}
 
 
-	public boolean updateLOD()
+	////////////////////////////////////////////////////////////////////////////////////////////
+	// Save/Load state
+	////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void saveState(FileOutputStream outputStream, int x, int z) throws IOException
 	{
-		/*LODCounter--;
+		int numPoints;
+		StringBuilder builder = new StringBuilder();
 
-		if(LODCounter < 0)
-		{
-			currentLOD = LOD_B;
-			LODCounter = 2;
-		}
-		else if(LODCounter < 2)
-		{
-			currentLOD = LOD_A;
-		}*/
-		int previousLOD = currentLOD;
+		builder.append("OBJECTS_PATCH ");
+		builder.append(x);	builder.append(" ");
+		builder.append(z);	builder.append(" ");
+		builder.append(currentPosition.x);	builder.append(" ");
+		builder.append(currentPosition.y);	builder.append(" ");
+		builder.append(currentPosition.z);	builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
 
-		if(distanceToOrigin(currentPosition) <= 650f)
+		builder.setLength(0);
+		builder.append("SAMPLER_POINTS ");
+		numPoints = points.size();
+		builder.append(numPoints);
+		for(int i=0; i<numPoints; i++)
 		{
-			currentLOD = LOD_A;
+			builder.append(" ");	builder.append(points.get(i).x);
+			builder.append(" ");	builder.append(points.get(i).y);
 		}
-		else
-		{
-			currentLOD = LOD_B;
-		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
 
-		if(currentLOD == previousLOD) return false;
-		else return true;
+		builder.setLength(0);
+		builder.append("PINE_TREE_POINTS ");
+		builder.append(pineTreeNumPoints);
+		numPoints = pineTreePoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(pineTreePoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("HUGE_TREE_POINTS ");
+		builder.append(hugeTreeNumPoints);
+		numPoints = hugeTreePoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(hugeTreePoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("PALM_TREE_POINTS ");
+		builder.append(palmTreeNumPoints);
+		numPoints = palmTreePoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(palmTreePoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("BIRCH_TREE_POINTS ");
+		builder.append(birchTreeNumPoints);
+		numPoints = birchTreePoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(birchTreePoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
 	}
 }

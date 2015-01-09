@@ -8,7 +8,6 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 import com.josepmtomas.rockgame.R;
 import com.josepmtomas.rockgame.algebra.operations;
-import com.josepmtomas.rockgame.algebra.vec2;
 import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.programsForwardPlus.BrokenTreeProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.DepthPrePassProgram;
@@ -30,6 +29,8 @@ import com.josepmtomas.rockgame.programsForwardPlus.WaterProgram;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -89,15 +90,6 @@ public class Ground
 	// Matrices
 	private float[] viewProjection;			// Main render view-projection matrix
 	private float[] lightViewProjection;	// Shadow map framebuffer view-projection matrix
-
-	private float[] shadowVPMatrix = new float[16];
-	private float[] S = new float[16];
-	private float[] N = new float[16];
-	private float[] M = new float[16];
-	private float[] currMV = new float[16];
-	private float[] prevMV = new float[16];
-	private float[] MV = new float[16];
-	private float[] MVP = new float[16];
 
 	// Patch common attributes
 	private float[] patchPositions;
@@ -276,22 +268,6 @@ public class Ground
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// Objects uniform buffers
 	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	private float objectsSpreadFactorX;
-	private float objectsSpreadFactorZ;
-
-	// TODO: change/delete
-	private float[] objectsPatchesModelMatrices;
-	private FloatBuffer objectsPatchesModelMatricesBuffer;
-	private int[] objectsPatchesModelMatricesUbo;
-
-	private float[] objectsPatchesMVPMatrices;
-	private FloatBuffer objectsPatchesMVPMatricesBuffer;
-	private int[] objectsPatchesMVPMatricesUbo;
-
-	private float[] objectsPatchesLightMVPMatrices;
-	private FloatBuffer objectsPatchesLightMVPMatricesBuffer;
-	private int[] objectsPatchesLightMVPMatricesUbo;
 
 	private float[] pineTreeArrayLODA;
 	private float[] pineTreeArrayLODB;
@@ -647,9 +623,6 @@ public class Ground
 		palmPlantArrayUbo = new int[2];
 		rockAArrayUbo = new int[2];
 		rockBArrayUbo = new int[2];
-
-		this.objectsSpreadFactorX = objectsPatchWidth * 0.5f;
-		this.objectsSpreadFactorZ = objectsPatchHeight * 0.5f;
 
 		this.createObjectsPatches();		// Create the patches (class)
 		Log.d(TAG, "Created objects patches");
@@ -1909,8 +1882,6 @@ public class Ground
 		// Objects patches
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		boolean newPatch = false;
-
 		for(int x=0; x < numObjectsPatchesX; x++)
 		{
 			for(int z=0; z < numObjectsPatchesZ; z++)
@@ -1922,32 +1893,18 @@ public class Ground
 		if(objectsPatches[objectsRightmostIndex][objectsLowerIndex].getCurrentPosition().x > maxObjectsOffsetX)
 		{
 			newLeftObjectsPatch();
-			newPatch = true;
 			Log.d(TAG, "NEW LEFT OBJECTS PATCH");
 		}
 		else if(objectsPatches[objectsLeftmostIndex][objectsLowerIndex].getCurrentPosition().x < minObjectsOffsetX)
 		{
 			newRightObjectsPatch();
-			newPatch = true;
 			Log.d(TAG, "NEW RIGHT OBJECTS PATCH");
 		}
 
 		if(objectsPatches[0][objectsLowerIndex].getCurrentPosition().z > maxObjectsOffsetZ)
 		{
 			newUpObjectsPatch();
-			newPatch = true;
 			Log.d(TAG, "NEW UP OBJECTS PATCH");
-		}
-
-
-		boolean rebuildLOD = false;
-
-		for(int z=0; z < numObjectsPatchesZ; z++)
-		{
-			for(int x=0; x < numObjectsPatchesX; x++)
-			{
-				rebuildLOD = rebuildLOD || objectsPatches[x][z].updateLOD();
-			}
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -1959,7 +1916,6 @@ public class Ground
 			for(int z=0; z < numGroundPatchesZ; z++)
 			{
 				groundPatches[x][z].update(viewProjection, displacement);
-				//groundPatches[x][z].updateLOD();//TODO: unnecessary
 			}
 		}
 
@@ -2877,69 +2833,6 @@ public class Ground
 
 	private void createObjectsBuffers()
 	{
-		int numMatrices;
-		int currentIndex;
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Objects patches model matrices & model view projection matrices
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		numMatrices = numObjectsPatchesX * numObjectsPatchesZ;
-		currentIndex = 0;
-		objectsPatchesModelMatricesUbo = new int[1];
-		objectsPatchesModelMatrices = new float[numMatrices * 16];
-		objectsPatchesMVPMatricesUbo = new int[1];
-		objectsPatchesMVPMatrices = new float[numMatrices * 16];
-		objectsPatchesLightMVPMatricesUbo = new int[1];
-		objectsPatchesLightMVPMatrices = new float[numMatrices * 16];
-
-		for(int x=0; x < numObjectsPatchesX; x++)
-		{
-			for(int z=0; z < numObjectsPatchesZ; z++)
-			{
-				System.arraycopy(objectsPatches[x][z].model, 0, objectsPatchesModelMatrices, currentIndex*16, 16);
-				System.arraycopy(objectsPatches[x][z].modelViewProjection, 0, objectsPatchesMVPMatrices, currentIndex*16, 16);
-				System.arraycopy(objectsPatches[x][z].lightModelViewProjection, 0, objectsPatchesLightMVPMatrices, currentIndex*16, 16);
-			}
-		}
-
-		objectsPatchesModelMatricesBuffer = ByteBuffer
-				.allocateDirect(objectsPatchesModelMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(objectsPatchesModelMatrices);
-		objectsPatchesModelMatricesBuffer.position(0);
-
-		objectsPatchesMVPMatricesBuffer = ByteBuffer
-				.allocateDirect(objectsPatchesMVPMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(objectsPatchesMVPMatrices);
-		objectsPatchesMVPMatricesBuffer.position(0);
-
-		objectsPatchesLightMVPMatricesBuffer = ByteBuffer
-				.allocateDirect(objectsPatchesLightMVPMatrices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(objectsPatchesLightMVPMatrices);
-		objectsPatchesLightMVPMatricesBuffer.position(0);
-
-		//TODO: matrices not used
-		glGenBuffers(1, objectsPatchesModelMatricesUbo, 0);
-		glGenBuffers(1, objectsPatchesMVPMatricesUbo, 0);
-		glGenBuffers(1, objectsPatchesLightMVPMatricesUbo, 0);
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesModelMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesModelMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesModelMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesMVPMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesMVPMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesMVPMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, objectsPatchesLightMVPMatricesUbo[0]);
-		glBufferData(GL_UNIFORM_BUFFER, objectsPatchesLightMVPMatricesBuffer.capacity() * BYTES_PER_FLOAT, objectsPatchesLightMVPMatricesBuffer, GL_STREAM_DRAW);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Tree
-		////////////////////////////////////////////////////////////////////////////////////////////
-
 		pineTreeArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		pineTreeArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
@@ -3925,6 +3818,55 @@ public class Ground
 				objectsPatches[x][z].reinitialize();
 			}
 		}
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// Save state
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void saveState(FileOutputStream outputStream) throws IOException
+	{
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("NUM_GROUND_PATCHES ");
+		builder.append(Integer.toString(numGroundPatchesX));
+		builder.append(" ");
+		builder.append(Integer.toString(numGroundPatchesZ));
+		builder.append("\n");
+
+		builder.append("NUM_OBJECTS_PATCHES ");
+		builder.append(Integer.toString(numObjectsPatchesX));
+		builder.append(" ");
+		builder.append(Integer.toString(numObjectsPatchesZ));
+		builder.append("\n");
+
+		outputStream.write(builder.toString().getBytes());
+
+		for(int z=0; z < numGroundPatchesZ; z++)
+		{
+			for(int x=0; x < numGroundPatchesX; x++)
+			{
+				builder.setLength(0);
+				builder.append("GROUND_PATCH ");
+				builder.append(x);	builder.append(" ");
+				builder.append(z);	builder.append("\n");
+
+				outputStream.write(builder.toString().getBytes());
+
+				groundPatches[x][z].saveState(outputStream);
+			}
+		}
+
+		for(int z=0; z < numObjectsPatchesZ; z++)
+		{
+			for(int x=0; x < numObjectsPatchesX; x++)
+			{
+				objectsPatches[x][z].saveState(outputStream, x, z);
+			}
+		}
+
+		playerRock.saveState(builder);
 	}
 
 

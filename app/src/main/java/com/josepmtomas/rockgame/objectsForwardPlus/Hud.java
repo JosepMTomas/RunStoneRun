@@ -10,6 +10,8 @@ import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -1061,5 +1063,49 @@ public class Hud
 				glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 			}
 		}
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////////////////////
+	// State save / load
+	////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	public void saveState(FileOutputStream outputStream) throws IOException
+	{
+		StringBuilder builder = new StringBuilder();
+
+		builder.append("HUD ");
+		builder.append(currentLife);		builder.append(" ");
+		builder.append(livesCounterState);	builder.append(" ");
+		builder.append(livesStates[0]);		builder.append(" ");
+		builder.append(livesStates[1]);		builder.append(" ");
+		builder.append(livesStates[2]);		builder.append(" ");
+		builder.append(livesStates[3]);		builder.append(" ");
+		builder.append(livesStates[4]);		builder.append(" ");
+		builder.append(livesPercents[0]);	builder.append(" ");
+		builder.append(livesPercents[1]);	builder.append(" ");
+		builder.append(livesPercents[2]);	builder.append(" ");
+		builder.append(livesPercents[3]);	builder.append(" ");
+		builder.append(livesPercents[4]);	builder.append("\n");
+
+		outputStream.write(builder.toString().getBytes());
+	}
+
+
+	public void loadState(String[] tokens)
+	{
+		currentLife = Integer.parseInt(tokens[1]);
+		livesCounterState = Integer.parseInt(tokens[2]);
+		livesStates[0] = Integer.parseInt(tokens[3]);
+		livesStates[1] = Integer.parseInt(tokens[4]);
+		livesStates[2] = Integer.parseInt(tokens[5]);
+		livesStates[3] = Integer.parseInt(tokens[6]);
+		livesStates[4] = Integer.parseInt(tokens[7]);
+		livesPercents[0] = Float.parseFloat(tokens[8]);
+		livesPercents[1] = Float.parseFloat(tokens[9]);
+		livesPercents[2] = Float.parseFloat(tokens[10]);
+		livesPercents[3] = Float.parseFloat(tokens[11]);
+		livesPercents[4] = Float.parseFloat(tokens[12]);
 	}
 }

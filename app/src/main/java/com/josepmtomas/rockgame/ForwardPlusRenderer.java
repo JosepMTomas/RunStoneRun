@@ -25,6 +25,13 @@ import com.josepmtomas.rockgame.util.FPSCounter;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TouchState;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 import static com.josepmtomas.rockgame.Constants.*;
 
 import javax.microedition.khronos.egl.EGLConfig;
@@ -207,6 +214,48 @@ public class ForwardPlusRenderer implements Renderer
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig)
 	{
+		/*String text = "saved text\nsaved textt";
+
+		try
+		{
+			FileOutputStream outputStream = context.openFileOutput(SAVED_GAME_FILE_NAME, Context.MODE_PRIVATE);
+			outputStream.write(text.getBytes());
+			outputStream.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}*/
+
+		try {
+			FileInputStream fis = context.openFileInput(SAVED_GAME_FILE_NAME);
+			InputStreamReader inputStreamReader = new InputStreamReader(fis);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			/*int size = fis.available();
+			byte[] bytes = new byte[size];
+			fis.read(bytes);
+			String string2 = new String(bytes);
+			String[] lines = string2.split("\n");
+			Log.w("Read ", size+" bytes");
+			for(int i=0; i<lines.length; i++)
+			{
+				Log.w("SAVED_GAME", lines[i]);
+			}*/
+			String nextLine;
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				//Log.w("SAVED_GAME", nextLine);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		// GL init
 		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -1061,26 +1110,34 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 
-	public void deleteGL()
+	public void onDestroy()
 	{
-		/*skyDome.deleteGL();
-		ground.deleteGL();
-		playerRock.deleteGL();
+		//String string = "SAVED_GAME\n";
+		String string;
 
-		// Framebuffers
-		glDeleteFramebuffers(1, fboID, 0);
-		glDeleteFramebuffers(1, reflectionFboID, 0);
-		glDeleteFramebuffers(1, shadowMapFboID, 0);
+		StringBuilder stringBuilder = new StringBuilder();
+		stringBuilder.append("SAVED_GAME\n");
 
-		// Renderbuffers
-		glDeleteRenderbuffers(1, rboID, 0);
-		glDeleteRenderbuffers(1, reflectionRboID, 0);
-		glDeleteRenderbuffers(1, shadowMapRboID, 0);
+		string = stringBuilder.toString();
 
-		// Textures
-		glDeleteTextures(1, fboTexID, 0);
-		glDeleteTextures(1, reflectionTexID, 0);
-		glDeleteTextures(1, shadowMapTexID, 0);*/
+		try
+		{
+			FileOutputStream outputStream = context.openFileOutput(SAVED_GAME_FILE_NAME, Context.MODE_PRIVATE);
+			outputStream.write(string.getBytes());
+
+			hud.saveState(outputStream);
+			ground.saveState(outputStream);
+
+			outputStream.close();
+		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 

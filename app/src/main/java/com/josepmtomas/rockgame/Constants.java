@@ -155,4 +155,7 @@ public class Constants
 	public static final int UI_STATE_APPEARING = 1;
 	public static final int UI_STATE_VISIBLE = 2;
 	public static final int UI_STATE_DISAPPEARING = 3;
+
+	// Saved game
+	public static final String SAVED_GAME_FILE_NAME = "game.txt";
 }
