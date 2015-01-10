@@ -11,6 +11,7 @@ import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.programsForwardPlus.DepthPrePassProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.PlayerRockProgram;
 import com.josepmtomas.rockgame.programsForwardPlus.ShadowPassProgram;
+import com.josepmtomas.rockgame.util.TextureHelper;
 
 import static com.josepmtomas.rockgame.algebra.operations.*;
 
@@ -60,6 +61,10 @@ public class PlayerRock
 	private static final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * BYTES_PER_FLOAT;
 	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
 	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * BYTES_PER_FLOAT;
+
+	// Textures
+	private final int diffuseTexture;
+	private final int normalTexture;
 
 	// Main geometry definition
 	private float[] vertices;
@@ -161,9 +166,24 @@ public class PlayerRock
 
 		glGenVertexArrays(1, vaoHandle, 0);
 
-		load("models/player_rock.vbm");
+		load("models/player_rock_2.vbm");
 		loadShadow("models/player_rock.vbm");
-		loadReflection("models/player_rock_reflection.vbm");
+		loadReflection("models/player_rock_reflection_2.vbm");
+
+		/*String[] diffuseTextureMips = {
+				"textures/player_rock/diffuse_mip_0.mp3",
+				"textures/player_rock/diffuse_mip_1.mp3",
+				"textures/player_rock/diffuse_mip_2.mp3",
+				"textures/player_rock/diffuse_mip_3.mp3",
+				"textures/player_rock/diffuse_mip_4.mp3",
+				"textures/player_rock/diffuse_mip_5.mp3",
+				"textures/player_rock/diffuse_mip_6.mp3",
+				"textures/player_rock/diffuse_mip_7.mp3",
+				"textures/player_rock/diffuse_mip_8.mp3",
+		};*/
+
+		diffuseTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/diffuse_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		normalTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/normal_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -216,7 +236,7 @@ public class PlayerRock
 
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1.0f;
 
 					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
@@ -734,7 +754,7 @@ public class PlayerRock
 
 		// TODO:
 		playerRockProgram.useProgram();
-		playerRockProgram.setUniforms(proxyModel, proxyModelViewProjection, shadowMatrix, shadowMapSampler);
+		playerRockProgram.setUniforms(proxyModel, proxyModelViewProjection, shadowMatrix, shadowMapSampler, diffuseTexture, normalTexture);
 
 		glBindVertexArray(reflectionVaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0);
@@ -746,7 +766,7 @@ public class PlayerRock
 		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
 
 		playerRockProgram.useProgram();
-		playerRockProgram.setUniforms(model, modelViewProjection, shadowMatrix, shadowMapSampler);
+		playerRockProgram.setUniforms(model, modelViewProjection, shadowMatrix, shadowMapSampler, diffuseTexture, normalTexture);
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);

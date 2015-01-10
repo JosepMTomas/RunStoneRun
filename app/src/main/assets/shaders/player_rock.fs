@@ -8,7 +8,9 @@ layout (std140) uniform lightInfo
 	vec4 ambientColor;
 };
 
-// TODO: textures
+// textures
+uniform sampler2D diffuseSampler;
+uniform sampler2D normalSampler;
 
 in vec4 vPosition;
 in vec2 vTexCoord;
@@ -23,18 +25,21 @@ out vec4 fragColor;
 
 void main()
 {
-	fragColor = vec4(vTexCoord, 0.0, 1.0);
-	//fragColor = vec4(vNormal, 1.0);
+	lowp vec4 diffuseTex = texture(diffuseSampler, vTexCoord);
 	
-	vec4 ambient = fragColor * ambientColor;
+	lowp vec4 normalTex = texture(normalSampler, vTexCoord);
+	normalTex = normalize(normalTex * 2.0 - 1.0);
+	mediump vec3 normal = vTangent.xyz * normalTex.x + vBinormal * normalTex.y + vNormal * normalTex.z;
 	
-	float vDiffuse = dot(vNormal, vLight);
-	vDiffuse = clamp(vDiffuse, 0.0, 1.0);
+	vec4 ambient = diffuseTex * ambientColor;
 	
-	float shading = vDiffuse * vShadows;
+	float diffuse = dot(normal, vLight);
+	diffuse = clamp(diffuse, 0.0, 1.0);
+	
+	float shading = diffuse * vShadows;
 	//shading += 0.25;
 	shading = clamp(shading, 0.0, 1.0);
 	
-	fragColor *= shading;
+	fragColor = diffuseTex * shading;
 	fragColor += ambient;
 }

@@ -15,6 +15,8 @@ public class PlayerRockProgram extends ShaderProgram
 	private final int shadowMatrixLocation;
 
 	private final int shadowMapSamplerLocation;
+	private final int diffuseSamplerLocation;
+	private final int normalSamplerLocation;
 
 	public PlayerRockProgram(Context context)
 	{
@@ -27,10 +29,12 @@ public class PlayerRockProgram extends ShaderProgram
 		shadowMatrixLocation = glGetUniformLocation(program, "shadowMatrix");
 
 		shadowMapSamplerLocation = glGetUniformLocation(program, "shadowMapSampler");
+		diffuseSamplerLocation = glGetUniformLocation(program, "diffuseSampler");
+		normalSamplerLocation = glGetUniformLocation(program, "normalSampler");
 	}
 
 
-	public void setUniforms(float[] model, float[] modelViewProjection, float[] shadowMatrix, int shadowMapSampler)
+	public void setUniforms(float[] model, float[] modelViewProjection, float[] shadowMatrix, int shadowMapSampler, int diffuseSampler, int normalSampler)
 	{
 		glUniformMatrix4fv(modelLocation, 1, false, model, 0);
 		glUniformMatrix4fv(modelViewProjectionLocation, 1, false, modelViewProjection, 0);
@@ -39,6 +43,14 @@ public class PlayerRockProgram extends ShaderProgram
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowMapSampler);
 		glUniform1i(shadowMapSamplerLocation, 0);
+
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
+		glUniform1i(diffuseSamplerLocation, 1);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, normalSampler);
+		glUniform1i(normalSamplerLocation, 2);
 
 		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
 	}

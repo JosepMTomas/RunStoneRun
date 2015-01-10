@@ -259,17 +259,20 @@ public class GroundPatch extends BoundarySampler
 			case GROUND_PATCH_GROUND:
 				generateGroundVertexColors(patchColorsType, downColors, sideColors);
 				updateGroundColorsBuffer();
+				updateGroundVertexArrayObject();
 				filterGrassPoints();
 				break;
 
 			case GROUND_PATCH_RIVER_ENTRY:
 				generateRiverEntryVertexColors(patchColorsType, downColors, sideColors);
 				updateRiverEntryColorsBuffer();
+				updateRiverEntryVertexArrayObject();
 				break;
 
 			case GROUND_PATCH_RIVER_EXIT:
 				generateRiverExitVertexColors(patchColorsType, sideColors);
 				updateRiverExitColorsBuffer();
+				updateRiverExitVertexArrayObject();
 				break;
 		}
 	}
@@ -544,6 +547,39 @@ public class GroundPatch extends BoundarySampler
 
 		glBindVertexArray(0);*/
 	}
+
+	private void updateGroundVertexArrayObject()
+	{
+		glBindVertexArray(groundVaoHandle[0]);
+		// Vertex colors
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, groundColorVboHandle[0]);
+		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
+		glBindVertexArray(0);
+	}
+
+
+	private void updateRiverEntryVertexArrayObject()
+	{
+		glBindVertexArray(riverEntryVaoHandle[0]);
+		// Vertex colors
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, riverEntryColorVboHandle[0]);
+		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
+		glBindVertexArray(0);
+	}
+
+
+	private void updateRiverExitVertexArrayObject()
+	{
+		glBindVertexArray(riverExitVaoHandle[0]);
+		// Vertex colors
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, riverExitColorVboHandle[0]);
+		glVertexAttribPointer(4, 3, GL_FLOAT, false, 0, 0);
+		glBindVertexArray(0);
+	}
+
 
 	private void generateGroundVertexColors(int patchColors, float[] downColors, float[] sideColors)
 	{

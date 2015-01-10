@@ -551,7 +551,7 @@ public class ForwardPlusRenderer implements Renderer
 		if(rendererState == RENDERER_STATE_RESUMING)
 		{
 			resumeTimer += deltaTime;
-			if(resumeTimer >= resumeTime)
+			if(resumeTimer >= PLAYER_RESUMING_TIME)
 			{
 				isPaused = false;
 				rendererState = RENDERER_STATE_PLAYING;
@@ -561,6 +561,7 @@ public class ForwardPlusRenderer implements Renderer
 		if(!isPaused)//deltaTime=0;
 			update(deltaTime);
 
+		hud.updateOther(deltaTime);
 		mainMenu.update(deltaTime);
 		optionsMenu.update(deltaTime);
 		creditsMenu.update(deltaTime);

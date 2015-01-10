@@ -25,6 +25,7 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
 
 /**
  * Created by Josep on 29/11/2014.
+ * @author Josep
  */
 public class Hud
 {
@@ -158,6 +159,17 @@ public class Hud
 	private float resumingPanelInitialPositionY = -500f;
 	private float resumingPanelFinalPositionY = 0f;
 
+	// Resuming progress bar
+	private int resumingProgressBarVaoHandle;
+	private int resumingProgressBarState = UI_STATE_NOT_VISIBLE;
+	private float resumingProgressBarTimer = 0f;
+	private float resumingProgressBarOpacity = 0f;
+	private float resumingProgressBarPercent = 0f;
+	private float[] resumingTimers = {0.5f, PLAYER_RESUMING_TIME - 0.5f, 0.5f};
+	private float resumingCurrentPositionY = 0f;
+	private float resumingInitialPositionY = -500f;
+	private float resumingFinalPositionY = 0f;
+
 	// Lives
 	private int lifeBarVaoHandle;
 	private int currentLife = 2;
@@ -231,6 +243,7 @@ public class Hud
 		// Resuming
 		resumingPanelVaoHandle = getReadyPanelVaoHandle;
 		resumingPanelTexture = TextureHelper.loadETC2Texture(context, "textures/hud/resuming.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		resumingProgressBarVaoHandle = recoveringProgressBarVaoHandle;
 
 		// Life bars
 		lifeBarVaoHandle = UIHelper.makeProgressBar(progressBarWidth * 0.2f, progressBarHeight, UI_BASE_CENTER_CENTER);
@@ -426,17 +439,20 @@ public class Hud
 		// Recovering
 
 		recoveringInitialPositionY = -screenHeight;
-		recoveringFinalPositionY = -screenHeight * 0.5f;
+		recoveringFinalPositionY = -screenHeight * 0.75f;
 
 		// Get Ready panel
 
 		getReadyPanelInitialPositionY = -screenHeight;
-		getReadyPanelFinalPositionY = -screenHeight * 0.4f;
+		getReadyPanelFinalPositionY = -screenHeight * 0.65f;
 
 		// Resuming panel
 
 		resumingPanelInitialPositionY = -screenHeight;
 		resumingPanelFinalPositionY = -screenHeight * 0.4f;
+
+		resumingInitialPositionY = -screenHeight;
+		resumingFinalPositionY = -screenHeight * 0.5f;
 
 		// Lives
 
@@ -488,9 +504,12 @@ public class Hud
 
 	public void resume()
 	{
+		livesCounterState = LIVES_TIMER_IDLE;
 		resetPauseButtonTexture();
 		resumingPanelTimer = 0f;
 		resumingPanelState = UI_STATE_APPEARING;
+		resumingProgressBarTimer = 0f;
+		resumingProgressBarState = UI_STATE_APPEARING;
 	}
 
 
@@ -861,6 +880,22 @@ public class Hud
 			}
 		}
 
+		for(int j=0; j < 5; j++)
+		{
+			if(livesStates[j] == LIFE_OK)
+			{
+				livesPercents[j] = 1f;
+			}
+			else
+			{
+				livesPercents[j] = 0f;
+			}
+		}
+	}
+
+
+	public void updateOther(float deltaTime)
+	{
 		// Resuming Panel
 		if(resumingPanelState == UI_STATE_APPEARING)
 		{
@@ -887,7 +922,7 @@ public class Hud
 		else if(resumingPanelState == UI_STATE_DISAPPEARING)
 		{
 			resumingPanelTimer += deltaTime;
-			resumingPanelOpacity = Math.min(0.0f, 1.0f - (resumingPanelTimer / resumingPanelTimes[2]));
+			resumingPanelOpacity = Math.max(0.0f, 1.0f - (resumingPanelTimer / resumingPanelTimes[2]));
 			resumingPanelCurrentPositionY = lerp(resumingPanelInitialPositionY, resumingPanelFinalPositionY, resumingPanelOpacity);
 			if(resumingPanelTimer >= resumingPanelTimes[2])
 			{
@@ -896,15 +931,41 @@ public class Hud
 			}
 		}
 
-		for(int j=0; j < 5; j++)
+		// Resuming progress bar
+		if(resumingProgressBarState == UI_STATE_APPEARING)
 		{
-			if(livesStates[j] == LIFE_OK)
+			resumingProgressBarTimer += deltaTime;
+			resumingProgressBarOpacity = Math.min(1f,resumingProgressBarTimer / resumingTimers[0]);
+			resumingCurrentPositionY = lerp(resumingInitialPositionY, resumingFinalPositionY, resumingProgressBarOpacity);
+			resumingProgressBarPercent = resumingTimers[0] / PLAYER_RESUMING_TIME;
+			if(resumingProgressBarTimer >= resumingTimers[0])
 			{
-				livesPercents[j] = 1f;
+				resumingProgressBarState = UI_STATE_VISIBLE;
+				resumingProgressBarTimer -= resumingTimers[0];
 			}
-			else
+		}
+		else if(resumingProgressBarState == UI_STATE_VISIBLE)
+		{
+			resumingProgressBarTimer += deltaTime;
+			resumingProgressBarOpacity = 1f;
+			resumingCurrentPositionY = resumingFinalPositionY;
+			resumingProgressBarPercent = (resumingProgressBarTimer + resumingTimers[0]) / PLAYER_RESUMING_TIME;
+			if(resumingProgressBarTimer >= resumingTimers[1])
 			{
-				livesPercents[j] = 0f;
+				resumingProgressBarState = UI_STATE_DISAPPEARING;
+				resumingProgressBarTimer -= resumingTimers[1];
+			}
+		}
+		else if(resumingProgressBarState == UI_STATE_DISAPPEARING)
+		{
+			resumingProgressBarTimer += deltaTime;
+			resumingProgressBarOpacity = Math.max(0.0f, 1f - (resumingProgressBarTimer / resumingTimers[2]));
+			resumingCurrentPositionY = lerp(resumingInitialPositionY, resumingFinalPositionY, resumingProgressBarOpacity);
+			resumingProgressBarPercent = 1f;
+			if(resumingProgressBarTimer >= resumingTimers[2])
+			{
+				resumingProgressBarState = UI_STATE_NOT_VISIBLE;
+				resumingProgressBarTimer = 0f;
 			}
 		}
 	}
@@ -1041,11 +1102,19 @@ public class Hud
 			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 		}
 
-		progressBarProgram.setSpecificUniforms(1f, 0f, recoveringCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], recoveringProgressBarOpacity, recoveringProgressBarPercent);
+		if(resumingProgressBarState != UI_STATE_NOT_VISIBLE)
+		{
+			progressBarProgram.setSpecificUniforms(1f, 0f, resumingCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], resumingProgressBarOpacity, resumingProgressBarPercent);
+			glBindVertexArray(resumingProgressBarVaoHandle);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		}
 
-		glBindVertexArray(recoveringProgressBarVaoHandle);
-		glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
-
+		if(recoveringProgressBarState != UI_STATE_NOT_VISIBLE)
+		{
+			progressBarProgram.setSpecificUniforms(1f, 0f, recoveringCurrentPositionY, recoveringColor[0], recoveringColor[1], recoveringColor[2], recoveringProgressBarOpacity, recoveringProgressBarPercent);
+			glBindVertexArray(recoveringProgressBarVaoHandle);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
+		}
 
 		if(livesState != UI_STATE_NOT_VISIBLE)
 		{

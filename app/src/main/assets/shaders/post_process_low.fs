@@ -22,7 +22,7 @@ void main()
 	vec2 screenCoord = vTexCoord * 2.0 - 1.0;
 	//vec2 screenSpeed = pow2(screenCoord, 2.0);
 	//screenSpeed = screenSpeed * screenCoord;
-	float factor = 0.008 * speedFactor; //0.003
+	float factor = 0.006 * speedFactor; //0.003
 	
 	lowp vec4 color = vec4(0.0);
 	vec2 screenFactor = screenCoord * factor;

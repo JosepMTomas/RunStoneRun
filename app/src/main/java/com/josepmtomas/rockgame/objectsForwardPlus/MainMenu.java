@@ -137,7 +137,8 @@ public class MainMenu
 	public void createButtonsBackPanel(float screenWidth, float screenHeight)
 	{
 		float borderSize = screenHeight * 0.025f;
-		float cornerSize = screenHeight * 0.08f + borderSize;
+		//float cornerSize = screenHeight * 0.08f + borderSize;
+		float cornerSize = screenHeight * 0.048f + borderSize;
 		float width = (screenWidth * 0.3f) + (borderSize * 2f);
 		float height = (screenHeight * 0.16f * 3f) + (borderSize * 2f);
 
