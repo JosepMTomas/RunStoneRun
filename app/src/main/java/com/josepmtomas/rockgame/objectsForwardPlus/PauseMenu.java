@@ -131,7 +131,7 @@ public class PauseMenu
 	private void createElements(float screenWidth, float screenHeight)
 	{
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
-		ui9PatchPanelVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.1f, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
+		ui9PatchPanelVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.06f, screenHeight * 0.81f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
 		float titleHeight = screenHeight * 0.1f;
 		float titleWidth = titleHeight * 10f;
@@ -152,7 +152,7 @@ public class PauseMenu
 		pauseTitleScale[0] = titleWidth;
 		pauseTitleScale[1] = titleHeight;
 		pauseTitlePosition[0] = 0f;
-		pauseTitlePosition[1] = titleHeight * 4f;
+		pauseTitlePosition[1] = titleHeight * 3.25f;
 		pauseTitleCurrentScale[0] = pauseTitleScale[0];
 		pauseTitleCurrentScale[1] = pauseTitleScale[1];
 		pauseTitleCurrentPosition[0] = pauseTitlePosition[0];

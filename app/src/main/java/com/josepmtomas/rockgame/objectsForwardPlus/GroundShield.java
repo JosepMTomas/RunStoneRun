@@ -19,10 +19,10 @@ import static com.josepmtomas.rockgame.Constants.*;
  */
 public class GroundShield
 {
-	private static final int INVISIBLE = 0;
+	/*private static final int INVISIBLE = 0;
 	private static final int APPEARING = 1;
 	private static final int SHOWING = 2;
-	private static final int DISAPPEARING = 3;
+	private static final int DISAPPEARING = 3;*/
 
 	private int[] vaoHandle = new int[1];
 
@@ -32,7 +32,7 @@ public class GroundShield
 
 	// State
 	public boolean isVisible = false;
-	private int state = INVISIBLE;
+	private int state = UI_STATE_NOT_VISIBLE;
 	private float[] stateTimers = {0f, 0.5f, 2.0f, 0.5f};
 	private float timer = 0f;
 	private float totalTimer = 0f;
@@ -149,36 +149,36 @@ public class GroundShield
 
 	public void update(float deltaTime)
 	{
-		if(state == APPEARING)
+		if(state == UI_STATE_APPEARING)
 		{
 			timer += deltaTime;
 			totalTimer += deltaTime;
 
-			if(timer >= stateTimers[APPEARING])
+			if(timer >= stateTimers[UI_STATE_APPEARING])
 			{
-				timer -= stateTimers[APPEARING];
-				state = SHOWING;
+				timer -= stateTimers[UI_STATE_APPEARING];
+				state = UI_STATE_VISIBLE;
 			}
 		}
-		else if(state == SHOWING)
+		else if(state == UI_STATE_VISIBLE)
 		{
 			timer += deltaTime;
 			totalTimer += deltaTime;
 
-			if(timer >= stateTimers[SHOWING])
+			if(timer >= stateTimers[UI_STATE_VISIBLE])
 			{
-				timer -= stateTimers[SHOWING];
-				state = DISAPPEARING;
+				timer -= stateTimers[UI_STATE_VISIBLE];
+				state = UI_STATE_DISAPPEARING;
 			}
 		}
-		else if(state == DISAPPEARING)
+		else if(state == UI_STATE_DISAPPEARING)
 		{
 			timer += deltaTime;
 			totalTimer += deltaTime;
 
-			if(timer >= stateTimers[DISAPPEARING])
+			if(timer >= stateTimers[UI_STATE_DISAPPEARING])
 			{
-				state = INVISIBLE;
+				state = UI_STATE_NOT_VISIBLE;
 				isVisible = false;
 			}
 		}
@@ -187,7 +187,7 @@ public class GroundShield
 
 	public void hit()
 	{
-		state = APPEARING;
+		state = UI_STATE_APPEARING;
 		isVisible = true;
 
 		timer = 0f;

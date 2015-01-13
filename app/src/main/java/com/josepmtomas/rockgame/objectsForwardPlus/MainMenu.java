@@ -42,8 +42,10 @@ public class MainMenu
 	private int ui9PatchPanelVaoHandle;
 
 	// Buttons back panel
-	private float[] buttonsBackPanelScale = {1f, 1f};
+	private float[] buttonsBackPanelScale = new float[2];
 	private float[] buttonsBackPanelPosition = new float[2];
+	private float[] buttonsBackPanelCurrentScale = new float[2];
+	private float[] buttonsBackPanelCurrentPosition = new float[2];
 
 	// New game button
 	private int newGameButtonCurrentTexture;
@@ -144,8 +146,15 @@ public class MainMenu
 
 		ui9PatchPanelVaoHandle = UIHelper.make9PatchPanel(width, height, cornerSize, UI_BASE_CENTER_CENTER);
 
+		buttonsBackPanelScale[0] = 1f;
+		buttonsBackPanelScale[1] = 1f;
+		buttonsBackPanelCurrentScale[0] = 1f;
+		buttonsBackPanelCurrentScale[1] = 1f;
+
 		buttonsBackPanelPosition[0] = 0f;
 		buttonsBackPanelPosition[1] = optionsButtonPosition[1];
+		buttonsBackPanelCurrentPosition[0] = buttonsBackPanelPosition[0];
+		buttonsBackPanelCurrentPosition[1] = buttonsBackPanelPosition[1];
 	}
 
 
@@ -293,7 +302,13 @@ public class MainMenu
 				currentState = UI_STATE_VISIBLE;
 				menuOpacity = 1f;
 				menuTimer = 0f;
+				renderer.changedToMainMenu();
 			}
+
+			buttonsBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
+			buttonsBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
+			buttonsBackPanelCurrentPosition[0] = lerp(0f, buttonsBackPanelPosition[0], menuOpacity);
+			buttonsBackPanelCurrentPosition[1] = lerp(0f, buttonsBackPanelPosition[1], menuOpacity);
 
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
@@ -321,6 +336,11 @@ public class MainMenu
 				menuTimer = 0f;
 			}
 
+			buttonsBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
+			buttonsBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
+			buttonsBackPanelCurrentPosition[0] = lerp(0f, buttonsBackPanelPosition[0], menuOpacity);
+			buttonsBackPanelCurrentPosition[1] = lerp(0f, buttonsBackPanelPosition[1], menuOpacity);
+
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
 			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
@@ -346,7 +366,7 @@ public class MainMenu
 
 			glBindVertexArray(ui9PatchPanelVaoHandle);
 
-			uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelScale, buttonsBackPanelPosition, textures.background9PatchPanelTexture, 0.75f * menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, buttonsBackPanelCurrentScale, buttonsBackPanelCurrentPosition, textures.background9PatchPanelTexture, 0.75f * menuOpacity);
 			glDrawElements(GL_TRIANGLES, 54, GL_UNSIGNED_SHORT, 0);
 
 			glBindVertexArray(uiPanelVaoHandle);

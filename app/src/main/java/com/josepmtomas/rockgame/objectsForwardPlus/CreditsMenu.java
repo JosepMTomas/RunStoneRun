@@ -100,7 +100,7 @@ public class CreditsMenu
 		this.textures = textures;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f,1f,UI_BASE_CENTER_CENTER);
-		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.1f, screenHeight * 1.0f, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.06f, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
 

@@ -167,7 +167,7 @@ public class OptionsMenu
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
-		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.3f, screenHeight, screenHeight * 0.1f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.26f, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
 		loadTextures(context);
@@ -363,7 +363,7 @@ public class OptionsMenu
 		optionsTitlePosition[1] = optionButtonHeight * 4f;
 
 		screenResolutionTitlePosition[0] = 0f;
-		screenResolutionTitlePosition[1] = optionButtonHeight * 3f;
+		screenResolutionTitlePosition[1] = optionButtonHeight * 3.125f;
 
 		resolutionPercentageButton25Position[0] = optionButtonWidth * -1.5f;
 		resolutionPercentageButton25Position[1] = optionButtonHeight * 2.25f;
@@ -376,7 +376,7 @@ public class OptionsMenu
 
 
 		postProcessDetailTitlePosition[0] = 0f;
-		postProcessDetailTitlePosition[1] = optionButtonHeight * 1.25f;
+		postProcessDetailTitlePosition[1] = optionButtonHeight * 1.375f;
 
 		postProcessNoDetailButtonPosition[0] = -optionButtonWidth;
 		postProcessNoDetailButtonPosition[1] = optionButtonHeight * 0.5f;
@@ -393,7 +393,7 @@ public class OptionsMenu
 		musicEnableButtonPosition[0] = 0f;
 		musicEnableButtonPosition[1] = optionButtonHeight * -1.0f;
 
-		musicDisableButtonPosition[0] = optionButtonHeight * 2.0f;
+		musicDisableButtonPosition[0] = optionButtonHeight * 1.5f;
 		musicDisableButtonPosition[1] = optionButtonHeight * -1.0f;
 
 
@@ -403,7 +403,7 @@ public class OptionsMenu
 		effectsEnableButtonPosition[0] = 0f;
 		effectsEnableButtonPosition[1] = optionButtonHeight * -2.5f;
 
-		effectsDisableButtonPosition[0] = optionButtonHeight * 2.0f;
+		effectsDisableButtonPosition[0] = optionButtonHeight * 1.5f;
 		effectsDisableButtonPosition[1] = optionButtonHeight * -2.5f;
 
 		backButtonPosition[0] = 0f;

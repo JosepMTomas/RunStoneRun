@@ -32,6 +32,7 @@ public class Hud
 	private static String TAG = "HUD";
 
 	private ForwardPlusRenderer renderer;
+	private MenuTextures textures;
 
 	// Geometry attributes constants
 	private static final int POSITION_BYTE_OFFSET = 0;
@@ -58,8 +59,6 @@ public class Hud
 
 	// Pause button
 	private int pauseButtonVaoHandle;
-	private int pauseButtonIdleTexture;
-	private int pauseButtonSelectedTexture;
 	private int pauseButtonCurrentTexture;
 	private float[] pauseButtonScale = new float[2];
 	private float[] pauseButtonPosition = new float[2];
@@ -82,7 +81,6 @@ public class Hud
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
 	private float scoreOpacity = 0f;
-	private int scoreNumbersTexture;
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
 
 	// Score panel state control
@@ -111,7 +109,6 @@ public class Hud
 
 	// Multiplier progress bar
 	private int multiplierProgressVaoHandle;
-	private int multiplierProgressTexture;
 	private float multiplierProgressValue = 0f;
 	private float multiplierProgressPositionX = 0;
 	private float multiplierProgressPositionY = 0;
@@ -207,10 +204,12 @@ public class Hud
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, float screenWidth, float screenHeight)
+	public Hud(Context context, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures menuTextures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;
+		this.scorePanelProgram = scorePanelProgram;
+		this.textures = menuTextures;
 
 		float progressBarHeight = screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.15f;
 		float progressBarWidth = screenHeight * 0.9f;
@@ -225,15 +224,9 @@ public class Hud
 
 		// Score panel
 		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
-		scoreNumbersTexture = TextureHelper.loadETC2Texture(context, "textures/hud/numbers_atlas.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		// Multiplier panel
-		//loadMultiplierGeometry(context, "models/hud_multiplier_base.vbm", screenHeight * NUMBER_HEIGHT_PERCENTAGE);
-		//multiplierTexture = TextureHelper.loadETC2Texture(context, "textures/hud/multiplier_9patch_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Multiplier progress bar
 		multiplierProgressVaoHandle = UIHelper.makeProgressBar((screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) * 8, progressBarHeight, UI_BASE_LEFT_CENTER);
-		multiplierProgressTexture = TextureHelper.loadETC2Texture(context, "textures/hud/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Recovering
 		recoveringProgressBarVaoHandle = UIHelper.makeProgressBar(progressBarWidth, progressBarHeight, UI_BASE_CENTER_CENTER);
@@ -252,7 +245,6 @@ public class Hud
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
 
 		// Programs
-		scorePanelProgram = new ScorePanelProgram(context);
 		progressBarProgram = new ProgressBarProgram(context);
 	}
 
@@ -304,9 +296,7 @@ public class Hud
 
 		pauseButtonVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
 
-		pauseButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/hud/pause_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		pauseButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/hud/pause_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		pauseButtonCurrentTexture = pauseButtonIdleTexture;
+		pauseButtonCurrentTexture = textures.pauseButtonIdleTexture;
 	}
 
 
@@ -478,7 +468,7 @@ public class Hud
 
 	private void resetPauseButtonTexture()
 	{
-		pauseButtonCurrentTexture = pauseButtonIdleTexture;
+		pauseButtonCurrentTexture = textures.pauseButtonIdleTexture;
 	}
 
 
@@ -541,7 +531,7 @@ public class Hud
 			y <= pauseButtonLimits[3])
 		{
 			renderer.setPause(true);
-			pauseButtonCurrentTexture = pauseButtonSelectedTexture;
+			pauseButtonCurrentTexture = textures.pauseButtonSelectedTexture;
 			return true;
 		}
 		return false;
@@ -971,13 +961,25 @@ public class Hud
 	}
 
 
-	public void hit(int type)
+	public boolean hit(int type)
 	{
+		boolean returnValue = true;
+
 		recoveringProgressBarState = UI_STATE_APPEARING;
 		recoveringProgressBarTimer = 0f;
 
 		getReadyPanelState = UI_STATE_APPEARING;
 		getReadyPanelTimer = 0f;
+
+		if(currentLife == 0)
+		{
+			if((type == 0 && livesStates[0] == LIFE_LOSING) || type == 1)
+			{
+				recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
+				getReadyPanelState = UI_STATE_NOT_VISIBLE;
+				returnValue = false;
+			}
+		}
 
 		multiplierProgressValue = 0f;
 
@@ -1002,8 +1004,15 @@ public class Hud
 			currentLife--;
 		}
 
+		if(currentLife < 0)
+		{
+			renderer.gameOver();
+		}
+
 		//TODO: temp (avoid exception)
 		currentLife = Math.max(currentLife, 0);
+
+		return returnValue;
 	}
 
 
@@ -1022,7 +1031,7 @@ public class Hud
 
 		// Score panel
 		scorePanelProgram.useProgram();
-		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersTexture);
+		scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);
 
 		glBindVertexArray(scoreVaoHandle[0]);
 
@@ -1053,7 +1062,7 @@ public class Hud
 		//scorePanelProgram.setSpecificUniforms(scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[0]], scoreTexCoordOffsetsY[scoreNumbers[0]]);
 
 		// current FPS
-		scorePanelProgram.setCommonUniforms(viewProjection, scoreNumbersTexture);
+		scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);
 		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
@@ -1092,7 +1101,7 @@ public class Hud
 		/// Progress bar program
 
 		progressBarProgram.useProgram();
-		progressBarProgram.setCommonUniforms(viewProjection, multiplierProgressTexture);
+		progressBarProgram.setCommonUniforms(viewProjection, textures.progressBarTexture);
 
 		if(multiplierProgressCurrentState != UI_STATE_NOT_VISIBLE)
 		{

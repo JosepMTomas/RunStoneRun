@@ -12,6 +12,13 @@ import static android.opengl.GLES30.*;
  */
 public class MenuTextures
 {
+	// HUD
+
+	public final int numbersAtlasTexture;
+	public final int pauseButtonIdleTexture;
+	public final int pauseButtonSelectedTexture;
+	public final int progressBarTexture;
+
 	// 9 patch panel
 
 	public final int background9PatchPanelTexture;
@@ -83,9 +90,22 @@ public class MenuTextures
 	public final int endGameTitleTexture;
 	public final int endGameTextTexture;
 
+	// Game over
+
+	public final int gameOverTitleTexture;
+	public final int finalScoreTitleTexture;
+	public final int touchToContinueTitleTexture;
+
 
 	public MenuTextures(Context context)
 	{
+		// HUD
+
+		numbersAtlasTexture = TextureHelper.loadETC2Texture(context, "textures/menus/numbers_atlas.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		pauseButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/pause_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		pauseButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/pause_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		progressBarTexture = TextureHelper.loadETC2Texture(context, "textures/menus/progress_bar_alpha.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		// 9 Patch panel
 
 		background9PatchPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
@@ -164,5 +184,11 @@ public class MenuTextures
 
 		endGameTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		endGameTextTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_text.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		// Game Over
+
+		gameOverTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/game_over_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		finalScoreTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/final_score_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		touchToContinueTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/touch_to_continue_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 }

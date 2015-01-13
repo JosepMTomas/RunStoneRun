@@ -139,6 +139,7 @@ public class Constants
 	public static final int OPTIONS_MENU = 1;
 	public static final int CREDITS_MENU = 2;
 	public static final int PAUSE_MENU = 3;
+	public static final int GAME_OVER_MENU = 4;
 
 	// HUD base points (X_Y)
 	public static final int UI_BASE_LEFT_TOP = 0;
