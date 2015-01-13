@@ -1125,18 +1125,19 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void setPause(boolean value)
 	{
-		//isPaused = value;
 		if(!value)
 		{
-			//rendererState = RENDERER_STATE_PLAYING;
 			rendererState = RENDERER_STATE_RESUMING;
 			resumeTimer = 0f;
 			hud.resume();
 		}
 		else
 		{
-			pauseMenu.setAppearing();
-			isPaused = true;
+			if(rendererState == RENDERER_STATE_PLAYING)
+			{
+				pauseMenu.setAppearing();
+				isPaused = true;
+			}
 		}
 	}
 

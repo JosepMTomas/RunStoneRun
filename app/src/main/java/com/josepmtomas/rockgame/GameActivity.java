@@ -2,7 +2,9 @@ package com.josepmtomas.rockgame;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Point;
@@ -370,6 +372,32 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		Log.d(TAG, "<<<<< ON DESTROY >>>>>");
 	}
 
+
+	@Override
+	public void onBackPressed()
+	{
+		forwardPlusRenderer.setPause(true);
+		//super.onBackPressed();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Exit game");
+		builder.setMessage("Are you sure you want to exit?");
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface arg0, int arg1) {
+				// do something when the OK button is clicked
+				GameActivity.super.onBackPressed();
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface arg0, int arg1) {
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
 
 	private void loadShadedPreferences()
 	{
