@@ -13,6 +13,7 @@ layout (std140) uniform lightInfo
 	vec3 vLight;
 	vec4 lightColor;
 	vec4 ambientColor;
+	vec4 backColor;
 };
 
 uniform mat4 viewProjection;
@@ -20,6 +21,7 @@ uniform mat4 viewProjection;
 out vec2 vTexCoords;
 out vec4 vDiffuse;
 out float vDistance;
+out vec4 vBackColor;
 
 void main()
 {
@@ -34,6 +36,7 @@ void main()
 
 	vTexCoords = aTexCoord;
 	vDistance = current.w;
+	vBackColor = backColor;
 	
 	gl_Position = viewProjection * position;
 }

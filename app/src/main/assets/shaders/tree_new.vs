@@ -15,6 +15,7 @@ layout (std140) uniform lightInfo
 	vec3 vLight;
 	vec4 lightColor;
 	vec4 ambientColor;
+	vec4 backColor;
 };
 
 uniform mat4 viewProjection;
@@ -26,6 +27,7 @@ out vec4 vAmbient;
 
 
 out vec4 vDiffuse;
+out lowp vec4 vBackColor;
 out lowp float vDistance;
 
 //const vec3 vLight = vec3(0.71, 0.71, 0.0);
@@ -56,6 +58,8 @@ void main()
 	// Vertex distance to origin
 	vDistance = property.w;
 	vDistance *= vDistance;
+	
+	vBackColor = backColor;
 	
 	gl_Position = viewProjection * vPosition;
 }

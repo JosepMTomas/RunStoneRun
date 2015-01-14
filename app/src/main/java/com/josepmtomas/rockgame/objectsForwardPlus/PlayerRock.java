@@ -816,6 +816,8 @@ public class PlayerRock
 	{
 		scoreMultiplier = 1.0f;
 		currentSpeed = 0f;
+		currentPositionY = 10f;
+		initialForce = 0f;
 	}
 
 	public void endGame()

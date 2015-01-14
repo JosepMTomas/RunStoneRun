@@ -2146,10 +2146,9 @@ public class Ground
 
 		glEnable(GL_CULL_FACE);
 
-		groundSimpleProgram.useProgram();
+		/*groundSimpleProgram.useProgram();
 		groundSimpleProgram.setCommonUniforms(shadowMatrix, shadowMapSampler, groundTextures[0], groundTextures[2]);
 
-		//TODO: camera frustum culling
 		for(int i=0; i < numGroundPatchesX; i++)
 		{
 			for (int j=0; j < numGroundPatchesZ; j++)
@@ -2162,7 +2161,7 @@ public class Ground
 					glDrawElements(GL_TRIANGLES, 300, GL_UNSIGNED_SHORT, 0);
 				}
 			}
-		}
+		}*/
 
 		rockLowProgram.useProgram();
 		rockLowProgram.setCommonUniforms(viewProjection, rockADiffuseTexture);
@@ -3797,7 +3796,8 @@ public class Ground
 
 	private void restartObjectsPatches()
 	{
-		float displacementZ = objectsPatches[0][objectsLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
+		//float displacementZ = objectsPatches[0][objectsLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
+		float displacementZ = groundPatches[0][groundLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
 
 		//objectsLeftmostIndex = 0;
 		//objectsRightmostIndex = numObjectsPatchesX - 1;

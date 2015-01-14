@@ -20,37 +20,27 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 05/10/2014.
+ * @author Josep
  */
 public class SkyDome
 {
-	private static final String TAG = "TestGrass";
-
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
-	private static final int NORMAL_COMPONENTS = 0;
-	private static final int TANGENT_COMPONENTS = 0;
-	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS;
+	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS;
 
 	private static final int POSITION_OFFSET = 0;
 	private static final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
-	private static final int NORMAL_OFFSET = TEXCOORD_OFFSET + TEXCOORD_COMPONENTS;
-	private static final int TANGENT_OFFSET = NORMAL_OFFSET + NORMAL_COMPONENTS;
 
 	private static final int POSITION_BYTE_OFFSET = POSITION_OFFSET * Constants.BYTES_PER_FLOAT;
 	private static final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * Constants.BYTES_PER_FLOAT;
-	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * Constants.BYTES_PER_FLOAT;
-	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * Constants.BYTES_PER_FLOAT;
 
 	private static final int BYTE_STRIDE = TOTAL_COMPONENTS * Constants.BYTES_PER_FLOAT;
 
 	// Geometry definition
-	private int numVertices;
-	private int numElements;
 	private int numElementsToDraw;
 	private float[] vertices;
 	private short[] elements;
-	private FloatBuffer verticesBuffer;
-	private ShortBuffer elementsBuffer;
+
 
 	// OpenGL buffers
 	private int[] vboHandles = new int[2];
@@ -58,7 +48,6 @@ public class SkyDome
 
 	// Matrices
 	private float[] model = new float[16];
-	private float[] viewProjection;
 	private float[] modelViewProjection = new float[16];
 
 	// Reflection matrices
@@ -66,8 +55,11 @@ public class SkyDome
 	private float[] reflectionModelViewProjection = new float[16];
 
 	// Sky textures
-	private int skyMiddayTexture;
-	private int skyDuskTexture;
+	private final int skyMiddayTexture;
+	private final int skyDuskTexture;
+	private final int skyNightTexture;
+	private int skyTextureA;
+	private int skyTextureB;
 
 	// Shader program
 	SkyDomeProgram skyDomeProgram;
@@ -85,11 +77,15 @@ public class SkyDome
 
 		skyMiddayTexture = TextureHelper.loadETC2Texture(context, "textures/sky/midday.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		skyDuskTexture = TextureHelper.loadETC2Texture(context, "textures/sky/dusk.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		skyNightTexture = TextureHelper.loadETC2Texture(context, "textures/sky/night.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
 	private void load(Context context, String fileName)
 	{
+		int numVertices;
+		int numElements;
+
 		try
 		{
 			InputStream inputStream = context.getResources().getAssets().open(fileName);
@@ -130,17 +126,6 @@ public class SkyDome
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
 					vertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
-
-					// Read the vertex normals
-					/*vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);*/
-
-					// read the vertex tangents
-					/*vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);*/
 				}
 				else if(tokens[0].equals("FACE"))
 				{
@@ -160,6 +145,9 @@ public class SkyDome
 
 	private void initialize()
 	{
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
 		// Build the java native buffers
 		verticesBuffer = ByteBuffer
 				.allocateDirect(vertices.length * Constants.BYTES_PER_FLOAT)
@@ -231,17 +219,37 @@ public class SkyDome
 
 	public void update(float[] viewProjection)
 	{
-		this.viewProjection = viewProjection;
+		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
+		multiplyMM(reflectionModelViewProjection, 0, viewProjection, 0, reflectionModel, 0);
 
-		multiplyMM(modelViewProjection, 0, this.viewProjection, 0, model, 0);
-		multiplyMM(reflectionModelViewProjection, 0, this.viewProjection, 0, reflectionModel, 0);
+		if(lightInfo.timeOfDay >= 0.0f && lightInfo.timeOfDay < 6f)
+		{
+			skyTextureA = skyNightTexture;
+			skyTextureB = skyDuskTexture;
+
+		}
+		else if(lightInfo.timeOfDay >= 6f && lightInfo.timeOfDay < 12f)
+		{
+			skyTextureA = skyDuskTexture;
+			skyTextureB = skyMiddayTexture;
+		}
+		else if(lightInfo.timeOfDay >= 12f && lightInfo.timeOfDay < 18f)
+		{
+			skyTextureA = skyMiddayTexture;
+			skyTextureB = skyDuskTexture;
+		}
+		else if(lightInfo.timeOfDay >= 18f && lightInfo.timeOfDay < 24f)
+		{
+			skyTextureA = skyDuskTexture;
+			skyTextureB = skyNightTexture;
+		}
 	}
 
 
 	public void draw()
 	{
 		skyDomeProgram.useProgram();
-		skyDomeProgram.setUniforms(modelViewProjection, skyDuskTexture, skyMiddayTexture, lightInfo.percent);
+		skyDomeProgram.setUniforms(modelViewProjection, skyTextureA, skyTextureB, lightInfo.timeOfDayAlpha);
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
@@ -251,18 +259,9 @@ public class SkyDome
 	public void drawReflectionProxy()
 	{
 		skyDomeProgram.useProgram();
-		skyDomeProgram.setUniforms(reflectionModelViewProjection, skyDuskTexture, skyMiddayTexture, lightInfo.percent);
+		skyDomeProgram.setUniforms(reflectionModelViewProjection, skyTextureA, skyTextureB, lightInfo.timeOfDayAlpha);
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
-	}
-
-
-	public void deleteGL()
-	{
-		glDeleteBuffers(2, vboHandles, 0);
-		glDeleteVertexArrays(1, vaoHandle, 0);
-
-		skyDomeProgram.deleteProgram();
 	}
 }

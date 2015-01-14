@@ -283,8 +283,8 @@ public class Hud
 		pauseButtonCurrentScale[0] = pauseButtonScale[0];
 		pauseButtonCurrentScale[1] = pauseButtonScale[1];
 
-		pauseButtonPosition[0] = screenWidth * 0.5f - buttonWidthHalf;
-		pauseButtonPosition[1] = screenHeight * -0.5f + buttonHeightHalf;
+		pauseButtonPosition[0] = screenWidth * 0.5f - buttonWidthHalf - (buttonHeightHalf * 0.5f);
+		pauseButtonPosition[1] = screenHeight * -0.5f + buttonHeightHalf + (buttonHeightHalf * 0.5f);
 		pauseButtonCurrentPosition[0] = pauseButtonPosition[0];
 		pauseButtonCurrentPosition[1] = pauseButtonPosition[1];
 
@@ -489,6 +489,10 @@ public class Hud
 		currentLife = 2;
 
 		livesCounterState = LIVES_TIMER_IDLE;
+
+		recoveringProgressBarTimer = 0f;
+		recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
+		getReadyPanelState = UI_STATE_NOT_VISIBLE;
 	}
 
 

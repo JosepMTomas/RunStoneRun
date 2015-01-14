@@ -282,7 +282,9 @@ public class PauseMenu
 	private void touchedRestartButton()
 	{
 		restartButtonCurrentTexture = textures.restartButtonSelectedTexture;
-		renderer.newGame();
+		/*renderer.newGame();
+		currentState = UI_STATE_DISAPPEARING;*/
+		renderer.changingToRestartMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
 

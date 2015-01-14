@@ -13,6 +13,8 @@ layout (std140) uniform lightInfo
 	vec3 vLight;
 	vec4 lightColor;
 	vec4 ambientColor;
+	vec4 backColor;
+	float shadowFactor;
 };
 
 uniform sampler2DShadow shadowMapSampler;
@@ -25,6 +27,7 @@ out float vDistance;
 out float vShadows;
 out vec4 vAmbient;
 out vec4 vLightColor;
+out vec4 vBackColor;
 //out vec4 vLodColor;
 
 void main()
@@ -43,7 +46,11 @@ void main()
 	// Shadow mapping
 	float diffuse = dot(vec3(0.0, 1.0, 0.0), vLight);
 	float shadow = textureProj(shadowMapSampler, shadowCoords);
+	shadow += shadowFactor;
+	shadow = clamp(shadow, 0.0, 1.0);
 	vShadows = diffuse * shadow;
+	/*vShadows += shadow += shadowFactor;
+	vShadows = clamp(vShadows, 0.0, 1.0);*/
 	//vShadows = shadow + 0.2;
 	/*vShadows = vec3(shadow);
 	vShadows += vec3(0.137, 0.169, 0.441);
@@ -59,6 +66,7 @@ void main()
 	
 	vAmbient = ambientColor;
 	vLightColor = lightColor;
+	vBackColor = backColor;
 	
 	gl_Position = viewProjection * position;
 }

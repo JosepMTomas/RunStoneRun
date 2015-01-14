@@ -42,7 +42,6 @@ public class MainMenu
 	private int ui9PatchPanelVaoHandle;
 
 	// Buttons back panel
-	private float[] buttonsBackPanelScale = new float[2];
 	private float[] buttonsBackPanelPosition = new float[2];
 	private float[] buttonsBackPanelCurrentScale = new float[2];
 	private float[] buttonsBackPanelCurrentPosition = new float[2];
@@ -146,8 +145,6 @@ public class MainMenu
 
 		ui9PatchPanelVaoHandle = UIHelper.make9PatchPanel(width, height, cornerSize, UI_BASE_CENTER_CENTER);
 
-		buttonsBackPanelScale[0] = 1f;
-		buttonsBackPanelScale[1] = 1f;
 		buttonsBackPanelCurrentScale[0] = 1f;
 		buttonsBackPanelCurrentScale[1] = 1f;
 

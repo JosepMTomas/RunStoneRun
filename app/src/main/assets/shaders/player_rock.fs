@@ -40,6 +40,6 @@ void main()
 	//shading += 0.25;
 	shading = clamp(shading, 0.0, 1.0);
 	
-	fragColor = diffuseTex * shading;
+	fragColor = diffuseTex * shading * lightColor;
 	fragColor += ambient;
 }

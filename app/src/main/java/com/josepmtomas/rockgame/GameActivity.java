@@ -1,5 +1,6 @@
 package com.josepmtomas.rockgame;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -56,12 +57,14 @@ public class GameActivity extends Activity
 	{
         super.onCreate(savedInstanceState);
 
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		context = this;
 
 		loadShadedPreferences();
 
 		glSurfaceView = new GLSurfaceView(this);
-		//glSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE);
+		//glSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 		// Get the width and height of the window
 		WindowManager windowManager = getWindowManager();
@@ -362,6 +365,8 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	{
 		forwardPlusRenderer.onDestroy();
 
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 		super.onDestroy();
 
 		backgroundMusicPlayer.release();
@@ -381,6 +386,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Exit game");
 		builder.setMessage("Are you sure you want to exit?");
+		builder.setCancelable(false);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface arg0, int arg1) {

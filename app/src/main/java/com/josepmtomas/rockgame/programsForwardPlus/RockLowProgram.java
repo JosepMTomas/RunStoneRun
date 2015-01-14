@@ -10,6 +10,7 @@ import static android.opengl.GLES30.*;
 public class RockLowProgram extends ShaderProgram
 {
 	private final int rockPropertiesBlockLocation;
+	private final int lightInfoBlockLocation;
 
 	private final int viewProjectionLocation;
 
@@ -21,6 +22,7 @@ public class RockLowProgram extends ShaderProgram
 		super(context, "shaders/rock_low.vs", "shaders/rock_low.fs");
 
 		rockPropertiesBlockLocation = glGetUniformBlockIndex(program, "rockProperties");
+		lightInfoBlockLocation = glGetUniformBlockIndex(program, "lightInfo");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
 
@@ -42,5 +44,7 @@ public class RockLowProgram extends ShaderProgram
 	{
 		glUniformBlockBinding(program, rockPropertiesBlockLocation, 0);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, rockProperties);
+
+		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
 	}
 }

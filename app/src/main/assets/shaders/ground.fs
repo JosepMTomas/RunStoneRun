@@ -6,6 +6,8 @@ layout (std140) uniform lightInfo
 	vec3 vLight;
 	vec4 lightColor;
 	vec4 ambientColor;
+	vec4 backColor;
+	float shadowFactor;
 };
 
 uniform vec2 uFramebufferDimensions;
@@ -58,6 +60,7 @@ void main()
 	
 	lowp float shadow = textureProj(shadowMapSampler, vShadowCoords);
 	shadow += ambientColor.x;
+	shadow += shadowFactor;
 	shadow = clamp(shadow, 0.0, 1.0);
 	
 	lowp float diffuse = dot(normal, vLight);
@@ -67,7 +70,7 @@ void main()
 	
 	diffuseColor = (diffuseColor * lightColor * diffuse) ;// + ambient;
 	
-	fragColor = mix(diffuseColor, vec4(1.0), vDistance);
+	fragColor = mix(diffuseColor, backColor, vDistance);
 	//fragColor = fragColor * (1.0 - vColor.y);
 	
 	lowp float height = clamp(vColor.x + groundHeight, 0.0, 1.0);

@@ -10,6 +10,7 @@ in vec4 vPosition;
 in vec2 vTexCoord;
 in vec3 vNormal;
 
+in vec4 vBackColor;
 in float vDistance;
 in vec4 vDiffuse;
 in vec4 vAmbient;
@@ -27,7 +28,7 @@ void main()
 	
 	fragColor += (diffuseTex * vAmbient);
 	
-	fragColor = mix(fragColor, vec4(1.0), vDistance);
+	fragColor = mix(fragColor, vBackColor, vDistance);
 	
 	/*if(lod == 0)
 	{

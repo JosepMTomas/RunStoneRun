@@ -9,13 +9,18 @@ layout (std140) uniform rockProperties
 	vec4 properties[512];
 };
 
+layout (std140) uniform lightInfo
+{
+	vec3 vLight;
+	vec4 lightColor;
+	vec4 ambientColor;
+	vec4 backColor;
+};
+
 uniform mat4 viewProjection;
 uniform sampler2D diffuseSampler;
 
 out vec4 vColor;
-
-const vec3 vLight = vec3(0.0, 1.0, 0.0);
-
 
 void main()
 {
@@ -34,9 +39,9 @@ void main()
 	vec4 diffuseTex = texture(diffuseSampler, aTexCoord);
 	float diffuse = dot(aNormal, vLight);
 	diffuse = clamp(diffuse, 0.0, 1.0);
-	diffuseTex *= diffuse;
+	diffuseTex *= (lightColor * diffuse);
 	
-	vColor = mix(diffuseTex, vec4(1.0), property.w);
+	vColor = mix(diffuseTex, backColor, property.w);
 	
 	// vertex shader output
 	gl_Position = viewProjection * position;

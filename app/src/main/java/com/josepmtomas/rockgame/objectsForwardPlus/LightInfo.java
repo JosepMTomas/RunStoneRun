@@ -28,7 +28,7 @@ public class LightInfo
 	private float[] lightVector = {0f, 0f, 0f, 0f};
 
 	// array
-	private float[] lightInfoArray = new float[12];
+	private float[] lightInfoArray = new float[17];
 	private FloatBuffer lightInfoArrayBuffer;
 
 	public int[] ubo = new int[1];
@@ -38,19 +38,31 @@ public class LightInfo
 	public float[] projection = new float[16];
 	public float[] viewProjection = new float[16];
 
+	// Time
+	public float timeOfDay = 0f;
+	private float timeOfDayMultiplier = 0.25f;
+	public float timeOfDayAlpha = 0f;
+
 	// Light colors
 	private float[] lightColor1 = {1.0f, 0.706f, 0.0f};
 	private float[] lightColor2 = {1.0f, 1.0f, 1.0f};
+	private float[] lightColor3 = {0.02f, 0.3136f, 0.4704f};//{0.098f, 0.1568f, 0.2352f};
+
+	// Ambient colors
+	private float[] ambientColor1 = {0.2f, 0.25f, 0.3f};
+	private float[] ambientColor2 = {0.2f, 0.25f, 0.3f};
+	private float[] ambientColor3 = {0.1f, 0.1f, 0.1f};
 
 	// Background colors
 	private float[] backColor1 = {0.949f, 0.623f, 0.38f};
 	private float[] backColor2 = {1f, 1f, 1f};
+	private float[] backColor3 = {0.09f, 0.078f, 0.35f};
 	public float[] backColor = {0f, 0f, 0f};
 
-	//TODO: temp
-	private float increment = 1f;
+	// Shadow factor
+	private float shadowFactor = 0f;
+
 	private float currentAngle = 0f;
-	public float percent;
 
 	public LightInfo()
 	{
@@ -68,7 +80,7 @@ public class LightInfo
 	private void initialize()
 	{
 		// initialize the array
-		for(int i=0; i < 12; i++)
+		for(int i=0; i < 17; i++)
 		{
 			lightInfoArray[i] = 0f;
 		}
@@ -99,8 +111,11 @@ public class LightInfo
 
 	public void update(float deltaTime)
 	{
+		timeOfDay += (deltaTime * timeOfDayMultiplier);
+		timeOfDay = timeOfDay % 24f;
+
 		//TODO: rotation test
-		currentAngle += increment;
+		/*currentAngle += increment;
 		if(currentAngle > 180f)
 		{
 			increment = -deltaTime * 5f;
@@ -108,11 +123,11 @@ public class LightInfo
 		if(currentAngle < 0)
 		{
 			increment = deltaTime * 5f;
-		}
+		}*/
 
 		float angleAlpha;
 		float angleAlphaOM;
-		if(currentAngle > 0f && currentAngle < 90f)
+		/*if(currentAngle > 0f && currentAngle < 90f)
 		{
 			angleAlpha = currentAngle / 90f;
 			percent = angleAlpha;
@@ -139,6 +154,89 @@ public class LightInfo
 			backColor[0] = backColor1[0]*angleAlpha + backColor2[0]*angleAlphaOM;
 			backColor[1] = backColor1[1]*angleAlpha + backColor2[1]*angleAlphaOM;
 			backColor[2] = backColor1[2]*angleAlpha + backColor2[2]*angleAlphaOM;
+		}*/
+
+
+		//Log.d("TimeOfDay", "hour = " + timeOfDay);
+		if(timeOfDay >= 0.0f && timeOfDay < 6f)
+		{
+			timeOfDayAlpha = timeOfDay / 6f;
+
+			currentAngle = timeOfDayAlpha * 45f;
+
+			shadowFactor = 1f - timeOfDayAlpha;
+
+			lightColor.x = lerp(lightColor3[0], lightColor1[0], timeOfDayAlpha);
+			lightColor.y = lerp(lightColor3[1], lightColor1[1], timeOfDayAlpha);
+			lightColor.z = lerp(lightColor3[2], lightColor1[2], timeOfDayAlpha);
+
+			backColor[0] = lerp(backColor3[0], backColor1[0], timeOfDayAlpha);
+			backColor[1] = lerp(backColor3[1], backColor1[1], timeOfDayAlpha);
+			backColor[2] = lerp(backColor3[2], backColor1[2], timeOfDayAlpha);
+
+			ambientColor.x = lerp(ambientColor3[0], ambientColor1[0], timeOfDayAlpha);
+			ambientColor.y = lerp(ambientColor3[1], ambientColor1[1], timeOfDayAlpha);
+			ambientColor.z = lerp(ambientColor3[2], ambientColor1[2], timeOfDayAlpha);
+		}
+		else if(timeOfDay >= 6f && timeOfDay < 12f)
+		{
+			timeOfDayAlpha = (timeOfDay - 6f) / 6f;
+
+			currentAngle = timeOfDayAlpha * 45f + 45f;
+
+			shadowFactor = 0f;
+
+			lightColor.x = lerp(lightColor1[0], lightColor2[0], timeOfDayAlpha);
+			lightColor.y = lerp(lightColor1[1], lightColor2[1], timeOfDayAlpha);
+			lightColor.z = lerp(lightColor1[2], lightColor2[2], timeOfDayAlpha);
+
+			backColor[0] = lerp(backColor1[0], backColor2[0], timeOfDayAlpha);
+			backColor[1] = lerp(backColor1[1], backColor2[1], timeOfDayAlpha);
+			backColor[2] = lerp(backColor1[2], backColor2[2], timeOfDayAlpha);
+
+			ambientColor.x = lerp(ambientColor1[0], ambientColor2[0], timeOfDayAlpha);
+			ambientColor.y = lerp(ambientColor1[1], ambientColor2[1], timeOfDayAlpha);
+			ambientColor.z = lerp(ambientColor1[2], ambientColor2[2], timeOfDayAlpha);
+		}
+		else if(timeOfDay >= 12f && timeOfDay < 18f)
+		{
+			timeOfDayAlpha = (timeOfDay - 12f) / 6f;
+
+			currentAngle = timeOfDayAlpha * 45f + 90f;
+
+			shadowFactor = 0f;
+
+			lightColor.x = lerp(lightColor2[0], lightColor1[0], timeOfDayAlpha);
+			lightColor.y = lerp(lightColor2[1], lightColor1[1], timeOfDayAlpha);
+			lightColor.z = lerp(lightColor2[2], lightColor1[2], timeOfDayAlpha);
+
+			backColor[0] = lerp(backColor2[0], backColor1[0], timeOfDayAlpha);
+			backColor[1] = lerp(backColor2[1], backColor1[1], timeOfDayAlpha);
+			backColor[2] = lerp(backColor2[2], backColor1[2], timeOfDayAlpha);
+
+			ambientColor.x = lerp(ambientColor2[0], ambientColor1[0], timeOfDayAlpha);
+			ambientColor.y = lerp(ambientColor2[1], ambientColor1[1], timeOfDayAlpha);
+			ambientColor.z = lerp(ambientColor2[2], ambientColor1[2], timeOfDayAlpha);
+		}
+		else if(timeOfDay >= 18f && timeOfDay < 24f)
+		{
+			timeOfDayAlpha = (timeOfDay - 18f) / 6f;
+
+			currentAngle = timeOfDayAlpha * 45f + 135f;
+
+			shadowFactor = timeOfDayAlpha;
+
+			lightColor.x = lerp(lightColor1[0], lightColor3[0], timeOfDayAlpha);
+			lightColor.y = lerp(lightColor1[1], lightColor3[1], timeOfDayAlpha);
+			lightColor.z = lerp(lightColor1[2], lightColor3[2], timeOfDayAlpha);
+
+			backColor[0] = lerp(backColor1[0], backColor3[0], timeOfDayAlpha);
+			backColor[1] = lerp(backColor1[1], backColor3[1], timeOfDayAlpha);
+			backColor[2] = lerp(backColor1[2], backColor3[2], timeOfDayAlpha);
+
+			ambientColor.x = lerp(ambientColor1[0], ambientColor3[0], timeOfDayAlpha);
+			ambientColor.y = lerp(ambientColor1[1], ambientColor3[1], timeOfDayAlpha);
+			ambientColor.z = lerp(ambientColor1[2], ambientColor3[2], timeOfDayAlpha);
 		}
 
 		//currentAngle = 45f;
@@ -165,6 +263,15 @@ public class LightInfo
 		lightInfoArray[9]  = ambientColor.y;
 		lightInfoArray[10] = ambientColor.z;
 		lightInfoArray[11] = ambientColor.w;
+
+		// Update the back color values
+		lightInfoArray[12] = backColor[0];
+		lightInfoArray[13] = backColor[1];
+		lightInfoArray[14] = backColor[2];
+		lightInfoArray[15] = 1f;
+
+		// Update shadow factor
+		lightInfoArray[16] = shadowFactor;
 
 		// Update the java native buffer
 		lightInfoArrayBuffer.put(lightInfoArray, 0, lightInfoArray.length);

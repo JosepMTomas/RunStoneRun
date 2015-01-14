@@ -8,6 +8,7 @@ in float vDistance;
 in float vShadows;
 in vec4 vLightColor;
 in vec4 vAmbient;
+in vec4 vBackColor;
 //in vec4 vLodColor;
 
 out vec4 fragColor;
@@ -22,6 +23,6 @@ void main()
 	
 	diffuseTex *= vLightColor;
 	
-	fragColor = mix(diffuseTex * vShadows + ambientTex, vec4(1.0), vDistance);
+	fragColor = mix(diffuseTex * vShadows + ambientTex, vBackColor, vDistance);
 	//fragColor = vLodColor;
 }

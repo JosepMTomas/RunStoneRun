@@ -195,12 +195,21 @@ public class GroundShield
 	}
 
 
+	public void newGame()
+	{
+		state = UI_STATE_NOT_VISIBLE;
+	}
+
+
 	public void draw(float[] viewProjection)
 	{
-		groundShieldProgram.useProgram();
-		groundShieldProgram.setUniforms(viewProjection, texture, 0.25f, 1f, 0f, totalTimer * 5f);
+		if(state != UI_STATE_NOT_VISIBLE)
+		{
+			groundShieldProgram.useProgram();
+			groundShieldProgram.setUniforms(viewProjection, texture, 0.25f, 1f, 0f, totalTimer * 5f);
 
-		glBindVertexArray(vaoHandle[0]);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			glBindVertexArray(vaoHandle[0]);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
 	}
 }

@@ -12,9 +12,9 @@ import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
 
 /**
- * Created by Josep on 01/01/2015.
+ * Created by Josep on 14/01/2015.
  */
-public class EndGameMenu
+public class RestartMenu
 {
 	private GameActivity parent;
 	private ForwardPlusRenderer renderer;
@@ -45,16 +45,16 @@ public class EndGameMenu
 	private float[] backgroundPanelCurrentPosition = new float[2];
 
 	// End Game Title
-	private float[] endGameTitleScale = new float[2];
-	private float[] endGameTitlePosition = new float[2];
-	private float[] endGameTitleCurrentScale = new float[2];
-	private float[] endGameTitleCurrentPosition = new float[2];
+	private float[] restartTitleScale = new float[2];
+	private float[] restartTitlePosition = new float[2];
+	private float[] restartTitleCurrentScale = new float[2];
+	private float[] restartTitleCurrentPosition = new float[2];
 
 	// End Game Text
-	private float[] endGameTextScale = new float[2];
-	private float[] endGameTextPosition = new float[2];
-	private float[] endGameTextCurrentScale = new float[2];
-	private float[] endGameTextCurrentPosition = new float[2];
+	private float[] restartTextScale = new float[2];
+	private float[] restartTextPosition = new float[2];
+	private float[] restartTextCurrentScale = new float[2];
+	private float[] restartTextCurrentPosition = new float[2];
 
 	// Yes button
 	private int yesButtonCurrentTexture;
@@ -73,7 +73,7 @@ public class EndGameMenu
 	private float[] noButtonLimits = new float[4];
 
 
-	public EndGameMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public RestartMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.renderer = renderer;
@@ -135,24 +135,24 @@ public class EndGameMenu
 		backgroundPanelCurrentPosition[1] = 0f;
 
 		// End Game Title
-		endGameTitleScale[0] = titleWidth;
-		endGameTitleScale[1] = titleHeight;
-		endGameTitlePosition[0] = 0f;
-		endGameTitlePosition[1] = titleHeight * 1.5f;
-		endGameTitleCurrentScale[0] = endGameTitleScale[0];
-		endGameTitleCurrentScale[1] = endGameTitleScale[1];
-		endGameTitleCurrentPosition[0] = endGameTitlePosition[0];
-		endGameTitleCurrentPosition[1] = endGameTitlePosition[1];
+		restartTitleScale[0] = titleWidth;
+		restartTitleScale[1] = titleHeight;
+		restartTitlePosition[0] = 0f;
+		restartTitlePosition[1] = titleHeight * 1.5f;
+		restartTitleCurrentScale[0] = restartTitleScale[0];
+		restartTitleCurrentScale[1] = restartTitleScale[1];
+		restartTitleCurrentPosition[0] = restartTitlePosition[0];
+		restartTitleCurrentPosition[1] = restartTitlePosition[1];
 
 		// End Game Text
-		endGameTextScale[0] = titleWidth;
-		endGameTextScale[1] = titleHeight * 1.5f;
-		endGameTextPosition[0] = 0f;
-		endGameTextPosition[1] = 0f;
-		endGameTextCurrentScale[0] = endGameTextScale[0];
-		endGameTextCurrentScale[1] = endGameTextScale[1];
-		endGameTextCurrentPosition[0] = endGameTextPosition[0];
-		endGameTextCurrentPosition[1] = endGameTextPosition[1];
+		restartTextScale[0] = titleWidth * 0.8f;
+		restartTextScale[1] = titleHeight * 1.5f;
+		restartTextPosition[0] = 0f;
+		restartTextPosition[1] = 0f;
+		restartTextCurrentScale[0] = restartTextScale[0];
+		restartTextCurrentScale[1] = restartTextScale[1];
+		restartTextCurrentPosition[0] = restartTextPosition[0];
+		restartTextCurrentPosition[1] = restartTextPosition[1];
 
 		// Yes button
 		yesButtonScale[0] = buttonWidth;
@@ -194,9 +194,9 @@ public class EndGameMenu
 	public void touch(float x, float y)
 	{
 		if(	x >= yesButtonLimits[0] &&
-			x <= yesButtonLimits[1] &&
-			y >= yesButtonLimits[2] &&
-			y <= yesButtonLimits[3])
+				x <= yesButtonLimits[1] &&
+				y >= yesButtonLimits[2] &&
+				y <= yesButtonLimits[3])
 		{
 			touchedYesButton();
 		}
@@ -212,11 +212,10 @@ public class EndGameMenu
 
 	private void touchedYesButton()
 	{
-		currentState = UI_STATE_DISAPPEARING;
 		yesButtonCurrentTexture = menuTextures.yesButtonSelectedTexture;
-		renderer.changingFromEndGameMenuToMainMenu();
-		renderer.endGame();
-		nextMenu = MAIN_MENU;
+		renderer.newGame();
+		currentState = UI_STATE_DISAPPEARING;
+		nextMenu = NO_MENU;
 	}
 
 
@@ -241,21 +240,21 @@ public class EndGameMenu
 				menuTimer = 0f;
 				menuOpacity = 1f;
 				currentState = UI_STATE_VISIBLE;
-				renderer.changedToEndGameMenu();
+				renderer.changedToRestartMenu();
 			}
 
 			backgroundPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
 			backgroundPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
 
-			endGameTitleCurrentScale[0] = lerp(0f, endGameTitleScale[0], menuOpacity);
-			endGameTitleCurrentScale[1] = lerp(0f, endGameTitleScale[1], menuOpacity);
-			endGameTitleCurrentPosition[0] = lerp(0f, endGameTitlePosition[0], menuOpacity);
-			endGameTitleCurrentPosition[1] = lerp(0f, endGameTitlePosition[1], menuOpacity);
+			restartTitleCurrentScale[0] = lerp(0f, restartTitleScale[0], menuOpacity);
+			restartTitleCurrentScale[1] = lerp(0f, restartTitleScale[1], menuOpacity);
+			restartTitleCurrentPosition[0] = lerp(0f, restartTitlePosition[0], menuOpacity);
+			restartTitleCurrentPosition[1] = lerp(0f, restartTitlePosition[1], menuOpacity);
 
-			endGameTextCurrentScale[0] = lerp(0f, endGameTextScale[0], menuOpacity);
-			endGameTextCurrentScale[1] = lerp(0f, endGameTextScale[1], menuOpacity);
-			endGameTextCurrentPosition[0] = lerp(0f, endGameTextPosition[0], menuOpacity);
-			endGameTextCurrentPosition[1] = lerp(0f, endGameTextPosition[1], menuOpacity);
+			restartTextCurrentScale[0] = lerp(0f, restartTextScale[0], menuOpacity);
+			restartTextCurrentScale[1] = lerp(0f, restartTextScale[1], menuOpacity);
+			restartTextCurrentPosition[0] = lerp(0f, restartTextPosition[0], menuOpacity);
+			restartTextCurrentPosition[1] = lerp(0f, restartTextPosition[1], menuOpacity);
 
 			yesButtonCurrentScale[0] = lerp(0f, yesButtonScale[0], menuOpacity);
 			yesButtonCurrentScale[1] = lerp(0f, yesButtonScale[1], menuOpacity);
@@ -278,11 +277,7 @@ public class EndGameMenu
 				menuOpacity = 0f;
 				currentState = UI_STATE_NOT_VISIBLE;
 
-				if(nextMenu == MAIN_MENU)
-				{
-					renderer.changedFromEndGameMenuToMainMenu();
-				}
-				else if(nextMenu == PAUSE_MENU)
+				if(nextMenu == PAUSE_MENU)
 				{
 					renderer.changedFromEndGameMenuToPauseMenu();
 				}
@@ -291,15 +286,15 @@ public class EndGameMenu
 			backgroundPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
 			backgroundPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
 
-			endGameTitleCurrentScale[0] = lerp(0f, endGameTitleScale[0], menuOpacity);
-			endGameTitleCurrentScale[1] = lerp(0f, endGameTitleScale[1], menuOpacity);
-			endGameTitleCurrentPosition[0] = lerp(0f, endGameTitlePosition[0], menuOpacity);
-			endGameTitleCurrentPosition[1] = lerp(0f, endGameTitlePosition[1], menuOpacity);
+			restartTitleCurrentScale[0] = lerp(0f, restartTitleScale[0], menuOpacity);
+			restartTitleCurrentScale[1] = lerp(0f, restartTitleScale[1], menuOpacity);
+			restartTitleCurrentPosition[0] = lerp(0f, restartTitlePosition[0], menuOpacity);
+			restartTitleCurrentPosition[1] = lerp(0f, restartTitlePosition[1], menuOpacity);
 
-			endGameTextCurrentScale[0] = lerp(0f, endGameTextScale[0], menuOpacity);
-			endGameTextCurrentScale[1] = lerp(0f, endGameTextScale[1], menuOpacity);
-			endGameTextCurrentPosition[0] = lerp(0f, endGameTextPosition[0], menuOpacity);
-			endGameTextCurrentPosition[1] = lerp(0f, endGameTextPosition[1], menuOpacity);
+			restartTextCurrentScale[0] = lerp(0f, restartTextScale[0], menuOpacity);
+			restartTextCurrentScale[1] = lerp(0f, restartTextScale[1], menuOpacity);
+			restartTextCurrentPosition[0] = lerp(0f, restartTextPosition[0], menuOpacity);
+			restartTextCurrentPosition[1] = lerp(0f, restartTextPosition[1], menuOpacity);
 
 			yesButtonCurrentScale[0] = lerp(0f, yesButtonScale[0], menuOpacity);
 			yesButtonCurrentScale[1] = lerp(0f, yesButtonScale[1], menuOpacity);
@@ -327,11 +322,11 @@ public class EndGameMenu
 
 			// End game title
 			glBindVertexArray(uiPanelVaoHandle);
-			uiPanelProgram.setUniforms(viewProjection, endGameTitleCurrentScale, endGameTitleCurrentPosition, menuTextures.endGameTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, restartTitleCurrentScale, restartTitleCurrentPosition, menuTextures.restartTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// End game text
-			uiPanelProgram.setUniforms(viewProjection, endGameTextCurrentScale, endGameTextCurrentPosition, menuTextures.endGameTextTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, restartTextCurrentScale, restartTextCurrentPosition, menuTextures.restartTextTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Yes button

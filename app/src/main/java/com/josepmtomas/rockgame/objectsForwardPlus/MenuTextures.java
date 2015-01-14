@@ -90,6 +90,11 @@ public class MenuTextures
 	public final int endGameTitleTexture;
 	public final int endGameTextTexture;
 
+	// Restart dialog
+
+	public final int restartTitleTexture;
+	public final int restartTextTexture;
+
 	// Game over
 
 	public final int gameOverTitleTexture;
@@ -184,6 +189,11 @@ public class MenuTextures
 
 		endGameTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		endGameTextTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_text.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		// Restart dialog
+
+		restartTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/restart_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		restartTextTexture = TextureHelper.loadETC2Texture(context, "textures/menus/restart_text.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Game Over
 
