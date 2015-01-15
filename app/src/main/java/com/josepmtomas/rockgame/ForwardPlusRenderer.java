@@ -298,7 +298,7 @@ public class ForwardPlusRenderer implements Renderer
 		scorePanelProgram = new ScorePanelProgram(context);
 		menuTextures = new MenuTextures(context);
 		hud = new Hud(context, this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
-		mainMenu = new MainMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		pauseMenu = new PauseMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
@@ -1159,6 +1159,12 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 
+	public void setMenuSpeed(boolean value)
+	{
+		playerRock.setNotVisibleSpeed(value);
+	}
+
+
 	public void setPause()
 	{
 		isPaused = !isPaused;
@@ -1167,6 +1173,16 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void onDestroy()
 	{
+		// Preferences (default values for menu preferences)
+
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+
+		editor.putBoolean("SpeedEnabled", false);
+		editor.putBoolean("VisibilityEnabled", true);
+		editor.apply();
+
+		// State (save the state of the current game)
+
 		//String string = "SAVED_GAME\n";
 		String string;
 

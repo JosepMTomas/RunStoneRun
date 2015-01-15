@@ -62,6 +62,8 @@ public class PlayerRock
 	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
 	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * BYTES_PER_FLOAT;
 
+	private float notVisibleSpeed = 500f;
+
 	// Textures
 	private final int diffuseTexture;
 	private final int normalTexture;
@@ -183,7 +185,7 @@ public class PlayerRock
 		};*/
 
 		diffuseTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/diffuse_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		normalTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/normal_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		normalTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/normal_new_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -568,7 +570,8 @@ public class PlayerRock
 	{
 		if(state == PLAYER_ROCK_NOT_VISIBLE)
 		{
-			currentSpeed = 500f;
+			float speedDifference = (notVisibleSpeed - currentSpeed) * deltaTime;
+			currentSpeed += speedDifference;
 			currentPositionZ = 50f;
 			currentPositionY = 10f;
 			initialForce = 0f;
@@ -794,6 +797,18 @@ public class PlayerRock
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	// Control
 	////////////////////////////////////////////////////////////////////////////////////////////////
+
+	public void setNotVisibleSpeed(boolean isFast)
+	{
+		if(isFast)
+		{
+			notVisibleSpeed = 2500f;
+		}
+		else
+		{
+			notVisibleSpeed = 500f;
+		}
+	}
 
 	public void turnLeft()
 	{

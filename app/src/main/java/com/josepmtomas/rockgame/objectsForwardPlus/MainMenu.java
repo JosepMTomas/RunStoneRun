@@ -1,9 +1,9 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
-import android.content.Context;
+
+import android.content.SharedPreferences;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
-import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 
@@ -15,13 +15,13 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 22/12/2014.
+ * @author Josep
  */
 public class MainMenu
 {
-	private GameActivity parent;
 	private ForwardPlusRenderer renderer;
-	private Context context;
 	private MenuTextures textures;
+	private SharedPreferences sharedPreferences;
 
 	// State
 	private int currentState;
@@ -31,6 +31,9 @@ public class MainMenu
 	private static final float menuDisappearTime = 0.5f;
 	private float menuTimer = 0f;
 	private float menuOpacity = 1f;
+	private float buttonsOpacity = 0.25f;
+	private static final float BUTTONS_BASE_OPACITY = 0.25f;
+	private boolean menuEnabled = true;
 
 	// Matrices
 	private float[] view = new float[16];
@@ -70,15 +73,32 @@ public class MainMenu
 	private float[] creditsButtonCurrentPosition = new float[2];
 	private float[] creditsButtonCurrentScale = new float[2];
 
+	// Speed button
+	private boolean speedButtonEnabled = false;
+	private float[] speedButtonScale = new float[2];
+	private float[] speedButtonPosition = new float[2];
+	private float[] speedButtonCurrentScale = new float[2];
+	private float[] speedButtonCurrentPosition = new float[2];
+	private float[] speedButtonLimits = new float[4];
+	private int speedButtonTexture;
+
+	// Visibility button
+	private boolean visibilityButtonEnabled = true;
+	private float[] visibilityButtonScale = new float[2];
+	private float[] visibilityButtonPosition = new float[2];
+	private float[] visibilityButtonCurrentScale = new float[2];
+	private float[] visibilityButtonCurrentPosition = new float[2];
+	private float[] visibilityButtonLimits = new float[4];
+	private int visibilityButtonTexture;
+
 	// renderer ui programs
 	UIPanelProgram uiPanelProgram;
 
 
-	public MainMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public MainMenu(ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
-		this.parent = parent;
 		this.renderer = renderer;
-		this.context = parent.getApplicationContext();
+		this.sharedPreferences = sharedPreferences;
 		this.textures = textures;
 		this.uiPanelProgram = panelProgram;
 		this.currentState = UI_STATE_VISIBLE;
@@ -90,6 +110,8 @@ public class MainMenu
 
 		createButtons(screenWidth, screenHeight);
 		createButtonsBackPanel(screenWidth, screenHeight);
+
+		loadPreferences();
 	}
 
 
@@ -120,6 +142,28 @@ public class MainMenu
 		newGameButtonCurrentTexture = textures.newGameButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
+		speedButtonTexture = textures.speedNormalTexture;
+		visibilityButtonTexture = textures.visibilityEnabledTexture;
+	}
+
+
+	private void loadPreferences()
+	{
+		speedButtonEnabled = !sharedPreferences.getBoolean("SpeedEnabled", false);
+		visibilityButtonEnabled = !sharedPreferences.getBoolean("VisibilityEnabled", true);
+
+		touchSpeedButton();
+		touchVisibilityButton();
+	}
+
+
+	private void savePreferences()
+	{
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+
+		editor.putBoolean("SpeedEnabled", speedButtonEnabled);
+		editor.putBoolean("VisibilityEnabled", visibilityButtonEnabled);
+		editor.apply();
 	}
 
 
@@ -131,6 +175,8 @@ public class MainMenu
 		createNewGameButton(width, height);
 		createOptionsButton(width, height);
 		createCreditsButton(width, height);
+		createSpeedButton(screenWidth, screenHeight);
+		createVisibilityButton(screenWidth, screenHeight);
 		setCurrentPositions();
 	}
 
@@ -201,6 +247,40 @@ public class MainMenu
 	}
 
 
+	private void createSpeedButton(float screenWidth, float screenHeight)
+	{
+		float buttonSize = screenHeight * 0.15f;
+		float buttonSizeHalf = buttonSize * 0.5f;
+
+		speedButtonScale[0] = buttonSize;
+		speedButtonScale[1] = buttonSize;
+		speedButtonPosition[0] = screenWidth * -0.5f + buttonSizeHalf;
+		speedButtonPosition[1] = buttonSize * 0.5f;
+
+		speedButtonLimits[0] = speedButtonPosition[0] - (buttonSizeHalf);
+		speedButtonLimits[1] = speedButtonPosition[0] + (buttonSizeHalf);
+		speedButtonLimits[2] = speedButtonPosition[1] - (buttonSizeHalf);
+		speedButtonLimits[3] = speedButtonPosition[1] + (buttonSizeHalf);
+	}
+
+
+	private void createVisibilityButton(float screenWidth, float screenHeight)
+	{
+		float buttonSize = screenHeight * 0.15f;
+		float buttonSizeHalf = buttonSize * 0.5f;
+
+		visibilityButtonScale[0] = buttonSize;
+		visibilityButtonScale[1] = buttonSize;
+		visibilityButtonPosition[0] = screenWidth * -0.5f + buttonSizeHalf;
+		visibilityButtonPosition[1] = buttonSize * -0.5f;
+
+		visibilityButtonLimits[0] = visibilityButtonPosition[0] - (buttonSizeHalf);
+		visibilityButtonLimits[1] = visibilityButtonPosition[0] + (buttonSizeHalf);
+		visibilityButtonLimits[2] = visibilityButtonPosition[1] - (buttonSizeHalf);
+		visibilityButtonLimits[3] = visibilityButtonPosition[1] + (buttonSizeHalf);
+	}
+
+
 	private void setCurrentPositions()
 	{
 		newGameButtonCurrentPosition[0] = newGameButtonPosition[0];
@@ -217,34 +297,61 @@ public class MainMenu
 		creditsButtonCurrentPosition[1] = creditsButtonPosition[1];
 		creditsButtonCurrentScale[0] = creditsButtonScale[0];
 		creditsButtonCurrentScale[1] = creditsButtonScale[1];
+
+		speedButtonCurrentScale[0] = speedButtonScale[0];
+		speedButtonCurrentScale[1] = speedButtonScale[1];
+		speedButtonCurrentPosition[0] = speedButtonPosition[0];
+		speedButtonCurrentPosition[1] = speedButtonPosition[1];
+
+		visibilityButtonCurrentScale[0] = visibilityButtonScale[0];
+		visibilityButtonCurrentScale[1] = visibilityButtonScale[1];
+		visibilityButtonCurrentPosition[0] = visibilityButtonPosition[0];
+		visibilityButtonCurrentPosition[1] = visibilityButtonPosition[1];
 	}
 
 
 	public void touch(float x, float y)
 	{
-		//Log.w("MainMenu", "Touch : x = " + x + " : y = " + y);
-		if(	x >= newGameButtonLimits[0] &&
-			x <= newGameButtonLimits[1] &&
-			y >= newGameButtonLimits[2] &&
-			y <= newGameButtonLimits[3])
+		if(menuEnabled)
 		{
-			touchNewGameButton();
+			if(	x >= newGameButtonLimits[0] &&
+					x <= newGameButtonLimits[1] &&
+					y >= newGameButtonLimits[2] &&
+					y <= newGameButtonLimits[3])
+			{
+				touchNewGameButton();
+			}
+
+			else if(x >= optionsButtonLimits[0] &&
+					x <= optionsButtonLimits[1] &&
+					y >= optionsButtonLimits[2] &&
+					y <= optionsButtonLimits[3])
+			{
+				touchOptionsButton();
+			}
+
+			else if(x >= optionsButtonLimits[0] &&
+					x <= optionsButtonLimits[1] &&
+					y >= creditsButtonLimits[2] &&
+					y <= creditsButtonLimits[3])
+			{
+				touchCreditsButton();
+			}
 		}
 
-		else if(x >= optionsButtonLimits[0] &&
-				x <= optionsButtonLimits[1] &&
-				y >= optionsButtonLimits[2] &&
-				y <= optionsButtonLimits[3])
+		if(	x >= speedButtonLimits[0] &&
+			x <= speedButtonLimits[1] &&
+			y >= speedButtonLimits[2] &&
+			y <= speedButtonLimits[3])
 		{
-			touchOptionsButton();
+			touchSpeedButton();
 		}
-
-		else if(x >= optionsButtonLimits[0] &&
-				x <= optionsButtonLimits[1] &&
-				y >= creditsButtonLimits[2] &&
-				y <= creditsButtonLimits[3])
+		else if(x >= visibilityButtonLimits[0] &&
+				x <= visibilityButtonLimits[1] &&
+				y >= visibilityButtonLimits[2] &&
+				y <= visibilityButtonLimits[3])
 		{
-			touchCreditsButton();
+			touchVisibilityButton();
 		}
 	}
 
@@ -281,8 +388,48 @@ public class MainMenu
 	}
 
 
+	private void touchSpeedButton()
+	{
+		speedButtonEnabled = !speedButtonEnabled;
+
+		if(speedButtonEnabled)
+		{
+			speedButtonTexture = textures.speedFastTexture;
+		}
+		else
+		{
+			speedButtonTexture = textures.speedNormalTexture;
+		}
+
+		savePreferences();
+		renderer.setMenuSpeed(speedButtonEnabled);
+	}
+
+
+	private void touchVisibilityButton()
+	{
+		visibilityButtonEnabled = !visibilityButtonEnabled;
+
+		if(visibilityButtonEnabled)
+		{
+			visibilityButtonTexture = textures.visibilityEnabledTexture;
+			menuOpacity = 1.0f;
+			menuEnabled = true;
+		}
+		else
+		{
+			visibilityButtonTexture = textures.visibilityDisabledTexture;
+			menuOpacity = 0.0f;
+			menuEnabled = false;
+		}
+
+		savePreferences();
+	}
+
+
 	public void setAppearing()
 	{
+		loadPreferences();
 		currentState = UI_STATE_APPEARING;
 	}
 
@@ -293,11 +440,13 @@ public class MainMenu
 		{
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
+			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
 
 			if(menuTimer >= menuAppearTime)
 			{
 				currentState = UI_STATE_VISIBLE;
 				menuOpacity = 1f;
+				buttonsOpacity = BUTTONS_BASE_OPACITY;
 				menuTimer = 0f;
 				renderer.changedToMainMenu();
 			}
@@ -320,16 +469,28 @@ public class MainMenu
 			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
 			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
 			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
+
+			/*speedButtonCurrentScale[0] = lerp(speedButtonScale[0] * 1.5f, speedButtonScale[0], menuOpacity);
+			speedButtonCurrentScale[1] = lerp(speedButtonScale[1] * 1.5f, speedButtonScale[1], menuOpacity);
+			speedButtonCurrentPosition[0] = lerp(speedButtonPosition[0] * 1.5f, speedButtonPosition[0], menuOpacity);
+			speedButtonCurrentPosition[1] = lerp(speedButtonPosition[1] * 1.5f, speedButtonPosition[1], menuOpacity);
+
+			visibilityButtonCurrentScale[0] = lerp(visibilityButtonScale[0] * 1.5f, visibilityButtonScale[0], menuOpacity);
+			visibilityButtonCurrentScale[1] = lerp(visibilityButtonScale[1] * 1.5f, visibilityButtonScale[1], menuOpacity);
+			visibilityButtonCurrentPosition[0] = lerp(visibilityButtonPosition[0] * 1.5f, visibilityButtonPosition[0], menuOpacity);
+			visibilityButtonCurrentPosition[1] = lerp(visibilityButtonPosition[1] * 1.5f, visibilityButtonPosition[1], menuOpacity);*/
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
+			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
 
 			if(menuTimer >= menuDisappearTime)
 			{
 				currentState = UI_STATE_NOT_VISIBLE;
 				menuOpacity = 0f;
+				buttonsOpacity = 0f;
 				menuTimer = 0f;
 			}
 
@@ -351,13 +512,23 @@ public class MainMenu
 			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
 			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
 			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
+
+			/*speedButtonCurrentScale[0] = lerp(speedButtonScale[0] * 1.5f, speedButtonScale[0], menuOpacity);
+			speedButtonCurrentScale[1] = lerp(speedButtonScale[1] * 1.5f, speedButtonScale[1], menuOpacity);
+			speedButtonCurrentPosition[0] = lerp(speedButtonPosition[0] * 1.5f, speedButtonPosition[0], menuOpacity);
+			speedButtonCurrentPosition[1] = lerp(speedButtonPosition[1] * 1.5f, speedButtonPosition[1], menuOpacity);
+
+			visibilityButtonCurrentScale[0] = lerp(visibilityButtonScale[0] * 1.5f, visibilityButtonScale[0], menuOpacity);
+			visibilityButtonCurrentScale[1] = lerp(visibilityButtonScale[1] * 1.5f, visibilityButtonScale[1], menuOpacity);
+			visibilityButtonCurrentPosition[0] = lerp(visibilityButtonPosition[0] * 1.5f, visibilityButtonPosition[0], menuOpacity);
+			visibilityButtonCurrentPosition[1] = lerp(visibilityButtonPosition[1] * 1.5f, visibilityButtonPosition[1], menuOpacity);*/
 		}
 	}
 
 
 	public void draw()
 	{
-		if(currentState != UI_STATE_NOT_VISIBLE)
+		if(currentState != UI_STATE_NOT_VISIBLE && menuEnabled)
 		{
 			uiPanelProgram.useProgram();
 
@@ -375,6 +546,23 @@ public class MainMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, creditsButtonCurrentScale, creditsButtonCurrentPosition, creditsButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, speedButtonCurrentScale, speedButtonCurrentPosition, speedButtonTexture, buttonsOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, visibilityButtonCurrentScale, visibilityButtonCurrentPosition, visibilityButtonTexture, buttonsOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
+		else
+		{
+			uiPanelProgram.useProgram();
+			glBindVertexArray(uiPanelVaoHandle);
+
+			uiPanelProgram.setUniforms(viewProjection, speedButtonCurrentScale, speedButtonCurrentPosition, speedButtonTexture, buttonsOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, visibilityButtonCurrentScale, visibilityButtonCurrentPosition, visibilityButtonTexture, buttonsOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}

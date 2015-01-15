@@ -1,6 +1,5 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
@@ -16,12 +15,12 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 24/12/2014.
+ * @author Josep
  */
 public class OptionsMenu
 {
 	//
 	private GameActivity parent;
-	private Context context;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures textures;
@@ -34,7 +33,7 @@ public class OptionsMenu
 
 	// State
 	private int previousMenu;
-	private int currentState;
+	private int currentState = UI_STATE_NOT_VISIBLE;
 
 	// Matrices
 	private float[] view = new float[16];
@@ -50,6 +49,9 @@ public class OptionsMenu
 	private static final float menuDisappearTime = 0.5f;
 	private float menuTimer = 0f;
 	private float menuOpacity = 0f;
+	private final static float BUTTONS_BASE_OPACITY = 0.25f;
+	private float buttonsOpacity = 0.25f;
+	private boolean menuEnabled = true;
 
 	// Background
 	private float[] background9PatchScale = {1f,1f};
@@ -134,6 +136,20 @@ public class OptionsMenu
 	private float[] backButtonCurrentPosition = new float[2];
 	private float[] backButtonLimits = new float[4];
 
+	// Speed button
+	private boolean speedButtonEnabled = false;
+	private float[] speedButtonScale = new float[2];
+	private float[] speedButtonPosition = new float[2];
+	private float[] speedButtonLimits = new float[4];
+	private int speedButtonTexture;
+
+	// Visibility button
+	private boolean visibilityButtonEnabled = true;
+	private float[] visibilityButtonScale = new float[2];
+	private float[] visibilityButtonPosition = new float[2];
+	private float[] visibilityButtonLimits = new float[4];
+	private int visibilityButtonTexture;
+
 	// Textures
 
 	private int backButtonCurrentTexture;
@@ -159,7 +175,6 @@ public class OptionsMenu
 	public OptionsMenu(GameActivity parent, ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
-		this.context = parent.getApplicationContext();
 		this.sharedPreferences = sharedPreferences;
 		this.uiPanelProgram = panelProgram;
 		this.textures = textures;
@@ -170,10 +185,13 @@ public class OptionsMenu
 		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.26f, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
 		createMatrices(screenWidth, screenHeight);
-		loadTextures(context);
+		loadTextures();
 		setPositions(screenWidth, screenHeight);
 		setCurrentPositions();
 		loadPreferences();
+
+		speedButtonTexture = textures.speedNormalTexture;
+		visibilityButtonTexture = textures.visibilityEnabledTexture;
 	}
 
 
@@ -199,7 +217,7 @@ public class OptionsMenu
 	}
 
 
-	private void loadTextures(Context context)
+	private void loadTextures()
 	{
 		resetBackButtonCurrentTexture();
 		resetResolutionPercentageCurrentTextures();
@@ -215,6 +233,8 @@ public class OptionsMenu
 		postProcessQuality = sharedPreferences.getInt("PostProcessQuality", 0);
 		musicEnabled = sharedPreferences.getBoolean("Music", true);
 		effectsEnabled = sharedPreferences.getBoolean("Effects", true);
+		speedButtonEnabled = !sharedPreferences.getBoolean("SpeedEnabled", true);
+		visibilityButtonEnabled = !sharedPreferences.getBoolean("VisibilityEnabled", true);
 
 		switch(resolution)
 		{
@@ -262,6 +282,9 @@ public class OptionsMenu
 		{
 			touchedEffectsDisableButton();
 		}
+
+		touchSpeedButton();
+		touchVisibilityButton();
 	}
 
 
@@ -273,6 +296,8 @@ public class OptionsMenu
 		editor.putInt("PostProcessQuality", postProcessQuality);
 		editor.putBoolean("Music", musicEnabled);
 		editor.putBoolean("Effects", effectsEnabled);
+		editor.putBoolean("SpeedEnabled", speedButtonEnabled);
+		editor.putBoolean("VisibilityEnabled", visibilityButtonEnabled);
 		editor.apply();
 	}
 
@@ -357,6 +382,12 @@ public class OptionsMenu
 		backButtonScale[0] = optionButtonWidth;
 		backButtonScale[1] = optionButtonHeight;
 
+		speedButtonScale[0] = optionButtonHeight * 1.5f;
+		speedButtonScale[1] = optionButtonHeight * 1.5f;
+
+		visibilityButtonScale[0] = optionButtonHeight * 1.5f;
+		visibilityButtonScale[1] = optionButtonHeight * 1.5f;
+
 		// Positions
 
 		optionsTitlePosition[0] = 0f;
@@ -386,7 +417,6 @@ public class OptionsMenu
 		postProcessHighDetailButtonPosition[1] = optionButtonHeight * 0.5f;
 
 
-
 		musicTitlePosition[0] = -optionButtonWidth;
 		musicTitlePosition[1] = optionButtonHeight * -1.0f;
 
@@ -408,6 +438,12 @@ public class OptionsMenu
 
 		backButtonPosition[0] = 0f;
 		backButtonPosition[1] = -optionButtonHeight * 4f;
+
+		speedButtonPosition[0] = screenWidth * -0.5f + (optionButtonHeight * 0.75f);
+		speedButtonPosition[1] = optionButtonHeight * 0.75f;
+
+		visibilityButtonPosition[0] = screenWidth * -0.5f + (optionButtonHeight * 0.75f);
+		visibilityButtonPosition[1] = optionButtonHeight * -0.75f;
 
 		// Limits (left-right-bottom-top)
 		resolutionPercentageButton25Limits[0] = resolutionPercentageButton25Position[0] - optionButtonWidthHalf;
@@ -469,6 +505,16 @@ public class OptionsMenu
 		backButtonLimits[1] = backButtonPosition[0] + optionButtonWidthHalf;
 		backButtonLimits[2] = backButtonPosition[1] - optionButtonHeightHalf;
 		backButtonLimits[3] = backButtonPosition[1] + optionButtonHeightHalf;
+
+		speedButtonLimits[0] = speedButtonPosition[0] - (optionButtonHeight * 0.75f);
+		speedButtonLimits[1] = speedButtonPosition[0] + (optionButtonHeight * 0.75f);
+		speedButtonLimits[2] = speedButtonPosition[1] - (optionButtonHeight * 0.75f);
+		speedButtonLimits[3] = speedButtonPosition[1] + (optionButtonHeight * 0.75f);
+
+		visibilityButtonLimits[0] = visibilityButtonPosition[0] - (optionButtonHeight * 0.75f);
+		visibilityButtonLimits[1] = visibilityButtonPosition[0] + (optionButtonHeight * 0.75f);
+		visibilityButtonLimits[2] = visibilityButtonPosition[1] - (optionButtonHeight * 0.75f);
+		visibilityButtonLimits[3] = visibilityButtonPosition[1] + (optionButtonHeight * 0.75f);
 	}
 
 
@@ -562,11 +608,13 @@ public class OptionsMenu
 		{
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
+			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
 
 			if(menuTimer >= menuAppearTime)
 			{
 				currentState = UI_STATE_VISIBLE;
 				menuOpacity = 1f;
+				buttonsOpacity = BUTTONS_BASE_OPACITY;
 				menuTimer = 0f;
 				renderer.changedToOptionMenu();
 			}
@@ -633,11 +681,13 @@ public class OptionsMenu
 		{
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
+			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
 
 			if(menuTimer >= menuDisappearTime)
 			{
 				currentState = UI_STATE_NOT_VISIBLE;
 				menuOpacity = 0f;
+				buttonsOpacity = 0f;
 				menuTimer = 0;
 				renderer.changedFromOptionsMenuToMainMenu();
 				resetBackButtonCurrentTexture();
@@ -788,118 +838,144 @@ public class OptionsMenu
 			// Back button
 			uiPanelProgram.setUniforms(viewProjection, backButtonCurrentScale, backButtonCurrentPosition, backButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Speed button
+			uiPanelProgram.setUniforms(viewProjection, speedButtonScale, speedButtonPosition, speedButtonTexture, buttonsOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Visibility button
+			uiPanelProgram.setUniforms(viewProjection, visibilityButtonScale, visibilityButtonPosition, visibilityButtonTexture, buttonsOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}
 
 
 	public void touch(float x, float y)
 	{
-		// 25% button
-		if(	x >= resolutionPercentageButton25Limits[0] &&
-			x <= resolutionPercentageButton25Limits[1] &&
-			y >= resolutionPercentageButton25Limits[2] &&
-			y <= resolutionPercentageButton25Limits[3])
+		if(menuEnabled)
 		{
-			touchedResolutionPercentageButton25();
+			// 25% button
+			if(	x >= resolutionPercentageButton25Limits[0] &&
+					x <= resolutionPercentageButton25Limits[1] &&
+					y >= resolutionPercentageButton25Limits[2] &&
+					y <= resolutionPercentageButton25Limits[3])
+			{
+				touchedResolutionPercentageButton25();
+			}
+
+			// 50% button
+			else if(x >= resolutionPercentageButton50Limits[0] &&
+					x <= resolutionPercentageButton50Limits[1] &&
+					y >= resolutionPercentageButton50Limits[2] &&
+					y <= resolutionPercentageButton50Limits[3])
+			{
+				touchedResolutionPercentageButton50();
+			}
+
+			// 75% button
+			else if(x >= resolutionPercentageButton75Limits[0] &&
+					x <= resolutionPercentageButton75Limits[1] &&
+					y >= resolutionPercentageButton75Limits[2] &&
+					y <= resolutionPercentageButton75Limits[3])
+			{
+				touchedResolutionPercentageButton75();
+			}
+
+			// 100% button
+			else if(x >= resolutionPercentageButton100Limits[0] &&
+					x <= resolutionPercentageButton100Limits[1] &&
+					y >= resolutionPercentageButton100Limits[2] &&
+					y <= resolutionPercentageButton100Limits[3])
+			{
+				touchedResolutionPercentageButton100();
+			}
+
+			// No post-process button
+			else if(x >= postProcessNoDetailButtonLimits[0] &&
+					x <= postProcessNoDetailButtonLimits[1] &&
+					y >= postProcessNoDetailButtonLimits[2] &&
+					y <= postProcessNoDetailButtonLimits[3])
+			{
+				touchedNoPostProcessDetailButton();
+			}
+
+			// Low post-process button
+			else if(x >= postProcessLowDetailButtonLimits[0] &&
+					x <= postProcessLowDetailButtonLimits[1] &&
+					y >= postProcessLowDetailButtonLimits[2] &&
+					y <= postProcessLowDetailButtonLimits[3])
+			{
+				touchedLowPostProcessDetailButton();
+			}
+
+			// High post-process button
+			else if(x >= postProcessHighDetailButtonLimits[0] &&
+					x <= postProcessHighDetailButtonLimits[1] &&
+					y >= postProcessHighDetailButtonLimits[2] &&
+					y <= postProcessHighDetailButtonLimits[3])
+			{
+				touchedHighPostProcessDetailButton();
+			}
+
+			// Enable music button
+			else if(x >= musicEnableButtonLimits[0] &&
+					x <= musicEnableButtonLimits[1] &&
+					y >= musicEnableButtonLimits[2] &&
+					y <= musicEnableButtonLimits[3])
+			{
+				touchedMusicEnableButton();
+			}
+
+			// Disable music button
+			else if(x >= musicDisableButtonLimits[0] &&
+					x <= musicDisableButtonLimits[1] &&
+					y >= musicDisableButtonLimits[2] &&
+					y <= musicDisableButtonLimits[3])
+			{
+				touchedMusicDisableButton();
+			}
+
+			// Enable effects button
+			else if(x >= effectsEnableButtonLimits[0] &&
+					x <= effectsEnableButtonLimits[1] &&
+					y >= effectsEnableButtonLimits[2] &&
+					y <= effectsEnableButtonLimits[3])
+			{
+				touchedEffectsEnableButton();
+			}
+
+			// Disable effects button
+			else if(x >= effectsDisableButtonLimits[0] &&
+					x <= effectsDisableButtonLimits[1] &&
+					y >= effectsDisableButtonLimits[2] &&
+					y <= effectsDisableButtonLimits[3])
+			{
+				touchedEffectsDisableButton();
+			}
+
+			// Back button
+			else if(x >= backButtonLimits[0] &&
+					x <= backButtonLimits[1] &&
+					y >= backButtonLimits[2] &&
+					y <= backButtonLimits[3])
+			{
+				touchedBackButton();
+			}
 		}
 
-		// 50% button
-		else if(x >= resolutionPercentageButton50Limits[0] &&
-				x <= resolutionPercentageButton50Limits[1] &&
-				y >= resolutionPercentageButton50Limits[2] &&
-				y <= resolutionPercentageButton50Limits[3])
+		if(	x >= speedButtonLimits[0] &&
+			x <= speedButtonLimits[1] &&
+			y >= speedButtonLimits[2] &&
+			y <= speedButtonLimits[3])
 		{
-			touchedResolutionPercentageButton50();
+			touchSpeedButton();
 		}
-
-		// 75% button
-		else if(x >= resolutionPercentageButton75Limits[0] &&
-				x <= resolutionPercentageButton75Limits[1] &&
-				y >= resolutionPercentageButton75Limits[2] &&
-				y <= resolutionPercentageButton75Limits[3])
+		else if(x >= visibilityButtonLimits[0] &&
+				x <= visibilityButtonLimits[1] &&
+				y >= visibilityButtonLimits[2] &&
+				y <= visibilityButtonLimits[3])
 		{
-			touchedResolutionPercentageButton75();
-		}
-
-		// 100% button
-		else if(x >= resolutionPercentageButton100Limits[0] &&
-				x <= resolutionPercentageButton100Limits[1] &&
-				y >= resolutionPercentageButton100Limits[2] &&
-				y <= resolutionPercentageButton100Limits[3])
-		{
-			touchedResolutionPercentageButton100();
-		}
-
-		// No post-process button
-		else if(x >= postProcessNoDetailButtonLimits[0] &&
-				x <= postProcessNoDetailButtonLimits[1] &&
-				y >= postProcessNoDetailButtonLimits[2] &&
-				y <= postProcessNoDetailButtonLimits[3])
-		{
-			touchedNoPostProcessDetailButton();
-		}
-
-		// Low post-process button
-		else if(x >= postProcessLowDetailButtonLimits[0] &&
-				x <= postProcessLowDetailButtonLimits[1] &&
-				y >= postProcessLowDetailButtonLimits[2] &&
-				y <= postProcessLowDetailButtonLimits[3])
-		{
-			touchedLowPostProcessDetailButton();
-		}
-
-		// High post-process button
-		else if(x >= postProcessHighDetailButtonLimits[0] &&
-				x <= postProcessHighDetailButtonLimits[1] &&
-				y >= postProcessHighDetailButtonLimits[2] &&
-				y <= postProcessHighDetailButtonLimits[3])
-		{
-			touchedHighPostProcessDetailButton();
-		}
-
-		// Enable music button
-		else if(x >= musicEnableButtonLimits[0] &&
-				x <= musicEnableButtonLimits[1] &&
-				y >= musicEnableButtonLimits[2] &&
-				y <= musicEnableButtonLimits[3])
-		{
-			touchedMusicEnableButton();
-		}
-
-		// Disable music button
-		else if(x >= musicDisableButtonLimits[0] &&
-				x <= musicDisableButtonLimits[1] &&
-				y >= musicDisableButtonLimits[2] &&
-				y <= musicDisableButtonLimits[3])
-		{
-			touchedMusicDisableButton();
-		}
-
-		// Enable effects button
-		else if(x >= effectsEnableButtonLimits[0] &&
-				x <= effectsEnableButtonLimits[1] &&
-				y >= effectsEnableButtonLimits[2] &&
-				y <= effectsEnableButtonLimits[3])
-		{
-			touchedEffectsEnableButton();
-		}
-
-		// Disable effects button
-		else if(x >= effectsDisableButtonLimits[0] &&
-				x <= effectsDisableButtonLimits[1] &&
-				y >= effectsDisableButtonLimits[2] &&
-				y <= effectsDisableButtonLimits[3])
-		{
-			touchedEffectsDisableButton();
-		}
-
-		// Back button
-		else if(x >= backButtonLimits[0] &&
-				x <= backButtonLimits[1] &&
-				y >= backButtonLimits[2] &&
-				y <= backButtonLimits[3])
-		{
-			touchedBackButton();
+			touchVisibilityButton();
 		}
 	}
 
@@ -907,13 +983,8 @@ public class OptionsMenu
 	public void setAppearing(int previousMenu)
 	{
 		this.previousMenu = previousMenu;
+		loadPreferences();
 		currentState = UI_STATE_APPEARING;
-	}
-
-
-	public void setDisappearing()
-	{
-		currentState = UI_STATE_DISAPPEARING;
 	}
 
 
@@ -1042,4 +1113,42 @@ public class OptionsMenu
 		}
 	}
 
+
+	private void touchSpeedButton()
+	{
+		speedButtonEnabled = !speedButtonEnabled;
+
+		if(speedButtonEnabled)
+		{
+			speedButtonTexture = textures.speedFastTexture;
+		}
+		else
+		{
+			speedButtonTexture = textures.speedNormalTexture;
+		}
+
+		savePreferences();
+		renderer.setMenuSpeed(speedButtonEnabled);
+	}
+
+
+	private void touchVisibilityButton()
+	{
+		visibilityButtonEnabled = !visibilityButtonEnabled;
+
+		if(visibilityButtonEnabled)
+		{
+			visibilityButtonTexture = textures.visibilityEnabledTexture;
+			menuOpacity = 1.0f;
+			menuEnabled = true;
+		}
+		else
+		{
+			visibilityButtonTexture = textures.visibilityDisabledTexture;
+			menuOpacity = 0.0f;
+			menuEnabled = false;
+		}
+
+		savePreferences();
+	}
 }

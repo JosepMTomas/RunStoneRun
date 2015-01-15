@@ -32,6 +32,11 @@ public class MenuTextures
 	public final int creditsButtonIdleTexture;
 	public final int creditsButtonSelectedTexture;
 
+	public final int speedNormalTexture;
+	public final int speedFastTexture;
+	public final int visibilityEnabledTexture;
+	public final int visibilityDisabledTexture;
+
 	// Options
 
 	public final int optionsTitleTexture;
@@ -125,6 +130,12 @@ public class MenuTextures
 
 		creditsButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/credits_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		creditsButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/credits_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		speedNormalTexture = TextureHelper.loadETC2Texture(context, "textures/menus/speed_normal.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		speedFastTexture = TextureHelper.loadETC2Texture(context, "textures/menus/speed_fast.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		visibilityEnabledTexture = TextureHelper.loadETC2Texture(context, "textures/menus/visibility_enabled.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		visibilityDisabledTexture = TextureHelper.loadETC2Texture(context, "textures/menus/visibility_disabled.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// options
 
