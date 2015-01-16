@@ -3,7 +3,7 @@ precision highp float;
 
 layout (std140) uniform lightInfo
 {
-	vec3 vLight;
+	vec3 lightVector;
 	vec4 lightColor;
 	vec4 ambientColor;
 	vec4 backColor;
@@ -30,8 +30,10 @@ in vec3 vNormal;
 in vec3 vTangent;
 in vec3 vBinormal;
 in vec3 vColor;
+in vec3 vLight;
 
 in float vDistance;
+in float vDiffuse;
 in vec4 vShadowCoords;
 
 out vec4 fragColor;
@@ -63,12 +65,12 @@ void main()
 	shadow += shadowFactor;
 	shadow = clamp(shadow, 0.0, 1.0);
 	
-	lowp float diffuse = dot(normal, vLight);
+	lowp float diffuse = dot(normal, lightVector);
 	diffuse = clamp(diffuse, 0.0, 1.0);
 	
 	diffuse *= shadow;
 	
-	diffuseColor = (diffuseColor * lightColor * diffuse) ;// + ambient;
+	diffuseColor = (diffuseColor * lightColor * diffuse) + (diffuseColor * vec4(dot(normal, vLight) * 2.0 * shadowFactor));// + ambient;
 	
 	fragColor = mix(diffuseColor, backColor, vDistance);
 	//fragColor = fragColor * (1.0 - vColor.y);
@@ -97,4 +99,5 @@ void main()
 	
 	///fragColor = mix(fragColor, vec4(1.0), vDistance);
 	//fragColor = vec4(diffuse);
+	//fragColor = vec4(shadowFactor);
 }

@@ -5,13 +5,15 @@ in vec3 vNormal;
 in vec3 vTangent;
 in vec3 vBinormal;
 in float vDistance;
+in vec3 vLight;
 
 layout (std140) uniform lightInfo
 {
-	vec3 vLight;
+	vec3 lightVector;
 	vec4 lightColor;
 	vec4 ambientColor;
 	vec4 backColor;
+	float shadowFactor;
 };
 
 uniform sampler2D diffuseSampler;
@@ -19,7 +21,6 @@ uniform sampler2D normalSampler;
 
 out vec4 fragColor;
 
-//const vec3 vLight = vec3(0.71, 0.71, 0.0);
 const vec3 vIndirect = vec3(0.0, -1.0, 0.0);
 
 void main()
@@ -30,17 +31,14 @@ void main()
 	normalTex = normalize(normalTex * 2.0 - 1.0);
 	mediump vec3 normal = vTangent.xyz * normalTex.x + vBinormal * normalTex.y + vNormal * normalTex.z;
 	
-	float diffuse = dot(normal, vLight);
+	float diffuse = dot(normal, lightVector);
 	diffuse = clamp(diffuse, 0.0, 1.0);
 	
-	vec4 color = vec4(diffuse) * diffuseTex * lightColor;
+	float diffuse2 = dot(normal, vLight);
+	diffuse2 = clamp(diffuse2, 0.0, 1.0) * 2.0 * shadowFactor;
 	
-	/*float indirect = dot(normal, vIndirect);
-	indirect = clamp(indirect, 0.0, 1.0);
-	vec4 indirectColor = vec4(0.2, 0.25, 0.07, 1.0) * indirect;
-	
-	color += indirectColor;*/
-	
+	vec4 color = (diffuseTex * diffuse * lightColor) + (diffuseTex * diffuse2);
+
 	vec4 ambient = diffuseTex * ambientColor;
 	color += ambient;
 	

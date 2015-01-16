@@ -51,12 +51,13 @@ public class GroundShield
 	public void createGeometry()
 	{
 		int[] vboHandles = new int[2];
-
 		float[] vertices = new float[20];
-		float left = -10f;
-		float right = 10f;
-		float up = -10f;
-		float down = 10f;
+
+		float sizeHalf = 15f;
+		float left = -sizeHalf;
+		float right = sizeHalf;
+		float up = -sizeHalf;
+		float down = sizeHalf;
 		float height = 0.1f;
 
 		// A

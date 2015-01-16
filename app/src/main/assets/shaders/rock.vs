@@ -17,6 +17,9 @@ out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBinormal;
 out float vDistance;
+out vec3 vLight;
+
+const vec3 lightPos = vec3(0.0, 50.0, 0.0);
 
 void main()
 {
@@ -44,6 +47,9 @@ void main()
 	vTangent = aTangent.xyz;
 	vBinormal = normalize(cross(aNormal, aTangent.xyz)) * aTangent.w;
 	
+	vec4 finalPosition = viewProjection * position;
+	vLight = normalize(lightPos - position.xyz);
+	
 	// vertex shader output position
-	gl_Position = viewProjection * position;
+	gl_Position = finalPosition; //viewProjection * position;
 }

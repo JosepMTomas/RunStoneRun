@@ -10,7 +10,7 @@ layout (std140) uniform grassProperties
 
 layout (std140) uniform lightInfo
 {
-	vec3 vLight;
+	vec3 lightVector;
 	vec4 lightColor;
 	vec4 ambientColor;
 	vec4 backColor;
@@ -44,7 +44,7 @@ void main()
 	vDistance = current.w;
 	
 	// Shadow mapping
-	float diffuse = dot(vec3(0.0, 1.0, 0.0), vLight);
+	float diffuse = dot(vec3(0.0, 1.0, 0.0), lightVector);
 	float shadow = textureProj(shadowMapSampler, shadowCoords);
 	shadow += shadowFactor;
 	shadow = clamp(shadow, 0.0, 1.0);
@@ -68,5 +68,8 @@ void main()
 	vLightColor = lightColor;
 	vBackColor = backColor;
 	
-	gl_Position = viewProjection * position;
+	vec4 finalPosition = viewProjection * position;
+	vAmbient += vec4(dot(vec3(0.0, 1.0, 0.0), normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz)) * 2.0 * shadowFactor);
+	
+	gl_Position = finalPosition; //viewProjection * position;
 }

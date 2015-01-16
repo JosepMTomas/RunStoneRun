@@ -16,6 +16,7 @@ layout (std140) uniform lightInfo
 	vec4 lightColor;
 	vec4 ambientColor;
 	vec4 backColor;
+	float shadowFactor;
 };
 
 uniform mat4 viewProjection;
@@ -53,7 +54,10 @@ void main()
 	diffuse = clamp(diffuse, 0.0, 1.0);
 	vDiffuse = lightColor * diffuse;
 	
+	vec4 finalPosition = viewProjection * vPosition;
+	
 	vAmbient = ambientColor;
+	vAmbient += dot(vec3(0.0, 1.0, 0.0), normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz)) * shadowFactor * 2.0;
 
 	// Vertex distance to origin
 	vDistance = property.w;
@@ -61,5 +65,5 @@ void main()
 	
 	vBackColor = backColor;
 	
-	gl_Position = viewProjection * vPosition;
+	gl_Position = finalPosition; //viewProjection * vPosition;
 }

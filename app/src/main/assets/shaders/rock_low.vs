@@ -15,12 +15,15 @@ layout (std140) uniform lightInfo
 	vec4 lightColor;
 	vec4 ambientColor;
 	vec4 backColor;
+	float shadowFactor;
 };
 
 uniform mat4 viewProjection;
 uniform sampler2D diffuseSampler;
 
 out vec4 vColor;
+
+const vec3 lightPos = vec3(0.0, 50.0, 0.0);
 
 void main()
 {
@@ -35,14 +38,27 @@ void main()
 	// final distance
 	//float dist = property.w;
 	
+	vec4 finalPosition = viewProjection * position;
+	
 	// diffuse component
 	vec4 diffuseTex = texture(diffuseSampler, aTexCoord);
 	float diffuse = dot(aNormal, vLight);
+	float diffuse2 = dot(aNormal, normalize(lightPos - position.xyz));
 	diffuse = clamp(diffuse, 0.0, 1.0);
-	diffuseTex *= (lightColor * diffuse);
+	diffuse2 = clamp(diffuse2, 0.0, 1.0) * 2.0 * shadowFactor; 
 	
-	vColor = mix(diffuseTex, backColor, property.w);
+	vec4 ambient = diffuseTex * ambientColor;
+	
+	diffuseTex = (diffuseTex * lightColor * diffuse) + (diffuseTex * diffuse2);
+	
+	vColor = mix(diffuseTex + ambient, backColor, property.w);
+	
+	
+	//diffuse = dot(aNormal, normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz));
+	//diffuse = clamp(diffuse, 0.0, 1.0);
+	
+	//vColor += diffuse;
 	
 	// vertex shader output
-	gl_Position = viewProjection * position;
+	gl_Position = finalPosition;
 }

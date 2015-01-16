@@ -9,6 +9,7 @@ in float vShadows;
 in vec4 vLightColor;
 in vec4 vAmbient;
 in vec4 vBackColor;
+in float vLight;
 //in vec4 vLodColor;
 
 out vec4 fragColor;
@@ -19,7 +20,7 @@ void main()
 	
 	if(diffuseTex.w < 0.25) discard;
 	
-	vec4 ambientTex = diffuseTex * vAmbient;
+	vec4 ambientTex = diffuseTex * vAmbient; // + diffuseTex * vLight;
 	
 	diffuseTex *= vLightColor;
 	

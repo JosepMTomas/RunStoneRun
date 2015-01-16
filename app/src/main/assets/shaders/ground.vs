@@ -16,6 +16,7 @@ out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBinormal;
 out vec3 vColor;
+out vec3 vLight;
 
 out float vDistance;
 
@@ -23,7 +24,7 @@ out vec4 vShadowCoords;
 
 void main()
 {
-	vPosition = aPosition;
+	vPosition = uModelViewProjection * aPosition;
 	vTexCoord = aTexCoord * 2.0;
 	vNormal = normalize(aNormal);
 	vTangent = aTangent.xyz;
@@ -34,6 +35,8 @@ void main()
 	vDistance = clamp(vDistance, 0.0, 1.0);
 	
 	vShadowCoords = uShadowMatrix * (uModel * aPosition);
+	
+	vLight = normalize(vec3(0.0, 50.0, 0.0) - vPosition.xyz);
 
-	gl_Position = uModelViewProjection * aPosition;
+	gl_Position = vPosition;
 }

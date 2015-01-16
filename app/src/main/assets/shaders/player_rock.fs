@@ -3,9 +3,10 @@ precision highp float;
 
 layout (std140) uniform lightInfo
 {
-	vec3 vLight;
+	vec3 lightVector;
 	vec4 lightColor;
 	vec4 ambientColor;
+	float shadowFactor;
 };
 
 // textures
@@ -18,10 +19,11 @@ in vec3 vNormal;
 in vec3 vTangent;
 in vec3 vBinormal;
 
-//in float vDiffuse;
 in float vShadows;
 
 out vec4 fragColor;
+
+const vec3 vLight = normalize(vec3(0.0,0.5,1.0));
 
 void main()
 {
@@ -33,13 +35,18 @@ void main()
 	
 	vec4 ambient = diffuseTex * ambientColor;
 	
-	float diffuse = dot(normal, vLight);
+	float diffuse = dot(normal, lightVector);
 	diffuse = clamp(diffuse, 0.0, 1.0);
 	
-	float shading = diffuse * vShadows;
+	float diffuse2 = dot(normal, vLight) * (1.0 - shadowFactor);
+	diffuse2 = clamp(diffuse2, 0.0, 1.0);
+	
+	float shading = (diffuse * vShadows) + (1.0 - shadowFactor);
 	//shading += 0.25;
 	shading = clamp(shading, 0.0, 1.0);
 	
-	fragColor = diffuseTex * shading * lightColor;
+	fragColor = (diffuseTex * shading * lightColor) + (diffuseTex * diffuse2);
 	fragColor += ambient;
+	
+	//fragColor = vec4(shadowFactor);
 }
