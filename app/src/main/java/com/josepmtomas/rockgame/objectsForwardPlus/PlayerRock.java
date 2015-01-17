@@ -89,7 +89,6 @@ public class PlayerRock
 	private int[] reflectionVboHandles = new int[2];
 	public int[] reflectionVaoHandle = new int[1];
 
-
 	// Shader program
 	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
@@ -146,6 +145,8 @@ public class PlayerRock
 
 	private int currentState = MOVING_FORWARD;
 
+	private SmokeParticleSystem smokeParticleSystem;
+
 	private LightInfo lightInfo;
 
 	private GameActivity parent;
@@ -164,7 +165,7 @@ public class PlayerRock
 		shadowPassProgram = new ShadowPassProgram(context);
 		playerRockProgram = new PlayerRockProgram(context);
 
-		//load(context, R.raw.spherified_cube2);
+		smokeParticleSystem = new SmokeParticleSystem(context);
 
 		glGenVertexArrays(1, vaoHandle, 0);
 
@@ -568,6 +569,8 @@ public class PlayerRock
 
 	public void update(float[] viewProjectionMatrix, float deltaTime)
 	{
+		smokeParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, currentSpeed, deltaTime);
+
 		if(state == PLAYER_ROCK_NOT_VISIBLE)
 		{
 			float speedDifference = (notVisibleSpeed - currentSpeed) * deltaTime;
@@ -601,6 +604,7 @@ public class PlayerRock
 				playerRockTimer = 0f;
 				playerRockTimerPercent = 1f;
 				state = PLAYER_ROCK_NOT_VISIBLE;
+				smokeParticleSystem.setEnabled(false);
 			}
 
 			currentPositionY = lerp(currentPositionY, 10f, playerRockTimerPercent);
@@ -773,6 +777,15 @@ public class PlayerRock
 
 		glBindVertexArray(vaoHandle[0]);
 		glDrawElements(GL_TRIANGLES, numElementsToDraw, GL_UNSIGNED_SHORT, 0);
+
+		glDepthMask(false);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		smokeParticleSystem.draw();
+
+		glDisable(GL_BLEND);
+		glDepthMask(true);
 	}
 
 
@@ -791,6 +804,7 @@ public class PlayerRock
 	public void setAppearing()
 	{
 		state = PLAYER_ROCK_APPEARING;
+	//	smokeParticleSystem.setEnabled(true);
 	}
 
 
@@ -833,6 +847,7 @@ public class PlayerRock
 		currentSpeed = 0f;
 		currentPositionY = 10f;
 		initialForce = 0f;
+		smokeParticleSystem.setEnabled(true);
 	}
 
 	public void endGame()

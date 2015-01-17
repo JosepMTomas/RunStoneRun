@@ -982,6 +982,7 @@ public class OptionsMenu
 
 	public void setAppearing(int previousMenu)
 	{
+		menuTimer = 0f;
 		this.previousMenu = previousMenu;
 		loadPreferences();
 		currentState = UI_STATE_APPEARING;

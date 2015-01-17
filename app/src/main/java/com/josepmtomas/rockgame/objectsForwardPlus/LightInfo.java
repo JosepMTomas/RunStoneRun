@@ -39,7 +39,7 @@ public class LightInfo
 	public float[] viewProjection = new float[16];
 
 	// Time
-	public float timeOfDay = 10f;
+	public float timeOfDay = 12f;
 	private float timeOfDayMultiplier = 0.25f;
 	public float timeOfDayAlpha = 0f;
 
