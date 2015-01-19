@@ -162,6 +162,7 @@ public class Ground
 	private Plant palmPlant;
 	private Rock rockA;
 	private Rock rockB;
+	private Rock rockC;
 
 	// Broken objects
 	private boolean drawBrokenTree = false;
@@ -232,6 +233,8 @@ public class Ground
 	private int rockANormalTexture;
 	private int rockBDiffuseTexture;
 	private int rockBNormalTexture;
+	private int rockCDiffuseTexture;
+	private int rockCNormalTexture;
 	private int[] groundTextures;
 	private int[] groundNormalTextures;
 
@@ -338,6 +341,13 @@ public class Ground
 	private FloatBuffer rockBArrayBufferLODB;
 	private final int[] rockBArrayUbo;
 	private int[] rockBNumInstances = {0,0};
+
+	private float[] rockCArrayLODA;
+	private float[] rockCArrayLODB;
+	private FloatBuffer rockCArrayBufferLODA;
+	private FloatBuffer rockCArrayBufferLODB;
+	private final int[] rockCArrayUbo;
+	private int[] rockCNumInstances = {0,0};
 
 	// Grass
 	private int[] grassUbo;
@@ -501,6 +511,11 @@ public class Ground
 
 		rockB = new Rock(context, "models/rock_b_lod_a.vbm", "models/rock_b_lod_b.vbm");
 		rockB.addShadowGeometry("models/rock_b_lod_b.vbm");
+		rockB.addReflectionGeometry("models/rock_b_reflection.vbm");
+
+		rockC = new Rock(context, "models/rock_c_lod_a.vbm", "models/rock_c_lod_b.vbm");
+		rockC.addShadowGeometry("models/rock_c_lod_b.vbm");
+		rockC.addReflectionGeometry("models/rock_c_reflection.vbm");
 
 		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_a.vbm", "models/pine_tree_broken_b.vbm");
 		brokenPineTree.addShadowGeometry("models/pine_tree_broken_root_shadow.vbm", "models/pine_tree_broken_top_shadow.vbm");
@@ -623,6 +638,7 @@ public class Ground
 		palmPlantArrayUbo = new int[2];
 		rockAArrayUbo = new int[2];
 		rockBArrayUbo = new int[2];
+		rockCArrayUbo = new int[2];
 
 		this.createObjectsPatches();		// Create the patches (class)
 		Log.d(TAG, "Created objects patches");
@@ -849,7 +865,7 @@ public class Ground
 		palmPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] rockADiffuseTextureMips = {
-				"textures/rocks/rock_a_diffuse_mip_0.mp3",
+				//"textures/rocks/rock_a_diffuse_mip_0.mp3",
 				"textures/rocks/rock_a_diffuse_mip_1.mp3",
 				"textures/rocks/rock_a_diffuse_mip_2.mp3",
 				"textures/rocks/rock_a_diffuse_mip_3.mp3",
@@ -863,46 +879,74 @@ public class Ground
 		rockADiffuseTexture = TextureHelper.loadETC2Texture(context, rockADiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockANormalTextureMips = {
-				"textures/rocks/rock_a_normal_mip_0.mp3",
-				"textures/rocks/rock_a_normal_mip_1.mp3",
-				"textures/rocks/rock_a_normal_mip_2.mp3",
-				"textures/rocks/rock_a_normal_mip_3.mp3",
-				"textures/rocks/rock_a_normal_mip_4.mp3",
-				"textures/rocks/rock_a_normal_mip_5.mp3",
-				"textures/rocks/rock_a_normal_mip_6.mp3",
-				"textures/rocks/rock_a_normal_mip_7.mp3",
-				"textures/rocks/rock_a_normal_mip_8.mp3"
+				//"textures/rock_a/normal_mip_0.mp3",
+				"textures/rock_a/normal_mip_1.mp3",
+				"textures/rock_a/normal_mip_2.mp3",
+				"textures/rock_a/normal_mip_3.mp3",
+				"textures/rock_a/normal_mip_4.mp3",
+				"textures/rock_a/normal_mip_5.mp3",
+				"textures/rock_a/normal_mip_6.mp3",
+				"textures/rock_a/normal_mip_7.mp3",
+				"textures/rock_a/normal_mip_8.mp3"
 		};
 		Log.d(TAG, "Loading rock a normal texture");
 		rockANormalTexture = TextureHelper.loadETC2Texture(context, rockANormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockBDiffuseTextureMips = {
-				//"textures/rocks/rock_b_diffuse_mip_0.mp3",
-				"textures/rocks/rock_b_diffuse_mip_1.mp3",
-				"textures/rocks/rock_b_diffuse_mip_2.mp3",
-				"textures/rocks/rock_b_diffuse_mip_3.mp3",
-				"textures/rocks/rock_b_diffuse_mip_4.mp3",
-				"textures/rocks/rock_b_diffuse_mip_5.mp3",
-				"textures/rocks/rock_b_diffuse_mip_6.mp3",
-				"textures/rocks/rock_b_diffuse_mip_7.mp3",
-				"textures/rocks/rock_b_diffuse_mip_8.mp3"
+				//"textures/rock_b/diffuse_mip_0.mp3",
+				"textures/rock_b/diffuse_mip_1.mp3",
+				"textures/rock_b/diffuse_mip_2.mp3",
+				"textures/rock_b/diffuse_mip_3.mp3",
+				"textures/rock_b/diffuse_mip_4.mp3",
+				"textures/rock_b/diffuse_mip_5.mp3",
+				"textures/rock_b/diffuse_mip_6.mp3",
+				"textures/rock_b/diffuse_mip_7.mp3",
+				"textures/rock_b/diffuse_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock a diffuse texture");
+		Log.d(TAG, "Loading rock b diffuse texture");
 		rockBDiffuseTexture = TextureHelper.loadETC2Texture(context, rockBDiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockBNormalTextureMips = {
-				//"textures/rocks/rock_b_normal_mip_0.mp3",
-				"textures/rocks/rock_b_normal_mip_1.mp3",
-				"textures/rocks/rock_b_normal_mip_2.mp3",
-				"textures/rocks/rock_b_normal_mip_3.mp3",
-				"textures/rocks/rock_b_normal_mip_4.mp3",
-				"textures/rocks/rock_b_normal_mip_5.mp3",
-				"textures/rocks/rock_b_normal_mip_6.mp3",
-				"textures/rocks/rock_b_normal_mip_7.mp3",
-				"textures/rocks/rock_b_normal_mip_8.mp3"
+				//"textures/rock_b/normal_mip_0.mp3",
+				"textures/rock_b/normal_mip_1.mp3",
+				"textures/rock_b/normal_mip_2.mp3",
+				"textures/rock_b/normal_mip_3.mp3",
+				"textures/rock_b/normal_mip_4.mp3",
+				"textures/rock_b/normal_mip_5.mp3",
+				"textures/rock_b/normal_mip_6.mp3",
+				"textures/rock_b/normal_mip_7.mp3",
+				"textures/rock_b/normal_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock a normal texture");
+		Log.d(TAG, "Loading rock b normal texture");
 		rockBNormalTexture = TextureHelper.loadETC2Texture(context, rockBNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
+
+		String[] rockCDiffuseTextureMips = {
+				//"textures/rock_c/diffuse_mip_0.mp3",
+				"textures/rock_c/diffuse_mip_1.mp3",
+				"textures/rock_c/diffuse_mip_2.mp3",
+				"textures/rock_c/diffuse_mip_3.mp3",
+				"textures/rock_c/diffuse_mip_4.mp3",
+				"textures/rock_c/diffuse_mip_5.mp3",
+				"textures/rock_c/diffuse_mip_6.mp3",
+				"textures/rock_c/diffuse_mip_7.mp3",
+				"textures/rock_c/diffuse_mip_8.mp3",
+		};
+		Log.d(TAG, "Loading rock c diffuse texture");
+		rockCDiffuseTexture = TextureHelper.loadETC2Texture(context, rockCDiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
+
+		String[] rockCNormalTextureMips = {
+				//"textures/rock_c/normal_mip_0.mp3",
+				"textures/rock_c/normal_mip_1.mp3",
+				"textures/rock_c/normal_mip_2.mp3",
+				"textures/rock_c/normal_mip_3.mp3",
+				"textures/rock_c/normal_mip_4.mp3",
+				"textures/rock_c/normal_mip_5.mp3",
+				"textures/rock_c/normal_mip_6.mp3",
+				"textures/rock_c/normal_mip_7.mp3",
+				"textures/rock_c/normal_mip_8.mp3",
+		};
+		Log.d(TAG, "Loading rock c normal texture");
+		rockCNormalTexture = TextureHelper.loadETC2Texture(context, rockCNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] groundBlackTextureMips = {
 				//"textures/ground/ground_black_mip_0.mp3",
@@ -2146,29 +2190,22 @@ public class Ground
 
 		glEnable(GL_CULL_FACE);
 
-		/*groundSimpleProgram.useProgram();
-		groundSimpleProgram.setCommonUniforms(shadowMatrix, shadowMapSampler, groundTextures[0], groundTextures[2]);
-
-		for(int i=0; i < numGroundPatchesX; i++)
-		{
-			for (int j=0; j < numGroundPatchesZ; j++)
-			{
-				if(groundPatches[i][j].visible && groundPatches[i][j].type == GROUND_PATCH_RIVER_EXIT)
-				{
-					groundSimpleProgram.setSpecificUniforms(groundPatches[i][j].getModelMatrix(), groundPatches[i][j].getModelViewProjectionMatrix());
-
-					glBindVertexArray(groundPatches[i][j].riverExitReflectionVaoHandle[0]);
-					glDrawElements(GL_TRIANGLES, 300, GL_UNSIGNED_SHORT, 0);
-				}
-			}
-		}*/
-
 		rockLowProgram.useProgram();
+
 		rockLowProgram.setCommonUniforms(viewProjection, rockADiffuseTexture);
 		rockLowProgram.setSpecificUniforms(rockAArrayUbo[LOD_A]);
-
 		glBindVertexArray(rockA.reflectionVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockA.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, rockANumInstances[LOD_A]);
+
+		rockLowProgram.setCommonUniforms(viewProjection, rockBDiffuseTexture);
+		rockLowProgram.setSpecificUniforms(rockBArrayUbo[LOD_A]);
+		glBindVertexArray(rockB.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, rockB.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_A]);
+
+		rockLowProgram.setCommonUniforms(viewProjection, rockCDiffuseTexture);
+		rockLowProgram.setSpecificUniforms(rockCArrayUbo[LOD_A]);
+		glBindVertexArray(rockC.reflectionVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, rockC.numReflectionElementsToDraw, GL_UNSIGNED_SHORT, 0, rockCNumInstances[LOD_A]);
 	}
 
 
@@ -2239,6 +2276,10 @@ public class Ground
 		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, rockBArrayUbo[LOD_A]);
 		glBindVertexArray(rockB.shadowVaoHandle[0]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockB.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_A]);
+
+		treeShadowPassProgram.setUniforms(lightInfo.viewProjection, rockCArrayUbo[LOD_A]);
+		glBindVertexArray(rockC.shadowVaoHandle[0]);
+		glDrawElementsInstanced(GL_TRIANGLES, rockC.numShadowElementsToDraw, GL_UNSIGNED_SHORT, 0, rockCNumInstances[LOD_A]);
 
 		glEnable(GL_CULL_FACE);
 	}
@@ -2436,9 +2477,9 @@ public class Ground
 
 
 		rockProgram.useProgram();
+
 		rockProgram.setCommonUniforms(viewProjection, rockADiffuseTexture, rockANormalTexture);
 		rockProgram.setSpecificUniforms(rockAArrayUbo[LOD_A]);
-
 		glBindVertexArray(rockA.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockA.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockANumInstances[LOD_A]);
 
@@ -2447,7 +2488,13 @@ public class Ground
 		glBindVertexArray(rockB.vaoHandles[LOD_A]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockB.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_A]);
 
+		rockProgram.setCommonUniforms(viewProjection, rockCDiffuseTexture, rockCNormalTexture);
+		rockProgram.setSpecificUniforms(rockCArrayUbo[LOD_A]);
+		glBindVertexArray(rockC.vaoHandles[LOD_A]);
+		glDrawElementsInstanced(GL_TRIANGLES, rockC.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, rockCNumInstances[LOD_A]);
+
 		rockLowProgram.useProgram();
+
 		rockLowProgram.setCommonUniforms(viewProjection, rockADiffuseTexture);
 		rockLowProgram.setSpecificUniforms(rockAArrayUbo[LOD_B]);
 		glBindVertexArray(rockA.vaoHandles[LOD_B]);
@@ -2457,6 +2504,11 @@ public class Ground
 		rockLowProgram.setSpecificUniforms(rockBArrayUbo[LOD_B]);
 		glBindVertexArray(rockB.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, rockB.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, rockBNumInstances[LOD_B]);
+
+		rockLowProgram.setCommonUniforms(viewProjection, rockCDiffuseTexture);
+		rockLowProgram.setSpecificUniforms(rockCArrayUbo[LOD_B]);
+		glBindVertexArray(rockC.vaoHandles[LOD_B]);
+		glDrawElementsInstanced(GL_TRIANGLES, rockC.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, rockCNumInstances[LOD_B]);
 	}
 
 
@@ -2862,6 +2914,9 @@ public class Ground
 		rockBArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 		rockBArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
 
+		rockCArrayLODA = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+		rockCArrayLODB = new float[MAX_TREE_INSTANCES_TOTAL * 4];
+
 
 		for(int i=0; i < MAX_TREE_INSTANCES_TOTAL; i++)
 		{
@@ -2973,6 +3028,16 @@ public class Ground
 			rockBArrayLODB[i*4 + 1] = 0f;
 			rockBArrayLODB[i*4 + 2] = 0f;
 			rockBArrayLODB[i*4 + 3] = 0f;
+
+			rockCArrayLODA[i*4] = 0f;
+			rockCArrayLODA[i*4 + 1] = 0f;
+			rockCArrayLODA[i*4 + 2] = 0f;
+			rockCArrayLODA[i*4 + 3] = 0f;
+
+			rockCArrayLODB[i*4] = 0f;
+			rockCArrayLODB[i*4 + 1] = 0f;
+			rockCArrayLODB[i*4 + 2] = 0f;
+			rockCArrayLODB[i*4 + 3] = 0f;
 
 		}
 
@@ -3126,6 +3191,20 @@ public class Ground
 				.put(rockBArrayLODB);
 		rockBArrayBufferLODB.position(0);
 
+		rockCArrayBufferLODA = ByteBuffer
+				.allocateDirect(rockCArrayLODA.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(rockCArrayLODA);
+		rockCArrayBufferLODA.position(0);
+
+		rockCArrayBufferLODB = ByteBuffer
+				.allocateDirect(rockCArrayLODB.length * BYTES_PER_FLOAT)
+				.order(ByteOrder.nativeOrder())
+				.asFloatBuffer()
+				.put(rockCArrayLODB);
+		rockCArrayBufferLODB.position(0);
+
 		glGenBuffers(2, pineTreeArrayUbo, 0);
 		glGenBuffers(2, hugeTreeArrayUbo, 0);
 		glGenBuffers(2, palmTreeArrayUbo, 0);
@@ -3136,6 +3215,7 @@ public class Ground
 		glGenBuffers(2, palmPlantArrayUbo, 0);
 		glGenBuffers(2, rockAArrayUbo, 0);
 		glGenBuffers(2, rockBArrayUbo, 0);
+		glGenBuffers(2, rockCArrayUbo, 0);
 
 
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_A]);
@@ -3198,6 +3278,12 @@ public class Ground
 		glBufferData(GL_UNIFORM_BUFFER, rockBArrayBufferLODB.capacity() * BYTES_PER_FLOAT, rockBArrayBufferLODB, GL_DYNAMIC_DRAW);
 
 
+		glBindBuffer(GL_UNIFORM_BUFFER, rockCArrayUbo[LOD_A]);
+		glBufferData(GL_UNIFORM_BUFFER, rockCArrayBufferLODA.capacity() * BYTES_PER_FLOAT, rockCArrayBufferLODA, GL_DYNAMIC_DRAW);
+		glBindBuffer(GL_UNIFORM_BUFFER, rockCArrayUbo[LOD_B]);
+		glBufferData(GL_UNIFORM_BUFFER, rockCArrayBufferLODB.capacity() * BYTES_PER_FLOAT, rockCArrayBufferLODB, GL_DYNAMIC_DRAW);
+
+
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 
@@ -3225,6 +3311,8 @@ public class Ground
 		int rockAOffsetLODB = 0;
 		int rockBOffsetLODA = 0;
 		int rockBOffsetLODB = 0;
+		int rockCOffsetLODA = 0;
+		int rockCOffsetLODB = 0;
 
 		// IMPORTANT! reset instance count
 		pineTreeNumInstances[LOD_A] = 0;
@@ -3256,6 +3344,9 @@ public class Ground
 
 		rockBNumInstances[LOD_A] = 0;
 		rockBNumInstances[LOD_B] = 0;
+
+		rockCNumInstances[LOD_A] = 0;
+		rockCNumInstances[LOD_B] = 0;
 
 		for(int x=0; x < numObjectsPatchesX; x++)
 		{
@@ -3462,6 +3553,26 @@ public class Ground
 					System.arraycopy(objectsPatches[x][z].rockBPointsLODB, 0, rockBArrayLODB, rockBOffsetLODB, numElements);
 					rockBOffsetLODB += numElements;
 				}
+
+				// rock C
+
+				numElements = objectsPatches[x][z].rockCNumInstances[LOD_A];
+				if(numElements > 0)
+				{
+					rockCNumInstances[LOD_A] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].rockCPointsLODA, 0, rockCArrayLODA, rockCOffsetLODA, numElements);
+					rockCOffsetLODA += numElements;
+				}
+
+				numElements = objectsPatches[x][z].rockCNumInstances[LOD_B];
+				if(numElements > 0)
+				{
+					rockCNumInstances[LOD_B] += numElements;
+					numElements = numElements * 4;
+					System.arraycopy(objectsPatches[x][z].rockCPointsLODB, 0, rockCArrayLODB, rockCOffsetLODB, numElements);
+					rockCOffsetLODB += numElements;
+				}
 			}
 		}
 
@@ -3545,6 +3656,14 @@ public class Ground
 		rockBArrayBufferLODB.put(rockBArrayLODB, 0, rockBArrayLODB.length);
 		rockBArrayBufferLODB.position(0);
 
+		rockCArrayBufferLODA.position(0);
+		rockCArrayBufferLODA.put(rockCArrayLODA, 0, rockCArrayLODA.length);
+		rockCArrayBufferLODA.position(0);
+
+		rockCArrayBufferLODB.position(0);
+		rockCArrayBufferLODB.put(rockCArrayLODB, 0, rockCArrayLODB.length);
+		rockCArrayBufferLODB.position(0);
+
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_A]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, pineTreeOffsetLODA * BYTES_PER_FLOAT, pineTreeArrayBufferLODA);
 		glBindBuffer(GL_UNIFORM_BUFFER, pineTreeArrayUbo[LOD_B]);
@@ -3594,6 +3713,12 @@ public class Ground
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockBOffsetLODA * BYTES_PER_FLOAT, rockBArrayBufferLODA);
 		glBindBuffer(GL_UNIFORM_BUFFER, rockBArrayUbo[LOD_B]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockBOffsetLODB * BYTES_PER_FLOAT, rockBArrayBufferLODB);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, rockCArrayUbo[LOD_A]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockCOffsetLODA * BYTES_PER_FLOAT, rockCArrayBufferLODA);
+		glBindBuffer(GL_UNIFORM_BUFFER, rockCArrayUbo[LOD_B]);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, rockCOffsetLODB * BYTES_PER_FLOAT, rockCArrayBufferLODB);
+
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	}
 

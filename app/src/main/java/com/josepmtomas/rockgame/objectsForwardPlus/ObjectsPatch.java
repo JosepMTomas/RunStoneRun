@@ -95,6 +95,11 @@ public class ObjectsPatch extends BoundarySampler
 	public float[] rockBPointsLODA;
 	public float[] rockBPointsLODB;
 
+	public float[] rockCPoints;
+	public int rockCNumPoints;
+	public float[] rockCPointsLODA;
+	public float[] rockCPointsLODB;
+
 
 	public int[] pineTreeNumInstances = {0,0};
 	public int[] hugeTreeNumInstances = {0,0};
@@ -106,6 +111,7 @@ public class ObjectsPatch extends BoundarySampler
 	public int[] palmPlantNumInstances = {0,0};
 	public int[] rockANumInstances = {0,0};
 	public int[] rockBNumInstances = {0,0};
+	public int[] rockCNumInstances = {0,0};
 
 	// Culling points
 	private float[] pineTreeCullingPoints;
@@ -178,6 +184,10 @@ public class ObjectsPatch extends BoundarySampler
 		rockBPoints = new float[384];
 		rockBPointsLODA = new float[1024];
 		rockBPointsLODB = new float[1024];
+
+		rockCPoints = new float[384];
+		rockCPointsLODA = new float[1024];
+		rockCPointsLODB = new float[1024];
 	}
 
 
@@ -211,6 +221,7 @@ public class ObjectsPatch extends BoundarySampler
 			palmPlantPoints[i] = 0f;
 			rockAPoints[i] = 0f;
 			rockBPoints[i] = 0f;
+			rockCPoints[i] = 0f;
 		}
 
 		for(int i=0; i < 1024; i++)
@@ -235,6 +246,8 @@ public class ObjectsPatch extends BoundarySampler
 			rockAPointsLODB[i] = 0f;
 			rockBPointsLODA[i] = 0f;
 			rockBPointsLODB[i] = 0f;
+			rockCPointsLODA[i] = 0f;
+			rockCPointsLODB[i] = 0f;
 		}
 
 		for(int i=0; i < (MAX_TREE_INSTANCES_TOTAL*4); i++)
@@ -257,6 +270,7 @@ public class ObjectsPatch extends BoundarySampler
 		int palmPlantCount = 0;
 		int rockACount = 0;
 		int rockBCount = 0;
+		int rockCCount = 0;
 
 		int pineTreeOffset = 0;
 		int hugeTreeOffset = 0;
@@ -268,6 +282,7 @@ public class ObjectsPatch extends BoundarySampler
 		int palmPlantOffset = 0;
 		int rockAOffset = 0;
 		int rockBOffset = 0;
+		int rockCOffset = 0;
 
 		int collisionCylindersOffset = 0;
 		int collisionSpheresOffset = 0;
@@ -287,6 +302,7 @@ public class ObjectsPatch extends BoundarySampler
 		palmPlantNumPoints = 0;
 		rockANumPoints = 0;
 		rockBNumPoints = 0;
+		rockCNumPoints = 0;
 
 		numCollisionCylinders = 0;
 		numCollisionSpheres = 0;
@@ -401,7 +417,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				palmPlantCount++;
 			}
-			else if(randomValue < 0.9f)
+			else if(randomValue < 0.85f)
 			{
 				scaleValue = random.nextFloat() * ROCK_A_SCALE_DIFFERENCE + ROCK_A_MIN_SCALE;
 
@@ -417,7 +433,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				rockACount++;
 			}
-			else if(randomValue < 1.1)
+			else if(randomValue < 0.9f)
 			{
 				scaleValue = random.nextFloat() * ROCK_B_SCALE_DIFFERENCE + ROCK_B_MIN_SCALE;
 
@@ -425,9 +441,29 @@ public class ObjectsPatch extends BoundarySampler
 				rockBPoints[rockBOffset++] = currentPoint.y;
 				rockBPoints[rockBOffset++] = scaleValue;
 
-				//TODO: collision
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.x + currentPoint.x + (0.208f * scaleValue);
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.y + (-0.908f * scaleValue);
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.z + currentPoint.y + (0.692f * scaleValue);
+				collisionSpheres[collisionSpheresOffset++] = 8.769f * scaleValue;
+				numCollisionSpheres++;
 
 				rockBCount++;
+			}
+			else if(randomValue < 1f)
+			{
+				scaleValue = random.nextFloat() * ROCK_C_SCALE_DIFFERENCE + ROCK_C_MIN_SCALE;
+
+				rockCPoints[rockCOffset++] = currentPoint.x;
+				rockCPoints[rockCOffset++] = currentPoint.y;
+				rockCPoints[rockCOffset++] = scaleValue;
+
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.x + currentPoint.x + (0.246f * scaleValue);
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.y + (3.743f * scaleValue);
+				collisionSpheres[collisionSpheresOffset++] = currentPosition.z + currentPoint.y;
+				collisionSpheres[collisionSpheresOffset++] = 9f;
+				numCollisionSpheres++;
+
+				rockCCount++;
 			}
 		}
 
@@ -442,6 +478,7 @@ public class ObjectsPatch extends BoundarySampler
 		palmPlantNumPoints = palmPlantCount;
 		rockANumPoints = rockACount;
 		rockBNumPoints = rockBCount;
+		rockCNumPoints = rockCCount;
 	}
 
 
@@ -924,7 +961,13 @@ public class ObjectsPatch extends BoundarySampler
 				rockBPointsLODA[offsetLODA++] = scale;
 				rockBPointsLODA[offsetLODA++] = distance / 800f;
 
+				collisionSpheres[collisionSpheresOffset++] = pointX + (0.208f * scale);
+				collisionSpheres[collisionSpheresOffset++] = (-0.908f * scale);
+				collisionSpheres[collisionSpheresOffset++] = pointZ + (0.692f * scale);
+				collisionSpheres[collisionSpheresOffset++] = 8.769f * scale; //13.766f * scale;
+
 				countLODA++;
+				collisionSpheresCount++;
 			}
 			else
 			{
@@ -939,6 +982,53 @@ public class ObjectsPatch extends BoundarySampler
 
 		rockBNumInstances[LOD_A] = countLODA;
 		rockBNumInstances[LOD_B] = countLODB;
+
+		// rock C
+
+		offsetLODA = 0;
+		offsetLODB = 0;
+		countLODA = 0;
+		countLODB = 0;
+
+		for(int i=0; i < rockCNumPoints; i++)
+		{
+			pointX = rockCPoints[i*3];
+			pointZ = rockCPoints[i*3 +1];
+			scale  = rockCPoints[i*3 +2];
+
+			pointX += currentPosition.x;
+			pointZ += currentPosition.z;
+
+			distance = distanceToOrigin(pointX, pointZ);
+
+			if(distance < TREE_LOD_A_MAX_DISTANCE)
+			{
+				rockCPointsLODA[offsetLODA++] = pointX;
+				rockCPointsLODA[offsetLODA++] = pointZ;
+				rockCPointsLODA[offsetLODA++] = scale;
+				rockCPointsLODA[offsetLODA++] = distance / 800f;
+
+				collisionSpheres[collisionSpheresOffset++] = pointX + (0.246f * scale);
+				collisionSpheres[collisionSpheresOffset++] = (3.743f * scale);
+				collisionSpheres[collisionSpheresOffset++] = pointZ;
+				collisionSpheres[collisionSpheresOffset++] = 9f * scale;
+
+				countLODA++;
+				collisionSpheresCount++;
+			}
+			else
+			{
+				rockCPointsLODB[offsetLODB++] = pointX;
+				rockCPointsLODB[offsetLODB++] = pointZ;
+				rockCPointsLODB[offsetLODB++] = scale;
+				rockCPointsLODB[offsetLODB++] = distance / 800f;
+
+				countLODB++;
+			}
+		}
+
+		rockCNumInstances[LOD_A] = countLODA;
+		rockCNumInstances[LOD_B] = countLODB;
 
 		//
 
@@ -991,6 +1081,7 @@ public class ObjectsPatch extends BoundarySampler
 	// Save/Load state
 	////////////////////////////////////////////////////////////////////////////////////////////
 
+	//TODO: incomplete
 	public void saveState(FileOutputStream outputStream, int x, int z) throws IOException
 	{
 		int numPoints;

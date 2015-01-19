@@ -498,7 +498,7 @@ public class Hud
 
 	public void resume()
 	{
-		livesCounterState = LIVES_TIMER_IDLE;
+		livesCounterState = LIVES_TIMER_COUNTING;
 		resetPauseButtonTexture();
 		resumingPanelTimer = 0f;
 		resumingPanelState = UI_STATE_APPEARING;

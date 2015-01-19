@@ -1,10 +1,11 @@
 package com.josepmtomas.rockgame;
 
-import android.util.FloatMath;
-
 /**
  * Created by Josep on 16/07/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class Constants
 {
 	public static final float PI2 = (float)Math.PI * 2.0f;
@@ -75,13 +76,17 @@ public class Constants
 	public static final float PALM_PLANT_MAX_SCALE = 1.5f;
 	public static final float PALM_PLANT_SCALE_DIFFERENCE = PALM_PLANT_MAX_SCALE - PALM_PLANT_MIN_SCALE;
 
-	public static final float ROCK_A_MIN_SCALE = 0.75f;
+	public static final float ROCK_A_MIN_SCALE = 1.0f;
 	public static final float ROCK_A_MAX_SCALE = 1.5f;
 	public static final float ROCK_A_SCALE_DIFFERENCE = ROCK_A_MAX_SCALE - ROCK_A_MIN_SCALE;
 
-	public static final float ROCK_B_MIN_SCALE = 0.75f;
-	public static final float ROCK_B_MAX_SCALE = 1.5f;
+	public static final float ROCK_B_MIN_SCALE = 1.5f;
+	public static final float ROCK_B_MAX_SCALE = 1.75f;
 	public static final float ROCK_B_SCALE_DIFFERENCE = ROCK_B_MAX_SCALE - ROCK_B_MIN_SCALE;
+
+	public static final float ROCK_C_MIN_SCALE = 1.25f;
+	public static final float ROCK_C_MAX_SCALE = 1.5f;
+	public static final float ROCK_C_SCALE_DIFFERENCE = ROCK_C_MAX_SCALE - ROCK_C_MIN_SCALE;
 
 	public static final int GROUND_PATCH_GROUND = 1;
 	public static final int GROUND_PATCH_RIVER_ENTRY = 2;
