@@ -31,6 +31,7 @@ import static android.opengl.Matrix.*;
  * Created by Josep M. Tomas on 05/09/2014.
  * @author Josep
  */
+
 public class PlayerRock
 {
 	private static final String TAG = "PlayerRock";
@@ -139,6 +140,7 @@ public class PlayerRock
 
 	// State
 	public float scoreMultiplier = 1.0f;
+	public int previousGroundPatchState = GROUND_PATCH_GROUND;
 	public int state = PLAYER_ROCK_NOT_VISIBLE;
 	public int lastObjectTypeHit = 0;
 	private float recoverTimer = 0f;
@@ -146,6 +148,7 @@ public class PlayerRock
 	private int currentState = MOVING_FORWARD;
 
 	private SmokeParticleSystem smokeParticleSystem;
+	private WaterParticleSystem waterParticleSystem;
 
 	private LightInfo lightInfo;
 
@@ -166,6 +169,7 @@ public class PlayerRock
 		playerRockProgram = new PlayerRockProgram(context);
 
 		smokeParticleSystem = new SmokeParticleSystem(context);
+		waterParticleSystem = new WaterParticleSystem(context);
 
 		glGenVertexArrays(1, vaoHandle, 0);
 
@@ -567,9 +571,24 @@ public class PlayerRock
 	}
 
 
-	public void update(float[] viewProjectionMatrix, float deltaTime)
+	public void update(float[] viewProjectionMatrix, float deltaTime, int groundPatchType)
 	{
-		smokeParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, currentSpeed, deltaTime);
+		smokeParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, deltaTime);
+		waterParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, deltaTime);
+
+		if(previousGroundPatchState == GROUND_PATCH_GROUND && groundPatchType != GROUND_PATCH_GROUND)
+		{
+			smokeParticleSystem.setEmitterEnabled(false);
+			waterParticleSystem.setEmitterEnabled(true);
+
+		}
+		else if(previousGroundPatchState != GROUND_PATCH_GROUND && groundPatchType == GROUND_PATCH_GROUND)
+		{
+			smokeParticleSystem.setEmitterEnabled(true);
+			waterParticleSystem.setEmitterEnabled(false);
+		}
+
+		previousGroundPatchState = groundPatchType;
 
 		if(state == PLAYER_ROCK_NOT_VISIBLE)
 		{
@@ -783,6 +802,7 @@ public class PlayerRock
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		smokeParticleSystem.draw();
+		waterParticleSystem.draw();
 
 		glDisable(GL_BLEND);
 		glDepthMask(true);
@@ -848,6 +868,9 @@ public class PlayerRock
 		currentPositionY = 10f;
 		initialForce = 0f;
 		smokeParticleSystem.setEnabled(true);
+		smokeParticleSystem.setEmitterEnabled(true);
+		waterParticleSystem.setEnabled(true);
+		waterParticleSystem.setEmitterEnabled(false);
 	}
 
 	public void endGame()

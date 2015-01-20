@@ -3995,6 +3995,30 @@ public class Ground
 	}
 
 
+	public int getNearestGroundPatchType()
+	{
+		float z1, z2;
+		int type1, type2;
+		int index = groundLowerIndex;
+
+		z1 = groundPatches[0][index].getCurrentPosition().z;
+		type1 = groundPatches[0][index].type;
+
+		index++;
+		index = index % numGroundPatchesZ;
+		z2 = groundPatches[0][index].getCurrentPosition().z;
+		type2 = groundPatches[0][index].type;
+
+		if(z1 < z2)
+		{
+			return type1;
+		}
+		else
+		{
+			return type2;
+		}
+	}
+
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////////////////////

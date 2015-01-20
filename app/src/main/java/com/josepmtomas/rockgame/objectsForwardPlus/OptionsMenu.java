@@ -284,7 +284,7 @@ public class OptionsMenu
 		}
 
 		touchSpeedButton();
-		touchVisibilityButton();
+		//touchVisibilityButton();
 	}
 
 

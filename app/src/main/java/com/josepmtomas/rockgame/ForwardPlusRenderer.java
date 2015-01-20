@@ -171,7 +171,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Score
 	private float fScore = 0f;
-	private int iScore = 0;
+	private float fScoreIncrement = 0f;
 
 	// PlaterRock state
 	private int previousState = PLAYER_ROCK_MOVING;
@@ -617,7 +617,7 @@ public class ForwardPlusRenderer implements Renderer
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 
 		// Update View-Projection matrix on objects
-		playerRock.update(viewProjection, deltaTime);
+		playerRock.update(viewProjection, deltaTime, ground.getNearestGroundPatchType());
 		playerRock.updateLightMatrices(shadowViewProjection);
 		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], deltaTime);
 		skyDome.update(viewProjection);
@@ -663,10 +663,11 @@ public class ForwardPlusRenderer implements Renderer
 		}
 
 		// Score
-		fScore += playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
+		fScoreIncrement = playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
+		fScore += fScoreIncrement; //playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 
 		// Update hud
-		hud.update((int)fScore, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS, deltaTime);
+		hud.update((int)fScore, (int)fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS, deltaTime);
 		groundShield.update(deltaTime);
 
 		// Game state
@@ -912,6 +913,8 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void newGame()
 	{
+		setDefaultMenuPreferences();
+
 		rendererState = RENDERER_STATE_PLAYING;
 		isPaused = false;
 		ground.newGame();
@@ -921,7 +924,6 @@ public class ForwardPlusRenderer implements Renderer
 		playerRock.newGame();
 		playerRock.setAppearing();
 		groundShield.newGame();
-		iScore = 0;
 		fScore = 0f;
 	}
 
@@ -929,7 +931,8 @@ public class ForwardPlusRenderer implements Renderer
 	{
 		playerRock.endGame();
 		hud.setDisappearing();
-
+		hud.endGame();
+		groundShield.endGame();
 	}
 
 	public void gameOver()
@@ -939,7 +942,6 @@ public class ForwardPlusRenderer implements Renderer
 
 		rendererState = RENDERER_STATE_CHANGING_MENU;
 		gameOverMenu.setAppearing((int)fScore);
-		//mainMenu.setAppearing();
 	}
 
 	public void changingToCreditsMenu()
@@ -1171,15 +1173,20 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 
-	public void onDestroy()
+	public void setDefaultMenuPreferences()
 	{
-		// Preferences (default values for menu preferences)
-
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 
 		editor.putBoolean("SpeedEnabled", false);
 		editor.putBoolean("VisibilityEnabled", true);
 		editor.apply();
+	}
+
+
+	public void onDestroy()
+	{
+		// Preferences (default values for menu preferences)
+		setDefaultMenuPreferences();
 
 		// State (save the state of the current game)
 

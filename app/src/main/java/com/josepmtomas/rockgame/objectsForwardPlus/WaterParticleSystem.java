@@ -1,7 +1,11 @@
 package com.josepmtomas.rockgame.objectsForwardPlus;
 
 import android.content.Context;
-//import android.util.Log;
+
+import com.josepmtomas.rockgame.programsForwardPlus.ParticleProgram;
+import com.josepmtomas.rockgame.util.TextureHelper;
+
+import static com.josepmtomas.rockgame.Constants.*;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,18 +16,13 @@ import java.util.Random;
 import static android.opengl.GLES30.*;
 import static android.opengl.Matrix.*;
 
-import com.josepmtomas.rockgame.programsForwardPlus.ParticleProgram;
-import com.josepmtomas.rockgame.util.TextureHelper;
-
-import static com.josepmtomas.rockgame.Constants.*;
-
 /**
- * Created by Josep on 16/01/2015.
+ * Created by Josep on 20/01/2015.
  * @author Josep
  */
-public class SmokeParticleSystem
+
+public class WaterParticleSystem
 {
-	//private static final String TAG = "SmokePS";
 
 	// Geometry
 	private int[] vaoHandle = new int[1];
@@ -67,13 +66,13 @@ public class SmokeParticleSystem
 	private final int smokeTexture;
 
 
-	public SmokeParticleSystem(Context context)
+	public WaterParticleSystem(Context context)
 	{
 		random = new Random();
 
 		particleProgram = new ParticleProgram(context);
 
-		smokeTexture = TextureHelper.loadETC2Texture(context, "textures/particles/smoke.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		smokeTexture = TextureHelper.loadETC2Texture(context, "textures/particles/water_splash.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		createGeometry();
 		createParticlesBuffer();
@@ -244,7 +243,7 @@ public class SmokeParticleSystem
 			currentOffset = currentIndex * 4;
 
 			// Obtain new angle
-			angle = random.nextFloat() * 180f - 90f;
+			angle = random.nextFloat() * 90f - 45f;
 
 			// Obtain new direction
 			setIdentityM(rotationMatrix, 0);
@@ -262,9 +261,9 @@ public class SmokeParticleSystem
 
 			// New rotation
 			if(angle < 0)
-				rotations[currentIndex] = random.nextFloat() * 30f;
+				rotations[currentIndex] = random.nextFloat() * -15f;
 			else
-				rotations[currentIndex] = random.nextFloat() * -30f;
+				rotations[currentIndex] = random.nextFloat() * 15f;
 
 			angles[currentIndex] = random.nextFloat() * 360f;
 
@@ -322,9 +321,9 @@ public class SmokeParticleSystem
 			// Update matrices
 			index = currentIndex;
 			float scale;
-			for(i=0; i <numberOfParticles; i++)
+			for(int j =0; j <numberOfParticles; j++)
 			{
-				currentOffset = i *16;
+				currentOffset = j *16;
 
 				scale = Math.min(scales[index] * (timers[index] * 4f + 0.25f), scales[index]);
 
@@ -332,6 +331,7 @@ public class SmokeParticleSystem
 				translateM(particlesMatricesArray, currentOffset, positions[index*4], positions[index*4 + 1], positions[index*4 + 2]);
 				rotateM(particlesMatricesArray, currentOffset, angles[index], 0f, 0f, 1f);
 				scaleM(particlesMatricesArray, currentOffset, scale, scale, scale);
+
 
 				index--;
 				if(index < 0) index = MAX_NUMBER_OF_PARTICLES - 1;

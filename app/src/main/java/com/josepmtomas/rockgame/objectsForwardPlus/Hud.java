@@ -177,6 +177,7 @@ public class Hud
 	private float livesPositionY;
 	private float lifeRecoverPercent;
 	private float lifeRecoverTimer;
+	private float nextLifeCounter = 0f;
 
 	// Lives state control
 	private int livesState = UI_STATE_NOT_VISIBLE;
@@ -220,7 +221,7 @@ public class Hud
 		createMatrices(screenWidth, screenHeight);
 
 		// Pause button
-		createPauseButton(context, screenWidth, screenHeight);
+		createPauseButton(screenWidth, screenHeight);
 
 		// Score panel
 		createScoreGeometry(screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f, screenHeight * NUMBER_HEIGHT_PERCENTAGE);
@@ -271,7 +272,7 @@ public class Hud
 	}
 
 
-	private void createPauseButton(Context context, float screenWidth, float screenHeight)
+	private void createPauseButton(float screenWidth, float screenHeight)
 	{
 		float buttonHeight = screenHeight * 0.1f;
 		float buttonWidth = buttonHeight * 3f;
@@ -307,8 +308,6 @@ public class Hud
 
 		float bottom = -numberHeight * 0.5f;
 		float left = -numberWidth * 0.5f;
-		float width = numberWidth;
-		float height = numberHeight;
 
 		// D - C
 		// | \ |
@@ -321,8 +320,8 @@ public class Hud
 			for(int x=0; x<2; x++)
 			{
 				// Position
-				vertices[offset++] = left + ((float)x * width);
-				vertices[offset++] = bottom + ((float)y * height);
+				vertices[offset++] = left + ((float)x * numberWidth);
+				vertices[offset++] = bottom + ((float)y * numberHeight);
 				vertices[offset++] = 0.0f;
 
 				// Texture Coordinates
@@ -487,6 +486,7 @@ public class Hud
 		livesStates[4] = LIFE_LOST;
 
 		currentLife = 2;
+		nextLifeCounter = 0;
 
 		livesCounterState = LIVES_TIMER_IDLE;
 
@@ -504,6 +504,17 @@ public class Hud
 		resumingPanelState = UI_STATE_APPEARING;
 		resumingProgressBarTimer = 0f;
 		resumingProgressBarState = UI_STATE_APPEARING;
+	}
+
+
+	public void endGame()
+	{
+		getReadyPanelTimer = 0f;
+		getReadyPanelState = UI_STATE_NOT_VISIBLE;
+		livesCounterState = LIVES_TIMER_IDLE;
+		lifeRecoverTimer = 0f;
+		recoveringProgressBarTimer = 0f;
+		recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
 	}
 
 
@@ -542,9 +553,31 @@ public class Hud
 	}
 
 
-	public void update(int currentScore, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
+	public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
 	{
 		multiplierProgressValue = multiplierPercent;
+
+		nextLifeCounter += scoreIncrement;
+		if(nextLifeCounter >= 50000f)
+		{
+			nextLifeCounter = 0;
+
+			if(livesStates[currentLife] != LIFE_OK)
+			{
+				livesStates[currentLife+1] = livesStates[currentLife];
+				livesPercents[currentLife+1] = livesPercents[currentLife];
+				livesStates[currentLife] = LIFE_OK;
+				livesPercents[currentLife] = 1f;
+				currentLife++;
+			}
+			else
+			{
+				currentLife++;
+				currentLife = Math.min(currentLife, 4);
+				livesStates[currentLife] = LIFE_OK;
+				livesPercents[currentLife] = 1f;
+			}
+		}
 
 		int i;
 		boolean end = false;

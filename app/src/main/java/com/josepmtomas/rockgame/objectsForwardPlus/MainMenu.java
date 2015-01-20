@@ -150,10 +150,10 @@ public class MainMenu
 	private void loadPreferences()
 	{
 		speedButtonEnabled = !sharedPreferences.getBoolean("SpeedEnabled", false);
-		visibilityButtonEnabled = !sharedPreferences.getBoolean("VisibilityEnabled", true);
+		//visibilityButtonEnabled = !sharedPreferences.getBoolean("VisibilityEnabled", true);
 
 		touchSpeedButton();
-		touchVisibilityButton();
+		//touchVisibilityButton();
 	}
 
 

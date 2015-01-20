@@ -202,6 +202,12 @@ public class GroundShield
 	}
 
 
+	public void endGame()
+	{
+		state = UI_STATE_NOT_VISIBLE;
+	}
+
+
 	public void draw(float[] viewProjection)
 	{
 		if(state != UI_STATE_NOT_VISIBLE)
