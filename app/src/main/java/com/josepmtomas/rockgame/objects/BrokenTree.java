@@ -11,13 +11,14 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
-import static android.opengl.GLES30.*;
 import static com.josepmtomas.rockgame.Constants.*;
 
+import static android.opengl.GLES30.*;
+
 /**
- * Created by Josep on 30/11/2014.
+ * Created by Josep on 10/12/2014.
  */
-public class Rock
+public class BrokenTree
 {
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
@@ -37,55 +38,57 @@ public class Rock
 
 	private static final int BYTE_STRIDE = TOTAL_COMPONENTS * BYTES_PER_FLOAT;
 
+	// Root mesh geometry definition
+	private float[] rootVertices;
+	private short[] rootElements;
+	public int numRootElementsToDraw = 0;
+	private int[] rootVboHandles = new int[2];
+	public int[] rootVaoHandle = new int[1];
+
+	// Top mesh geometry definition
+	private float[] topVertices;
+	private short[] topElements;
+	public int numTopElementsToDraw = 0;
+	private int[] topVboHandles = new int[2];
+	public int[] topVaoHandle = new int[1];
+
+	// Root shadow mesh geometry definition
+	private float[] rootShadowVertices;
+	private short[] rootShadowElements;
+	public int numRootShadowElementsToDraw;
+	private int[] rootShadowVboHandles = new int[2];
+	public int[] rootShadowVaoHandle = new int[1];
+
+	// Top shadow mesh geometry definition
+	private float[] topShadowVertices;
+	private short[] topShadowElements;
+	public int numTopShadowElementsToDraw;
+	private int[] topShadowVboHandles = new int[2];
+	public int[] topShadowVaoHandle = new int[1];
+
 	private Context context;
 
-	// Main geometry definition
-	private float[] vertices;
-	private short[] elements;
-	public int[] numElementsToDraw = new int[2];
-	private int[] vboHandlesLODA = new int[2];
-	private int[] vboHandlesLODB = new int[2];
-	public int[] vaoHandles = new int[2];
 
-	// Shadow mesh geometry definition
-	private float[] shadowVertices;
-	private short[] shadowElements;
-	public int numShadowElementsToDraw;
-	private int[] shadowVboHandles = new int[2];
-	public int[] shadowVaoHandle = new int[1];
-
-	// Reflection mesh geometry definition
-	private float[] reflectionVertices;
-	private short[] reflectionElements;
-	public int numReflectionElementsToDraw;
-	private int[] reflectionVboHandles = new int[2];
-	public int[] reflectionVaoHandle = new int[1];
-
-
-	public Rock(Context context, String fileNameLODA, String fileNameLODB)
+	public BrokenTree(Context context, String rootFileName, String topFileName)
 	{
 		this.context = context;
 
-		glGenVertexArrays(2, vaoHandles, 0);
+		glGenVertexArrays(1, rootVaoHandle, 0);
+		glGenVertexArrays(1, topVaoHandle, 0);
 
-		loadLODA(fileNameLODA);
-		loadLODB(fileNameLODB);
+		loadRoot(rootFileName);
+		loadTop(topFileName);
 	}
 
 
-	public void addShadowGeometry(String shadowFileName)
+	public void addShadowGeometry(String rootShadowFileName, String topShadowFileName)
 	{
-		loadShadow(context, shadowFileName);
+		loadRootShadow(rootShadowFileName);
+		loadTopShadow(topShadowFileName);
 	}
 
 
-	public void addReflectionGeometry(String reflectioFileName)
-	{
-		loadReflection(context, reflectioFileName);
-	}
-
-
-	private void loadLODA(String fileName)
+	private void loadRoot(String rootFileName)
 	{
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
@@ -97,7 +100,7 @@ public class Rock
 
 		try
 		{
-			InputStream inputStream = context.getResources().getAssets().open(fileName);
+			InputStream inputStream = context.getResources().getAssets().open(rootFileName);
 			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -116,43 +119,43 @@ public class Rock
 				{
 					// Get the number of vertices and initialize the positions array
 					numVertices = Integer.parseInt(tokens[1]);
-					vertices = new float[TOTAL_COMPONENTS * numVertices];
+					rootVertices = new float[TOTAL_COMPONENTS * numVertices];
 				}
 				else if(tokens[0].equals("FACES"))
 				{
 					// Get the number of faces and initialize the elements array
 					numElements = Integer.parseInt(tokens[1]);
-					numElementsToDraw[LOD_A] = numElements * 3;
-					elements = new short[numElementsToDraw[LOD_A]];
+					numRootElementsToDraw = numElements * 3;
+					rootElements = new short[numRootElementsToDraw];
 				}
 				else if(tokens[0].equals("VERTEX"))
 				{
 					// Read the vertex positions
-					vertices[verticesOffset++] = Float.parseFloat(tokens[1]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[2]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 
 					// Read the vertex texture coordinates
-					vertices[verticesOffset++] = Float.parseFloat(tokens[4]) * 1f;
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1f;
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
-					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[7]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[8]);
 
 					// read the vertex tangents
-					vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[9]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[10]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[11]);
+					rootVertices[verticesOffset++] = Float.parseFloat(tokens[12]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
 					// Read the face indices (triangle)
-					elements[elementsOffset++] = Short.parseShort(tokens[1]);
-					elements[elementsOffset++] = Short.parseShort(tokens[2]);
-					elements[elementsOffset++] = Short.parseShort(tokens[3]);
+					rootElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					rootElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					rootElements[elementsOffset++] = Short.parseShort(tokens[3]);
 				}
 			}
 		}
@@ -166,69 +169,59 @@ public class Rock
 		////////////////////////////////////////////////////////////////////////////////////////////
 
 		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
+				.allocateDirect(rootVertices.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer()
-				.put(vertices);
+				.put(rootVertices);
 		verticesBuffer.position(0);
 
 		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
+				.allocateDirect(rootElements.length * BYTES_PER_SHORT)
 				.order(ByteOrder.nativeOrder())
 				.asShortBuffer()
-				.put(elements);
+				.put(rootElements);
 		elementsBuffer.position(0);
 
 		// Create and populate the buffer objects
-		glGenBuffers(2, vboHandlesLODA, 0);
+		glGenBuffers(2, rootVboHandles, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootVboHandles[0]);
 		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandlesLODA[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootVboHandles[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
 
 		// Create the VAO
-		glBindVertexArray(vaoHandles[LOD_A]);
+		glBindVertexArray(rootVaoHandle[0]);
 
 		// Vertex positions
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootVboHandles[0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
 
 		// Vertex texture coordinates
 		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootVboHandles[0]);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
 
 		// Vertex normals
 		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootVboHandles[0]);
 		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
 
 		// Vertex tangents
 		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootVboHandles[0]);
 		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandlesLODA[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootVboHandles[1]);
 
 		glBindVertexArray(0);
 	}
 
 
-	private void loadLODB(String fileName)
+	private void loadTop(String topFileName)
 	{
-		final int POSITION_OFFSET = 0;
-		final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
-		final int NORMAL_OFFSET = TEXCOORD_OFFSET + TEXCOORD_COMPONENTS;
-
-		final int POSITION_BYTE_OFFSET = POSITION_OFFSET * BYTES_PER_FLOAT;
-		final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * BYTES_PER_FLOAT;
-		final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
-
-		final int BYTE_STRIDE = (POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS) * BYTES_PER_FLOAT;
-
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
 		ShortBuffer elementsBuffer;
@@ -239,7 +232,7 @@ public class Rock
 
 		try
 		{
-			InputStream inputStream = context.getResources().getAssets().open(fileName);
+			InputStream inputStream = context.getResources().getAssets().open(topFileName);
 			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -258,37 +251,43 @@ public class Rock
 				{
 					// Get the number of vertices and initialize the positions array
 					numVertices = Integer.parseInt(tokens[1]);
-					vertices = new float[TOTAL_COMPONENTS * numVertices];
+					topVertices = new float[TOTAL_COMPONENTS * numVertices];
 				}
 				else if(tokens[0].equals("FACES"))
 				{
 					// Get the number of faces and initialize the elements array
 					numElements = Integer.parseInt(tokens[1]);
-					numElementsToDraw[LOD_B] = numElements * 3;
-					elements = new short[numElementsToDraw[LOD_B]];
+					numTopElementsToDraw = numElements * 3;
+					topElements = new short[numTopElementsToDraw];
 				}
 				else if(tokens[0].equals("VERTEX"))
 				{
 					// Read the vertex positions
-					vertices[verticesOffset++] = Float.parseFloat(tokens[1]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[2]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 
 					// Read the vertex texture coordinates
-					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
+					topVertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
-					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[7]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[8]);
+
+					// read the vertex tangents
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[9]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[10]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[11]);
+					topVertices[verticesOffset++] = Float.parseFloat(tokens[12]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
 					// Read the face indices (triangle)
-					elements[elementsOffset++] = Short.parseShort(tokens[1]);
-					elements[elementsOffset++] = Short.parseShort(tokens[2]);
-					elements[elementsOffset++] = Short.parseShort(tokens[3]);
+					topElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					topElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					topElements[elementsOffset++] = Short.parseShort(tokens[3]);
 				}
 			}
 		}
@@ -302,53 +301,58 @@ public class Rock
 		////////////////////////////////////////////////////////////////////////////////////////////
 
 		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
+				.allocateDirect(topVertices.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer()
-				.put(vertices);
+				.put(topVertices);
 		verticesBuffer.position(0);
 
 		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
+				.allocateDirect(topElements.length * BYTES_PER_SHORT)
 				.order(ByteOrder.nativeOrder())
 				.asShortBuffer()
-				.put(elements);
+				.put(topElements);
 		elementsBuffer.position(0);
 
 		// Create and populate the buffer objects
-		glGenBuffers(2, vboHandlesLODB, 0);
+		glGenBuffers(2, topVboHandles, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODB[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, topVboHandles[0]);
 		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandlesLODB[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topVboHandles[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
 
 		// Create the VAO
-		glBindVertexArray(vaoHandles[LOD_B]);
+		glBindVertexArray(topVaoHandle[0]);
 
 		// Vertex positions
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODB[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, topVboHandles[0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
 
 		// Vertex texture coordinates
 		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODB[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, topVboHandles[0]);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
 
 		// Vertex normals
 		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODB[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, topVboHandles[0]);
 		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandlesLODB[1]);
+		// Vertex tangents
+		glEnableVertexAttribArray(3);
+		glBindBuffer(GL_ARRAY_BUFFER, topVboHandles[0]);
+		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topVboHandles[1]);
 
 		glBindVertexArray(0);
 	}
 
 
-	private void loadShadow(Context context, String shadowFileName)
+	private void loadRootShadow(String shadowFileName)
 	{
 		int numShadowVertices, numShadowElements;
 		FloatBuffer shadowVerticesBuffer;
@@ -379,28 +383,28 @@ public class Rock
 				{
 					// Get the number of vertices and initialize the positions array
 					numShadowVertices = Integer.parseInt(tokens[1]);
-					shadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
+					rootShadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
 				}
 				else if(tokens[0].equals("FACES"))
 				{
 					// Get the number of faces and initialize the elements array
 					numShadowElements = Integer.parseInt(tokens[1]);
-					numShadowElementsToDraw = numShadowElements * 3;
-					shadowElements = new short[numShadowElementsToDraw];
+					numRootShadowElementsToDraw = numShadowElements * 3;
+					rootShadowElements = new short[numRootShadowElementsToDraw];
 				}
 				else if(tokens[0].equals("VERTEX"))
 				{
 					// Read the vertex positions
-					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
-					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
-					shadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					rootShadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
 					// Read the face indices (triangle)
-					shadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
-					shadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
-					shadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					rootShadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
 				}
 			}
 		}
@@ -415,55 +419,56 @@ public class Rock
 
 		// Build the java native buffers
 		shadowVerticesBuffer = ByteBuffer
-				.allocateDirect(shadowVertices.length * BYTES_PER_FLOAT)
+				.allocateDirect(rootShadowVertices.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer()
-				.put(shadowVertices);
+				.put(rootShadowVertices);
 		shadowVerticesBuffer.position(0);
 
 		shadowElementsBuffer = ByteBuffer
-				.allocateDirect(shadowElements.length * BYTES_PER_SHORT)
+				.allocateDirect(rootShadowElements.length * BYTES_PER_SHORT)
 				.order(ByteOrder.nativeOrder())
 				.asShortBuffer()
-				.put(shadowElements);
+				.put(rootShadowElements);
 		shadowElementsBuffer.position(0);
 
 		// Create and populate the buffer objects
-		glGenBuffers(2, shadowVboHandles, 0);
+		glGenBuffers(2, rootShadowVboHandles, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, shadowVboHandles[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootShadowVboHandles[0]);
 		glBufferData(GL_ARRAY_BUFFER,  shadowVerticesBuffer.capacity() * BYTES_PER_FLOAT, shadowVerticesBuffer, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shadowVboHandles[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootShadowVboHandles[1]);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shadowElementsBuffer.capacity() * BYTES_PER_SHORT, shadowElementsBuffer, GL_STATIC_DRAW);
 
 		// Create the VAO
-		glGenVertexArrays(1, shadowVaoHandle, 0);
-		glBindVertexArray(shadowVaoHandle[0]);
+		glGenVertexArrays(1, rootShadowVaoHandle, 0);
+		glBindVertexArray(rootShadowVaoHandle[0]);
 
 		// Vertex positions
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, shadowVboHandles[0]);
+		glBindBuffer(GL_ARRAY_BUFFER, rootShadowVboHandles[0]);
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, POSITION_COMPONENTS * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, shadowVboHandles[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, rootShadowVboHandles[1]);
 
 		glBindVertexArray(0);
 	}
 
-	private void loadReflection(Context context, String reflectionFileName)
+
+	private void loadTopShadow(String shadowFileName)
 	{
-		int numVertices, numElements;
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
+		int numShadowVertices, numShadowElements;
+		FloatBuffer shadowVerticesBuffer;
+		ShortBuffer shadowElementsBuffer;
 
 		////////////////////////////////////////////////////////////////////////////////////////////
-		// Read geometry from file
+		// Read shadow geometry from file
 		////////////////////////////////////////////////////////////////////////////////////////////
 
 		try
 		{
-			InputStream inputStream = context.getResources().getAssets().open(reflectionFileName);
+			InputStream inputStream = context.getResources().getAssets().open(shadowFileName);
 			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
@@ -481,44 +486,29 @@ public class Rock
 				if(tokens[0].equals("VERTICES"))
 				{
 					// Get the number of vertices and initialize the positions array
-					numVertices = Integer.parseInt(tokens[1]);
-					reflectionVertices = new float[TOTAL_COMPONENTS * numVertices];
+					numShadowVertices = Integer.parseInt(tokens[1]);
+					topShadowVertices = new float[POSITION_COMPONENTS * numShadowVertices];
 				}
 				else if(tokens[0].equals("FACES"))
 				{
 					// Get the number of faces and initialize the elements array
-					numElements = Integer.parseInt(tokens[1]);
-					numReflectionElementsToDraw = numElements * 3;
-					reflectionElements = new short[numReflectionElementsToDraw];
+					numShadowElements = Integer.parseInt(tokens[1]);
+					numTopShadowElementsToDraw = numShadowElements * 3;
+					topShadowElements = new short[numTopShadowElementsToDraw];
 				}
 				else if(tokens[0].equals("VERTEX"))
 				{
 					// Read the vertex positions
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
-
-					// Read the vertex texture coordinates
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1.0f;
-
-					// Read the vertex normals
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[8]);
-
-					// read the vertex tangents
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[12]);
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[1]);
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[2]);
+					topShadowVertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
 					// Read the face indices (triangle)
-					reflectionElements[elementsOffset++] = Short.parseShort(tokens[1]);
-					reflectionElements[elementsOffset++] = Short.parseShort(tokens[2]);
-					reflectionElements[elementsOffset++] = Short.parseShort(tokens[3]);
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[1]);
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[2]);
+					topShadowElements[elementsOffset++] = Short.parseShort(tokens[3]);
 				}
 			}
 		}
@@ -531,54 +521,40 @@ public class Rock
 		// Buffers
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		verticesBuffer = ByteBuffer
-				.allocateDirect(reflectionVertices.length * BYTES_PER_FLOAT)
+		// Build the java native buffers
+		shadowVerticesBuffer = ByteBuffer
+				.allocateDirect(topShadowVertices.length * BYTES_PER_FLOAT)
 				.order(ByteOrder.nativeOrder())
 				.asFloatBuffer()
-				.put(reflectionVertices);
-		verticesBuffer.position(0);
+				.put(topShadowVertices);
+		shadowVerticesBuffer.position(0);
 
-		elementsBuffer = ByteBuffer
-				.allocateDirect(reflectionElements.length * BYTES_PER_SHORT)
+		shadowElementsBuffer = ByteBuffer
+				.allocateDirect(topShadowElements.length * BYTES_PER_SHORT)
 				.order(ByteOrder.nativeOrder())
 				.asShortBuffer()
-				.put(reflectionElements);
-		elementsBuffer.position(0);
+				.put(topShadowElements);
+		shadowElementsBuffer.position(0);
 
 		// Create and populate the buffer objects
-		glGenBuffers(2, reflectionVboHandles, 0);
+		glGenBuffers(2, topShadowVboHandles, 0);
 
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
+		glBindBuffer(GL_ARRAY_BUFFER, topShadowVboHandles[0]);
+		glBufferData(GL_ARRAY_BUFFER,  shadowVerticesBuffer.capacity() * BYTES_PER_FLOAT, shadowVerticesBuffer, GL_STATIC_DRAW);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topShadowVboHandles[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, shadowElementsBuffer.capacity() * BYTES_PER_SHORT, shadowElementsBuffer, GL_STATIC_DRAW);
 
 		// Create the VAO
-		glGenVertexArrays(1, reflectionVaoHandle, 0);
-		glBindVertexArray(reflectionVaoHandle[0]);
+		glGenVertexArrays(1, topShadowVaoHandle, 0);
+		glBindVertexArray(topShadowVaoHandle[0]);
 
 		// Vertex positions
 		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
+		glBindBuffer(GL_ARRAY_BUFFER, topShadowVboHandles[0]);
+		glVertexAttribPointer(0, 3, GL_FLOAT, false, POSITION_COMPONENTS * BYTES_PER_FLOAT, POSITION_BYTE_OFFSET);
 
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
-
-		// Vertex normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
-
-		// Vertex tangents
-		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, topShadowVboHandles[1]);
 
 		glBindVertexArray(0);
 	}

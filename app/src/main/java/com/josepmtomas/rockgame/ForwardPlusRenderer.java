@@ -6,24 +6,23 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.josepmtomas.rockgame.algebra.vec3;
-import com.josepmtomas.rockgame.objectsForwardPlus.CreditsMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.EndGameMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.GameOverMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.Ground;
-import com.josepmtomas.rockgame.objectsForwardPlus.GroundShield;
-import com.josepmtomas.rockgame.objectsForwardPlus.Hud;
-import com.josepmtomas.rockgame.objectsForwardPlus.LightInfo;
-import com.josepmtomas.rockgame.objectsForwardPlus.MainMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.MenuTextures;
-import com.josepmtomas.rockgame.objectsForwardPlus.OptionsMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.PauseMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.PlayerRock;
-import com.josepmtomas.rockgame.objectsForwardPlus.RestartMenu;
-import com.josepmtomas.rockgame.objectsForwardPlus.Screen;
-import com.josepmtomas.rockgame.objectsForwardPlus.SkyDome;
-import com.josepmtomas.rockgame.objectsForwardPlus.TestTree;
-import com.josepmtomas.rockgame.programsForwardPlus.ScorePanelProgram;
-import com.josepmtomas.rockgame.programsForwardPlus.UIPanelProgram;
+import com.josepmtomas.rockgame.objects.CreditsMenu;
+import com.josepmtomas.rockgame.objects.EndGameMenu;
+import com.josepmtomas.rockgame.objects.GameOverMenu;
+import com.josepmtomas.rockgame.objects.Ground;
+import com.josepmtomas.rockgame.objects.GroundShield;
+import com.josepmtomas.rockgame.objects.Hud;
+import com.josepmtomas.rockgame.objects.LightInfo;
+import com.josepmtomas.rockgame.objects.MainMenu;
+import com.josepmtomas.rockgame.objects.MenuTextures;
+import com.josepmtomas.rockgame.objects.OptionsMenu;
+import com.josepmtomas.rockgame.objects.PauseMenu;
+import com.josepmtomas.rockgame.objects.PlayerRock;
+import com.josepmtomas.rockgame.objects.RestartMenu;
+import com.josepmtomas.rockgame.objects.Screen;
+import com.josepmtomas.rockgame.objects.SkyDome;
+import com.josepmtomas.rockgame.programs.ScorePanelProgram;
+import com.josepmtomas.rockgame.programs.UIPanelProgram;
 import com.josepmtomas.rockgame.util.FPSCounter;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TouchState;
@@ -152,8 +151,6 @@ public class ForwardPlusRenderer implements Renderer
 	GroundShield groundShield;
 	Ground ground;
 	SkyDome skyDome;
-
-	TestTree testTree;
 
 	Screen screen;
 	Hud hud;
@@ -287,7 +284,6 @@ public class ForwardPlusRenderer implements Renderer
 				perspectiveCamera, lightInfo);
 		ground.setPlayerRock(playerRock);
 		skyDome = new SkyDome(context, lightInfo);
-		testTree = new TestTree(context);
 
 		screen = new Screen(context, 1, 1);
 		//hud = new Hud(context, renderWidth, renderHeight);
@@ -621,7 +617,6 @@ public class ForwardPlusRenderer implements Renderer
 		playerRock.updateLightMatrices(shadowViewProjection);
 		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], deltaTime);
 		skyDome.update(viewProjection);
-		testTree.update(viewProjection);
 
 		////////////
 

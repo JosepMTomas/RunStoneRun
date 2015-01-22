@@ -38,7 +38,6 @@ public class GameActivity extends Activity
 	private float previousX;
 	private float previousY;
 
-	private DeferredRenderer deferredRenderer;
 	private ForwardPlusRenderer forwardPlusRenderer;
 
 	private MediaPlayer backgroundMusicPlayer;

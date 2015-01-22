@@ -12,12 +12,13 @@ import java.nio.FloatBuffer;
 import java.nio.ShortBuffer;
 
 import static android.opengl.GLES30.*;
+
 import static com.josepmtomas.rockgame.Constants.*;
 
 /**
- * Created by Josep on 30/11/2014.
+ * Created by Josep on 11/10/2014.
  */
-public class Rock
+public class Plant
 {
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
@@ -61,15 +62,18 @@ public class Rock
 	private int[] reflectionVboHandles = new int[2];
 	public int[] reflectionVaoHandle = new int[1];
 
+	public float[] cullingPoints;
 
-	public Rock(Context context, String fileNameLODA, String fileNameLODB)
+
+
+	public Plant(Context context, String[] fileNames)
 	{
 		this.context = context;
 
 		glGenVertexArrays(2, vaoHandles, 0);
 
-		loadLODA(fileNameLODA);
-		loadLODB(fileNameLODB);
+		loadLODA(fileNames[LOD_A]);
+		loadLODB(fileNames[LOD_B]);
 	}
 
 
@@ -79,9 +83,15 @@ public class Rock
 	}
 
 
-	public void addReflectionGeometry(String reflectioFileName)
+	public void addReflectionGeometry(String reflectionFileName)
 	{
-		loadReflection(context, reflectioFileName);
+		loadReflection(context, reflectionFileName);
+	}
+
+
+	public void addCullingPoints(String cullingFileName)
+	{
+		loadCullingPoints(context, cullingFileName);
 	}
 
 
@@ -133,8 +143,8 @@ public class Rock
 					vertices[verticesOffset++] = Float.parseFloat(tokens[3]);
 
 					// Read the vertex texture coordinates
-					vertices[verticesOffset++] = Float.parseFloat(tokens[4]) * 1f;
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1f;
+					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
+					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
@@ -451,6 +461,7 @@ public class Rock
 		glBindVertexArray(0);
 	}
 
+
 	private void loadReflection(Context context, String reflectionFileName)
 	{
 		int numVertices, numElements;
@@ -581,5 +592,61 @@ public class Rock
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
 
 		glBindVertexArray(0);
+	}
+
+
+	private void loadCullingPoints(Context context, String reflectionFileName)
+	{
+		int numVertices;
+
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Read geometry from file
+		////////////////////////////////////////////////////////////////////////////////////////////
+
+		try
+		{
+			InputStream inputStream = context.getResources().getAssets().open(reflectionFileName);
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+			String nextLine;
+
+			int verticesOffset = 0;
+
+			while((nextLine = bufferedReader.readLine()) != null)
+			{
+				// Split the line into tokens separated by spaces
+				String[] tokens = nextLine.split(" ");
+
+				// Check the first token of the line
+				if(tokens[0].equals("VERTICES"))
+				{
+					// Get the number of vertices and initialize the positions array
+					numVertices = Integer.parseInt(tokens[1]);
+					cullingPoints = new float[POSITION_COMPONENTS * numVertices];
+				}
+				else if(tokens[0].equals("VERTEX"))
+				{
+					// Read the vertex positions
+					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[1]);
+					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[2]);
+					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[3]);
+				}
+			}
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+
+	public void deleteGL()
+	{
+		/*glDeleteBuffers(1, vboHandles, 0);
+		glDeleteBuffers(1, shadowVboHandles, 0);
+
+		glDeleteVertexArrays(1, vaoHandle, 0);
+		glDeleteVertexArrays(1, shadowVaoHandle, 0);*/
 	}
 }
