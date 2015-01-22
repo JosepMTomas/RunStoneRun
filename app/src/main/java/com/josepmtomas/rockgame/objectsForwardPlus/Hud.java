@@ -76,6 +76,7 @@ public class Hud
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
+	private float[] scoreOpacities = new float[8];
 	private float[] scorePositionsX = new float[8];//{1700f, 1572f, 1444f, 1316f, 1188f, 1060f, 932f, 804f};
 	private float scorePositionY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
@@ -398,6 +399,7 @@ public class Hud
 
 		for(int i=1; i < 8; i++)
 		{
+			scoreOpacities[i] = 0.75f;
 			scorePositionsX[i] = initialOffsetX - ((float)i * numberWidth);
 			scoreCurrentPositionsX[i] = scorePositionsX[i];
 		}
@@ -560,7 +562,7 @@ public class Hud
 		nextLifeCounter += scoreIncrement;
 		if(nextLifeCounter >= 50000f)
 		{
-			nextLifeCounter = 0;
+			nextLifeCounter -= 50000f;
 
 			if(livesStates[currentLife] != LIFE_OK)
 			{
@@ -586,6 +588,7 @@ public class Hud
 
 		for(i=0; i<8; i++)
 		{
+			scoreOpacities[i] = 0.25f;
 			scoreNumbers[i] = 0;
 		}
 		i=0;
@@ -595,6 +598,7 @@ public class Hud
 			number = nextScore % 10;
 			nextScore = nextScore / 10;
 
+			scoreOpacities[i] = 1f;
 			scoreNumbers[i] = number;
 
 			if(nextScore == 0) end = true;
@@ -1079,7 +1083,7 @@ public class Hud
 				scorePanelProgram.setSpecificUniforms(scoreCurrentScale,
 						scoreCurrentPositionsX[i], scoreCurrentPositionY,
 						scoreTexCoordOffsetsX[scoreNumbers[i]], scoreTexCoordOffsetsY[scoreNumbers[i]],
-						scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
+						scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacities[i] * scoreOpacity);
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 			}
 		}

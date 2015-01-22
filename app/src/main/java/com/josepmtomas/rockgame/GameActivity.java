@@ -183,7 +183,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 						//gameRenderer.releaseTouch();
 						forwardPlusRenderer.releaseTouch();
 					}
-					else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+					/*else if (event.getAction() == MotionEvent.ACTION_MOVE) {
 						final float deltaX = event.getX() - previousX;
 						final float deltaY = event.getY() - previousY;
 						previousX = event.getX();
@@ -201,8 +201,8 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 					}
 					else if (event.getAction() == MotionEvent.ACTION_SCROLL)
 					{
-						forwardPlusRenderer.scroll();
-					}
+						//forwardPlusRenderer.scroll();
+					}*/
 					return true;
 				} else {
 					return false;

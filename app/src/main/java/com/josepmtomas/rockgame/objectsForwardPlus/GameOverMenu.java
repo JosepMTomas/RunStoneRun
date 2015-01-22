@@ -43,6 +43,7 @@ public class GameOverMenu
 
 	// State
 	private int currentState = UI_STATE_NOT_VISIBLE;
+	private boolean isNewRecord = false;
 
 	// Menu common attributes
 	private static final float menuAppearTime = 0.5f;
@@ -83,6 +84,12 @@ public class GameOverMenu
 	private float[] touchToContinueTitleCurrentScale = new float[2];
 	private float[] touchToContinueTitleCurrentPosition = new float[2];
 
+	// New record title
+	private float[] newRecordTitleScale = new float[2];
+	private float[] newRecordTitlePosition = new float[2];
+	private float[] newRecordTitleCurrentScale = new float[2];
+	private float[] newRecordTitleCurrentPosition = new float[2];
+
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
@@ -112,8 +119,6 @@ public class GameOverMenu
 
 		createMatrices(screenWidth, screenHeight);
 		createElements(screenWidth, screenHeight);
-
-		//TODO: loadTextures();
 	}
 
 
@@ -267,14 +272,23 @@ public class GameOverMenu
 		touchToContinueTitleScale[0] = titleHeight * 6f;
 		touchToContinueTitleScale[1] = titleHeight * 1.5f;
 		touchToContinueTitlePosition[0] = 0f;
-		touchToContinueTitlePosition[1] = titleHeight * -1.5f;
+		touchToContinueTitlePosition[1] = titleHeight * -1.75f;
 		touchToContinueTitleCurrentScale[0] = touchToContinueTitleScale[0];
 		touchToContinueTitleCurrentScale[1] = touchToContinueTitleScale[1];
 		touchToContinueTitleCurrentPosition[0] = touchToContinueTitlePosition[0];
 		touchToContinueTitleCurrentPosition[1] = touchToContinueTitlePosition[1];
 
-		scorePositionY = 0f;
-		scoreCurrentPositionY = 0f;
+		newRecordTitleScale[0] = titleWidth;
+		newRecordTitleScale[1] = titleHeight;
+		newRecordTitlePosition[0] = 0f;
+		newRecordTitlePosition[1] = finalScoreTitlePosition[1];
+		newRecordTitleCurrentScale[0] = newRecordTitleScale[0];
+		newRecordTitleCurrentScale[1] = newRecordTitleScale[1];
+		newRecordTitleCurrentPosition[0] = newRecordTitlePosition[0];
+		newRecordTitleCurrentPosition[1] = newRecordTitlePosition[1];
+
+		scorePositionY = (screenHeight * -0.05f);
+		scoreCurrentPositionY = scorePositionY;
 
 		for(int i=0; i<8; i++)
 		{
@@ -284,9 +298,10 @@ public class GameOverMenu
 	}
 
 
-	public void setAppearing(int currentScore)
+	public void setAppearing(int currentScore, boolean isNewRecord)
 	{
 		currentState = UI_STATE_APPEARING;
+		this.isNewRecord = isNewRecord;
 
 		int i;
 		boolean end = false;
@@ -375,8 +390,13 @@ public class GameOverMenu
 			touchToContinueTitleCurrentPosition[0] = lerp(0f, touchToContinueTitlePosition[0], menuOpacity);
 			touchToContinueTitleCurrentPosition[1] = lerp(0f, touchToContinueTitlePosition[1], menuOpacity);
 
-			scoreCurrentScale = menuOpacity;
+			newRecordTitleCurrentScale[0] = lerp(0f, newRecordTitleScale[0], menuOpacity);
+			newRecordTitleCurrentScale[1] = lerp(0f, newRecordTitleScale[1], menuOpacity);
+			newRecordTitleCurrentPosition[0] = lerp(0f, newRecordTitlePosition[0], menuOpacity);
+			newRecordTitleCurrentPosition[1] = lerp(0f, newRecordTitlePosition[1], menuOpacity);
 
+			scoreCurrentScale = menuOpacity;
+			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
 			for(int i=0; i<scoreNumberOfDigits; i++)
 			{
 				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
@@ -412,8 +432,13 @@ public class GameOverMenu
 			touchToContinueTitleCurrentPosition[0] = lerp(0f, touchToContinueTitlePosition[0], menuOpacity);
 			touchToContinueTitleCurrentPosition[1] = lerp(0f, touchToContinueTitlePosition[1], menuOpacity);
 
-			scoreCurrentScale = menuOpacity;
+			newRecordTitleCurrentScale[0] = lerp(0f, newRecordTitleScale[0], menuOpacity);
+			newRecordTitleCurrentScale[1] = lerp(0f, newRecordTitleScale[1], menuOpacity);
+			newRecordTitleCurrentPosition[0] = lerp(0f, newRecordTitlePosition[0], menuOpacity);
+			newRecordTitleCurrentPosition[1] = lerp(0f, newRecordTitlePosition[1], menuOpacity);
 
+			scoreCurrentScale = menuOpacity;
+			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
 			for(int i=0; i<scoreNumberOfDigits; i++)
 			{
 				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
@@ -440,9 +465,19 @@ public class GameOverMenu
 			uiPanelProgram.setUniforms(viewProjection, gameOverTitleCurrentScale, gameOverTitleCurrentPosition, textures.gameOverTitleTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
-			// Final score title
-			uiPanelProgram.setUniforms(viewProjection, finalScoreTitleCurrentScale, finalScoreTitleCurrentPosition, textures.finalScoreTitleTexture, menuOpacity);
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			if(isNewRecord)
+			{
+				// New Record title
+				uiPanelProgram.setUniforms(viewProjection, newRecordTitleCurrentScale, newRecordTitleCurrentPosition, textures.newRecordTitleTexture,
+						Math.abs(menuOpacity * FloatMath.cos(menuGlobalTimer * 1.75f)));
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
+			else
+			{
+				// Final score title
+				uiPanelProgram.setUniforms(viewProjection, finalScoreTitleCurrentScale, finalScoreTitleCurrentPosition, textures.finalScoreTitleTexture, menuOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
 
 			// Touch to continue title
 			uiPanelProgram.setUniforms(viewProjection, touchToContinueTitleCurrentScale, touchToContinueTitleCurrentPosition, textures.touchToContinueTitleTexture,
@@ -453,7 +488,6 @@ public class GameOverMenu
 			// Score
 			scorePanelProgram.useProgram();
 			scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);
-
 			glBindVertexArray(scoreVaoHandle[0]);
 
 			for(int i=0; i < scoreNumberOfDigits; i++)

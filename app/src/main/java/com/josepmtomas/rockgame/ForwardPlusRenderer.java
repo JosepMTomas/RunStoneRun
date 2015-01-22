@@ -298,7 +298,7 @@ public class ForwardPlusRenderer implements Renderer
 		scorePanelProgram = new ScorePanelProgram(context);
 		menuTextures = new MenuTextures(context);
 		hud = new Hud(context, this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
-		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		pauseMenu = new PauseMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
@@ -940,8 +940,23 @@ public class ForwardPlusRenderer implements Renderer
 		playerRock.endGame();
 		hud.setDisappearing();
 
-		rendererState = RENDERER_STATE_CHANGING_MENU;
-		gameOverMenu.setAppearing((int)fScore);
+		int highScore = sharedPreferences.getInt("LocalHighScore",0);
+
+		if((int)fScore > highScore)
+		{
+			SharedPreferences.Editor editor = sharedPreferences.edit();
+			editor.putInt("LocalHighScore", (int)fScore);
+			editor.apply();
+
+			rendererState = RENDERER_STATE_CHANGING_MENU;
+			gameOverMenu.setAppearing((int)fScore, true);
+		}
+		else
+		{
+			rendererState = RENDERER_STATE_CHANGING_MENU;
+			gameOverMenu.setAppearing((int)fScore, false);
+		}
+
 	}
 
 	public void changingToCreditsMenu()
@@ -1066,23 +1081,6 @@ public class ForwardPlusRenderer implements Renderer
 		rendererState = RENDERER_STATE_MAIN_MENU;
 	}
 
-	public void scroll()
-	{
-
-	}
-
-
-	public void handleTouchDrag(float deltaX, float deltaY)
-	{
-		/*xRotation += deltaX / 10f;
-		yRotation += deltaY / 10f;
-
-		if(yRotation < -90) yRotation = -90;
-		else if(yRotation > 90) yRotation = 90;*/
-
-		//playerRock.currentPositionY += deltaY;
-	}
-
 
 	public void setResolution25()
 	{
@@ -1164,12 +1162,6 @@ public class ForwardPlusRenderer implements Renderer
 	public void setMenuSpeed(boolean value)
 	{
 		playerRock.setNotVisibleSpeed(value);
-	}
-
-
-	public void setPause()
-	{
-		isPaused = !isPaused;
 	}
 
 

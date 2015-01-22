@@ -25,6 +25,8 @@ public class MenuTextures
 
 	// Main menu
 
+	public final int recordButtonTexture;
+
 	public final int newGameButtonIdleTexture;
 	public final int newGameButtonSelectedTexture;
 	public final int optionsButtonIdleTexture;
@@ -105,6 +107,7 @@ public class MenuTextures
 	public final int gameOverTitleTexture;
 	public final int finalScoreTitleTexture;
 	public final int touchToContinueTitleTexture;
+	public final int newRecordTitleTexture;
 
 
 	public MenuTextures(Context context)
@@ -121,6 +124,8 @@ public class MenuTextures
 		background9PatchPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/9patch.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Main menu
+
+		recordButtonTexture = TextureHelper.loadETC2Texture(context, "textures/menus/record_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		newGameButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/new_game_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		newGameButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/new_game_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
@@ -211,5 +216,6 @@ public class MenuTextures
 		gameOverTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/game_over_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		finalScoreTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/final_score_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		touchToContinueTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/touch_to_continue_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		newRecordTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/new_record_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 }
