@@ -44,6 +44,7 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 05/09/2014.
+ * @author Josep
  */
 public class ForwardPlusRenderer implements Renderer
 {

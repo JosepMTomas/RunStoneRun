@@ -20,6 +20,7 @@ uniform mat4 viewProjection;
 
 out vec2 vTexCoords;
 out vec4 vDiffuse;
+out vec4 vAmbient;
 out float vDistance;
 out vec4 vBackColor;
 
@@ -33,7 +34,7 @@ void main()
 	
 	float diffuse = dot(vec3(0.0, 1.0, 0.0), vLight);
 	vDiffuse = lightColor * diffuse;
-
+	vAmbient = ambientColor;
 	vTexCoords = aTexCoord;
 	vDistance = current.w;
 	vBackColor = backColor;
