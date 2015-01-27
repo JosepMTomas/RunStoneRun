@@ -1,5 +1,7 @@
 package com.josepmtomas.rockgame.objects;
 
+import android.util.Log;
+
 import static com.josepmtomas.rockgame.Constants.*;
 import static com.josepmtomas.rockgame.algebra.operations.*;
 import com.josepmtomas.rockgame.algebra.vec2;
@@ -7,6 +9,7 @@ import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Random;
@@ -1075,14 +1078,18 @@ public class ObjectsPatch extends BoundarySampler
 	////////////////////////////////////////////////////////////////////////////////////////////
 
 	//TODO: incomplete
-	public void saveState(FileOutputStream outputStream, int x, int z) throws IOException
+	public void saveState(FileOutputStream outputStream) throws IOException
 	{
 		int numPoints;
 		StringBuilder builder = new StringBuilder();
 
-		builder.append("OBJECTS_PATCH ");
+		/*builder.append("OBJECTS_PATCH ");
 		builder.append(x);	builder.append(" ");
-		builder.append(z);	builder.append(" ");
+		builder.append(z);	builder.append("\n");
+		outputStream.write(builder.toString().getBytes());*/
+
+		builder.setLength(0);
+		builder.append("POSITION ");
 		builder.append(currentPosition.x);	builder.append(" ");
 		builder.append(currentPosition.y);	builder.append(" ");
 		builder.append(currentPosition.z);	builder.append("\n");
@@ -1143,6 +1150,237 @@ public class ObjectsPatch extends BoundarySampler
 		}
 		builder.append("\n");
 		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("FERN_PLANT_POINTS ");
+		builder.append(fernPlantNumPoints);
+		numPoints = fernPlantPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(fernPlantPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("WEED_PLANT_POINTS ");
+		builder.append(weedPlantNumPoints);
+		numPoints = weedPlantPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(weedPlantPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("BUSH_PLANT_POINTS ");
+		builder.append(bushPlantNumPoints);
+		numPoints = bushPlantPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(bushPlantPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("PALM_PLANT_POINTS ");
+		builder.append(palmPlantNumPoints);
+		numPoints = palmPlantPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(palmPlantPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("ROCK_A_POINTS ");
+		builder.append(rockANumPoints);
+		numPoints = rockAPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(rockAPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("ROCK_B_POINTS ");
+		builder.append(rockBNumPoints);
+		numPoints = rockBPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(rockBPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("ROCK_C_POINTS ");
+		builder.append(rockCNumPoints);
+		numPoints = rockCPoints.length;
+		for(int i=0; i<numPoints; i++)
+		{
+			builder.append(" ");	builder.append(rockCPoints[i]);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+	}
+
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
+	{
+		String line;
+		String[] tokens;
+		int numPoints;
+		int offset;
+		float x, y, z;
+
+		// Read position
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		currentPosition.x = Float.parseFloat(tokens[1]);
+		currentPosition.y = Float.parseFloat(tokens[2]);
+		currentPosition.z = Float.parseFloat(tokens[3]);
+
+		// Read sampler points
+		line = bufferedReader.readLine();
+		//Log.w("ObjPatch(LoadState)", "Current: " + line);
+		tokens = line.split(" ");
+		points.clear();
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			x = Float.parseFloat(tokens[offset++]);
+			y = Float.parseFloat(tokens[offset++]);
+			points.add(new vec2(x,y));
+		}
+
+		// Read pine tree points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		pineTreeNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = pineTreeNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			pineTreePoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read huge tree points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		hugeTreeNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = hugeTreeNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			hugeTreePoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read palm tree points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		palmTreeNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = palmTreeNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			palmTreePoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read birch tree points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		birchTreeNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = birchTreeNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			birchTreePoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read fern plant points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		fernPlantNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = fernPlantNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			fernPlantPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read weed plant points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		fernPlantNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = fernPlantNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			weedPlantPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read bush plant points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		bushPlantNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = bushPlantNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			bushPlantPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read palm plant points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		palmPlantNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = palmPlantNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			palmPlantPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read rock a points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		rockANumPoints = Integer.parseInt(tokens[1]);
+		numPoints = rockANumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			rockAPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read rock b points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		rockBNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = rockBNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			rockBPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read rock c points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		rockCNumPoints = Integer.parseInt(tokens[1]);
+		numPoints = rockCNumPoints * 3;
+		offset = 2;
+		for(int i=0; i < numPoints; i++)
+		{
+			rockCPoints[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		updateObjectsArrays();
 
 	}
 }

@@ -225,6 +225,7 @@ public class PauseMenu
 	{
 		currentState = UI_STATE_APPEARING;
 		menuTimer = 0f;
+		releaseTouch();
 	}
 
 

@@ -6,11 +6,15 @@ import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +24,8 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+
+import java.util.List;
 
 public class GameActivity extends Activity
 {
@@ -391,6 +397,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 			public void onClick(DialogInterface arg0, int arg1) {
 				// do something when the OK button is clicked
 				GameActivity.super.onBackPressed();
+				forwardPlusRenderer.onDestroy();
 			}
 		});
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -407,5 +414,60 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	private void loadShadedPreferences()
 	{
 		sharedPreferences = getSharedPreferences("RockGamePreferences", Context.MODE_PRIVATE);
+	}
+
+
+	public void launchComposerIntent()
+	{
+		// Build the intent
+		Uri webPage = Uri.parse("http://danosongs.com/");
+		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+		// Verify it resolves
+		PackageManager packageManager = getPackageManager();
+		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+		boolean isIntentSafe = activities.size() > 0;
+
+		// Start an activity if it's safe
+		if (isIntentSafe) {
+			startActivity(webIntent);
+		}
+	}
+
+
+	public void launchSoundEffectsIntent()
+	{
+		// Build the intent
+		Uri webPage = Uri.parse("http://www.freeSFX.co.uk");
+		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+		// Verify it resolves
+		PackageManager packageManager = getPackageManager();
+		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+		boolean isIntentSafe = activities.size() > 0;
+
+		// Start an activity if it's safe
+		if (isIntentSafe) {
+			startActivity(webIntent);
+		}
+	}
+
+
+	public void touchedFontIntent()
+	{
+
+		// Build the intent
+		Uri webPage = Uri.parse("http://yoworks.com/telegrama/index.html");
+		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+		// Verify it resolves
+		PackageManager packageManager = getPackageManager();
+		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+		boolean isIntentSafe = activities.size() > 0;
+
+		// Start an activity if it's safe
+		if (isIntentSafe) {
+			startActivity(webIntent);
+		}
 	}
 }

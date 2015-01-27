@@ -60,10 +60,10 @@ public class ShaderHelper
 			return 0;
 		}
 
-		if(LoggerConfig.ON)
+		/*if(LoggerConfig.ON)
 		{
 			Log.d(TAG,"Compilation of shader OK.");
-		}
+		}*/
 
 		return shaderObjectId;
 	}
@@ -90,11 +90,11 @@ public class ShaderHelper
 
 		glGetProgramiv(programObjectId, GL_LINK_STATUS, linkStatus, 0);
 
-		if(LoggerConfig.ON)
+		/*if(LoggerConfig.ON)
 		{
 			// Print the program info log to the Android log output.
 			Log.v(TAG, "Results of linking program:\n" + glGetProgramInfoLog(programObjectId));
-		}
+		}*/
 
 		if(linkStatus[0] == 0)
 		{
@@ -131,13 +131,13 @@ public class ShaderHelper
 		int program;
 
 		// Compile the shaders
-		Log.d(TAG, "Compiling vertex shader");
+		//Log.d(TAG, "Compiling vertex shader");
 		int vertexShader = compileVertexShader(vertexShaderSource);
-		Log.d(TAG, "Compiling fragment shader");
+		//Log.d(TAG, "Compiling fragment shader");
 		int fragmentShader = compileFragmentShader(fragmentShaderSource);
 
 		// Link them into a shader program
-		Log.d(TAG, "Linking shaders");
+		//Log.d(TAG, "Linking shaders");
 		program = linkProgram(vertexShader, fragmentShader);
 
 		if(LoggerConfig.ON)

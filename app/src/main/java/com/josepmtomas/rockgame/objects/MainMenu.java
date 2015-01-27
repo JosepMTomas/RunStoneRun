@@ -685,6 +685,12 @@ public class MainMenu
 	}
 
 
+	public void setNotVisible()
+	{
+		currentState = UI_STATE_NOT_VISIBLE;
+	}
+
+
 	public void setAppearing()
 	{
 		loadPreferences();

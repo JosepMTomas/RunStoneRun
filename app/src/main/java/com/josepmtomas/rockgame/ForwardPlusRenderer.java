@@ -48,7 +48,7 @@ import static android.opengl.Matrix.*;
  */
 public class ForwardPlusRenderer implements Renderer
 {
-	private static final String TAG = "Forward+";
+	private static final String TAG = "Renderer";
 
 	private boolean isLoaded = false;
 
@@ -78,6 +78,8 @@ public class ForwardPlusRenderer implements Renderer
 	private float FRAMEBUFFER_ASPECT_RATIO = 0.5625f;
 
 	private boolean isPaused = false;
+	private boolean isPlaying = false;
+	private boolean isSavedGame = false;
 
 	private float[] framebufferDimensions = new float[2];
 
@@ -536,6 +538,26 @@ public class ForwardPlusRenderer implements Renderer
 
 		isLoaded = true;
 
+		/*boolean savedGameExists = sharedPreferences.getBoolean("SavedGame", false);
+		Log.w(TAG, "SavedGame found = " + savedGameExists);*/
+		isPlaying = sharedPreferences.getBoolean("SavedGame", false);
+		if(isPlaying)
+		{
+			Log.w(TAG, "There was a saved game ... loading state");
+			loadState();
+			Log.w(TAG, "Finished loading state ... pausing game");
+			/*rendererState = RENDERER_STATE_PLAYING;
+			setPause(true);
+			mainMenu.setNotVisible();
+			update(0f);*/
+			isSavedGame = true;
+		}
+		else
+		{
+			isSavedGame = false;
+			Log.w(TAG, "No previous saved game");
+		}
+
 		startTime = System.nanoTime();
 	}
 
@@ -555,6 +577,16 @@ public class ForwardPlusRenderer implements Renderer
 		//Log.w("CurrentFrame", " "+ endTime/1000000 + " ms");
 
 		//Log.w("DeltaTime", " = " + deltaTime + " s");
+
+		if(isSavedGame)
+		{
+			rendererState = RENDERER_STATE_PLAYING;
+			setPause(true);
+			mainMenu.setNotVisible();
+			hud.setAppearing();
+			update(0f);
+			isSavedGame = false;
+		}
 
 		startTime = System.nanoTime();
 		// Clear everything
@@ -597,6 +629,8 @@ public class ForwardPlusRenderer implements Renderer
 			updateTime = 0;
 			drawTime = 0;
 		}*/
+
+		//Log.w(TAG, "isPlaying = " + isPlaying);
 	}
 
 
@@ -913,6 +947,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		rendererState = RENDERER_STATE_PLAYING;
 		isPaused = false;
+		isPlaying = true;
 		ground.newGame();
 		hud.newGame();
 		hud.setAppearing();
@@ -925,6 +960,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void endGame()
 	{
+		isPlaying = false;
 		playerRock.endGame();
 		hud.setDisappearing();
 		hud.endGame();
@@ -933,6 +969,7 @@ public class ForwardPlusRenderer implements Renderer
 
 	public void gameOver()
 	{
+		isPlaying = false;
 		playerRock.endGame();
 		hud.setDisappearing();
 
@@ -1178,23 +1215,84 @@ public class ForwardPlusRenderer implements Renderer
 
 		// State (save the state of the current game)
 
-		//String string = "SAVED_GAME\n";
-		String string;
+		String string = "SAVED_GAME "
+				+ fScore + " " +
+				+ lightInfo.timeOfDay + "\n";
 
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("SAVED_GAME\n");
+		if(isPlaying)
+		{
+			try
+			{
+				FileOutputStream outputStream = context.openFileOutput(SAVED_GAME_FILE_NAME, Context.MODE_PRIVATE);
+				outputStream.write(string.getBytes());
 
-		string = stringBuilder.toString();
+				playerRock.saveState(outputStream);
+				hud.saveState(outputStream);
+				ground.saveState(outputStream);
+
+				outputStream.close();
+			}
+			catch (FileNotFoundException e)
+			{
+				e.printStackTrace();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+
+			Log.w(TAG, "is playing - game saved");
+		}
+		else
+		{
+			Log.w(TAG, "is not playing - no game saved");
+		}
+
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putBoolean("SavedGame", isPlaying);
+		editor.apply();
+	}
+
+
+	public void loadState()
+	{
+		String line;
+		String[] tokens;
 
 		try
 		{
-			FileOutputStream outputStream = context.openFileOutput(SAVED_GAME_FILE_NAME, Context.MODE_PRIVATE);
-			outputStream.write(string.getBytes());
+			FileInputStream fileInputStream = context.openFileInput(SAVED_GAME_FILE_NAME);
+			InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
 
-			hud.saveState(outputStream);
-			ground.saveState(outputStream);
+			line = bufferedReader.readLine();
+			tokens = line.split(" ");
+			fScore = Float.parseFloat(tokens[1]);
+			lightInfo.timeOfDay = Float.parseFloat(tokens[2]);
 
-			outputStream.close();
+			line = bufferedReader.readLine();
+			tokens = line.split(" ");
+			playerRock.loadState(tokens);
+
+			line = bufferedReader.readLine();
+			tokens = line.split(" ");
+			hud.loadState(tokens);
+
+			ground.loadState(bufferedReader);
+
+			/*if(tokens[0].equals("PLAYER_ROCK"))
+			{
+				playerRock.loadState(tokens);
+			}
+			else if(tokens[0].equals("HUD"))
+			{
+				hud.loadState(tokens);
+			}
+			else if(tokens[0].equals("GROUND"))
+			{
+				ground.loadState(bufferedReader);
+			}*/
+
 		}
 		catch (FileNotFoundException e)
 		{
@@ -1205,7 +1303,6 @@ public class ForwardPlusRenderer implements Renderer
 			e.printStackTrace();
 		}
 	}
-
 
 }
 

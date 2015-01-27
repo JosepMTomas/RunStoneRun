@@ -28,6 +28,7 @@ import com.josepmtomas.rockgame.programs.WaterProgram;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -105,14 +106,14 @@ public class Ground
 	private float[] patchCullingPoints;
 
 	// Ground patches definition
-	private final int numGroundPatchesX;
-	private final int numGroundPatchesZ;
-	private final int numGroundPolygonsX;
-	private final int numGroundPolygonsZ;
-	private final int numGroundVerticesX;
-	private final int numGroundVerticesZ;
-	private final float groundPatchWidth;
-	private final float groundPatchHeight;
+	private int numGroundPatchesX;
+	private int numGroundPatchesZ;
+	private int numGroundPolygonsX;
+	private int numGroundPolygonsZ;
+	private int numGroundVerticesX;
+	private int numGroundVerticesZ;
+	private float groundPatchWidth;
+	private float groundPatchHeight;
 
 	private final float minGroundOffsetX;
 	private final float maxGroundOffsetX;
@@ -127,8 +128,8 @@ public class Ground
 	private int groundUpperIndex;
 
 	// Objects patches definition
-	private final int numObjectsPatchesX;
-	private final int numObjectsPatchesZ;
+	private int numObjectsPatchesX;
+	private int numObjectsPatchesZ;
 	private final float objectsPatchWidth;
 	private final float objectsPatchHeight;
 
@@ -649,7 +650,7 @@ public class Ground
 				"textures/test_grass/test_grass_mip_6.mp3",
 				"textures/test_grass/test_grass_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading grass patch texture");
+		//Log.d(TAG, "Loading grass patch texture");
 		grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		//grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, false, true);
 
@@ -663,7 +664,7 @@ public class Ground
 				"textures/pine_tree/pine_tree_mip_6.mp3",
 				"textures/pine_tree/pine_tree_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading pine branch texture");
+		//Log.d(TAG, "Loading pine branch texture");
 		pineBranchTexture = TextureHelper.loadETC2Texture(context, pineBranchTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] pineTreeReflectionProxyTextureMips = {
@@ -676,7 +677,7 @@ public class Ground
 				"textures/pine_tree/reflection_proxy_mip_6.mp3",
 				"textures/pine_tree/reflection_proxy_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading pine reflection proxy texture");
+		//Log.d(TAG, "Loading pine reflection proxy texture");
 		pineTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, pineTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] hugeTreeTextureMips = {
@@ -689,7 +690,7 @@ public class Ground
 				"textures/huge_tree/diffuse_mip_6.mp3",
 				"textures/huge_tree/diffuse_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading huge tree texture");
+		//Log.d(TAG, "Loading huge tree texture");
 		hugeTreeTexture = TextureHelper.loadETC2Texture(context, hugeTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] hugeTreeReflectionProxyTextureMips = {
@@ -702,7 +703,7 @@ public class Ground
 				"textures/huge_tree/reflection_proxy_mip_6.mp3",
 				"textures/huge_tree/reflection_proxy_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading huge tree reflection proxy texture");
+		//Log.d(TAG, "Loading huge tree reflection proxy texture");
 		hugeTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, hugeTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] palmTreeTextureMips = {
@@ -715,7 +716,7 @@ public class Ground
 				"textures/palm_tree/diffuse_mip_6.mp3",
 				"textures/palm_tree/diffuse_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading palm tree texture");
+		//Log.d(TAG, "Loading palm tree texture");
 		palmTreeTexture = TextureHelper.loadETC2Texture(context, palmTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] palmTreeReflectionProxyTextureMips = {
@@ -728,7 +729,7 @@ public class Ground
 				"textures/palm_tree/reflection_proxy_mip_6.mp3",
 				"textures/palm_tree/reflection_proxy_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading huge tree reflection proxy texture");
+		//Log.d(TAG, "Loading huge tree reflection proxy texture");
 		palmTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] birchTreeTextureMips = {
@@ -765,7 +766,7 @@ public class Ground
 				"textures/fern_plant/fern_plant_mip_6.mp3",
 				"textures/fern_plant/fern_plant_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading fern plant texture");
+		//Log.d(TAG, "Loading fern plant texture");
 		fernPlantTexture = TextureHelper.loadETC2Texture(context, fernPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] fernPlantReflectionProxyTextureMips = {
@@ -790,7 +791,7 @@ public class Ground
 				"textures/weed_plant/diffuse_mip_6.mp3",
 				"textures/weed_plant/diffuse_mip_7.mp3"
 		};
-		Log.d(TAG, "Loading weeds plant texture");
+		//Log.d(TAG, "Loading weeds plant texture");
 		weedPlantTexture = TextureHelper.loadETC2Texture(context, weedPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] weedPlantReflectionProxyTextureMips = {
@@ -864,7 +865,7 @@ public class Ground
 				"textures/rocks/rock_a_diffuse_mip_7.mp3",
 				"textures/rocks/rock_a_diffuse_mip_8.mp3"
 		};
-		Log.d(TAG, "Loading rock a diffuse texture");
+		//Log.d(TAG, "Loading rock a diffuse texture");
 		rockADiffuseTexture = TextureHelper.loadETC2Texture(context, rockADiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockANormalTextureMips = {
@@ -878,7 +879,7 @@ public class Ground
 				"textures/rock_a/normal_mip_7.mp3",
 				"textures/rock_a/normal_mip_8.mp3"
 		};
-		Log.d(TAG, "Loading rock a normal texture");
+		//Log.d(TAG, "Loading rock a normal texture");
 		rockANormalTexture = TextureHelper.loadETC2Texture(context, rockANormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockBDiffuseTextureMips = {
@@ -906,7 +907,7 @@ public class Ground
 				"textures/rock_b/normal_mip_7.mp3",
 				"textures/rock_b/normal_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock b normal texture");
+		//Log.d(TAG, "Loading rock b normal texture");
 		rockBNormalTexture = TextureHelper.loadETC2Texture(context, rockBNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockCDiffuseTextureMips = {
@@ -920,7 +921,7 @@ public class Ground
 				"textures/rock_c/diffuse_mip_7.mp3",
 				"textures/rock_c/diffuse_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock c diffuse texture");
+		//Log.d(TAG, "Loading rock c diffuse texture");
 		rockCDiffuseTexture = TextureHelper.loadETC2Texture(context, rockCDiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockCNormalTextureMips = {
@@ -934,7 +935,7 @@ public class Ground
 				"textures/rock_c/normal_mip_7.mp3",
 				"textures/rock_c/normal_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock c normal texture");
+		//Log.d(TAG, "Loading rock c normal texture");
 		rockCNormalTexture = TextureHelper.loadETC2Texture(context, rockCNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] groundBlackTextureMips = {
@@ -3943,6 +3944,17 @@ public class Ground
 	{
 		StringBuilder builder = new StringBuilder();
 
+		builder.append("GROUND ");
+		builder.append(Integer.toString(groundUpperIndex));		builder.append(" ");
+		builder.append(Integer.toString(groundLowerIndex));		builder.append(" ");
+		builder.append(Integer.toString(groundLeftmostIndex));	builder.append(" ");
+		builder.append(Integer.toString(groundRightmostIndex));	builder.append(" ");
+		builder.append(Integer.toString(objectsUpperIndex));		builder.append(" ");
+		builder.append(Integer.toString(objectsLowerIndex));		builder.append(" ");
+		builder.append(Integer.toString(objectsLeftmostIndex));		builder.append(" ");
+		builder.append(Integer.toString(objectsRightmostIndex));
+		builder.append("\n");
+
 		builder.append("NUM_GROUND_PATCHES ");
 		builder.append(Integer.toString(numGroundPatchesX));
 		builder.append(" ");
@@ -3957,30 +3969,70 @@ public class Ground
 
 		outputStream.write(builder.toString().getBytes());
 
-		for(int z=0; z < numGroundPatchesZ; z++)
+		for(int x=0; x < numGroundPatchesX; x++)
 		{
-			for(int x=0; x < numGroundPatchesX; x++)
+			for(int z=0; z < numGroundPatchesZ; z++)
 			{
-				builder.setLength(0);
-				builder.append("GROUND_PATCH ");
-				builder.append(x);	builder.append(" ");
-				builder.append(z);	builder.append("\n");
-
-				outputStream.write(builder.toString().getBytes());
-
 				groundPatches[x][z].saveState(outputStream);
 			}
 		}
 
-		for(int z=0; z < numObjectsPatchesZ; z++)
+		for(int x=0; x < numObjectsPatchesX; x++)
 		{
-			for(int x=0; x < numObjectsPatchesX; x++)
+			for(int z=0; z < numObjectsPatchesZ; z++)
 			{
-				objectsPatches[x][z].saveState(outputStream, x, z);
+				objectsPatches[x][z].saveState(outputStream);
+			}
+		}
+	}
+
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
+	{
+		String line;
+		String[] tokens;
+
+		// Get indices
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		groundUpperIndex = Integer.parseInt(tokens[1]);
+		groundLowerIndex = Integer.parseInt(tokens[2]);
+		groundLeftmostIndex = Integer.parseInt(tokens[3]);
+		groundRightmostIndex = Integer.parseInt(tokens[4]);
+		objectsUpperIndex = Integer.parseInt(tokens[5]);
+		objectsLowerIndex = Integer.parseInt(tokens[6]);
+		objectsLeftmostIndex = Integer.parseInt(tokens[7]);
+		objectsRightmostIndex = Integer.parseInt(tokens[8]);
+
+		// Get the number of ground patches
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numGroundPatchesX = Integer.parseInt(tokens[1]);
+		numGroundPatchesZ = Integer.parseInt(tokens[2]);
+
+		// Get the number of objects patches
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numObjectsPatchesX = Integer.parseInt(tokens[1]);
+		numObjectsPatchesZ = Integer.parseInt(tokens[2]);
+
+		for(int x=0; x < numGroundPatchesX; x++)
+		{
+			for(int z=0; z < numGroundPatchesZ; z++)
+			{
+				groundPatches[x][z].loadState(bufferedReader);
 			}
 		}
 
-		playerRock.saveState(builder);
+		updateGrassBuffers();
+
+		for(int x=0; x < numObjectsPatchesX; x++)
+		{
+			for(int z=0; z < numObjectsPatchesZ; z++)
+			{
+				objectsPatches[x][z].loadState(bufferedReader);
+			}
+		}
 	}
 
 

@@ -1191,7 +1191,7 @@ public class Hud
 
 	public void saveState(FileOutputStream outputStream) throws IOException
 	{
-		StringBuilder builder = new StringBuilder();
+		/*StringBuilder builder = new StringBuilder();
 
 		builder.append("HUD ");
 		builder.append(currentLife);		builder.append(" ");
@@ -1207,7 +1207,23 @@ public class Hud
 		builder.append(livesPercents[3]);	builder.append(" ");
 		builder.append(livesPercents[4]);	builder.append("\n");
 
-		outputStream.write(builder.toString().getBytes());
+		outputStream.write(builder.toString().getBytes());*/
+
+		String stateString = "HUD "
+				+ currentLife + " "
+				+ livesCounterState + " "
+				+ livesStates[0] + " "
+				+ livesStates[1] + " "
+				+ livesStates[2] + " "
+				+ livesStates[3] + " "
+				+ livesStates[4] + " "
+				+ livesPercents[0] + " "
+				+ livesPercents[1] + " "
+				+ livesPercents[2] + " "
+				+ livesPercents[3] + " "
+				+ livesPercents[4] + "\n";
+
+		outputStream.write(stateString.getBytes());
 	}
 
 

@@ -1,11 +1,17 @@
 package com.josepmtomas.rockgame.objects;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
 import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programs.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
+
+import java.util.List;
 
 import static com.josepmtomas.rockgame.Constants.*;
 import static com.josepmtomas.rockgame.algebra.operations.*;
@@ -65,18 +71,21 @@ public class CreditsMenu
 	private float[] composerTitlePosition = new float[2];
 	private float[] composerTitleCurrentScale = new float[2];
 	private float[] composerTitleCurrentPosition = new float[2];
+	private float[] composerTitleLimits = new float[4];
 
 	// Sound effects title
 	private float[] effectsTitleScale = new float[2];
 	private float[] effectsTitlePosition = new float[2];
 	private float[] effectsTitleCurrentScale = new float[2];
 	private float[] effectsTitleCurrentPosition = new float[2];
+	private float[] effectsTitleLimits = new float[4];
 
 	// Font type title
 	private float[] fontTitleScale = new float[2];
 	private float[] fontTitlePosition = new float[2];
 	private float[] fontTitleCurrentScale = new float[2];
 	private float[] fontTitleCurrentPosition = new float[2];
+	private float[] fontTitleLimits = new float[4];
 
 	// Back button
 	private float[] backButtonScale = new float[2];
@@ -177,18 +186,31 @@ public class CreditsMenu
 		composerTitleScale[1] = buttonHeight * 1.0f;
 		composerTitlePosition[0] = 0f;
 		composerTitlePosition[1] = buttonHeight * 1.5f;
+		composerTitleLimits[0] = composerTitlePosition[0] - buttonWidthHalf;
+		composerTitleLimits[1] = composerTitlePosition[0] + buttonWidthHalf;
+		composerTitleLimits[2] = composerTitlePosition[1] - buttonHeightHalf;
+		composerTitleLimits[3] = composerTitlePosition[1] + buttonHeightHalf;
+
 
 		// Sound effects title
 		effectsTitleScale[0] = buttonHeight * 4.666667f; // 7
 		effectsTitleScale[1] = buttonHeight * 1.0f;
 		effectsTitlePosition[0] = 0f;
 		effectsTitlePosition[1] = buttonHeight * 0.25f;
+		effectsTitleLimits[0] = effectsTitlePosition[0] - buttonWidthHalf;
+		effectsTitleLimits[1] = effectsTitlePosition[0] + buttonWidthHalf;
+		effectsTitleLimits[2] = effectsTitlePosition[1] - buttonHeightHalf;
+		effectsTitleLimits[3] = effectsTitlePosition[1] + buttonHeightHalf;
 
 		// Font type title
 		fontTitleScale[0] = buttonHeight * 4.666667f;
 		fontTitleScale[1] = buttonHeight * 1f;
 		fontTitlePosition[0] = 0f;
 		fontTitlePosition[1] = buttonHeight * -1.0f;
+		fontTitleLimits[0] = fontTitlePosition[0] - buttonWidthHalf;
+		fontTitleLimits[1] = fontTitlePosition[0] + buttonWidthHalf;
+		fontTitleLimits[2] = fontTitlePosition[1] - buttonHeightHalf;
+		fontTitleLimits[3] = fontTitlePosition[1] + buttonHeightHalf;
 
 		// Back button
 		backButtonScale[0] = buttonWidth;
@@ -383,10 +405,31 @@ public class CreditsMenu
 
 	public void touch(float x, float y)
 	{
-		if(	x >= backButtonLimits[0] &&
-			x <= backButtonLimits[1] &&
-			y >= backButtonLimits[2] &&
-			y <= backButtonLimits[3])
+		if( x >= composerTitleLimits[0] &&
+			x <= composerTitleLimits[1] &&
+			y >= composerTitleLimits[2] &&
+			y <= composerTitleLimits[3] )
+		{
+			parent.launchComposerIntent();
+		}
+		else if(x >= effectsTitleLimits[0] &&
+				x <= effectsTitleLimits[1] &&
+				y >= effectsTitleLimits[2] &&
+				y <= effectsTitleLimits[3])
+		{
+			parent.launchSoundEffectsIntent();
+		}
+		else if(x >= fontTitleLimits[0] &&
+				x <= fontTitleLimits[1] &&
+				y >= fontTitleLimits[2] &&
+				y <= fontTitleLimits[3])
+		{
+			parent.touchedFontIntent();
+		}
+		else if(x >= backButtonLimits[0] &&
+				x <= backButtonLimits[1] &&
+				y >= backButtonLimits[2] &&
+				y <= backButtonLimits[3])
 		{
 			touchedBackButton();
 		}

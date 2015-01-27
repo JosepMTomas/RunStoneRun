@@ -16,6 +16,7 @@ import com.josepmtomas.rockgame.util.TextureHelper;
 import static com.josepmtomas.rockgame.algebra.operations.*;
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -776,6 +777,8 @@ public class PlayerRock
 
 	public void drawReflectionProxy(float[] shadowMatrix, int shadowMapSampler)
 	{
+		if(viewProjection == null) Log.w("PlayerRock", "viewProjection is null");
+		if(proxyModel == null) Log.w("PlayerRock", "proxyModel is null");
 		multiplyMM(proxyModelViewProjection, 0, viewProjection, 0, proxyModel, 0);
 
 		// TODO:
@@ -914,8 +917,10 @@ public class PlayerRock
 	// State save / load
 	////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public void saveState(StringBuilder builder)
+	public void saveState(FileOutputStream outputStream) throws IOException
 	{
+		/*StringBuilder builder = new StringBuilder();
+
 		builder.append("PLAYER_ROCK ");
 		builder.append(currentSpeed);		builder.append(" ");
 		builder.append(currentPositionY);	builder.append(" ");
@@ -924,6 +929,19 @@ public class PlayerRock
 		builder.append(scoreMultiplier);	builder.append(" ");
 		builder.append(state);				builder.append(" ");
 		builder.append(currentState);		builder.append("\n");
+
+		outputStream.write(builder.toString().getBytes());*/
+
+		String stateString = "PLAYER_ROCK "
+				+ currentSpeed + " "
+				+ currentPositionY + " "
+				+ rotationX + " "
+				+ rotationY + " "
+				+ scoreMultiplier + " "
+				+ state + " "
+				+ currentState + " "
+				+ initialForce + "\n";
+		outputStream.write(stateString.getBytes());
 	}
 
 	public  void loadState(String[] tokens)
@@ -935,5 +953,9 @@ public class PlayerRock
 		scoreMultiplier = Float.parseFloat(tokens[5]);
 		state = Integer.parseInt(tokens[6]);
 		currentState = Integer.parseInt(tokens[7]);
+		initialForce = Float.parseFloat(tokens[8]);
+
+		smokeParticleSystem.setEnabled(true);
+		waterParticleSystem.setEnabled(true);
 	}
 }

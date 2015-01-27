@@ -29,7 +29,7 @@ public class ShaderProgram
 
 	protected ShaderProgram(Context context, String vertexShaderFileName, String fragmentShaderFileName)
 	{
-		Log.d("ShaderProgram", "Creating: " + vertexShaderFileName + " & " + fragmentShaderFileName);
+		//Log.d("ShaderProgram", "Creating: " + vertexShaderFileName + " & " + fragmentShaderFileName);
 		// Compile the shaders and link the program
 		program = ShaderHelper.buildProgram(
 				TextResourceReader.readTextFileFromAsset(context, vertexShaderFileName),

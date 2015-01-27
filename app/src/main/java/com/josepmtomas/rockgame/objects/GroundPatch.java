@@ -8,6 +8,7 @@ import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -614,7 +615,6 @@ public class GroundPatch extends BoundarySampler
 	{
 		Random random = new Random();
 		float randomValue;
-		float colorValue;
 
 		int current;
 		int previousDown;
@@ -1462,14 +1462,6 @@ public class GroundPatch extends BoundarySampler
 			{
 				position = (i * numPolygonsX * COLOR_COMPONENTS) + (j * COLOR_COMPONENTS);
 
-				a = (i * numVerticesX * COLOR_COMPONENTS) + (j * COLOR_COMPONENTS);
-				b = a + COLOR_COMPONENTS;
-				c = a + (numVerticesX * COLOR_COMPONENTS);
-				d = c + COLOR_COMPONENTS;
-
-				//colorGrid[position]   = (colors[a]   + colors[b]   + colors[c]   + colors[d])   / 4f;
-				//colorGrid[position+1] = (colors[a+1] + colors[b+1] + colors[c+1] + colors[d+1]) / 4f;
-				//colorGrid[position+2] = (colors[a+2] + colors[b+2] + colors[c+2] + colors[d+2]) / 4f;
 				groundColorGrid[position] = random.nextFloat();
 				groundColorGrid[position+1] = random.nextFloat();
 				groundColorGrid[position+2] = random.nextFloat();
@@ -1622,24 +1614,6 @@ public class GroundPatch extends BoundarySampler
 		translateM(model, 0, currentPosition.x , currentPosition.y, currentPosition.z);
 
 		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
-	}
-
-
-	public void update(float[] viewMatrix, float time, vec3 displacement)
-	{
-		for(int i=0; i<15; i+=3)
-		{
-			currentCullingPoints[i]   = currentCullingPoints[i] + displacement.x;
-			currentCullingPoints[i+1] = currentCullingPoints[i+1] + displacement.y;
-			currentCullingPoints[i+2] = currentCullingPoints[i+2] + displacement.z;
-		}
-
-		this.currentPosition.add(displacement);
-
-		setIdentityM(model, 0);
-		translateM(model, 0, currentPosition.x , currentPosition.y, currentPosition.z);
-
-		//updateGrassPointsArray(displacement.x, displacement.z);
 	}
 
 
@@ -2023,10 +1997,11 @@ public class GroundPatch extends BoundarySampler
 		int numPoints;
 		vec2 currentPoint;
 		StringBuilder builder = new StringBuilder();
+		visible = true;
 
 		builder.append("PROPERTIES ");
 		builder.append(type);		builder.append(" ");
-		builder.append(visible);	builder.append(" ");
+		//builder.append(visible);	builder.append(" ");
 		builder.append(currentPosition.x);	builder.append(" ");
 		builder.append(currentPosition.y);	builder.append(" ");
 		builder.append(currentPosition.z);	builder.append(" ");
@@ -2048,7 +2023,7 @@ public class GroundPatch extends BoundarySampler
 		builder.append("\n");
 		outputStream.write(builder.toString().getBytes());
 
-		builder.setLength(0);
+		/*builder.setLength(0);
 		builder.append("CURRENT_POINTS");
 		numPoints = currentPoints.size();
 		builder.append(" ");	builder.append(numPoints);
@@ -2059,7 +2034,7 @@ public class GroundPatch extends BoundarySampler
 			builder.append(" ");	builder.append(currentPoint.y);
 		}
 		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());
+		outputStream.write(builder.toString().getBytes());*/
 
 		builder.setLength(0);
 		builder.append("GROUND_COLORS ");
@@ -2094,7 +2069,7 @@ public class GroundPatch extends BoundarySampler
 		builder.append("\n");
 		outputStream.write(builder.toString().getBytes());
 
-		builder.setLength(0);
+		/*builder.setLength(0);
 		builder.append("GRASS_POINTS_LOD_A ");
 		numPoints = grassPointsLODA.length;
 		builder.append(numPoints);
@@ -2125,7 +2100,81 @@ public class GroundPatch extends BoundarySampler
 			builder.append(" ");	builder.append(grassPointsLODC[i]);
 		}
 		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());
+		outputStream.write(builder.toString().getBytes());*/
+	}
+
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
+	{
+		String line;
+		String[] tokens;
+		int numPoints;
+		int offset;
+		float x, y, z;
+
+		// Read the properties
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		type = Integer.parseInt(tokens[1]);
+		x = Float.parseFloat(tokens[2]);
+		y = Float.parseFloat(tokens[3]);
+		z = Float.parseFloat(tokens[4]);
+		this.setCurrentPosition(x,y,z);
+		numGrassPointsPerLOD[LOD_A] = Integer.parseInt(tokens[5]);
+		numGrassPointsPerLOD[LOD_B] = Integer.parseInt(tokens[6]);
+		numGrassPointsPerLOD[LOD_C] = Integer.parseInt(tokens[7]);
+
+		// Read the sampler points
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		points.clear();
+		for(int i=0; i<numPoints; i++)
+		{
+			x = Float.parseFloat(tokens[offset++]);
+			y = Float.parseFloat(tokens[offset++]);
+			points.add(new vec2(x,y));
+		}
+
+		// Read the ground colors
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			groundColors[i] = Float.parseFloat(tokens[offset++]);
+		}
+		updateGroundColorsBuffer();
+		updateGroundVertexArrayObject();
+
+		// Read the river entry colors
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			riverEntryColors[i] = Float.parseFloat(tokens[offset++]);
+		}
+		updateRiverEntryColorsBuffer();
+		updateRiverEntryVertexArrayObject();
+
+		// Read the river exit colors
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			riverExitColors[i] = Float.parseFloat(tokens[offset++]);
+		}
+		updateRiverExitColorsBuffer();
+		updateRiverExitVertexArrayObject();
+
+		// Update the grass buffers
+		filterGrassPoints();
 	}
 }
 
