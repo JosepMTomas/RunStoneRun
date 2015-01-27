@@ -616,7 +616,6 @@ public class ForwardPlusRenderer implements Renderer
 
 		shadowMapPass();
 		reflectionPass();
-		//lightCullingPass();
 		glViewport(0, 0, renderWidth, renderHeight);
 		depthPrePass();
 		shadingPass();

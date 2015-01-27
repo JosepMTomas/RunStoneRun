@@ -68,6 +68,12 @@ public class MainMenu
 	private float[] recordBackPanelCurrentScale = new float[2];
 	private float[] recordBackPanelCurrentPosition = new float[2];
 
+	// Game title
+	private float[] gameTitleScale = new float[2];
+	private float[] gameTitlePosition = new float[2];
+	private float[] gameTitleCurrentScale = new float[2];
+	private float[] gameTitleCurrentPosition = new float[2];
+
 	// New game button
 	private int newGameButtonCurrentTexture;
 	private float[] newGameButtonScale = new float[2];
@@ -152,6 +158,7 @@ public class MainMenu
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
 
+		createGameTitle(screenWidth, screenHeight);
 		createButtons(screenWidth, screenHeight);
 		createButtonsBackPanel(screenWidth, screenHeight);
 		createRecordBackPanel(screenWidth, screenHeight);
@@ -215,6 +222,22 @@ public class MainMenu
 		editor.putBoolean("SpeedEnabled", speedButtonEnabled);
 		editor.putBoolean("VisibilityEnabled", visibilityButtonEnabled);
 		editor.apply();
+	}
+
+
+	private void createGameTitle(float screenWidth, float screenHeight)
+	{
+		float width = screenWidth * 0.9f;
+		float height = width * 0.17647f;
+
+		gameTitleScale[0] = width;
+		gameTitleScale[1] = height;
+		gameTitlePosition[0] = 0f;
+		gameTitlePosition[1] = screenHeight * 0.325f;
+		gameTitleCurrentScale[0] = gameTitleScale[0];
+		gameTitleCurrentScale[1] = gameTitleScale[1];
+		gameTitleCurrentPosition[0] = gameTitlePosition[0];
+		gameTitleCurrentPosition[1] = gameTitlePosition[1];
 	}
 
 
@@ -726,6 +749,11 @@ public class MainMenu
 			recordBackPanelCurrentPosition[0] = lerp(0f, recordBackPanelPosition[0], menuOpacity);
 			recordBackPanelCurrentPosition[1] = lerp(0f, recordBackPanelPosition[1], menuOpacity);
 
+			gameTitleCurrentScale[0] = lerp(0f, gameTitleScale[0], menuOpacity);
+			gameTitleCurrentScale[1] = lerp(0f, gameTitleScale[1], menuOpacity);
+			gameTitleCurrentPosition[0] = lerp(0f, gameTitlePosition[0], menuOpacity);
+			gameTitleCurrentPosition[1] = lerp(0f, gameTitlePosition[1], menuOpacity);
+
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
 			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
@@ -776,6 +804,11 @@ public class MainMenu
 			recordBackPanelCurrentPosition[0] = lerp(0f, recordBackPanelPosition[0], menuOpacity);
 			recordBackPanelCurrentPosition[1] = lerp(0f, recordBackPanelPosition[1], menuOpacity);
 
+			gameTitleCurrentScale[0] = lerp(0f, gameTitleScale[0], menuOpacity);
+			gameTitleCurrentScale[1] = lerp(0f, gameTitleScale[1], menuOpacity);
+			gameTitleCurrentPosition[0] = lerp(0f, gameTitlePosition[0], menuOpacity);
+			gameTitleCurrentPosition[1] = lerp(0f, gameTitlePosition[1], menuOpacity);
+
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
 			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
@@ -822,6 +855,9 @@ public class MainMenu
 
 
 			glBindVertexArray(uiPanelVaoHandle);
+
+			uiPanelProgram.setUniforms(viewProjection, gameTitleCurrentScale, gameTitleCurrentPosition, textures.gameTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, newGameButtonCurrentScale, newGameButtonCurrentPosition, newGameButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);

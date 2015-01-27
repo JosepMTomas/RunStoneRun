@@ -14,6 +14,7 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
 
 /**
  * Created by Josep on 01/12/2014.
+ * @author Josep
  */
 public class LightInfo
 {
@@ -38,7 +39,7 @@ public class LightInfo
 
 	// Time
 	public float timeOfDay = 12f;
-	private float timeOfDayMultiplier = 0.25f;
+	private static final float TIME_OF_DAY_MULTIPLIER = 0.25f;
 	public float timeOfDayAlpha = 0f;
 
 	// Light colors
@@ -109,7 +110,7 @@ public class LightInfo
 
 	public void update(float deltaTime)
 	{
-		timeOfDay += (deltaTime * timeOfDayMultiplier);
+		timeOfDay += (deltaTime * TIME_OF_DAY_MULTIPLIER);
 		timeOfDay = timeOfDay % 24f;
 
 		//Log.d("TimeOfDay", "hour = " + timeOfDay);
@@ -194,13 +195,18 @@ public class LightInfo
 			ambientColor.z = lerp(ambientColor1[2], ambientColor3[2], timeOfDayAlpha);
 		}
 
-		//currentAngle = 45f;
-		//if(lightPos.x >= 150f) increment = -1f;
-		//if(lightPos.x <= -150f) increment = 1f;
+		setLookAtM(view, 0, lightPos.x, 0f, 0f, 0f, 0f, 0f, 0f, 1f, 0f);
+		translateM(view, 0, 0f, 0f, 0f);
+		rotateM(view, 0, -currentAngle, 0f, 0f, 1f);
 
-		//Log.d("LightInfo", "LightPos.x = " + lightPos.x);
+		// Light vector update
+		setIdentityM(lightRotation, 0);
+		rotateM(lightRotation, 0, currentAngle, 0f, 0f, 1f);
+		multiplyMV(lightVector, 0, lightRotation, 0, initialLightVector, 0);
 
-		//lightPos.add(increment, 0f, 0f);
+
+		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
+		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 
 		// Update the light position values
 		lightInfoArray[0] = lightVector[0];
@@ -236,26 +242,5 @@ public class LightInfo
 		glBindBuffer(GL_UNIFORM_BUFFER, ubo[0]);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, lightInfoArrayBuffer.capacity() * BYTES_PER_FLOAT, lightInfoArrayBuffer);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-
-		// update view matrix
-		/*setLookAtM(view, 0, lightPos.x, lightPos.y, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
-		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
-		multiplyMM(viewProjection, 0, projection, 0, view, 0);*/
-
-		setLookAtM(view, 0, lightPos.x, 0f/*lightPos.y*/, 0f, 0f, 0f, 0f, 0f, 1f, 0f);
-		//setLookAtM(shadowView, 0, 300f, 200f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
-		//perspectiveM(shadowProjection, 0, 90f, 1f, 0.1f, 500f);
-		translateM(view, 0, 0f, 0f, 0f);
-		rotateM(view, 0, -currentAngle, 0f, 0f, 1f);
-
-		// Light vector update
-		setIdentityM(lightRotation, 0);
-		rotateM(lightRotation, 0, currentAngle, 0f, 0f, 1f);
-		multiplyMV(lightVector, 0, lightRotation, 0, initialLightVector, 0);
-
-
-		orthoM(projection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
-		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 	}
 }

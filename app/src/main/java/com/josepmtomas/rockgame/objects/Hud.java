@@ -170,7 +170,8 @@ public class Hud
 	// Lives
 	private int lifeBarVaoHandle;
 	private int currentLife = 2;
-	private int livesCounterState = LIVES_TIMER_IDLE;
+	private int livesCounterCurrentState = LIVES_TIMER_IDLE;
+	private int livesCounterPreviousState = LIVES_TIMER_IDLE;
 	private int[] livesStates = {LIFE_OK, LIFE_OK, LIFE_OK, LIFE_LOST, LIFE_LOST};
 	private float[] livesPercents = {1f, 1f, 1f, 0f, 0f};
 	private float[] livesPositionsX = new float[5];
@@ -489,7 +490,7 @@ public class Hud
 		currentLife = 2;
 		nextLifeCounter = 0;
 
-		livesCounterState = LIVES_TIMER_IDLE;
+		livesCounterCurrentState = LIVES_TIMER_IDLE;
 
 		recoveringProgressBarTimer = 0f;
 		recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
@@ -499,7 +500,8 @@ public class Hud
 
 	public void resume()
 	{
-		livesCounterState = LIVES_TIMER_COUNTING;
+		//livesCounterCurrentState = LIVES_TIMER_COUNTING;
+		livesCounterCurrentState = livesCounterPreviousState;
 		resetPauseButtonTexture();
 		resumingPanelTimer = 0f;
 		resumingPanelState = UI_STATE_APPEARING;
@@ -512,7 +514,7 @@ public class Hud
 	{
 		getReadyPanelTimer = 0f;
 		getReadyPanelState = UI_STATE_NOT_VISIBLE;
-		livesCounterState = LIVES_TIMER_IDLE;
+		livesCounterCurrentState = LIVES_TIMER_IDLE;
 		lifeRecoverTimer = 0f;
 		recoveringProgressBarTimer = 0f;
 		recoveringProgressBarState = UI_STATE_NOT_VISIBLE;
@@ -546,6 +548,7 @@ public class Hud
 			y >= pauseButtonLimits[2] &&
 			y <= pauseButtonLimits[3])
 		{
+			livesCounterPreviousState = livesCounterCurrentState;
 			renderer.setPause(true);
 			pauseButtonCurrentTexture = textures.pauseButtonSelectedTexture;
 			return true;
@@ -781,7 +784,7 @@ public class Hud
 		}
 
 		// Lives
-		if(livesCounterState == LIVES_TIMER_COUNTING)
+		if(livesCounterCurrentState == LIVES_TIMER_COUNTING)
 		{
 			lifeRecoverTimer = lifeRecoverTimer + deltaTime;
 			lifeRecoverPercent = lifeRecoverTimer / LIFE_RECOVERING_TIME;
@@ -789,7 +792,7 @@ public class Hud
 			if(lifeRecoverPercent >= 1f)
 			{
 				livesStates[currentLife] = LIFE_OK;
-				livesCounterState = LIVES_TIMER_IDLE;
+				livesCounterCurrentState = LIVES_TIMER_IDLE;
 			}
 		}
 
@@ -858,7 +861,7 @@ public class Hud
 				if(livesStates[currentLife] == LIFE_LOSING)
 				{
 					lifeRecoverTimer = 0f;
-					livesCounterState = LIVES_TIMER_COUNTING;
+					livesCounterCurrentState = LIVES_TIMER_COUNTING;
 				}
 			}
 		}
@@ -1039,7 +1042,7 @@ public class Hud
 		}
 		else if(livesStates[currentLife] == LIFE_LOSING)
 		{
-			livesCounterState = LIVES_TIMER_IDLE;
+			livesCounterCurrentState = LIVES_TIMER_IDLE;
 			livesStates[currentLife] = LIFE_LOST;
 			currentLife--;
 		}
@@ -1211,7 +1214,7 @@ public class Hud
 
 		String stateString = "HUD "
 				+ currentLife + " "
-				+ livesCounterState + " "
+				+ livesCounterCurrentState + " "
 				+ livesStates[0] + " "
 				+ livesStates[1] + " "
 				+ livesStates[2] + " "
@@ -1230,7 +1233,7 @@ public class Hud
 	public void loadState(String[] tokens)
 	{
 		currentLife = Integer.parseInt(tokens[1]);
-		livesCounterState = Integer.parseInt(tokens[2]);
+		livesCounterCurrentState = Integer.parseInt(tokens[2]);
 		livesStates[0] = Integer.parseInt(tokens[3]);
 		livesStates[1] = Integer.parseInt(tokens[4]);
 		livesStates[2] = Integer.parseInt(tokens[5]);

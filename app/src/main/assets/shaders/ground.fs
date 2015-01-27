@@ -80,6 +80,7 @@ void main()
 	
 	//fragColor = mix((fragColor + reflectionColor * (1.0 - height)) * 0.5, fragColor, height); 
 	fragColor = mix(reflectionColor, fragColor, height);
+	//fragColor = groundColor;
 	//fragColor = reflectionColor * (1.0 - height);
 	
 	/*if(lod == 0)

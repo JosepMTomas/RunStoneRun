@@ -12,6 +12,10 @@ import static android.opengl.GLES30.*;
  */
 public class MenuTextures
 {
+	// Game title
+
+	public final int gameTitleTexture;
+
 	// HUD
 
 	public final int numbersAtlasTexture;
@@ -112,6 +116,10 @@ public class MenuTextures
 
 	public MenuTextures(Context context)
 	{
+		// Game title
+
+		gameTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/game_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
 		// HUD
 
 		numbersAtlasTexture = TextureHelper.loadETC2Texture(context, "textures/menus/numbers_atlas.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
