@@ -517,7 +517,7 @@ public class Ground
 		rockC.addShadowGeometry("models/rock_c_lod_b.vbm");
 		rockC.addReflectionGeometry("models/rock_c_reflection.vbm");
 
-		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_a.vbm", "models/pine_tree_broken_b.vbm");
+		brokenPineTree = new BrokenTree(context, "models/pine_tree_broken_root.vbm", "models/pine_tree_broken_top.vbm");
 		brokenPineTree.addShadowGeometry("models/pine_tree_broken_root_shadow.vbm", "models/pine_tree_broken_top_shadow.vbm");
 
 		brokenHugeTree = new BrokenTree(context, "models/huge_tree_broken_root.vbm", "models/huge_tree_broken_top.vbm");
@@ -655,14 +655,14 @@ public class Ground
 		//grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, false, true);
 
 		String[] pineBranchTextureMips = {
-				"textures/pine_tree/pine_tree_mip_0.mp3",
-				"textures/pine_tree/pine_tree_mip_1.mp3",
-				"textures/pine_tree/pine_tree_mip_2.mp3",
-				"textures/pine_tree/pine_tree_mip_3.mp3",
-				"textures/pine_tree/pine_tree_mip_4.mp3",
-				"textures/pine_tree/pine_tree_mip_5.mp3",
-				"textures/pine_tree/pine_tree_mip_6.mp3",
-				"textures/pine_tree/pine_tree_mip_7.mp3"
+				"textures/pine_tree/diffuse_mip_0.mp3",
+				"textures/pine_tree/diffuse_mip_1.mp3",
+				"textures/pine_tree/diffuse_mip_2.mp3",
+				"textures/pine_tree/diffuse_mip_3.mp3",
+				"textures/pine_tree/diffuse_mip_4.mp3",
+				"textures/pine_tree/diffuse_mip_5.mp3",
+				"textures/pine_tree/diffuse_mip_6.mp3",
+				"textures/pine_tree/diffuse_mip_7.mp3"
 		};
 		//Log.d(TAG, "Loading pine branch texture");
 		pineBranchTexture = TextureHelper.loadETC2Texture(context, pineBranchTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);

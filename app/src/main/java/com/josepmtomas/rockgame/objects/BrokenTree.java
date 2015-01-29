@@ -137,7 +137,7 @@ public class BrokenTree
 
 					// Read the vertex texture coordinates
 					rootVertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					rootVertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					rootVertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
 					rootVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
