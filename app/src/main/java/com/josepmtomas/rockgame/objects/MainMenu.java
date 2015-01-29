@@ -26,7 +26,6 @@ import static android.opengl.Matrix.*;
 public class MainMenu
 {
 	// Geometry attributes constants
-	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 	private static final int POSITION_BYTE_OFFSET = 0;
 	private static final int TEXCOORD_BYTE_OFFSET = 3 * BYTES_PER_FLOAT;
 	private static final int BYTE_STRIDE = 5 * BYTES_PER_FLOAT;
@@ -123,7 +122,6 @@ public class MainMenu
 	private int visibilityButtonTexture;
 
 	// Score panel
-	private boolean previousScoreSet = false;
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
 	private float[] scoreOpacities = new float[8];
@@ -131,7 +129,6 @@ public class MainMenu
 	private float scorePositionY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
-	//private int scoreNumberOfDigits = 0;
 	private float scoreNumberWidth;
 	private int[] scoreNumbers = {0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -208,10 +205,7 @@ public class MainMenu
 	private void loadPreferences()
 	{
 		speedButtonEnabled = !sharedPreferences.getBoolean("SpeedEnabled", false);
-		//visibilityButtonEnabled = !sharedPreferences.getBoolean("VisibilityEnabled", true);
-
 		touchSpeedButton();
-		//touchVisibilityButton();
 	}
 
 
@@ -274,6 +268,7 @@ public class MainMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void createRecordBackPanel(float screenWidth, float screenHeight)
 	{
 		float borderSize = screenHeight * 0.025f;
@@ -341,6 +336,7 @@ public class MainMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void createRecordButton(float screenWidth, float screenHeight)
 	{
 		float height = screenHeight * 0.1f;
@@ -392,6 +388,7 @@ public class MainMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void createScoreGeometry(float screenWidth, float screenHeight)
 	{
 		float[] vertices = new float[20];
@@ -516,6 +513,7 @@ public class MainMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	public void setScore(float screenWidth, float screenHeight)
 	{
 		// get current high score from shared preferences
@@ -711,6 +709,7 @@ public class MainMenu
 	public void setNotVisible()
 	{
 		currentState = UI_STATE_NOT_VISIBLE;
+		buttonsOpacity = 0f;
 	}
 
 

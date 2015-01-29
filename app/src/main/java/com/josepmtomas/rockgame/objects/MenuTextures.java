@@ -85,6 +85,11 @@ public class MenuTextures
 	public final int composerTitleTexture;
 	public final int effectsTitleTexture;
 	public final int fontTitleTexture;
+	public final int texturesTitleTexture;
+	public final int originalModelsTitleTexture;
+	public final int hughesTitleTexture;
+	public final int tomislavTitleTexture;
+	public final int specialThanksTitleTexture;
 
 	// Pause
 
@@ -195,6 +200,11 @@ public class MenuTextures
 		composerTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/composer_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		effectsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/sound_effects_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		fontTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/font_type_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		texturesTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/textures_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		originalModelsTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/original_models_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		hughesTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/hughes_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		tomislavTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/tomislav_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		specialThanksTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/special_thanks_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// Pause
 

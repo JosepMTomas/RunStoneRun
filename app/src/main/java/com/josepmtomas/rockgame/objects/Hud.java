@@ -26,10 +26,9 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
  * Created by Josep on 29/11/2014.
  * @author Josep
  */
+
 public class Hud
 {
-	private static String TAG = "HUD";
-
 	private ForwardPlusRenderer renderer;
 	private MenuTextures textures;
 
@@ -69,8 +68,8 @@ public class Hud
 	private float[] pauseButtonCurrentPosition = new float[2];
 	private float pauseButtonTimer = 0f;
 	private float pauseButtonOpacity = 0f;
-	private float pauseButtonAppearTime = 0.5f;
-	private float pauseButtonDisappearTime = 0.5f;
+	private static final float PAUSE_BUTTON_APPEAR_TIME = 0.5f;
+	private static final float PAUSE_BUTTON_DISAPPEAR_TIME = 0.5f;
 
 	// Score panel
 	private int[] scoreVboHandles = new int[2];
@@ -89,8 +88,8 @@ public class Hud
 	private float[] scoreCurrentPositionsX = new float[8];
 	private float scoreCurrentPositionY = 0f;
 	private float scoreTimer = 0f;
-	private float scoreAppearTime = 0.5f;
-	private float scoreDisappearTime = 0.5f;
+	private static final float SCORE_APPEAR_TIME = 0.5f;
+	private static final float SCORE_DISAPPEAR_TIME = 0.5f;
 
 	// Multiplier panel
 	private float[] multiplierNumbersPositionsX = new float[4];
@@ -103,8 +102,8 @@ public class Hud
 	private float[] multiplierNumbersCurrentPositionsX = new float[4];
 	private float multiplierNumbersCurrentPositionY = 0f;
 	private float multiplierNumbersTimer = 0f;
-	private float multiplierNumbersAppearTime = 0.5f;
-	private float multiplierNumbersDisappearTime = 0.5f;
+	private static final float MULTIPLIER_NUMBERS_APPEAR_TIME = 0.5f;
+	private static final float MULTIPLIER_NUMBERS_DISAPPEAR_TIME = 0.5f;
 	private float multiplierNumbersOpacity = 1f;
 
 	// Multiplier progress bar
@@ -119,8 +118,8 @@ public class Hud
 	private float multiplierProgressCurrentPositionX = 0f;
 	private float multiplierProgressCurrentPositionY = 0f;
 	private float multiplierProgressTimer = 0f;
-	private float multiplierProgressAppearTime = 0.5f;
-	private float multiplierProgressDisappearTime = 0.5f;
+	private static final float MULTIPLIER_PROGRESS_APPEAR_TIME = 0.5f;
+	private static final float MULTIPLIER_PROGRESS_DISAPPEAR_TIME = 0.5f;
 	private float multiplierProgressOpacity = 1f;
 
 	// Recovering progress bar
@@ -183,8 +182,8 @@ public class Hud
 	// Lives state control
 	private int livesState = UI_STATE_NOT_VISIBLE;
 	private float livesTimer = 0f;
-	private float livesAppearTime = 0.5f;
-	private float livesDisappearTime = 0.5f;
+	private static final float LIVES_APPEAR_TIME = 0.5f;
+	private static final float LIVES_DISAPPEAR_TIME = 0.5f;
 	private float livesOpacity = 0f;
 	private float livesCurrentScale = 1f;
 	private float livesCurrentPositionY;
@@ -531,6 +530,7 @@ public class Hud
 		pauseButtonState = UI_STATE_NOT_VISIBLE;
 	}
 
+
 	public void setDisappearing()
 	{
 		scoreCurrentState = UI_STATE_DISAPPEARING;
@@ -623,9 +623,9 @@ public class Hud
 		if(scoreCurrentState == UI_STATE_APPEARING)
 		{
 			scoreTimer += deltaTime;
-			scoreOpacity = scoreTimer / scoreAppearTime;
+			scoreOpacity = scoreTimer / SCORE_APPEAR_TIME;
 
-			if(scoreTimer >= scoreAppearTime)
+			if(scoreTimer >= SCORE_APPEAR_TIME)
 			{
 				scoreTimer = 0f;
 				scoreOpacity = 1f;
@@ -644,9 +644,9 @@ public class Hud
 		else if(scoreCurrentState == UI_STATE_DISAPPEARING)
 		{
 			scoreTimer += deltaTime;
-			scoreOpacity = 1f - (scoreTimer / scoreDisappearTime);
+			scoreOpacity = 1f - (scoreTimer / SCORE_DISAPPEAR_TIME);
 
-			if(scoreTimer >= scoreDisappearTime)
+			if(scoreTimer >= SCORE_DISAPPEAR_TIME)
 			{
 				scoreTimer = 0f;
 				scoreOpacity = 0f;
@@ -666,9 +666,9 @@ public class Hud
 		if(multiplierProgressCurrentState == UI_STATE_APPEARING)
 		{
 			multiplierProgressTimer += deltaTime;
-			multiplierProgressOpacity = multiplierProgressTimer / multiplierProgressAppearTime;
+			multiplierProgressOpacity = multiplierProgressTimer / MULTIPLIER_PROGRESS_APPEAR_TIME;
 
-			if(multiplierProgressTimer >= multiplierProgressAppearTime)
+			if(multiplierProgressTimer >= MULTIPLIER_PROGRESS_APPEAR_TIME)
 			{
 				multiplierProgressTimer = 0f;
 				multiplierProgressOpacity = 1f;
@@ -683,9 +683,9 @@ public class Hud
 		else if(multiplierProgressCurrentState == UI_STATE_DISAPPEARING)
 		{
 			multiplierProgressTimer += deltaTime;
-			multiplierProgressOpacity = 1f - (multiplierProgressTimer / multiplierProgressDisappearTime);
+			multiplierProgressOpacity = 1f - (multiplierProgressTimer / MULTIPLIER_PROGRESS_DISAPPEAR_TIME);
 
-			if(multiplierProgressTimer >= multiplierProgressDisappearTime)
+			if(multiplierProgressTimer >= MULTIPLIER_PROGRESS_DISAPPEAR_TIME)
 			{
 				multiplierProgressTimer = 0f;
 				multiplierProgressOpacity = 0f;
@@ -701,9 +701,9 @@ public class Hud
 		if(multiplierNumbersCurrentState == UI_STATE_APPEARING)
 		{
 			multiplierNumbersTimer += deltaTime;
-			multiplierNumbersOpacity = multiplierNumbersTimer / multiplierNumbersAppearTime;
+			multiplierNumbersOpacity = multiplierNumbersTimer / MULTIPLIER_NUMBERS_APPEAR_TIME;
 
-			if(multiplierNumbersTimer >= multiplierNumbersAppearTime)
+			if(multiplierNumbersTimer >= MULTIPLIER_NUMBERS_APPEAR_TIME)
 			{
 				multiplierNumbersTimer = 0f;
 				multiplierNumbersOpacity = 1f;
@@ -722,9 +722,9 @@ public class Hud
 		else if(multiplierNumbersCurrentState == UI_STATE_DISAPPEARING)
 		{
 			multiplierNumbersTimer += deltaTime;
-			multiplierNumbersOpacity = 1f - (multiplierNumbersTimer / multiplierNumbersDisappearTime);
+			multiplierNumbersOpacity = 1f - (multiplierNumbersTimer / MULTIPLIER_NUMBERS_DISAPPEAR_TIME);
 
-			if(multiplierNumbersTimer >= multiplierNumbersDisappearTime)
+			if(multiplierNumbersTimer >= MULTIPLIER_NUMBERS_DISAPPEAR_TIME)
 			{
 				multiplierNumbersTimer = 0f;
 				multiplierNumbersOpacity = 0f;
@@ -744,9 +744,9 @@ public class Hud
 		if(livesState == UI_STATE_APPEARING)
 		{
 			livesTimer += deltaTime;
-			livesOpacity = livesTimer / livesAppearTime;
+			livesOpacity = livesTimer / LIVES_APPEAR_TIME;
 
-			if(livesTimer >= livesAppearTime)
+			if(livesTimer >= LIVES_APPEAR_TIME)
 			{
 				livesTimer = 0f;
 				livesOpacity = 1f;
@@ -765,9 +765,9 @@ public class Hud
 		else if(livesState == UI_STATE_DISAPPEARING)
 		{
 			livesTimer += deltaTime;
-			livesOpacity = 1f - (livesTimer / livesDisappearTime);
+			livesOpacity = 1f - (livesTimer / LIVES_DISAPPEAR_TIME);
 
-			if(livesTimer >= livesDisappearTime)
+			if(livesTimer >= LIVES_DISAPPEAR_TIME)
 			{
 				livesTimer = 0f;
 				livesOpacity = 0f;
@@ -801,9 +801,9 @@ public class Hud
 		if(pauseButtonState == UI_STATE_APPEARING)
 		{
 			pauseButtonTimer += deltaTime;
-			pauseButtonOpacity = pauseButtonTimer / pauseButtonAppearTime;
+			pauseButtonOpacity = pauseButtonTimer / PAUSE_BUTTON_APPEAR_TIME;
 
-			if(pauseButtonTimer >= pauseButtonAppearTime)
+			if(pauseButtonTimer >= PAUSE_BUTTON_APPEAR_TIME)
 			{
 				pauseButtonTimer = 0f;
 				pauseButtonOpacity = 1f;
@@ -818,9 +818,9 @@ public class Hud
 		else if(pauseButtonState == UI_STATE_DISAPPEARING)
 		{
 			pauseButtonTimer += deltaTime;
-			pauseButtonOpacity = 1f - (pauseButtonTimer / pauseButtonDisappearTime);
+			pauseButtonOpacity = 1f - (pauseButtonTimer / PAUSE_BUTTON_DISAPPEAR_TIME);
 
-			if(pauseButtonTimer >= pauseButtonDisappearTime)
+			if(pauseButtonTimer >= PAUSE_BUTTON_DISAPPEAR_TIME)
 			{
 				pauseButtonTimer = 0f;
 				pauseButtonOpacity = 0f;
@@ -1052,7 +1052,6 @@ public class Hud
 			renderer.gameOver();
 		}
 
-		//TODO: temp (avoid exception)
 		currentLife = Math.max(currentLife, 0);
 
 		return returnValue;

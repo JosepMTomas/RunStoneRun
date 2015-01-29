@@ -648,7 +648,6 @@ public class ForwardPlusRenderer implements Renderer
 
 		// Update View-Projection matrix on objects
 		playerRock.update(viewProjection, deltaTime, ground.getNearestGroundPatchType());
-		playerRock.updateLightMatrices(shadowViewProjection);
 		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], deltaTime);
 		skyDome.update(viewProjection);
 
@@ -1269,9 +1268,9 @@ public class ForwardPlusRenderer implements Renderer
 			fScore = Float.parseFloat(tokens[1]);
 			lightInfo.timeOfDay = Float.parseFloat(tokens[2]);
 
-			line = bufferedReader.readLine();
-			tokens = line.split(" ");
-			playerRock.loadState(tokens);
+			//line = bufferedReader.readLine();
+			//tokens = line.split(" ");
+			playerRock.loadState(bufferedReader);
 
 			line = bufferedReader.readLine();
 			tokens = line.split(" ");

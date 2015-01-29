@@ -49,9 +49,12 @@ public class OptionsMenu
 	private static final float menuDisappearTime = 0.5f;
 	private float menuTimer = 0f;
 	private float menuOpacity = 0f;
-	private final static float BUTTONS_BASE_OPACITY = 0.25f;
-	private float buttonsOpacity = 0.25f;
+	private float speedButtonBaseOpacity = 0.25f;
+	private float speedButtonOpacity = 0.25f;
+	private float visibilityButtonBaseOpacity = 0.25f;
+	private float visibilityButtonOpacity = 0.25f;
 	private boolean menuEnabled = true;
+	private boolean extraButtonsEnabled = true;
 
 	// Background
 	private float[] background9PatchScale = {1f,1f};
@@ -608,13 +611,15 @@ public class OptionsMenu
 		{
 			menuTimer += deltaTime;
 			menuOpacity = menuTimer / menuAppearTime;
-			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
+			speedButtonOpacity = menuOpacity * speedButtonBaseOpacity;
+			visibilityButtonOpacity = menuOpacity * visibilityButtonBaseOpacity;
 
 			if(menuTimer >= menuAppearTime)
 			{
 				currentState = UI_STATE_VISIBLE;
 				menuOpacity = 1f;
-				buttonsOpacity = BUTTONS_BASE_OPACITY;
+				speedButtonOpacity = speedButtonBaseOpacity;
+				visibilityButtonOpacity = visibilityButtonBaseOpacity;
 				menuTimer = 0f;
 				renderer.changedToOptionMenu();
 			}
@@ -681,13 +686,15 @@ public class OptionsMenu
 		{
 			menuTimer += deltaTime;
 			menuOpacity = 1f - (menuTimer / menuDisappearTime);
-			buttonsOpacity = menuOpacity * BUTTONS_BASE_OPACITY;
+			speedButtonOpacity = menuOpacity * speedButtonBaseOpacity;
+			visibilityButtonOpacity = menuOpacity * visibilityButtonBaseOpacity;
 
 			if(menuTimer >= menuDisappearTime)
 			{
 				currentState = UI_STATE_NOT_VISIBLE;
 				menuOpacity = 0f;
-				buttonsOpacity = 0f;
+				speedButtonOpacity = 0f;
+				visibilityButtonOpacity = 0f;
 				menuTimer = 0;
 				renderer.changedFromOptionsMenuToMainMenu();
 				resetBackButtonCurrentTexture();
@@ -840,11 +847,11 @@ public class OptionsMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Speed button
-			uiPanelProgram.setUniforms(viewProjection, speedButtonScale, speedButtonPosition, speedButtonTexture, buttonsOpacity);
+			uiPanelProgram.setUniforms(viewProjection, speedButtonScale, speedButtonPosition, speedButtonTexture, speedButtonOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Visibility button
-			uiPanelProgram.setUniforms(viewProjection, visibilityButtonScale, visibilityButtonPosition, visibilityButtonTexture, buttonsOpacity);
+			uiPanelProgram.setUniforms(viewProjection, visibilityButtonScale, visibilityButtonPosition, visibilityButtonTexture, visibilityButtonOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}
@@ -963,14 +970,17 @@ public class OptionsMenu
 			}
 		}
 
-		if(	x >= speedButtonLimits[0] &&
-			x <= speedButtonLimits[1] &&
-			y >= speedButtonLimits[2] &&
-			y <= speedButtonLimits[3])
+		if(extraButtonsEnabled)
 		{
-			touchSpeedButton();
+			if(	x >= speedButtonLimits[0] &&
+					x <= speedButtonLimits[1] &&
+					y >= speedButtonLimits[2] &&
+					y <= speedButtonLimits[3])
+			{
+				touchSpeedButton();
+			}
 		}
-		else if(x >= visibilityButtonLimits[0] &&
+		if(x >= visibilityButtonLimits[0] &&
 				x <= visibilityButtonLimits[1] &&
 				y >= visibilityButtonLimits[2] &&
 				y <= visibilityButtonLimits[3])
@@ -986,6 +996,19 @@ public class OptionsMenu
 		this.previousMenu = previousMenu;
 		loadPreferences();
 		currentState = UI_STATE_APPEARING;
+
+		if(previousMenu == PAUSE_MENU)
+		{
+			speedButtonBaseOpacity = 0f;
+			visibilityButtonBaseOpacity = 0.25f;
+			extraButtonsEnabled = false;
+		}
+		else
+		{
+			speedButtonBaseOpacity = 0.25f;
+			visibilityButtonBaseOpacity = 0.25f;
+			extraButtonsEnabled = true;
+		}
 	}
 
 

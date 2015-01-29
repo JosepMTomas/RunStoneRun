@@ -108,13 +108,12 @@ public class PlayerRock
 	public float currentPositionY = 10f;
 
 	// Shadow map generation matrices
-	private float[] lightViewProjection;
 	private float[] lightModelViewProjection = new float[16];
 
 	// Normal rendering matrices
-	private float[] rotationVector = new float[4];
-	private float[] vectorX = {1.0f, 0.0f, 0.0f, 1.0f};
-	private float[] vectorY = {0.0f, 1.0f, 0.0f, 1.0f};
+	//private float[] rotationVector = new float[4];
+	//private float[] vectorX = {1.0f, 0.0f, 0.0f, 1.0f};
+	//private float[] vectorY = {0.0f, 1.0f, 0.0f, 1.0f};
 	private float[] model = new float[16];
 	private float[] rotationMatrix = new float[16];
 
@@ -566,16 +565,10 @@ public class PlayerRock
 	}
 
 
-	public void updateLightMatrices(float[] lightViewProjection)
-	{
-		this.lightViewProjection = lightViewProjection;
-	}
-
-
 	public void update(float[] viewProjectionMatrix, float deltaTime, int groundPatchType)
 	{
-		smokeParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, deltaTime);
-		waterParticleSystem.update(viewProjectionMatrix, currentPositionZ, currentDirection, displacement, deltaTime);
+		smokeParticleSystem.update(viewProjectionMatrix, currentPositionZ, displacement, deltaTime);
+		waterParticleSystem.update(viewProjectionMatrix, currentPositionZ, displacement, deltaTime);
 
 		if(previousGroundPatchState == GROUND_PATCH_GROUND && groundPatchType != GROUND_PATCH_GROUND)
 		{
@@ -743,7 +736,6 @@ public class PlayerRock
 
 		multiplyMM(modelViewProjection, 0, viewProjectionMatrix, 0, model, 0);
 
-		// TODO: mirrored proxy
 		setIdentityM(proxyModel, 0);
 		translateM(proxyModel, 0, 0.0f, -currentPositionY, currentPositionZ);
 		rotateM(proxyModel, 0, rotationY, 0f, 1f, 0f);
@@ -781,7 +773,6 @@ public class PlayerRock
 		if(proxyModel == null) Log.w("PlayerRock", "proxyModel is null");
 		multiplyMM(proxyModelViewProjection, 0, viewProjection, 0, proxyModel, 0);
 
-		// TODO:
 		playerRockProgram.useProgram();
 		playerRockProgram.setUniforms(proxyModel, proxyModelViewProjection, shadowMatrix, shadowMapSampler, diffuseTexture, normalTexture);
 
@@ -809,12 +800,6 @@ public class PlayerRock
 
 		glDisable(GL_BLEND);
 		glDepthMask(true);
-	}
-
-
-	public float[] getDisplacement()
-	{
-		return displacement;
 	}
 
 
@@ -906,10 +891,6 @@ public class PlayerRock
 				parent.playImpactRockOnRockSound();
 			}
 		}
-		else //if(state == PLAYER_ROCK_RECOVERING)
-		{
-			// nothing at this point
-		}
 	}
 
 
@@ -919,19 +900,6 @@ public class PlayerRock
 
 	public void saveState(FileOutputStream outputStream) throws IOException
 	{
-		/*StringBuilder builder = new StringBuilder();
-
-		builder.append("PLAYER_ROCK ");
-		builder.append(currentSpeed);		builder.append(" ");
-		builder.append(currentPositionY);	builder.append(" ");
-		builder.append(rotationX);			builder.append(" ");
-		builder.append(rotationY);			builder.append(" ");
-		builder.append(scoreMultiplier);	builder.append(" ");
-		builder.append(state);				builder.append(" ");
-		builder.append(currentState);		builder.append("\n");
-
-		outputStream.write(builder.toString().getBytes());*/
-
 		String stateString = "PLAYER_ROCK "
 				+ currentSpeed + " "
 				+ currentPositionY + " "
@@ -942,10 +910,21 @@ public class PlayerRock
 				+ currentState + " "
 				+ initialForce + "\n";
 		outputStream.write(stateString.getBytes());
+
+		smokeParticleSystem.saveState(outputStream);
+		waterParticleSystem.saveState(outputStream);
 	}
 
-	public  void loadState(String[] tokens)
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
 	{
+		String line;
+		String[] tokens;
+
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+
+		// Read properties
 		currentSpeed = Float.parseFloat(tokens[1]);
 		currentPositionY = Float.parseFloat(tokens[2]);
 		rotationX = Float.parseFloat(tokens[3]);
@@ -955,7 +934,7 @@ public class PlayerRock
 		currentState = Integer.parseInt(tokens[7]);
 		initialForce = Float.parseFloat(tokens[8]);
 
-		smokeParticleSystem.setEnabled(true);
-		waterParticleSystem.setEnabled(true);
+		smokeParticleSystem.loadState(bufferedReader);
+		waterParticleSystem.loadState(bufferedReader);
 	}
 }

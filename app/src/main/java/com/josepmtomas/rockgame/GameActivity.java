@@ -25,6 +25,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 
+import org.apache.http.protocol.HTTP;
+
 import java.util.List;
 
 public class GameActivity extends Activity
@@ -417,57 +419,263 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	}
 
 
+	public void launchDeveloperIntent()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Developer");
+		builder.setMessage("Send email?");
+		builder.setCancelable(true);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// Build the intent
+				Uri email = Uri.parse("mailto:josepmtomas90@gmail.com");
+				Intent emailIntent = new Intent(Intent.ACTION_VIEW, email);
+
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(emailIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
+
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(emailIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
+
 	public void launchComposerIntent()
 	{
-		// Build the intent
-		Uri webPage = Uri.parse("http://danosongs.com/");
-		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit Dan O'Connor's website?");
+		builder.setCancelable(true);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// Build the intent
+				Uri webPage = Uri.parse("http://danosongs.com/");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
 
-		// Verify it resolves
-		PackageManager packageManager = getPackageManager();
-		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
-		boolean isIntentSafe = activities.size() > 0;
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
 
-		// Start an activity if it's safe
-		if (isIntentSafe) {
-			startActivity(webIntent);
-		}
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
+
+
 	}
 
 
 	public void launchSoundEffectsIntent()
 	{
-		// Build the intent
-		Uri webPage = Uri.parse("http://www.freeSFX.co.uk");
-		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit www.freeSFX.co.uk ?");
+		builder.setCancelable(true);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// Build the intent
+				Uri webPage = Uri.parse("http://www.freeSFX.co.uk");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
 
-		// Verify it resolves
-		PackageManager packageManager = getPackageManager();
-		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
-		boolean isIntentSafe = activities.size() > 0;
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
 
-		// Start an activity if it's safe
-		if (isIntentSafe) {
-			startActivity(webIntent);
-		}
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 
 
 	public void touchedFontIntent()
 	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit Yamaoka Yasuhiro's website?");
+		builder.setCancelable(false);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Build the intent
+				Uri webPage = Uri.parse("http://yoworks.com/index.html");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
 
-		// Build the intent
-		Uri webPage = Uri.parse("http://yoworks.com/telegrama/index.html");
-		Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
 
-		// Verify it resolves
-		PackageManager packageManager = getPackageManager();
-		List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
-		boolean isIntentSafe = activities.size() > 0;
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
 
-		// Start an activity if it's safe
-		if (isIntentSafe) {
-			startActivity(webIntent);
-		}
+
+	public void touchedTexturesIntent()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit Giles Hodges' website?");
+		builder.setCancelable(false);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Build the intent
+				Uri webPage = Uri.parse("http://seamless-pixels.blogspot.com");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
+
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
+
+	public void touchedHughesMullerIntent()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit Hughes Muller's website?");
+		builder.setCancelable(false);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Build the intent
+				Uri webPage = Uri.parse("http://www.yughues-folio.com");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
+
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
+	}
+
+
+	public void touchedTomislavSpajicIntent()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Credits");
+		builder.setMessage("Do you want to visit Tomislav Spajic's website?");
+		builder.setCancelable(false);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1) {
+				// Build the intent
+				Uri webPage = Uri.parse("http://www.clayman.se/");
+				Intent webIntent = new Intent(Intent.ACTION_VIEW, webPage);
+
+				// Verify it resolves
+				PackageManager packageManager = getPackageManager();
+				List<ResolveInfo> activities = packageManager.queryIntentActivities(webIntent, 0);
+				boolean isIntentSafe = activities.size() > 0;
+
+				// Start an activity if it's safe
+				if (isIntentSafe) {
+					startActivity(webIntent);
+				}
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+		{
+			public void onClick(DialogInterface arg0, int arg1)
+			{
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 }

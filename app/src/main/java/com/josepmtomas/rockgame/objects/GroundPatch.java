@@ -4,7 +4,6 @@ import android.util.FloatMath;
 
 import com.josepmtomas.rockgame.algebra.vec2;
 import com.josepmtomas.rockgame.algebra.vec3;
-//import com.josepmtomas.rockgame.data.GroundPatchType;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
@@ -25,11 +24,12 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 /**
  * Created by Josep on 06/09/2014.
+ * @author Josep
  */
 
 public class GroundPatch extends BoundarySampler
 {
-	private static final String TAG = "GroundPatch";
+	//private static final String TAG = "GroundPatch";
 
 	private static final int COLOR_COMPONENTS = 3;
 
@@ -37,12 +37,11 @@ public class GroundPatch extends BoundarySampler
 
 	// LOD
 	public int currentLOD = LOD_A;
-	public int grassElementsToDraw = 6;
 
 	// Frustum culling
 	public boolean visible = false;
 	private PerspectiveCamera perspectiveCamera;
-	private float cullingPointsRadius;
+	//private float cullingPointsRadius;
 	private float[] initialCullingPoints;
 	private float[] currentCullingPoints = new float[15];
 
@@ -120,7 +119,7 @@ public class GroundPatch extends BoundarySampler
 	public float[] grassPointsLODB = new float[256];
 	public float[] grassPointsLODC = new float[256];
 	public int[] numGrassPointsPerLOD = new int[3];
-	public final int[] grassNumElementsLOD = {18, 12, 6};
+	//public final int[] grassNumElementsLOD = {18, 12, 6};
 
 
 
@@ -139,7 +138,7 @@ public class GroundPatch extends BoundarySampler
 		this.type = GROUND_PATCH_GROUND;
 		this.perspectiveCamera = perspectiveCamera;
 
-		this.cullingPointsRadius = Math.max(patchWidth, patchHeight) * 0.5f;
+		//this.cullingPointsRadius = Math.max(patchWidth, patchHeight) * 0.5f;
 
 		this.indexNum = indexNum;
 
@@ -428,21 +427,6 @@ public class GroundPatch extends BoundarySampler
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, riverEntryVboHandles[4]);
 
 		glBindVertexArray(0);
-
-		/******************************************************************************************/
-
-		//TODO: depth prepass?
-		/*glGenVertexArrays(1, depthPrePassVaoHandle, 0);
-		glBindVertexArray(depthPrePassVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, groundVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundVboHandles[4]);
-
-		glBindVertexArray(0);*/
 	}
 
 
@@ -479,21 +463,6 @@ public class GroundPatch extends BoundarySampler
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, riverExitVboHandles[4]);
 
 		glBindVertexArray(0);
-
-		/******************************************************************************************/
-
-		//TODO: depth prepass?
-		/*glGenVertexArrays(1, depthPrePassVaoHandle, 0);
-		glBindVertexArray(depthPrePassVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, groundVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundVboHandles[4]);
-
-		glBindVertexArray(0);*/
 	}
 
 
@@ -530,21 +499,6 @@ public class GroundPatch extends BoundarySampler
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, riverExitVboHandles[4]);
 
 		glBindVertexArray(0);
-
-		/******************************************************************************************/
-
-		//TODO: depth prepass?
-		/*glGenVertexArrays(1, depthPrePassVaoHandle, 0);
-		glBindVertexArray(depthPrePassVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, groundVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, groundVboHandles[4]);
-
-		glBindVertexArray(0);*/
 	}
 
 	private void updateGroundVertexArrayObject()
@@ -1454,7 +1408,6 @@ public class GroundPatch extends BoundarySampler
 	{
 		Random random = new Random();
 		int position;
-		int a, b, c, d;
 
 		for(int i=0; i < numPolygonsZ; i++)
 		{
@@ -1475,8 +1428,8 @@ public class GroundPatch extends BoundarySampler
 	private void filterGrassPoints()
 	{
 		int numPoints = points.size();
-		int i=0, j=0;
-		int ix, iz, position;
+		int i=0;
+		int ix, iz;
 		int index = 0;
 		float x, z;
 
@@ -1584,18 +1537,6 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	public boolean isVisible(PerspectiveCamera camera)
-	{
-		return camera.anyPointInFrustum(currentCullingPoints, 50f);
-	}
-
-
-	public void setPerspectiveCamera(PerspectiveCamera perspectiveCamera)
-	{
-		this.perspectiveCamera = perspectiveCamera;
-	}
-
-
 	public void update(float[] viewProjection, vec3 displacement)
 	{
 		for(int i=0; i<15; i+=3)
@@ -1617,37 +1558,10 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	public void updateLOD()
-	{
-		float distance = distanceToOrigin(currentPosition);
-
-		if(distance < GRASS_LOD_A_MAX_DISTANCE)
-		{
-			currentLOD = LOD_A;
-		}
-		else if(distance < GRASS_LOD_B_MAX_DISTANCE)
-		{
-			currentLOD = LOD_B;
-		}
-		else
-		{
-			currentLOD = LOD_C;
-		}
-
-		grassElementsToDraw = grassNumElementsLOD[currentLOD];
-	}
-
-
 	public float[] getModelMatrix()
 	{
 		return model;
 	}
-
-
-	/*public int getGrassUbo()
-	{
-		return grassMatricesUbo[0];
-	}*/
 
 
 	public float[] getModelViewProjectionMatrix()
@@ -1753,79 +1667,6 @@ public class GroundPatch extends BoundarySampler
 		{
 			return null;
 		}
-
-
-		/*float[] result;
-		int position;
-		int offset = 0;
-
-		switch(type)
-		{
-			case DOWN:
-				result = new float[numVerticesX * 3];
-
-				for(int x=0; x < numVerticesX; x++)
-				{
-					position = x*3;
-
-					result[offset++] = colors[position];
-					result[offset++] = colors[position+1];
-					result[offset++] = colors[position+2];
-				}
-
-				return result;
-
-			case UP:
-				result = new float[numVerticesX * 3];
-
-				for(int x=0; x < numVerticesX; x++)
-				{
-					position = ((numVerticesZ-1)*numVerticesX + x)*3;
-
-					result[offset++] = colors[position];
-					result[offset++] = colors[position+1];
-					result[offset++] = colors[position+2];
-				}
-
-				return result;
-
-			case LEFT:
-				result = new float[numVerticesZ * 3];
-
-				for(int z=0; z < numVerticesZ; z++)
-				{
-					position = (z * numVerticesX) * 3;
-
-					result[offset++] = colors[position];
-					result[offset++] = colors[position+1];
-					result[offset++] = colors[position+2];
-				}
-
-				return result;
-
-			case RIGHT:
-				result = new float[numVerticesZ * 3];
-
-				for(int z=0; z < numVerticesZ; z++)
-				{
-					position = (z * numVerticesX + (numVerticesX-1)) * 3;
-
-					result[offset++] = colors[position];
-					result[offset++] = colors[position+1];
-					result[offset++] = colors[position+2];
-				}
-
-				return result;
-
-			default:
-				return null;
-		}*/
-	}
-
-
-	public int getNumInstances()
-	{
-		return currentPoints.size();
 	}
 
 
@@ -1913,16 +1754,6 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	//TODO: delete
-	/*private void updateGrassPoints(vec3 displacement)
-	{
-		for(vec2 point : currentPoints)
-		{
-			point.add(displacement.x, displacement.z);
-		}
-	}*/
-
-
 	public void updateGrassPointsArray()
 	{
 		vec2 point;
@@ -2001,7 +1832,6 @@ public class GroundPatch extends BoundarySampler
 
 		builder.append("PROPERTIES ");
 		builder.append(type);		builder.append(" ");
-		//builder.append(visible);	builder.append(" ");
 		builder.append(currentPosition.x);	builder.append(" ");
 		builder.append(currentPosition.y);	builder.append(" ");
 		builder.append(currentPosition.z);	builder.append(" ");
@@ -2022,19 +1852,6 @@ public class GroundPatch extends BoundarySampler
 		}
 		builder.append("\n");
 		outputStream.write(builder.toString().getBytes());
-
-		/*builder.setLength(0);
-		builder.append("CURRENT_POINTS");
-		numPoints = currentPoints.size();
-		builder.append(" ");	builder.append(numPoints);
-		for(int i=0; i<numPoints; i++)
-		{
-			currentPoint = currentPoints.get(i);
-			builder.append(" ");	builder.append(currentPoint.x);
-			builder.append(" ");	builder.append(currentPoint.y);
-		}
-		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());*/
 
 		builder.setLength(0);
 		builder.append("GROUND_COLORS ");
@@ -2068,39 +1885,6 @@ public class GroundPatch extends BoundarySampler
 		}
 		builder.append("\n");
 		outputStream.write(builder.toString().getBytes());
-
-		/*builder.setLength(0);
-		builder.append("GRASS_POINTS_LOD_A ");
-		numPoints = grassPointsLODA.length;
-		builder.append(numPoints);
-		for(int i=0; i<numPoints; i++)
-		{
-			builder.append(" ");	builder.append(grassPointsLODA[i]);
-		}
-		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());
-
-		builder.setLength(0);
-		builder.append("GRASS_POINTS_LOD_B ");
-		numPoints = grassPointsLODB.length;
-		builder.append(numPoints);
-		for(int i=0; i<numPoints; i++)
-		{
-			builder.append(" ");	builder.append(grassPointsLODB[i]);
-		}
-		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());
-
-		builder.setLength(0);
-		builder.append("GRASS_POINTS_LOD_C ");
-		numPoints = grassPointsLODC.length;
-		builder.append(numPoints);
-		for(int i=0; i<numPoints; i++)
-		{
-			builder.append(" ");	builder.append(grassPointsLODC[i]);
-		}
-		builder.append("\n");
-		outputStream.write(builder.toString().getBytes());*/
 	}
 
 

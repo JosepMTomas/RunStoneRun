@@ -1,8 +1,10 @@
 package com.josepmtomas.rockgame.objects;
 
 import android.content.Context;
-//import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -35,8 +37,8 @@ public class SmokeParticleSystem
 	private static final float PARTICLE_GENERATOR_PERIOD = 0.05f;
 	private static final float PARTICLE_MAXIMUM_LIFE = 1.5f;
 	private static final int MAX_NUMBER_OF_PARTICLES = 32;
-	private float[] rotationMatrix = new float[16];
-	private float[] directions;
+	//private float[] rotationMatrix = new float[16];
+	//private float[] directions;
 	private float[] positions;
 	private float[] rotations;
 	private float[] angles;
@@ -210,7 +212,7 @@ public class SmokeParticleSystem
 
 	private void initialize()
 	{
-		directions = new float[MAX_NUMBER_OF_PARTICLES * 4];
+		//directions = new float[MAX_NUMBER_OF_PARTICLES * 4];
 		positions = new float[MAX_NUMBER_OF_PARTICLES * 4];
 		rotations = new float[MAX_NUMBER_OF_PARTICLES];
 		angles = new float[MAX_NUMBER_OF_PARTICLES];
@@ -219,7 +221,7 @@ public class SmokeParticleSystem
 
 		for(int i=0; i<MAX_NUMBER_OF_PARTICLES*4; i++)
 		{
-			directions[i] = 0f;
+			//directions[i] = 0f;
 			positions[i] = 0f;
 		}
 
@@ -231,7 +233,7 @@ public class SmokeParticleSystem
 	}
 
 
-	private void emitParticle(float currentPositionZ, float[] currentDirection)
+	private void emitParticle(float currentPositionZ)
 	{
 		float angle;
 		int currentOffset;
@@ -247,9 +249,9 @@ public class SmokeParticleSystem
 			angle = random.nextFloat() * 180f - 90f;
 
 			// Obtain new direction
-			setIdentityM(rotationMatrix, 0);
-			rotateM(rotationMatrix, 0, angle, 0f, 1f, 0f);
-			multiplyMV(directions, currentOffset, rotationMatrix, 0, currentDirection, 0);
+			////setIdentityM(rotationMatrix, 0);
+			////rotateM(rotationMatrix, 0, angle, 0f, 1f, 0f);
+			////multiplyMV(directions, currentOffset, rotationMatrix, 0, currentDirection, 0);
 
 			// Calculate position
 			positions[currentOffset] = random.nextFloat() * 10f - 5f;
@@ -276,7 +278,7 @@ public class SmokeParticleSystem
 	}
 
 
-	public void update(float[] viewProjection, float currentPositionZ, float[] currentDirection, float[] displacement, float deltaTime)
+	public void update(float[] viewProjection, float currentPositionZ, float[] displacement, float deltaTime)
 	{
 		this.viewProjection = viewProjection;
 
@@ -290,7 +292,7 @@ public class SmokeParticleSystem
 			if(globalTimer >= PARTICLE_GENERATOR_PERIOD)
 			{
 				globalTimer -= PARTICLE_GENERATOR_PERIOD;
-				emitParticle(currentPositionZ, currentDirection);
+				emitParticle(currentPositionZ);
 			}
 
 			index = currentIndex;
@@ -388,5 +390,135 @@ public class SmokeParticleSystem
 	public void setEmitterEnabled(boolean value)
 	{
 		isEmitterEnabled = value;
+	}
+
+
+	public void saveState(FileOutputStream outputStream) throws IOException
+	{
+		StringBuilder builder = new StringBuilder();
+
+		String stateString = "SMOKE_PARTICLES "
+				+ isEnabled + " "
+				+ isEmitterEnabled + " "
+				+ globalTimer + " "
+				+ currentIndex + " "
+				+ numberOfParticles + "\n";
+		outputStream.write(stateString.getBytes());
+
+		builder.append("POSITIONS ");
+		builder.append(positions.length);
+		for(float position : positions)
+		{
+			builder.append(" ");	builder.append(position);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("ROTATIONS ");
+		builder.append(rotations.length);
+		for(float rotation : rotations)
+		{
+			builder.append(" ");	builder.append(rotation);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("ANGLES ");
+		builder.append(angles.length);
+		for(float angle : angles)
+		{
+			builder.append(" ");	builder.append(angle);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("SCALES ");
+		builder.append(scales.length);
+		for(float scale : scales)
+		{
+			builder.append(" ");	builder.append(scale);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+
+		builder.setLength(0);
+		builder.append("TIMERS ");
+		builder.append(timers.length);
+		for(float timer : timers)
+		{
+			builder.append(" ");	builder.append(timer);
+		}
+		builder.append("\n");
+		outputStream.write(builder.toString().getBytes());
+	}
+
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
+	{
+		String line;
+		String[] tokens;
+		int numPoints, offset;
+
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+
+		isEnabled = Boolean.parseBoolean(tokens[1]);
+		isEmitterEnabled = Boolean.parseBoolean(tokens[2]);
+		globalTimer = Float.parseFloat(tokens[3]);
+		currentIndex = Integer.parseInt(tokens[4]);
+		numberOfParticles = Integer.parseInt(tokens[5]);
+
+		// Read positions
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			positions[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read rotations
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			rotations[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read angles
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			angles[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read scales
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			scales[i] = Float.parseFloat(tokens[offset++]);
+		}
+
+		// Read timers
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		numPoints = Integer.parseInt(tokens[1]);
+		offset = 2;
+		for(int i=0; i<numPoints; i++)
+		{
+			timers[i] = Float.parseFloat(tokens[offset++]);
+		}
 	}
 }
