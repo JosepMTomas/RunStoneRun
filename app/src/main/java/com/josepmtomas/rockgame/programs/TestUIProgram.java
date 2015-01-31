@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 29/11/2014.
+ * @author Josep
  */
+
 public class TestUIProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;

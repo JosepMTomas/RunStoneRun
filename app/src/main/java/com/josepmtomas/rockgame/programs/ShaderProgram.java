@@ -1,7 +1,6 @@
 package com.josepmtomas.rockgame.programs;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.josepmtomas.rockgame.util.ShaderHelper;
 import com.josepmtomas.rockgame.util.TextResourceReader;
@@ -10,7 +9,10 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 17/07/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class ShaderProgram
 {
 	// Shader program
@@ -29,7 +31,6 @@ public class ShaderProgram
 
 	protected ShaderProgram(Context context, String vertexShaderFileName, String fragmentShaderFileName)
 	{
-		//Log.d("ShaderProgram", "Creating: " + vertexShaderFileName + " & " + fragmentShaderFileName);
 		// Compile the shaders and link the program
 		program = ShaderHelper.buildProgram(
 				TextResourceReader.readTextFileFromAsset(context, vertexShaderFileName),

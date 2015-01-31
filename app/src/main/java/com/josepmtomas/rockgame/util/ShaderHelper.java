@@ -2,13 +2,13 @@ package com.josepmtomas.rockgame.util;
 
 import android.util.Log;
 
-import java.util.logging.Logger;
-
 import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 17/07/2014.
+ * @author Josep
  */
+
 public class ShaderHelper
 {
 	private static final String TAG = "ShaderHelper";

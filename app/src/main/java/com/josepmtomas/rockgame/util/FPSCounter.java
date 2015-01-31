@@ -4,7 +4,10 @@ import android.util.Log;
 
 /**
  * Created by Josep on 06/08/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class FPSCounter
 {
 	long startTime = System.nanoTime();

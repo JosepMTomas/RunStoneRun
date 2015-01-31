@@ -17,6 +17,7 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 04/10/2014.
+ * @author Josep
  */
 public class Tree
 {
@@ -62,18 +63,6 @@ public class Tree
 	private int[] reflectionVboHandles = new int[2];
 	public int[] reflectionVaoHandle = new int[1];
 
-	public float[] cullingPoints;
-
-
-
-
-	public Tree(Context context, String fileName)
-	{
-		this.context = context;
-
-		load(context, fileName);
-	}
-
 
 	public Tree(Context context, String[] fileNames)
 	{
@@ -95,12 +84,6 @@ public class Tree
 	public void addReflectionGeometry(String reflectionFileName)
 	{
 		loadReflection(context, reflectionFileName);
-	}
-
-
-	public void addCullingPoints(String cullingFileName)
-	{
-		loadCullingPoints(context, cullingFileName);
 	}
 
 
@@ -367,139 +350,6 @@ public class Tree
 	}
 
 
-	private void load(Context context, String fileName)
-	{
-		/*int numVertices, numElements;
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Read geometry from file
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		try
-		{
-			InputStream inputStream = context.getResources().getAssets().open(fileName);
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-			String nextLine;
-
-			int verticesOffset = 0;
-			int elementsOffset = 0;
-
-			while((nextLine = bufferedReader.readLine()) != null)
-			{
-				// Split the line into tokens separated by spaces
-				String[] tokens = nextLine.split(" ");
-
-				// Check the first token of the line
-				if(tokens[0].equals("VERTICES"))
-				{
-					// Get the number of vertices and initialize the positions array
-					numVertices = Integer.parseInt(tokens[1]);
-					vertices = new float[TOTAL_COMPONENTS * numVertices];
-				}
-				else if(tokens[0].equals("FACES"))
-				{
-					// Get the number of faces and initialize the elements array
-					numElements = Integer.parseInt(tokens[1]);
-					numElementsToDraw = numElements * 3;
-					elements = new short[numElementsToDraw];
-				}
-				else if(tokens[0].equals("VERTEX"))
-				{
-					// Read the vertex positions
-					vertices[verticesOffset++] = Float.parseFloat(tokens[1]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[2]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[3]);
-
-					// Read the vertex texture coordinates
-					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
-
-					// Read the vertex normals
-					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);
-
-					// read the vertex tangents
-					vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);
-				}
-				else if(tokens[0].equals("FACE"))
-				{
-					// Read the face indices (triangle)
-					elements[elementsOffset++] = Short.parseShort(tokens[1]);
-					elements[elementsOffset++] = Short.parseShort(tokens[2]);
-					elements[elementsOffset++] = Short.parseShort(tokens[3]);
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Buffers
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(vertices);
-		verticesBuffer.position(0);
-
-		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer()
-				.put(elements);
-		elementsBuffer.position(0);
-
-		// Create and populate the buffer objects
-		glGenBuffers(2, vboHandles, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER,  verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
-
-		// Create the VAO
-		glGenVertexArrays(1, vaoHandle, 0);
-		glBindVertexArray(vaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, BYTE_STRIDE, POSITION_BYTE_OFFSET);
-
-		// Vertex texture coordinates
-		glEnableVertexAttribArray(1);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
-
-		// Vertex normals
-		glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
-
-		// Vertex tangents
-		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
-
-		glBindVertexArray(0);*/
-	}
-
-
 	private void loadShadow(Context context, String shadowFileName)
 	{
 		int numShadowVertices, numShadowElements;
@@ -734,61 +584,5 @@ public class Tree
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
 
 		glBindVertexArray(0);
-	}
-
-
-	private void loadCullingPoints(Context context, String reflectionFileName)
-	{
-		int numVertices;
-
-		////////////////////////////////////////////////////////////////////////////////////////////
-		// Read geometry from file
-		////////////////////////////////////////////////////////////////////////////////////////////
-
-		try
-		{
-			InputStream inputStream = context.getResources().getAssets().open(reflectionFileName);
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-
-			String nextLine;
-
-			int verticesOffset = 0;
-
-			while((nextLine = bufferedReader.readLine()) != null)
-			{
-				// Split the line into tokens separated by spaces
-				String[] tokens = nextLine.split(" ");
-
-				// Check the first token of the line
-				if(tokens[0].equals("VERTICES"))
-				{
-					// Get the number of vertices and initialize the positions array
-					numVertices = Integer.parseInt(tokens[1]);
-					cullingPoints = new float[POSITION_COMPONENTS * numVertices];
-				}
-				else if(tokens[0].equals("VERTEX"))
-				{
-					// Read the vertex positions
-					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[1]);
-					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[2]);
-					cullingPoints[verticesOffset++] = Float.parseFloat(tokens[3]);
-				}
-			}
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-
-	public void deleteGL()
-	{
-		/*glDeleteBuffers(1, vboHandles, 0);
-		glDeleteBuffers(1, shadowVboHandles, 0);
-
-		glDeleteVertexArrays(1, vaoHandle, 0);
-		glDeleteVertexArrays(1, shadowVaoHandle, 0);*/
 	}
 }

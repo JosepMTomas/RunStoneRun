@@ -17,36 +17,25 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 30/09/2014.
+ * @author Josep
  */
 public class GrassPatch
 {
-	private static final String TAG = "GrassPatch";
-
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
-	private static final int NORMAL_COMPONENTS = 0;//3;
-	private static final int TANGENT_COMPONENTS = 0;//4;
-	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS;
+	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS;
 
 	private static final int POSITION_OFFSET = 0;
 	private static final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
-	private static final int NORMAL_OFFSET = TEXCOORD_OFFSET + TEXCOORD_COMPONENTS;
-	private static final int TANGENT_OFFSET = NORMAL_OFFSET + NORMAL_COMPONENTS;
 
 	private static final int POSITION_BYTE_OFFSET = POSITION_OFFSET * Constants.BYTES_PER_FLOAT;
 	private static final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * Constants.BYTES_PER_FLOAT;
-	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * Constants.BYTES_PER_FLOAT;
-	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * Constants.BYTES_PER_FLOAT;
 
 	private static final int BYTE_STRIDE = TOTAL_COMPONENTS * Constants.BYTES_PER_FLOAT;
 
 	// Geometry definition
-	private int numVertices;
-	private int numElements;
 	private float[] vertices;
 	private short[] elements;
-	private FloatBuffer verticesBuffer;
-	private ShortBuffer elementsBuffer;
 	private int[] vboHandles;
 	private int[] vaoHandle;
 
@@ -63,6 +52,9 @@ public class GrassPatch
 
 	private void load(Context context, String fileName)
 	{
+		int numVertices;
+		int numElements;
+
 		try
 		{
 			InputStream inputStream = context.getResources().getAssets().open(fileName);
@@ -102,17 +94,6 @@ public class GrassPatch
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
 					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1.0f;
-
-					// Read the vertex normals
-					/*vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);*/
-
-					// read the vertex tangents
-					/*vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);*/
 				}
 				else if(tokens[0].equals("FACE"))
 				{
@@ -132,6 +113,9 @@ public class GrassPatch
 
 	private void initialize()
 	{
+		FloatBuffer verticesBuffer;
+		ShortBuffer elementsBuffer;
+
 		// Build the java native buffers
 		verticesBuffer = ByteBuffer
 				.allocateDirect(vertices.length * Constants.BYTES_PER_FLOAT)
@@ -170,37 +154,14 @@ public class GrassPatch
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
 
-		// Vertex normals
-		/*glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);*/
-
-		// Vertex tangents
-		/*glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);*/
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
 
 		glBindVertexArray(0);
 	}
 
 
-	public int getNumElements()
-	{
-		return numElements;
-	}
-
-
 	public int getVaoHandle()
 	{
 		return vaoHandle[0];
-	}
-
-
-	public void deleteGL()
-	{
-		glDeleteBuffers(2, vboHandles, 0);
-		glDeleteVertexArrays(1, vaoHandle, 0);
 	}
 }

@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 29/10/2014.
+ * @author Josep
  */
+
 public class GroundSimpleProgram extends ShaderProgram
 {
 	private final int modelLocation;

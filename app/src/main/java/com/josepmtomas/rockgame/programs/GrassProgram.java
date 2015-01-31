@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 25/09/2014.
+ * @author Josep
  */
+
 public class GrassProgram extends ShaderProgram
 {
 	private final int shadowMatrixLocation;

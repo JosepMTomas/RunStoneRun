@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 16/12/2014.
+ * @author Josep
  */
+
 public class GroundShieldProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;

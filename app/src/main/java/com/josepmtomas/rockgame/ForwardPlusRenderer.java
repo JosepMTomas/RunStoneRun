@@ -288,7 +288,7 @@ public class ForwardPlusRenderer implements Renderer
 		ground.setPlayerRock(playerRock);
 		skyDome = new SkyDome(context, lightInfo);
 
-		screen = new Screen(context, 1, 1);
+		screen = new Screen(context);
 		//hud = new Hud(context, renderWidth, renderHeight);
 
 
@@ -300,10 +300,10 @@ public class ForwardPlusRenderer implements Renderer
 		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
-		pauseMenu = new PauseMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
-		endGameMenu = new EndGameMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
-		restartMenu = new RestartMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
-		gameOverMenu = new GameOverMenu(parent, this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
+		pauseMenu = new PauseMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		endGameMenu = new EndGameMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		restartMenu = new RestartMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		gameOverMenu = new GameOverMenu(this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -950,7 +950,7 @@ public class ForwardPlusRenderer implements Renderer
 		hud.newGame();
 		hud.setAppearing();
 
-		playerRock.newGame();
+		playerRock.newGame(ground.getNearestGroundPatchType());
 		playerRock.setAppearing();
 		groundShield.newGame();
 		fScore = 0f;

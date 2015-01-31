@@ -1,20 +1,18 @@
 package com.josepmtomas.rockgame.util;
 
-import android.opengl.Matrix;
-
 import com.josepmtomas.rockgame.algebra.operations;
 import com.josepmtomas.rockgame.algebra.vec3;
 
 import static com.josepmtomas.rockgame.algebra.operations.*;
-import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 16/08/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class PerspectiveCamera
 {
-	private static final String TAG = "PerspectiveCamera";
-
 	// Camera parameters
 	private vec3 look;
 	private vec3 poi;
@@ -22,7 +20,6 @@ public class PerspectiveCamera
 
 	private vec3 u;
 	private vec3 v;
-	private vec3 w;
 
 	private float aspectRatio;
 	private float fov;
@@ -38,14 +35,14 @@ public class PerspectiveCamera
 	/**********************************************************************************************/
 
 	public PerspectiveCamera(
-			float povx, float povy, float povz,
-			float poix, float poiy, float poiz,
+			float povX, float povY, float povZ,
+			float poiX, float poiY, float poiZ,
 			float near, float far,
 			float aspectRatio, float fov
 	)
 	{
-		this.pov = new vec3(povx, povy, povz);
-		this.poi = new vec3(poix, poiy, poiz);
+		this.pov = new vec3(povX, povY, povZ);
+		this.poi = new vec3(poiX, poiY, poiZ);
 		this.look = subtract(this.poi, this.pov);
 		this.look.normalize();
 
@@ -59,36 +56,10 @@ public class PerspectiveCamera
 		buildFrustumPlanes();
 	}
 
-	public PerspectiveCamera(
-			vec3 pov, vec3 poi,
-			float aspectRatio, float fov, float zNear, float zFar
-	)
-	{
-		this.pov = new vec3(pov);
-		this.poi = new vec3(poi);
-		this.look = operations.subtract(this.poi, this.pov);
-		this.look.normalize();
-
-		calculateUVW();
-
-		this.aspectRatio = aspectRatio;
-		this.fov = fov;
-		this.zNear = zNear;
-		this.zFar = zFar;
-
-		// Calculate the projection matrix
-		//perspectiveM(projectionMatrix, 0, fov, aspectRatio, zNear, zFar);
-
-		// Calculate the view matrix
-		//setLookAtM(viewMatrix, 0, pov.x, pov.y, pov.z, poi.x, poi.y, poi.z, v.x, v.y, v.z);
-
-		buildFrustumPlanes();
-	}
-
 
 	private void calculateUVW()
 	{
-		w = operations.subtract(poi, pov);
+		vec3 w = operations.subtract(poi, pov);
 		w.negate();
 		w.normalize();
 

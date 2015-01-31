@@ -10,7 +10,9 @@ import java.io.InputStreamReader;
 
 /**
  * Created by Josep on 17/07/2014.
+ * @author Josep
  */
+
 public class TextResourceReader
 {
 	public static String readTextFileFromResource(Context context, int resourceId)

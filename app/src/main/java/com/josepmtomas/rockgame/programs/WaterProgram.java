@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 28/10/2014.
+ * @author Josep
  */
+
 public class WaterProgram extends ShaderProgram
 {
 	private final int shadowMapSamplerLocation;

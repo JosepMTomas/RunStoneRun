@@ -16,11 +16,11 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 09/09/2014.
+ * @author Josep
  */
+
 public class Screen
 {
-	private static final String TAG = "Screen";
-
 	private static final int POSITION_BYTE_OFFSET = 0;
 	private static final int TEXCOORD_BYTE_OFFSET = 3 * Constants.BYTES_PER_FLOAT;
 	private static final int BYTE_STRIDE = 5 * Constants.BYTES_PER_FLOAT;
@@ -40,32 +40,22 @@ public class Screen
 	PostProcessHighProgram postProcessHighProgram;
 
 
-	public Screen(Context context, float width, float height)
+	public Screen(Context context)
 	{
 		screenProgram = new ScreenProgram(context);
 		postProcessLowProgram = new PostProcessLowProgram(context);
 		postProcessHighProgram = new PostProcessHighProgram(context);
 
-		createScreenPlane(width, height);
+		createScreenPlane();
 		initialize();
 	}
 
-	private void createScreenPlane(float planeWidth, float planeHeight)
+	private void createScreenPlane()
 	{
-		/*float bottom = 0.0f;
-		float top = planeHeight;
-		float right = planeWidth;
-		float left = 0.0f;*/
-
 		float bottom = -1f;
 		float left = -1f;
 		float width = 2f;
 		float height = 2f;
-
-		/*float bottom = -0.75f;
-		float left = -0.75f;
-		float width = 1.5f;
-		float height = 1.5f;*/
 
 		// D - C
 		// | \ |

@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 30/11/2014.
+ * @author Josep
  */
+
 public class RockProgram extends ShaderProgram
 {
 	private final int rockPropertiesBlockLocation;

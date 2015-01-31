@@ -2,7 +2,9 @@ package com.josepmtomas.rockgame.util;
 
 /**
  * Created by Josep on 11/08/2014.
+ * @author Josep
  */
+
 public enum TouchState
 {
 	TOUCHING,

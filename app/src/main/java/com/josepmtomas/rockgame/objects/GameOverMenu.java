@@ -1,6 +1,5 @@
 package com.josepmtomas.rockgame.objects;
 
-import android.content.Context;
 import android.util.FloatMath;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
@@ -22,13 +21,12 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 10/01/2015.
+ * @author Josep
  */
 public class GameOverMenu
 {
 	private static final String TAG = "GameOverMenu";
 
-	private GameActivity parent;
-	private Context context;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private ScorePanelProgram scorePanelProgram;
@@ -61,7 +59,6 @@ public class GameOverMenu
 	private int ui9PatchPanelVaoHandle;
 
 	// Background panel
-	private float[] background9PatchScale = new float[2];
 	private float[] background9PatchPosition = new float[2];
 	private float[] background9PatchCurrentScale = new float[2];
 
@@ -105,10 +102,8 @@ public class GameOverMenu
 	private float scoreCurrentPositionY = 0f;
 
 
-	public GameOverMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public GameOverMenu(ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
-		this.parent = parent;
-		this.context = parent.getApplicationContext();
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;
 		this.scorePanelProgram = scorePanelProgram;
@@ -229,6 +224,7 @@ public class GameOverMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void createElements(float screenWidth, float screenHeight)
 	{
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
@@ -243,8 +239,6 @@ public class GameOverMenu
 		float titleHeight = screenHeight * 0.1f;
 		float titleWidth = titleHeight * 10f;
 
-		background9PatchScale[0] = 1f;
-		background9PatchScale[1] = 1f;
 		background9PatchPosition[0] = 0f;
 		background9PatchPosition[1] = 0f;
 		background9PatchCurrentScale[0] = 1f;

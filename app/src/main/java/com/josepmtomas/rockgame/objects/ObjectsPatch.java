@@ -1,13 +1,10 @@
 package com.josepmtomas.rockgame.objects;
 
-import android.util.Log;
-
 import static com.josepmtomas.rockgame.Constants.*;
 import static com.josepmtomas.rockgame.algebra.operations.*;
 import com.josepmtomas.rockgame.algebra.vec2;
 import com.josepmtomas.rockgame.algebra.vec3;
 import com.josepmtomas.rockgame.poissonGeneration.BoundarySampler;
-import com.josepmtomas.rockgame.util.PerspectiveCamera;
 
 import java.io.BufferedReader;
 import java.io.FileOutputStream;
@@ -18,22 +15,14 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 04/10/2014.
+ * @author Josep
  */
+
 public class ObjectsPatch extends BoundarySampler
 {
-	private static final String TAG = "ObjectsPatch";
-
 	public int index;
 
-	// Camera
-	private PerspectiveCamera perspectiveCamera;
-
-	// LOD
-	//public int currentLOD = LOD_A;
-
 	// Patch properties
-	private final float patchWidth;
-	private final float patchHeight;
 	private final float spreadFactorX;
 	private final float spreadFactorZ;
 
@@ -109,9 +98,6 @@ public class ObjectsPatch extends BoundarySampler
 	public int[] rockBNumInstances = {0,0};
 	public int[] rockCNumInstances = {0,0};
 
-	// Culling points
-	private float[] pineTreeCullingPoints;
-
 	// Matrices
 	public float[] model = new float[16];
 	public float[] modelViewProjection = new float[16];
@@ -126,16 +112,12 @@ public class ObjectsPatch extends BoundarySampler
 	public int numCollisionSpheres = 0;
 
 
-	public ObjectsPatch(int index, float patchWidth, float patchHeight, PerspectiveCamera perspectiveCamera)
+	public ObjectsPatch(int index, float patchWidth, float patchHeight)
 	{
 		super(0.18f);
 
 		this.index = index;
 
-		this.perspectiveCamera = perspectiveCamera;
-
-		this.patchWidth = patchWidth;
-		this.patchHeight = patchHeight;
 		this.spreadFactorX = patchWidth * 0.5f;
 		this.spreadFactorZ = patchHeight * 0.5f;
 
@@ -254,6 +236,7 @@ public class ObjectsPatch extends BoundarySampler
 	}
 
 
+	@SuppressWarnings("all")
 	private void filterPoints()
 	{
 		int pineTreeCount = 0;
@@ -463,7 +446,6 @@ public class ObjectsPatch extends BoundarySampler
 			}
 		}
 
-		//pineTreeNumInstances = pineTreeCount;
 		pineTreeNumPoints = pineTreeCount;
 		hugeTreeNumPoints = hugeTreeCount;
 		palmTreeNumPoints = palmTreeCount;
@@ -475,12 +457,6 @@ public class ObjectsPatch extends BoundarySampler
 		rockANumPoints = rockACount;
 		rockBNumPoints = rockBCount;
 		rockCNumPoints = rockCCount;
-	}
-
-
-	public void setCullingPoints(float[] pine)
-	{
-		pineTreeCullingPoints = pine;
 	}
 
 
@@ -510,15 +486,6 @@ public class ObjectsPatch extends BoundarySampler
 		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
 
 		multiplyMM(lightModelViewProjection, 0, lightViewProjection, 0, model, 0);
-
-		// Update collision cylinders
-		/*for(int i=0; i < numCollisionCylinders; i++)
-		{
-			collisionCylinders[i*4] += displacement.x;
-			collisionCylinders[i*4 + 1] += displacement.z;
-		}*/
-
-		//updateObjectsArrays();
 	}
 
 
@@ -550,21 +517,18 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
-				//TODO (enable in the future): if(perspectiveCamera.anyPointInFrustum(pineTreeCullingPoints, pointX, 0f, pointZ))
-				{
-					pineTreePointsLODA[offsetLODA++] = pointX;
-					pineTreePointsLODA[offsetLODA++] = pointZ;
-					pineTreePointsLODA[offsetLODA++] = scale;
-					pineTreePointsLODA[offsetLODA++] = distance / 800f;
+				pineTreePointsLODA[offsetLODA++] = pointX;
+				pineTreePointsLODA[offsetLODA++] = pointZ;
+				pineTreePointsLODA[offsetLODA++] = scale;
+				pineTreePointsLODA[offsetLODA++] = distance / 800f;
 
-					collisionCylinders[collisionCylindersOffset++] = pointX;
-					collisionCylinders[collisionCylindersOffset++] = pointZ;
-					collisionCylinders[collisionCylindersOffset++] = 2.9f * scale;
-					collisionCylinders[collisionCylindersOffset++] = 0.0f;
+				collisionCylinders[collisionCylindersOffset++] = pointX;
+				collisionCylinders[collisionCylindersOffset++] = pointZ;
+				collisionCylinders[collisionCylindersOffset++] = 2.9f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 0.0f;
 
-					countLODA++;
-					collisionCylindersCount++;
-				}
+				countLODA++;
+				collisionCylindersCount++;
 			}
 			else
 			{
@@ -1077,16 +1041,10 @@ public class ObjectsPatch extends BoundarySampler
 	// Save/Load state
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-	//TODO: incomplete
 	public void saveState(FileOutputStream outputStream) throws IOException
 	{
 		int numPoints;
 		StringBuilder builder = new StringBuilder();
-
-		/*builder.append("OBJECTS_PATCH ");
-		builder.append(x);	builder.append(" ");
-		builder.append(z);	builder.append("\n");
-		outputStream.write(builder.toString().getBytes());*/
 
 		builder.setLength(0);
 		builder.append("POSITION ");
@@ -1236,7 +1194,7 @@ public class ObjectsPatch extends BoundarySampler
 		String[] tokens;
 		int numPoints;
 		int offset;
-		float x, y, z;
+		float x, y;
 
 		// Read position
 		line = bufferedReader.readLine();
@@ -1247,7 +1205,6 @@ public class ObjectsPatch extends BoundarySampler
 
 		// Read sampler points
 		line = bufferedReader.readLine();
-		//Log.w("ObjPatch(LoadState)", "Current: " + line);
 		tokens = line.split(" ");
 		points.clear();
 		numPoints = Integer.parseInt(tokens[1]);

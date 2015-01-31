@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 01/11/2014.
+ * @author Josep
  */
+
 public class ObjectsPatchDebugProgram extends ShaderProgram
 {
 	private final int modelLocation;

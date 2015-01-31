@@ -2,7 +2,6 @@ package com.josepmtomas.rockgame.objects;
 
 import android.content.Context;
 import android.util.FloatMath;
-import android.util.Log;
 
 import static com.josepmtomas.rockgame.Constants.*;
 
@@ -14,16 +13,13 @@ import com.josepmtomas.rockgame.programs.GrassLowProgram;
 import com.josepmtomas.rockgame.programs.GrassProgram;
 import com.josepmtomas.rockgame.programs.GroundProgram;
 import com.josepmtomas.rockgame.programs.GroundSimpleProgram;
-import com.josepmtomas.rockgame.programs.ObjectsPatchDebugProgram;
 import com.josepmtomas.rockgame.programs.RockLowProgram;
 import com.josepmtomas.rockgame.programs.RockProgram;
 import com.josepmtomas.rockgame.programs.ShadowPassInstancedProgram;
 import com.josepmtomas.rockgame.programs.ShadowPassProgram;
-import com.josepmtomas.rockgame.programs.TreeLeavesProgram;
 import com.josepmtomas.rockgame.programs.TreeProgram;
 import com.josepmtomas.rockgame.programs.TreeReflectionProgram;
 import com.josepmtomas.rockgame.programs.TreeShadowPassProgram;
-import com.josepmtomas.rockgame.programs.TreeTrunkProgram;
 import com.josepmtomas.rockgame.programs.WaterProgram;
 import com.josepmtomas.rockgame.util.PerspectiveCamera;
 import com.josepmtomas.rockgame.util.TextureHelper;
@@ -42,11 +38,11 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 06/09/2014.
+ * @author Josep
  */
+
 public class Ground
 {
-	private final static String TAG = "Ground";
-
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
 	private static final int NORMAL_COMPONENTS = 3;
@@ -89,7 +85,7 @@ public class Ground
 
 	// Matrices
 	private float[] viewProjection;			// Main render view-projection matrix
-	private float[] lightViewProjection;	// Shadow map framebuffer view-projection matrix
+	//private float[] lightViewProjection;	// Shadow map framebuffer view-projection matrix
 
 	// Patch common attributes
 	private float[] patchPositions;
@@ -181,7 +177,7 @@ public class Ground
 	private BrokenTree brokenBirchTree;
 
 	// Broken parameters & matrices
-	private float[] brokenTreeInitialRootY = {0f, 0f, 0f, 0f};
+	//private float[] brokenTreeInitialRootY = {0f, 0f, 0f, 0f};
 	private float[] brokenTreeInitialTopY = {53.871f, 25f, 58.0f, 30.0f};
 	private float[] brokenTreeInitialForce = {1f, 1f, 2f, 2f};
 	private float brokenTreeDistanceZ = 0f;
@@ -189,14 +185,15 @@ public class Ground
 	private float brokenTreeScale = 0f;
 	private float brokenTreeX = 0f;
 	private float brokenTreeZ = 0f;
-	private float brokenTreeRootY = 0f;
+	//private float brokenTreeRootY = 0f;
 	private float brokenTreeTopY = 0f;
-	private float brokenTreeRootRotationAngle = 0f;
+	//private float brokenTreeRootRotationAngle = 0f;
 	private float brokenTreeTopRotationAngle = 0f;
 	private float[] brokenTreeRootModel = new float[16];
 	private float[] brokenTreeTopModel = new float[16];
 	private float[] brokenTreeRootModelViewProjection = new float[16];
 	private float[] brokenTreeTopModelViewProjection = new float[16];
+	private int brokenTreeType = 0;
 
 	// Movement
 	private vec3 displacement;
@@ -255,16 +252,11 @@ public class Ground
 	TreeProgram treeProgram;
 	TreeShadowPassProgram treeShadowPassProgram;
 	TreeReflectionProgram treeReflectionProgram;
-	TreeTrunkProgram treeTrunkProgram;
-	TreeLeavesProgram treeLeavesProgram;
 
 	RockProgram rockProgram;
 	RockLowProgram rockLowProgram;
 
 	BrokenTreeProgram brokenTreeProgram;
-
-	// TODO: debug
-	ObjectsPatchDebugProgram objectsPatchDebugProgram;
 
 	private int[] waterTextures;
 
@@ -359,13 +351,6 @@ public class Ground
 	private FloatBuffer grassBufferLODC;
 	private int[] grassNumInstances = {0,0,0};
 
-	// Tree culling //TODO
-	private float[] pineTreeCullingPoints;
-
-	// Debug Plane
-	public int[] debugPlaneVboHandles = new int[2];
-	public int[] debugPlaneVaoHandle = new int[1];
-
 
 	/**********************************************************************************************/
 
@@ -446,8 +431,6 @@ public class Ground
 		pineTree = new Tree(context, pineTreeLODs);
 		pineTree.addShadowGeometry("models/pine_tree_shadow.vbm");
 		pineTree.addReflectionGeometry("models/pine_tree_reflection_proxy.vbm");
-		pineTree.addCullingPoints("models/pine_tree_culling.vbm");
-		pineTreeCullingPoints = pineTree.cullingPoints;
 
 		String[] hugeTreeLODs = {
 				"models/huge_tree_lod_a.vbm",
@@ -490,8 +473,8 @@ public class Ground
 		weedPlant.addReflectionGeometry("models/weed_plant_reflection.vbm");
 
 		String[] bushPlantLODs = {
-				"models/bush_plant_lod_a_nfc.vbm",
-				"models/bush_plant_lod_b_nfc.vbm"
+				"models/bush_plant_lod_a.vbm",
+				"models/bush_plant_lod_b.vbm"
 		};
 		bushPlant = new Plant(context, bushPlantLODs);
 		bushPlant.addShadowGeometry("models/bush_plant_shadow.vbm");
@@ -544,14 +527,9 @@ public class Ground
 		treeProgram = new TreeProgram(context);
 		treeShadowPassProgram = new TreeShadowPassProgram(context);
 		treeReflectionProgram = new TreeReflectionProgram(context);
-		treeTrunkProgram = new TreeTrunkProgram(context);
-		treeLeavesProgram = new TreeLeavesProgram(context);
 		rockProgram = new RockProgram(context);
 		rockLowProgram = new RockLowProgram(context);
 		brokenTreeProgram = new BrokenTreeProgram(context);
-
-		//TODO: debug (delete later)
-		objectsPatchDebugProgram = new ObjectsPatchDebugProgram(context);
 
 		String[] grass1Texture = {
 				"textures/grass1/grass1_512_mip_0.mp3",
@@ -595,9 +573,6 @@ public class Ground
 
 		/************************************** GROUND PATCHES ************************************/
 
-		//TODO: debug
-		this.createDebugPlane();
-
 		// Base patch creation
 		this.createGroundBasePatch();
 		this.createGroundBaseShadowPlane();
@@ -631,12 +606,8 @@ public class Ground
 		rockCArrayUbo = new int[2];
 
 		this.createObjectsPatches();		// Create the patches (class)
-		Log.d(TAG, "Created objects patches");
 		this.createObjectsBuffers();		// Create the patches buffers and its object buffers
-		Log.d(TAG, "Created objects buffers");
 		this.updateObjectsPatchesBuffer();	// Update the patches reference positions
-		Log.d(TAG, "Updated objects patches buffers");
-		Log.d(TAG, "Updated objects buffers");
 
 		/*************************************** TEXTURES *****************************************/
 
@@ -904,7 +875,6 @@ public class Ground
 				"textures/rock_b/diffuse_mip_7.mp3",
 				"textures/rock_b/diffuse_mip_8.mp3",
 		};
-		Log.d(TAG, "Loading rock b diffuse texture");
 		rockBDiffuseTexture = TextureHelper.loadETC2Texture(context, rockBDiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockBNormalTextureMips = {
@@ -918,7 +888,6 @@ public class Ground
 				"textures/rock_b/normal_mip_7.mp3",
 				"textures/rock_b/normal_mip_8.mp3",
 		};
-		//Log.d(TAG, "Loading rock b normal texture");
 		rockBNormalTexture = TextureHelper.loadETC2Texture(context, rockBNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockCDiffuseTextureMips = {
@@ -932,7 +901,6 @@ public class Ground
 				"textures/rock_c/diffuse_mip_7.mp3",
 				"textures/rock_c/diffuse_mip_8.mp3",
 		};
-		//Log.d(TAG, "Loading rock c diffuse texture");
 		rockCDiffuseTexture = TextureHelper.loadETC2Texture(context, rockCDiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] rockCNormalTextureMips = {
@@ -946,7 +914,6 @@ public class Ground
 				"textures/rock_c/normal_mip_7.mp3",
 				"textures/rock_c/normal_mip_8.mp3",
 		};
-		//Log.d(TAG, "Loading rock c normal texture");
 		rockCNormalTexture = TextureHelper.loadETC2Texture(context, rockCNormalTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] groundBlackTextureMips = {
@@ -1854,7 +1821,7 @@ public class Ground
 	public void update(float[] viewProjection, float[] lightViewProjection, vec3 displacement, float[] shadowMatrix, int shadowMapSampler, float deltaTime)
 	{
 		this.viewProjection = viewProjection;
-		this.lightViewProjection = lightViewProjection;
+		//this.lightViewProjection = lightViewProjection;
 		this.displacement = displacement;
 		this.shadowMatrix = shadowMatrix;
 		this.shadowMapSampler = shadowMapSampler;
@@ -1874,12 +1841,12 @@ public class Ground
 			brokenTreeForce = brokenTreeForce - (9.8f * deltaTime);
 			brokenTreeTopY += brokenTreeForce;
 
-			brokenTreeRootRotationAngle -= 1.0f * deltaTime;
+			//brokenTreeRootRotationAngle -= 1.0f * deltaTime;
 			brokenTreeTopRotationAngle += playerRock.currentSpeed * 0.25f * deltaTime;
 
 			// root model matrix
 			setIdentityM(brokenTreeRootModel, 0);
-			translateM(brokenTreeRootModel, 0, brokenTreeX, brokenTreeRootY, brokenTreeZ);
+			translateM(brokenTreeRootModel, 0, brokenTreeX, 0f, brokenTreeZ);
 			//rotateM(brokenTreeRootModel, 0, brokenTreeRootRotationAngle, 1f, 0f, 0f);
 			scaleM(brokenTreeRootModel, 0, brokenTreeScale, brokenTreeScale, brokenTreeScale);
 
@@ -1914,18 +1881,15 @@ public class Ground
 		if(objectsPatches[objectsRightmostIndex][objectsLowerIndex].getCurrentPosition().x > maxObjectsOffsetX)
 		{
 			newLeftObjectsPatch();
-			Log.d(TAG, "NEW LEFT OBJECTS PATCH");
 		}
 		else if(objectsPatches[objectsLeftmostIndex][objectsLowerIndex].getCurrentPosition().x < minObjectsOffsetX)
 		{
 			newRightObjectsPatch();
-			Log.d(TAG, "NEW RIGHT OBJECTS PATCH");
 		}
 
 		if(objectsPatches[0][objectsLowerIndex].getCurrentPosition().z > maxObjectsOffsetZ)
 		{
 			newUpObjectsPatch();
-			Log.d(TAG, "NEW UP OBJECTS PATCH");
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -1986,11 +1950,12 @@ public class Ground
 							treeType = (int)type;
 							scale = objectsPatches[x][z].deleteTreeAfterCollision(i);
 
+							brokenTreeType = treeType;
 							brokenTreeX = posX;
 							brokenTreeZ = posZ;
-							brokenTreeRootY = brokenTreeInitialRootY[treeType];
+							//brokenTreeRootY = brokenTreeInitialRootY[treeType];
 							brokenTreeTopY = brokenTreeInitialTopY[treeType] * scale;
-							brokenTreeRootRotationAngle = 0f;
+							//brokenTreeRootRotationAngle = 0f;
 							brokenTreeTopRotationAngle = 0f;
 							brokenTreeDistanceZ = 0f;
 							brokenTreeForce = brokenTreeInitialForce[treeType];
@@ -2267,7 +2232,6 @@ public class Ground
 		groundProgram.useProgram();
 		groundProgram.setCommonUniforms(groundTextures, groundNormalTextures[0], shadowMapSampler, reflectionSampler, waterTextures[0], shadowMatrix, dimensions);
 
-		//TODO: camera frustum culling
 		for(int i=0; i < numGroundPatchesX; i++)
 		{
 			for (int j=0; j < numGroundPatchesZ; j++)
@@ -2521,7 +2485,6 @@ public class Ground
 						groundPatches[previous][groundLowerIndex].getVertexColors(GROUND_PATCH_RIGHT)
 				);
 			}
-			Log.d(TAG, "New(UP) | state = GROUND | riverWait = "+riverWaitCount);
 
 			riverWaitCount = Math.max(0, riverWaitCount-1);
 		}
@@ -2552,7 +2515,6 @@ public class Ground
 						groundPatches[previous][groundLowerIndex].getVertexColors(GROUND_PATCH_LEFT)
 				);
 			}
-			Log.d(TAG, "New(UP) | state = RIVER_ENTRY | riverWait = "+riverWaitCount);
 
 			generatorState = GROUND_PATCH_RIVER_MIDDLE;
 		}
@@ -2575,7 +2537,6 @@ public class Ground
 			}
 
 			currentRiverCount++;
-			Log.d(TAG, "New(UP) | state = RIVER_MIDDLE | riverCount= "+currentRiverCount);
 
 			if(currentRiverCount == currentRiverLength)
 			{
@@ -2607,7 +2568,6 @@ public class Ground
 						groundPatches[previous][groundLowerIndex].getVertexColors(GROUND_PATCH_RIGHT)
 				);
 			}
-			Log.d(TAG, "New(UP) | state = RIVER_EXIT | riverWait = "+riverWaitCount);
 
 			generatorState = GROUND_PATCH_GROUND;
 		}
@@ -2640,7 +2600,7 @@ public class Ground
 				// Reposition the new patches
 				current = objectsLeftmostIndex;
 				currentPos = objectsPatches[current][objectsUpperIndex].getCurrentPosition();
-				objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - (objectsPatchHeight + groundPatchHeight *((float)currentRiverLength + 2f )));
+				objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - (objectsPatchHeight + groundPatchHeight *((float)currentRiverLength + 3f )));
 				objectsPatches[current][objectsLowerIndex].reinitialize();
 
 				for(int x=1; x < numObjectsPatchesX; x++)
@@ -2648,7 +2608,7 @@ public class Ground
 					current = (current + 1) % numObjectsPatchesX;
 					currentPos = objectsPatches[current][objectsUpperIndex].getCurrentPosition();
 
-					objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - (objectsPatchHeight + groundPatchHeight *((float)currentRiverLength + 2f)));
+					objectsPatches[current][objectsLowerIndex].setCurrentPosition(currentPos.x, currentPos.y, currentPos.z - (objectsPatchHeight + groundPatchHeight *((float)currentRiverLength + 3f)));
 					objectsPatches[current][objectsLowerIndex].reinitialize();
 				}
 
@@ -2827,33 +2787,29 @@ public class Ground
 		objectsPatches = new ObjectsPatch[numObjectsPatchesX][numObjectsPatchesZ];
 
 		// FIRST LANE
-		objectsPatches[0][0] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight, perspectiveCamera);
+		objectsPatches[0][0] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight);
 		objectsPatches[0][0].setCurrentPosition(minimumX, 0.0f, minimumZ);
 		objectsPatches[0][0].initialize();
-		objectsPatches[0][0].setCullingPoints(pineTreeCullingPoints);
 
 		for(int z=1; z < numObjectsPatchesZ; z++)
 		{
-			objectsPatches[0][z] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight, perspectiveCamera);
+			objectsPatches[0][z] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight);
 			objectsPatches[0][z].setCurrentPosition(minimumX, 0.0f, minimumZ - (float)z*objectsPatchHeight);
 			objectsPatches[0][z].initialize();
-			objectsPatches[0][z].setCullingPoints(pineTreeCullingPoints);
 		}
 
 		// NEXT LANES
 		for(int x=1; x < numObjectsPatchesX; x++)
 		{
-			objectsPatches[x][0] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight, perspectiveCamera);
+			objectsPatches[x][0] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight);
 			objectsPatches[x][0].setCurrentPosition(minimumX + x*objectsPatchWidth, 0.0f, minimumZ);
 			objectsPatches[x][0].initialize();
-			objectsPatches[x][0].setCullingPoints(pineTreeCullingPoints);
 
 			for(int z=1; z < numObjectsPatchesZ; z++)
 			{
-				objectsPatches[x][z] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight, perspectiveCamera);
+				objectsPatches[x][z] = new ObjectsPatch(index++, objectsPatchWidth, objectsPatchHeight);
 				objectsPatches[x][z].setCurrentPosition(minimumX + x*objectsPatchWidth, 0.0f, minimumZ - z*objectsPatchHeight);
 				objectsPatches[x][z].initialize();
-				objectsPatches[x][z].setCullingPoints(pineTreeCullingPoints);
 			}
 		}
 	}
@@ -3932,14 +3888,26 @@ public class Ground
 		StringBuilder builder = new StringBuilder();
 
 		builder.append("GROUND ");
-		builder.append(Integer.toString(groundUpperIndex));		builder.append(" ");
-		builder.append(Integer.toString(groundLowerIndex));		builder.append(" ");
-		builder.append(Integer.toString(groundLeftmostIndex));	builder.append(" ");
-		builder.append(Integer.toString(groundRightmostIndex));	builder.append(" ");
-		builder.append(Integer.toString(objectsUpperIndex));		builder.append(" ");
-		builder.append(Integer.toString(objectsLowerIndex));		builder.append(" ");
-		builder.append(Integer.toString(objectsLeftmostIndex));		builder.append(" ");
-		builder.append(Integer.toString(objectsRightmostIndex));
+		builder.append(groundUpperIndex);		builder.append(" ");
+		builder.append(groundLowerIndex);		builder.append(" ");
+		builder.append(groundLeftmostIndex);	builder.append(" ");
+		builder.append(groundRightmostIndex);	builder.append(" ");
+		builder.append(objectsUpperIndex);		builder.append(" ");
+		builder.append(objectsLowerIndex);		builder.append(" ");
+		builder.append(objectsLeftmostIndex);	builder.append(" ");
+		builder.append(objectsRightmostIndex);
+		builder.append("\n");
+
+		builder.append("BROKEN_TREE ");
+		builder.append(drawBrokenTree);			builder.append(" ");
+		builder.append(brokenTreeType);			builder.append(" ");
+		builder.append(brokenTreeDistanceZ);	builder.append(" ");
+		builder.append(brokenTreeForce);		builder.append(" ");
+		builder.append(brokenTreeScale);		builder.append(" ");
+		builder.append(brokenTreeX);			builder.append(" ");
+		builder.append(brokenTreeZ);			builder.append(" ");
+		builder.append(brokenTreeTopY);			builder.append(" ");
+		builder.append(brokenTreeTopRotationAngle);
 		builder.append("\n");
 
 		builder.append("NUM_GROUND_PATCHES ");
@@ -3979,7 +3947,7 @@ public class Ground
 		String line;
 		String[] tokens;
 
-		// Get indices
+		// Read the indices
 		line = bufferedReader.readLine();
 		tokens = line.split(" ");
 		groundUpperIndex = Integer.parseInt(tokens[1]);
@@ -3991,13 +3959,76 @@ public class Ground
 		objectsLeftmostIndex = Integer.parseInt(tokens[7]);
 		objectsRightmostIndex = Integer.parseInt(tokens[8]);
 
-		// Get the number of ground patches
+		// Read the broken tree saved state
+		line = bufferedReader.readLine();
+		tokens = line.split(" ");
+		drawBrokenTree = Boolean.parseBoolean(tokens[1]);
+		brokenTreeType = Integer.parseInt(tokens[2]);
+		brokenTreeDistanceZ = Float.parseFloat(tokens[3]);
+		brokenTreeForce = Float.parseFloat(tokens[4]);
+		brokenTreeScale = Float.parseFloat(tokens[5]);
+		brokenTreeX = Float.parseFloat(tokens[6]);
+		brokenTreeZ = Float.parseFloat(tokens[7]);
+		brokenTreeTopY = Float.parseFloat(tokens[8]);
+		brokenTreeTopRotationAngle = Float.parseFloat(tokens[9]);
+
+		if(brokenTreeType == 0)
+		{
+			brokenTreeTexture = pineTreeTexture;
+			brokenTreeRootVaoHandle = brokenPineTree.rootVaoHandle[0];
+			brokenTreeTopVaoHandle = brokenPineTree.topVaoHandle[0];
+			brokenTreeRootShadowVaoHandle = brokenPineTree.rootShadowVaoHandle[0];
+			brokenTreeTopShadowVaoHandle = brokenPineTree.topShadowVaoHandle[0];
+			brokenTreeRootNumElementsToDraw = brokenPineTree.numRootElementsToDraw;
+			brokenTreeTopNumElementsToDraw = brokenPineTree.numTopElementsToDraw;
+			brokenTreeRootShadowNumElementsToDraw = brokenPineTree.numRootShadowElementsToDraw;
+			brokenTreeTopShadowNumElementsToDraw = brokenPineTree.numTopShadowElementsToDraw;
+		}
+		else if(brokenTreeType == 1)
+		{
+			brokenTreeTexture = hugeTreeTexture;
+			brokenTreeRootVaoHandle = brokenHugeTree.rootVaoHandle[0];
+			brokenTreeTopVaoHandle = brokenHugeTree.topVaoHandle[0];
+			brokenTreeRootShadowVaoHandle = brokenHugeTree.rootShadowVaoHandle[0];
+			brokenTreeTopShadowVaoHandle = brokenHugeTree.topShadowVaoHandle[0];
+			brokenTreeRootNumElementsToDraw = brokenHugeTree.numRootElementsToDraw;
+			brokenTreeTopNumElementsToDraw = brokenHugeTree.numTopElementsToDraw;
+			brokenTreeRootShadowNumElementsToDraw = brokenHugeTree.numRootShadowElementsToDraw;
+			brokenTreeTopShadowNumElementsToDraw = brokenHugeTree.numTopShadowElementsToDraw;
+		}
+		else if(brokenTreeType == 2)
+		{
+			brokenTreeTexture = palmTreeTexture;
+			brokenTreeRootVaoHandle = brokenPalmTree.rootVaoHandle[0];
+			brokenTreeTopVaoHandle = brokenPalmTree.topVaoHandle[0];
+			brokenTreeRootShadowVaoHandle = brokenPalmTree.rootShadowVaoHandle[0];
+			brokenTreeTopShadowVaoHandle = brokenPalmTree.topShadowVaoHandle[0];
+			brokenTreeRootNumElementsToDraw = brokenPalmTree.numRootElementsToDraw;
+			brokenTreeTopNumElementsToDraw = brokenPalmTree.numTopElementsToDraw;
+			brokenTreeRootShadowNumElementsToDraw = brokenPalmTree.numRootShadowElementsToDraw;
+			brokenTreeTopShadowNumElementsToDraw = brokenPalmTree.numTopShadowElementsToDraw;
+		}
+		else if(brokenTreeType == 3)
+		{
+			brokenTreeTexture = birchTreeTexture;
+			brokenTreeRootVaoHandle = brokenBirchTree.rootVaoHandle[0];
+			brokenTreeTopVaoHandle = brokenBirchTree.topVaoHandle[0];
+			brokenTreeRootShadowVaoHandle = brokenBirchTree.rootShadowVaoHandle[0];
+			brokenTreeTopShadowVaoHandle = brokenBirchTree.topShadowVaoHandle[0];
+			brokenTreeRootNumElementsToDraw = brokenBirchTree.numRootElementsToDraw;
+			brokenTreeTopNumElementsToDraw = brokenBirchTree.numTopElementsToDraw;
+			brokenTreeRootShadowNumElementsToDraw = brokenBirchTree.numRootShadowElementsToDraw;
+			brokenTreeTopShadowNumElementsToDraw = brokenBirchTree.numTopShadowElementsToDraw;
+		}
+
+
+		// Read the number of ground patches
 		line = bufferedReader.readLine();
 		tokens = line.split(" ");
 		numGroundPatchesX = Integer.parseInt(tokens[1]);
 		numGroundPatchesZ = Integer.parseInt(tokens[2]);
 
-		// Get the number of objects patches
+		// Read the number of objects patches
 		line = bufferedReader.readLine();
 		tokens = line.split(" ");
 		numObjectsPatchesX = Integer.parseInt(tokens[1]);
@@ -4045,95 +4076,5 @@ public class Ground
 		{
 			return type2;
 		}
-	}
-
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////////////////////
-	///// DEBUG !!!!
-	////////////////////////////////////////////////////////////////////////////////////////////////
-
-	private void createDebugPlane()
-	{
-		float[] vertices = new float[POSITION_COMPONENTS * 4];
-		float left = -objectsPatchWidth * 0.5f;
-		float right = objectsPatchWidth * 0.5f;
-		float up = -objectsPatchHeight * 0.5f;
-		float down = objectsPatchHeight * 0.5f;
-		float height = 5f;
-
-		// A
-		vertices[0] = left;
-		vertices[1] = height;
-		vertices[2] = down;
-
-		// B
-		vertices[3] = right;
-		vertices[4] = height;
-		vertices[5] = down;
-
-		// C
-		vertices[6] = right;
-		vertices[7] = height;
-		vertices[8] = up;
-
-		// D
-		vertices[9] = left;
-		vertices[10] = height;
-		vertices[11] = up;
-
-		short[] elements = new short[6];
-
-		// A - B - C
-		elements[0] = 0;
-		elements[1] = 1;
-		elements[2] = 2;
-
-		// A - C - D
-		elements[3] = 0;
-		elements[4] = 2;
-		elements[5] = 3;
-
-		// Create the native buffers
-		FloatBuffer verticesBuffer;
-		ShortBuffer elementsBuffer;
-
-		verticesBuffer = ByteBuffer
-				.allocateDirect(vertices.length * BYTES_PER_FLOAT)
-				.order(ByteOrder.nativeOrder())
-				.asFloatBuffer()
-				.put(vertices);
-		verticesBuffer.position(0);
-
-		elementsBuffer = ByteBuffer
-				.allocateDirect(elements.length * BYTES_PER_SHORT)
-				.order(ByteOrder.nativeOrder())
-				.asShortBuffer()
-				.put(elements);
-		elementsBuffer.position(0);
-
-		// Create the VBOs
-		glGenBuffers(2, debugPlaneVboHandles, 0);
-
-		glBindBuffer(GL_ARRAY_BUFFER, debugPlaneVboHandles[0]);
-		glBufferData(GL_ARRAY_BUFFER, verticesBuffer.capacity() * BYTES_PER_FLOAT, verticesBuffer, GL_STATIC_DRAW);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debugPlaneVboHandles[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, elementsBuffer.capacity() * BYTES_PER_SHORT, elementsBuffer, GL_STATIC_DRAW);
-
-		// Create the VAO
-		glGenVertexArrays(1, debugPlaneVaoHandle, 0);
-		glBindVertexArray(debugPlaneVaoHandle[0]);
-
-		// Vertex positions
-		glEnableVertexAttribArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, debugPlaneVboHandles[0]);
-		glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
-
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, debugPlaneVboHandles[1]);
-
-		glBindVertexArray(0);
 	}
 }

@@ -27,6 +27,8 @@ import static com.josepmtomas.rockgame.algebra.operations.*;
  * @author Josep
  */
 
+//TODO: disable FPS counter
+
 public class Hud
 {
 	private ForwardPlusRenderer renderer;
@@ -75,7 +77,7 @@ public class Hud
 	private int[] scoreVboHandles = new int[2];
 	private int[] scoreVaoHandle = new int[1];
 	private float[] scoreOpacities = new float[8];
-	private float[] scorePositionsX = new float[8];//{1700f, 1572f, 1444f, 1316f, 1188f, 1060f, 932f, 804f};
+	private float[] scorePositionsX = new float[8];
 	private float scorePositionY = 0;
 	private float[] scoreTexCoordOffsetsX = {    0f,    0f,     0f, 0f,  0.25f, 0.25f,  0.25f, 0.25f,   0.5f,  0.5f,   0.5f, 0.5f,  0.75f, 0.75f};
 	private float[] scoreTexCoordOffsetsY = {-0.75f, -0.5f, -0.25f, 0f, -0.75f, -0.5f, -0.25f,    0f, -0.75f, -0.5f, -0.25f,   0f, -0.75f, -0.5f};
@@ -1067,7 +1069,6 @@ public class Hud
 			uiPanelProgram.setUniforms(viewProjection, pauseButtonCurrentScale, pauseButtonCurrentPosition, pauseButtonCurrentTexture, 0.5f * pauseButtonOpacity);
 			glBindVertexArray(pauseButtonVaoHandle);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
-			//Log.w("PauseButton", "Drawing");
 		}
 
 
@@ -1100,8 +1101,6 @@ public class Hud
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 			}
 		}
-
-		//scorePanelProgram.setSpecificUniforms(scorePositionOffsetY, scoreTexCoordOffsetsX[scoreNumbers[0]], scoreTexCoordOffsetsY[scoreNumbers[0]]);
 
 		// current FPS
 		scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);

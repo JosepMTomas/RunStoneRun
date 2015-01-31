@@ -1,6 +1,5 @@
 package com.josepmtomas.rockgame;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -12,7 +11,6 @@ import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Point;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.opengl.GLSurfaceView;
@@ -57,16 +55,12 @@ public class GameActivity extends Activity
 
 	private SharedPreferences sharedPreferences;
 
-	private Context context;
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
 
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-		context = this;
 
 		loadShadedPreferences();
 
@@ -118,12 +112,12 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 			}
 		}).start();*/
 
-		backgroundMusicPlayer = MediaPlayer.create(context, R.raw.art_of_gardens);
+		backgroundMusicPlayer = MediaPlayer.create(this, R.raw.art_of_gardens);
 		backgroundMusicPlayer.setLooping(true);
 
-		impactRockOnRockSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_rock);
-		impactRockOnTreeSoundEffect = MediaPlayer.create(context, R.raw.impact_rock_on_tree);
-		treeFallingSoundEffect = MediaPlayer.create(context, R.raw.tree_falling);
+		impactRockOnRockSoundEffect = MediaPlayer.create(this, R.raw.impact_rock_on_rock);
+		impactRockOnTreeSoundEffect = MediaPlayer.create(this, R.raw.impact_rock_on_tree);
+		treeFallingSoundEffect = MediaPlayer.create(this, R.raw.tree_falling);
 
 		backgroundMusicThread = new Thread(new Runnable() {
 			@Override
@@ -190,26 +184,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 						//gameRenderer.releaseTouch();
 						forwardPlusRenderer.releaseTouch();
 					}
-					/*else if (event.getAction() == MotionEvent.ACTION_MOVE) {
-						final float deltaX = event.getX() - previousX;
-						final float deltaY = event.getY() - previousY;
-						previousX = event.getX();
-						previousY = event.getY();
-
-						glSurfaceView.queueEvent(new Runnable() {
-							@Override
-							public void run() {
-								//gameRenderer.handleTouchDrag(deltaX, deltaY);
-								//deferredRenderer.handleTouchDrag(deltaX, deltaY);
-								//TODO(enable):
-								forwardPlusRenderer.handleTouchDrag(deltaX, deltaY);
-							}
-						});
-					}
-					else if (event.getAction() == MotionEvent.ACTION_SCROLL)
-					{
-						//forwardPlusRenderer.scroll();
-					}*/
 					return true;
 				} else {
 					return false;

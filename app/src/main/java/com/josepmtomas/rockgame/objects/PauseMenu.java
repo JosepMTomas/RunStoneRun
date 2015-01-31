@@ -1,9 +1,6 @@
 package com.josepmtomas.rockgame.objects;
 
-import android.content.Context;
-
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
-import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programs.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 
@@ -15,11 +12,10 @@ import static android.opengl.Matrix.*;
 
 /**
  * Created by Josep on 01/01/2015.
+ * @author Josep
  */
 public class PauseMenu
 {
-	private GameActivity parent;
-	private Context context;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures textures;
@@ -88,10 +84,8 @@ public class PauseMenu
 	private float[] optionsButtonLimits = new float[4];
 
 
-	public PauseMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public PauseMenu(ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
-		this.parent = parent;
-		this.context = parent.getApplicationContext();
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;
 		this.textures = textures;
@@ -127,6 +121,7 @@ public class PauseMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void createElements(float screenWidth, float screenHeight)
 	{
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);

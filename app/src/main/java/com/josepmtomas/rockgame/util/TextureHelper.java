@@ -20,7 +20,10 @@ import static org.apache.http.util.EntityUtils.toByteArray;
 
 /**
  * Created by Josep on 17/07/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class TextureHelper
 {
 	private static final String TAG = "TextureHelper";
@@ -223,6 +226,7 @@ public class TextureHelper
 	}
 
 
+	@SuppressWarnings("all")
 	public static int loadETC2Texture(Context context, String[] filenames, int compression, Boolean bClamp, Boolean bHighQuality)
 	{
 		int textures[] = new int[1];
@@ -294,6 +298,7 @@ public class TextureHelper
 	}
 
 
+	@SuppressWarnings("all")
 	public static int loadETC2Texture(Context context, String fileName, int compression, Boolean bClamp, Boolean bHighQuality)
 	{
 		int textures[] = new int[1];

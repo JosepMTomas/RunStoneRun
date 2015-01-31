@@ -8,7 +8,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 06/10/2014.
+ * @author Josep
  */
+
 public class ShadowPassInstancedProgram extends ShaderProgram
 {
 	private final int worldModelLocation;

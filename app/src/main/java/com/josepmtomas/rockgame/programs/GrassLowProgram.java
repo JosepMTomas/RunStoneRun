@@ -8,7 +8,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 24/11/2014.
+ * @author Josep
  */
+
 public class GrassLowProgram extends ShaderProgram
 {
 	private final int grassPropertiesBlockLocation;

@@ -16,14 +16,11 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 /**
  * Created by Josep on 16/12/2014.
+ * @author Josep
  */
+
 public class GroundShield
 {
-	/*private static final int INVISIBLE = 0;
-	private static final int APPEARING = 1;
-	private static final int SHOWING = 2;
-	private static final int DISAPPEARING = 3;*/
-
 	private int[] vaoHandle = new int[1];
 
 	private int texture;
@@ -55,27 +52,25 @@ public class GroundShield
 
 		float sizeHalf = 15f;
 		float left = -sizeHalf;
-		float right = sizeHalf;
 		float up = -sizeHalf;
-		float down = sizeHalf;
 		float height = 0.1f;
 
 		// A
 		vertices[0] = left;
 		vertices[1] = height;
-		vertices[2] = down;
+		vertices[2] = sizeHalf;
 		vertices[3] = 0f;
 		vertices[4] = 0f;
 
 		// B
-		vertices[5] = right;
+		vertices[5] = sizeHalf;
 		vertices[6] = height;
-		vertices[7] = down;
+		vertices[7] = sizeHalf;
 		vertices[8] = 1f;
 		vertices[9] = 0f;
 
 		// C
-		vertices[10] = right;
+		vertices[10] = sizeHalf;
 		vertices[11] = height;
 		vertices[12] = up;
 		vertices[13] = 1f;

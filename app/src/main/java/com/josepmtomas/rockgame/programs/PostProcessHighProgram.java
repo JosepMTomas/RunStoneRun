@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 26/12/2014.
+ * @author Josep
  */
+
 public class PostProcessHighProgram extends ShaderProgram
 {
 	private final int colorSamplerLocation;

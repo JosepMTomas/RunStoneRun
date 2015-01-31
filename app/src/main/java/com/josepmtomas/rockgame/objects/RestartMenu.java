@@ -1,7 +1,6 @@
 package com.josepmtomas.rockgame.objects;
 
 import com.josepmtomas.rockgame.ForwardPlusRenderer;
-import com.josepmtomas.rockgame.GameActivity;
 import com.josepmtomas.rockgame.programs.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 
@@ -17,7 +16,6 @@ import static android.opengl.Matrix.*;
  */
 public class RestartMenu
 {
-	private GameActivity parent;
 	private ForwardPlusRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures menuTextures;
@@ -74,9 +72,8 @@ public class RestartMenu
 	private float[] noButtonLimits = new float[4];
 
 
-	public RestartMenu(GameActivity parent, ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public RestartMenu(ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
-		this.parent = parent;
 		this.renderer = renderer;
 		this.uiPanelProgram = panelProgram;
 		this.menuTextures = textures;
@@ -119,6 +116,7 @@ public class RestartMenu
 	}
 
 
+	@SuppressWarnings("unused")
 	private void setPositions(float screenWidth, float screenHeight)
 	{
 		float titleHeight = screenHeight * 0.1f;

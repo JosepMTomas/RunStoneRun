@@ -5,7 +5,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 05/09/2014.
+ * @author Josep
  */
+
 public class PlayerRockProgram extends ShaderProgram
 {
 	private final int lightInfoBlockLocation;

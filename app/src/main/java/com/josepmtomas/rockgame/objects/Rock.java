@@ -16,7 +16,9 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 /**
  * Created by Josep on 30/11/2014.
+ * @author Josep
  */
+
 public class Rock
 {
 	private static final int POSITION_COMPONENTS = 3;
@@ -79,9 +81,9 @@ public class Rock
 	}
 
 
-	public void addReflectionGeometry(String reflectioFileName)
+	public void addReflectionGeometry(String reflectionFileName)
 	{
-		loadReflection(context, reflectioFileName);
+		loadReflection(context, reflectionFileName);
 	}
 
 

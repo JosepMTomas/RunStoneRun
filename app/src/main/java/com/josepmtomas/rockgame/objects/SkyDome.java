@@ -186,16 +186,6 @@ public class SkyDome
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, BYTE_STRIDE, TEXCOORD_BYTE_OFFSET);
 
-		// Vertex normals
-		/*glEnableVertexAttribArray(2);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);*/
-
-		// Vertex tangents
-		/*glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, vboHandles[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);*/
-
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandles[1]);
 
 		glBindVertexArray(0);

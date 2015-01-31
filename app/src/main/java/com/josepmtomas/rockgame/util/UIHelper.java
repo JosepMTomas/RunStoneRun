@@ -1,7 +1,5 @@
 package com.josepmtomas.rockgame.util;
 
-import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -13,7 +11,9 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 /**
  * Created by Josep on 15/12/2014.
+ * @author Josep
  */
+
 public class UIHelper
 {
 

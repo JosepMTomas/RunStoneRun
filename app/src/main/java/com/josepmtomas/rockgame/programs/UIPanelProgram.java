@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 22/12/2014.
+ * @author Josep
  */
+
 public class UIPanelProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;

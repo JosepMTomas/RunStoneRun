@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 08/12/2014.
+ * @author Josep
  */
+
 public class ProgressBarProgram extends ShaderProgram
 {
 	private final int viewProjectionLocation;

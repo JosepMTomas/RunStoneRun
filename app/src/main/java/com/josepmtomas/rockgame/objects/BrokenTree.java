@@ -17,6 +17,7 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 10/12/2014.
+ * @author Josep
  */
 public class BrokenTree
 {

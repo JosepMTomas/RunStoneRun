@@ -29,8 +29,6 @@ import static com.josepmtomas.rockgame.Constants.*;
 
 public class GroundPatch extends BoundarySampler
 {
-	//private static final String TAG = "GroundPatch";
-
 	private static final int COLOR_COMPONENTS = 3;
 
 	public int type;
@@ -41,7 +39,6 @@ public class GroundPatch extends BoundarySampler
 	// Frustum culling
 	public boolean visible = false;
 	private PerspectiveCamera perspectiveCamera;
-	//private float cullingPointsRadius;
 	private float[] initialCullingPoints;
 	private float[] currentCullingPoints = new float[15];
 
@@ -103,12 +100,6 @@ public class GroundPatch extends BoundarySampler
 
 	// GRASS
 	public int indexNum;
-	/*public int numGrassInstances;
-
-	public float[] grassYRotations = new float[MAX_GRASS_INSTANCES];
-	private float[] grassMatrices;
-	private FloatBuffer grassMatricesBuffer;
-	public final int[] grassMatricesUbo = new int[1];*/
 
 	// Grass filtered points
 	public ArrayList<vec2> currentPoints = new ArrayList<vec2>();
@@ -137,9 +128,6 @@ public class GroundPatch extends BoundarySampler
 
 		this.type = GROUND_PATCH_GROUND;
 		this.perspectiveCamera = perspectiveCamera;
-
-		//this.cullingPointsRadius = Math.max(patchWidth, patchHeight) * 0.5f;
-
 		this.indexNum = indexNum;
 
 		this.spreadFactorX = patchWidth / 2f;

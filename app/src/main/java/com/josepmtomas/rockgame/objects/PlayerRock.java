@@ -856,16 +856,27 @@ public class PlayerRock
 		currentState = RETURNING_CENTER;
 	}
 
-	public void newGame()
+	public void newGame(int groundPatchType)
 	{
 		scoreMultiplier = 1.0f;
 		currentSpeed = 0f;
 		currentPositionY = 10f;
 		initialForce = 0f;
-		smokeParticleSystem.setEnabled(true);
-		smokeParticleSystem.setEmitterEnabled(true);
-		waterParticleSystem.setEnabled(true);
-		waterParticleSystem.setEmitterEnabled(false);
+
+		if(groundPatchType == GROUND_PATCH_RIVER_MIDDLE)
+		{
+			smokeParticleSystem.setEnabled(true);
+			smokeParticleSystem.setEmitterEnabled(false);
+			waterParticleSystem.setEnabled(true);
+			waterParticleSystem.setEmitterEnabled(true);
+		}
+		else
+		{
+			smokeParticleSystem.setEnabled(true);
+			smokeParticleSystem.setEmitterEnabled(true);
+			waterParticleSystem.setEnabled(true);
+			waterParticleSystem.setEmitterEnabled(false);
+		}
 	}
 
 	public void endGame()
