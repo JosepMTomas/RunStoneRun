@@ -17,7 +17,6 @@ uniform sampler2D reflectionSampler;
 uniform sampler2D waterNormalSampler;
 
 uniform sampler2D groundBlackSampler;
-uniform sampler2D groundGraySampler;
 uniform sampler2D groundWhiteSampler;
 
 uniform sampler2D groundBlackNormalSampler;

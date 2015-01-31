@@ -213,7 +213,7 @@ public class Ground
 	private int riverCurrentLength;
 
 	// Textures
-	private int pineBranchTexture;
+	private int pineTreeTexture;
 	private int pineTreeReflectionProxyTexture;
 	private int hugeTreeTexture;
 	private int hugeTreeReflectionProxyTexture;
@@ -440,21 +440,21 @@ public class Ground
 
 		//tree = new Tree(context, "models/test_tree_trunk.vbm", "models/test_tree_leaves.vbm");
 		String[] pineTreeLODs = {
-				"models/pine_tree_lod_a_2.vbm",
-				"models/pine_tree_lod_b_2.vbm"
+				"models/pine_tree_lod_a.vbm",
+				"models/pine_tree_lod_b.vbm"
 		};
 		pineTree = new Tree(context, pineTreeLODs);
-		pineTree.addShadowGeometry("models/pine_tree_shadow_med.vbm");
+		pineTree.addShadowGeometry("models/pine_tree_shadow.vbm");
 		pineTree.addReflectionGeometry("models/pine_tree_reflection_proxy.vbm");
 		pineTree.addCullingPoints("models/pine_tree_culling.vbm");
 		pineTreeCullingPoints = pineTree.cullingPoints;
 
 		String[] hugeTreeLODs = {
-				"models/huge_tree_lod_a_2.vbm",
-				"models/huge_tree_lod_b_2.vbm"
+				"models/huge_tree_lod_a.vbm",
+				"models/huge_tree_lod_b.vbm"
 		};
 		hugeTree = new Tree(context, hugeTreeLODs);
-		hugeTree.addShadowGeometry("models/huge_tree_lod_a_shadow.vbm");
+		hugeTree.addShadowGeometry("models/huge_tree_shadow.vbm");
 		hugeTree.addReflectionGeometry("models/huge_tree_reflection_proxy.vbm");
 
 		String[] palmTreeLODs = {
@@ -490,8 +490,8 @@ public class Ground
 		weedPlant.addReflectionGeometry("models/weed_plant_reflection.vbm");
 
 		String[] bushPlantLODs = {
-				"models/bush_plant_lod_a.vbm",
-				"models/bush_plant_lod_b.vbm"
+				"models/bush_plant_lod_a_nfc.vbm",
+				"models/bush_plant_lod_b_nfc.vbm"
 		};
 		bushPlant = new Plant(context, bushPlantLODs);
 		bushPlant.addShadowGeometry("models/bush_plant_shadow.vbm");
@@ -505,7 +505,7 @@ public class Ground
 		palmPlant.addShadowGeometry("models/palm_plant_lod_a.vbm");
 		palmPlant.addReflectionGeometry("models/palm_plant_reflection.vbm");
 
-		rockA = new Rock(context, "models/rock_a_lod_a.vbm", "models/rock_a_lod_b.vbm");
+		rockA = new Rock(context, "models/rock_a_lod_a_2.vbm", "models/rock_a_lod_b_2.vbm");
 		rockA.addShadowGeometry("models/rock_a_lod_b.vbm");
 		rockA.addReflectionGeometry("models/rock_a_reflection.vbm");
 
@@ -650,11 +650,22 @@ public class Ground
 				"textures/test_grass/test_grass_mip_6.mp3",
 				"textures/test_grass/test_grass_mip_7.mp3"
 		};
+
+		String[] grassTextureMips = {
+				"textures/grass/diffuse_mip_0.mp3",
+				"textures/grass/diffuse_mip_1.mp3",
+				"textures/grass/diffuse_mip_2.mp3",
+				"textures/grass/diffuse_mip_3.mp3",
+				"textures/grass/diffuse_mip_4.mp3",
+				"textures/grass/diffuse_mip_5.mp3",
+				"textures/grass/diffuse_mip_6.mp3",
+				"textures/grass/diffuse_mip_7.mp3"
+		};
 		//Log.d(TAG, "Loading grass patch texture");
-		grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		grassPatchTexture = TextureHelper.loadETC2Texture(context, grassTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		//grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, false, true);
 
-		String[] pineBranchTextureMips = {
+		String[] pineTreeTextureMips = {
 				"textures/pine_tree/diffuse_mip_0.mp3",
 				"textures/pine_tree/diffuse_mip_1.mp3",
 				"textures/pine_tree/diffuse_mip_2.mp3",
@@ -665,7 +676,7 @@ public class Ground
 				"textures/pine_tree/diffuse_mip_7.mp3"
 		};
 		//Log.d(TAG, "Loading pine branch texture");
-		pineBranchTexture = TextureHelper.loadETC2Texture(context, pineBranchTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		pineTreeTexture = TextureHelper.loadETC2Texture(context, pineTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] pineTreeReflectionProxyTextureMips = {
 				"textures/pine_tree/reflection_proxy_mip_0.mp3",
@@ -855,15 +866,15 @@ public class Ground
 		palmPlantReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmPlantReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] rockADiffuseTextureMips = {
-				//"textures/rocks/rock_a_diffuse_mip_0.mp3",
-				"textures/rocks/rock_a_diffuse_mip_1.mp3",
-				"textures/rocks/rock_a_diffuse_mip_2.mp3",
-				"textures/rocks/rock_a_diffuse_mip_3.mp3",
-				"textures/rocks/rock_a_diffuse_mip_4.mp3",
-				"textures/rocks/rock_a_diffuse_mip_5.mp3",
-				"textures/rocks/rock_a_diffuse_mip_6.mp3",
-				"textures/rocks/rock_a_diffuse_mip_7.mp3",
-				"textures/rocks/rock_a_diffuse_mip_8.mp3"
+				//"textures/rock_a/diffuse_mip_0.mp3",
+				"textures/rock_a/diffuse_mip_1.mp3",
+				"textures/rock_a/diffuse_mip_2.mp3",
+				"textures/rock_a/diffuse_mip_3.mp3",
+				"textures/rock_a/diffuse_mip_4.mp3",
+				"textures/rock_a/diffuse_mip_5.mp3",
+				"textures/rock_a/diffuse_mip_6.mp3",
+				"textures/rock_a/diffuse_mip_7.mp3",
+				"textures/rock_a/diffuse_mip_8.mp3"
 		};
 		//Log.d(TAG, "Loading rock a diffuse texture");
 		rockADiffuseTexture = TextureHelper.loadETC2Texture(context, rockADiffuseTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
@@ -949,17 +960,6 @@ public class Ground
 				"textures/ground/ground_black_mip_7.mp3",
 				"textures/ground/ground_black_mip_8.mp3"
 		};
-		String[] groundGrayTextureMips = {
-				//"textures/ground/ground_gray_mip_0.mp3",
-				"textures/ground/ground_gray_mip_1.mp3",
-				"textures/ground/ground_gray_mip_2.mp3",
-				"textures/ground/ground_gray_mip_3.mp3",
-				"textures/ground/ground_gray_mip_4.mp3",
-				"textures/ground/ground_gray_mip_5.mp3",
-				"textures/ground/ground_gray_mip_6.mp3",
-				"textures/ground/ground_gray_mip_7.mp3",
-				"textures/ground/ground_gray_mip_8.mp3"
-		};
 		String[] groundWhiteTextureMips = {
 				//"textures/ground/ground_white_mip_0.mp3",
 				"textures/ground/ground_white_mip_1.mp3",
@@ -971,10 +971,9 @@ public class Ground
 				"textures/ground/ground_white_mip_7.mp3",
 				"textures/ground/ground_white_mip_8.mp3"
 		};
-		groundTextures = new int[3];
+		groundTextures = new int[2];
 		groundTextures[0] = TextureHelper.loadETC2Texture(context, groundBlackTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
-		groundTextures[1] = TextureHelper.loadETC2Texture(context, groundGrayTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
-		groundTextures[2] = TextureHelper.loadETC2Texture(context, groundWhiteTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
+		groundTextures[1] = TextureHelper.loadETC2Texture(context, groundWhiteTextureMips, GL_COMPRESSED_RGB8_ETC2, false, true);
 
 		String[] groundBlackNormalTextureMips = {
 				//"textures/ground/ground_black_normal_mip_0.mp3",
@@ -987,17 +986,6 @@ public class Ground
 				"textures/ground/ground_black_normal_mip_7.mp3",
 				"textures/ground/ground_black_normal_mip_8.mp3"
 		};
-		String[] groundGrayNormalTextureMips = {
-				//"textures/ground/ground_gray_normal_mip_0.mp3",
-				"textures/ground/ground_gray_normal_mip_1.mp3",
-				"textures/ground/ground_gray_normal_mip_2.mp3",
-				"textures/ground/ground_gray_normal_mip_3.mp3",
-				"textures/ground/ground_gray_normal_mip_4.mp3",
-				"textures/ground/ground_gray_normal_mip_5.mp3",
-				"textures/ground/ground_gray_normal_mip_6.mp3",
-				"textures/ground/ground_gray_normal_mip_7.mp3",
-				"textures/ground/ground_gray_normal_mip_8.mp3"
-		};
 		String[] groundWhiteNormalTextureMips = {
 				//"textures/ground/ground_white_normal_mip_0.mp3",
 				"textures/ground/ground_white_normal_mip_1.mp3",
@@ -1009,10 +997,9 @@ public class Ground
 				"textures/ground/ground_white_normal_mip_7.mp3",
 				"textures/ground/ground_white_normal_mip_8.mp3"
 		};
-		groundNormalTextures = new int[3];
+		groundNormalTextures = new int[2];
 		groundNormalTextures[0] = TextureHelper.loadETC2Texture(context, groundBlackNormalTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		groundNormalTextures[1] = TextureHelper.loadETC2Texture(context, groundGrayNormalTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		groundNormalTextures[2] = TextureHelper.loadETC2Texture(context, groundWhiteNormalTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		groundNormalTextures[1] = TextureHelper.loadETC2Texture(context, groundWhiteNormalTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -2024,7 +2011,7 @@ public class Ground
 								brokenTreeTopShadowNumElementsToDraw = brokenPineTree.numTopShadowElementsToDraw;
 
 								// Assign texture & make the broken tree drawable
-								brokenTreeTexture = pineBranchTexture;
+								brokenTreeTexture = pineTreeTexture;
 								drawBrokenTree = true;
 							}
 							else if(treeType == 1)
@@ -2365,7 +2352,7 @@ public class Ground
 
 
 		treeProgram.useProgram();
-		treeProgram.setCommonUniforms(viewProjection, pineBranchTexture);
+		treeProgram.setCommonUniforms(viewProjection, pineTreeTexture);
 
 		treeProgram.setSpecificUniforms(pineTreeArrayUbo[LOD_A]);
 		glBindVertexArray(pineTree.vaoHandles[LOD_A]);

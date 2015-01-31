@@ -202,7 +202,7 @@ public class CreditsMenu
 		creditsTitlePosition[1] = buttonHeight * 4.0f;
 
 		// Developer title
-		developerTitleScale[0] = buttonHeight * 4f; //6
+		developerTitleScale[0] = buttonHeight * 3.733333f; //6
 		developerTitleScale[1] = buttonHeight * 1.0f;
 		developerTitlePosition[0] = 0f;
 		developerTitlePosition[1] = buttonHeight * 2.75f;
@@ -212,7 +212,7 @@ public class CreditsMenu
 		developerTitleLimits[3] = developerTitlePosition[1] + buttonHeightHalf;
 
 		// Composer title
-		composerTitleScale[0] = buttonHeight * 3.3333f; //5
+		composerTitleScale[0] = buttonHeight * 3.2f; //5
 		composerTitleScale[1] = buttonHeight * 1.0f;
 		composerTitlePosition[0] = buttonWidth * -0.8f;
 		composerTitlePosition[1] = buttonHeight * 1.5f;
@@ -223,7 +223,7 @@ public class CreditsMenu
 
 
 		// Sound effects title
-		effectsTitleScale[0] = buttonHeight * 4.666667f; // 7
+		effectsTitleScale[0] = buttonHeight * 3.666667f; // 7
 		effectsTitleScale[1] = buttonHeight * 1.0f;
 		effectsTitlePosition[0] = buttonWidth * 0.75f;
 		effectsTitlePosition[1] = buttonHeight * 1.5f; //0.25f
@@ -233,9 +233,9 @@ public class CreditsMenu
 		effectsTitleLimits[3] = effectsTitlePosition[1] + buttonHeightHalf;
 
 		// Font type title
-		fontTitleScale[0] = buttonHeight * 4.666667f;
+		fontTitleScale[0] = buttonHeight * 4.33333f;
 		fontTitleScale[1] = buttonHeight * 1f;
-		fontTitlePosition[0] = buttonWidth * -0.75f;
+		fontTitlePosition[0] = buttonWidth * -0.8f;
 		fontTitlePosition[1] = buttonHeight * 0.25f; //-1.0f
 		fontTitleLimits[0] = fontTitlePosition[0] - buttonWidthHalf;
 		fontTitleLimits[1] = fontTitlePosition[0] + buttonWidthHalf;

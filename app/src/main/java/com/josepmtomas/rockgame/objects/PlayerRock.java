@@ -190,7 +190,7 @@ public class PlayerRock
 		};*/
 
 		diffuseTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/diffuse_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		normalTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/normal_new_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		normalTexture = TextureHelper.loadETC2Texture(context, "textures/player_rock/normal_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 
 
@@ -712,7 +712,14 @@ public class PlayerRock
 		//Log.e(TAG, "RotationVector (" + rotationVector[0] + ", " + rotationVector[1] + ", " + rotationVector[2] + ")");
 
 		//rotationX -= (currentSpeed * deltaTime);
-		rotationX -= lerp(currentSpeed * 2f * deltaTime, currentSpeed * deltaTime, playerRockTimerPercent);
+		if(state == PLAYER_ROCK_DISAPPEARING)
+		{
+			rotationX -= lerp(currentSpeed * deltaTime, 0f, playerRockTimerPercent);
+		}
+		else
+		{
+			rotationX -= lerp(currentSpeed * 2f * deltaTime, currentSpeed * deltaTime, playerRockTimerPercent);
+		}
 
 		//displacement = rockAngleLength * currentSpeed;
 		//Log.d("RockAngleLength", "= " + rockAngleLength);

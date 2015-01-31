@@ -490,8 +490,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		});
 		AlertDialog dialog = builder.create();
 		dialog.show();
-
-
 	}
 
 

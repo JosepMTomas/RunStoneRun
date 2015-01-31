@@ -6,7 +6,9 @@ import static android.opengl.GLES30.*;
 
 /**
  * Created by Josep on 06/09/2014.
+ * @author Josep
  */
+
 public class GroundProgram  extends ShaderProgram
 {
 	private final int lightInfoBlockLocation;
@@ -22,7 +24,6 @@ public class GroundProgram  extends ShaderProgram
 	private final int waterNormalSamplerLocation;
 
 	private final int groundBlackSamplerLocation;
-	private final int groundGraySamplerLocation;
 	private final int groundWhiteSamplerLocation;
 
 	private final int groundBlackNormalSamplerLocation;
@@ -47,7 +48,6 @@ public class GroundProgram  extends ShaderProgram
 		waterNormalSamplerLocation = glGetUniformLocation(program, "waterNormalSampler");
 
 		groundBlackSamplerLocation = glGetUniformLocation(program, "groundBlackSampler");
-		groundGraySamplerLocation = glGetUniformLocation(program, "groundGraySampler");
 		groundWhiteSamplerLocation = glGetUniformLocation(program, "groundWhiteSampler");
 
 		groundBlackNormalSamplerLocation = glGetUniformLocation(program, "groundBlackNormalSampler");
@@ -83,15 +83,11 @@ public class GroundProgram  extends ShaderProgram
 
 		glActiveTexture(GL_TEXTURE4);
 		glBindTexture(GL_TEXTURE_2D, groundSamplers[1]);
-		glUniform1i(groundGraySamplerLocation, 4);
+		glUniform1i(groundWhiteSamplerLocation, 4);
 
 		glActiveTexture(GL_TEXTURE5);
-		glBindTexture(GL_TEXTURE_2D, groundSamplers[2]);
-		glUniform1i(groundWhiteSamplerLocation, 5);
-
-		glActiveTexture(GL_TEXTURE6);
 		glBindTexture(GL_TEXTURE_2D, normalSampler);
-		glUniform1i(groundBlackNormalSamplerLocation, 6);
+		glUniform1i(groundBlackNormalSamplerLocation, 5);
 	}
 
 
