@@ -1,7 +1,6 @@
 package com.josepmtomas.rockgame.poissonGeneration;
 
 import android.util.FloatMath;
-import android.util.Log;
 
 import com.josepmtomas.rockgame.Constants;
 import com.josepmtomas.rockgame.algebra.vec2;
@@ -10,7 +9,10 @@ import java.util.ArrayList;
 
 /**
  * Created by Josep on 22/09/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class BoundarySampler extends PDSampler
 {
 	protected ArrayList<Integer> candidates = new ArrayList<Integer>();
@@ -160,9 +162,9 @@ public class BoundarySampler extends PDSampler
 
 	public void spread(float spreadFactorX, float spreadFactorY)
 	{
-		for(int i=0; i < points.size(); i++)
+		for(vec2 point:points)
 		{
-			points.get(i).multiply(spreadFactorX, spreadFactorY);
+			point.multiply(spreadFactorX, spreadFactorY);
 		}
 	}
 }

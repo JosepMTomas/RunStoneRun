@@ -3,8 +3,11 @@ package com.josepmtomas.rockgame.algebra;
 import android.util.FloatMath;
 
 /**
- * Created by Josep on 22/09/2014.
+ * Created by Josep on 22/09/2014.ç
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class vec2
 {
     public float x;

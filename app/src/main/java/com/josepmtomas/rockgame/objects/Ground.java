@@ -116,7 +116,7 @@ public class Ground
 	//private float minOffsetZ;
 	private final float maxGroundOffsetZ;
 
-	private int centerLaneIndex;
+	//private int centerLaneIndex;
 
 	private int groundLeftmostIndex;
 	private int groundRightmostIndex;
@@ -141,7 +141,7 @@ public class Ground
 	// Ground patches
 	private GroundPatch[][] groundPatches;
 	private int[][] groundVaoHandles;
-	private int[][] groundDepthPrePassVaoHandles;
+	//private int[][] groundDepthPrePassVaoHandles;
 	private Float maximumVariance;
 
 	// Objects patches
@@ -196,18 +196,18 @@ public class Ground
 	private int brokenTreeType = 0;
 
 	// Movement
-	private vec3 displacement;
+	//private vec3 displacement;
 
 	// Grass
 	private GrassProgram grassProgram;
 	private GrassLowProgram grassLowProgram;
-	private GrassPatch grassPatch;
+	//private GrassPatch grassPatch;
 	private final int grassVaoHandle;
 	private int grassPatchTexture;
 
 	// River
 	private int riverWaitCount = 15;
-	private int riverCurrentLength;
+	//private int riverCurrentLength;
 
 	// Textures
 	private int pineTreeTexture;
@@ -239,8 +239,6 @@ public class Ground
 	private float[] shadowMatrix;
 	private int shadowMapSampler;
 
-
-	// TODO: Shader programs
 	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
 	ShadowPassInstancedProgram shadowPassInstancedProgram;
@@ -385,7 +383,7 @@ public class Ground
 
 		this.maximumVariance = 0.15f;
 
-		centerLaneIndex = (numGroundPatchesX-1)/2;
+		int centerLaneIndex = (numGroundPatchesX-1)/2;
 
 		groundLeftmostIndex = 0;
 		groundRightmostIndex = numGroundPatchesX-1;
@@ -394,8 +392,6 @@ public class Ground
 
 		minGroundOffsetX = ((float)centerLaneIndex + 0.5f) * -groundPatchWidth;
 		maxGroundOffsetX = ((float)centerLaneIndex + 0.5f) * groundPatchWidth;
-		//minOffsetZ = ((float)centerLaneIndex + 0.5f) * -patchHeight;
-		//maxOffsetZ = ((float)groundUpperIndex/2.0f + 0.5f) * patchHeight;
 		maxGroundOffsetZ = groundPatchHeight;
 
 		////////////////////////////////////////////////////////////////////////////////////////////
@@ -420,7 +416,7 @@ public class Ground
 		// Objects
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		grassPatch = new GrassPatch(context);
+		GrassPatch grassPatch = new GrassPatch(context);
 		grassVaoHandle = grassPatch.getVaoHandle();
 
 		//tree = new Tree(context, "models/test_tree_trunk.vbm", "models/test_tree_leaves.vbm");
@@ -531,17 +527,6 @@ public class Ground
 		rockLowProgram = new RockLowProgram(context);
 		brokenTreeProgram = new BrokenTreeProgram(context);
 
-		String[] grass1Texture = {
-				"textures/grass1/grass1_512_mip_0.mp3",
-				"textures/grass1/grass1_512_mip_1.mp3",
-				"textures/grass1/grass1_512_mip_2.mp3",
-				"textures/grass1/grass1_512_mip_3.mp3",
-				"textures/grass1/grass1_512_mip_4.mp3",
-				"textures/grass1/grass1_512_mip_5.mp3",
-				"textures/grass1/grass1_512_mip_6.mp3",
-				"textures/grass1/grass1_512_mip_7.mp3",
-				"textures/grass1/grass1_512_mip_8.mp3"};
-
 		String[] waterTexture = {
 				//"textures/water_ripples/water_ripples_normal_mip_0.mp3",
 				"textures/water_ripples/water_ripples_normal_mip_1.mp3",
@@ -611,17 +596,6 @@ public class Ground
 
 		/*************************************** TEXTURES *****************************************/
 
-		String[] testGrassTexture = {
-				"textures/test_grass/test_grass_mip_0.mp3",
-				"textures/test_grass/test_grass_mip_1.mp3",
-				"textures/test_grass/test_grass_mip_2.mp3",
-				"textures/test_grass/test_grass_mip_3.mp3",
-				"textures/test_grass/test_grass_mip_4.mp3",
-				"textures/test_grass/test_grass_mip_5.mp3",
-				"textures/test_grass/test_grass_mip_6.mp3",
-				"textures/test_grass/test_grass_mip_7.mp3"
-		};
-
 		String[] grassTextureMips = {
 				"textures/grass/diffuse_mip_0.mp3",
 				"textures/grass/diffuse_mip_1.mp3",
@@ -632,9 +606,8 @@ public class Ground
 				"textures/grass/diffuse_mip_6.mp3",
 				"textures/grass/diffuse_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading grass patch texture");
 		grassPatchTexture = TextureHelper.loadETC2Texture(context, grassTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		//grassPatchTexture = TextureHelper.loadETC2Texture(context, testGrassTexture, GL_COMPRESSED_SRGB8_PUNCHTHROUGH_ALPHA1_ETC2, false, true);
+
 
 		String[] pineTreeTextureMips = {
 				"textures/pine_tree/diffuse_mip_0.mp3",
@@ -646,7 +619,6 @@ public class Ground
 				"textures/pine_tree/diffuse_mip_6.mp3",
 				"textures/pine_tree/diffuse_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading pine branch texture");
 		pineTreeTexture = TextureHelper.loadETC2Texture(context, pineTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] pineTreeReflectionProxyTextureMips = {
@@ -659,7 +631,6 @@ public class Ground
 				"textures/pine_tree/reflection_proxy_mip_6.mp3",
 				"textures/pine_tree/reflection_proxy_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading pine reflection proxy texture");
 		pineTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, pineTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] hugeTreeTextureMips = {
@@ -672,7 +643,6 @@ public class Ground
 				"textures/huge_tree/diffuse_mip_6.mp3",
 				"textures/huge_tree/diffuse_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading huge tree texture");
 		hugeTreeTexture = TextureHelper.loadETC2Texture(context, hugeTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] hugeTreeReflectionProxyTextureMips = {
@@ -685,7 +655,6 @@ public class Ground
 				"textures/huge_tree/reflection_proxy_mip_6.mp3",
 				"textures/huge_tree/reflection_proxy_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading huge tree reflection proxy texture");
 		hugeTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, hugeTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] palmTreeTextureMips = {
@@ -698,7 +667,6 @@ public class Ground
 				"textures/palm_tree/diffuse_mip_6.mp3",
 				"textures/palm_tree/diffuse_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading palm tree texture");
 		palmTreeTexture = TextureHelper.loadETC2Texture(context, palmTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] palmTreeReflectionProxyTextureMips = {
@@ -711,7 +679,6 @@ public class Ground
 				"textures/palm_tree/reflection_proxy_mip_6.mp3",
 				"textures/palm_tree/reflection_proxy_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading huge tree reflection proxy texture");
 		palmTreeReflectionProxyTexture = TextureHelper.loadETC2Texture(context, palmTreeReflectionProxyTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] birchTreeTextureMips = {
@@ -724,7 +691,8 @@ public class Ground
 				"textures/birch_tree/diffuse_mip_6.mp3",
 				"textures/birch_tree/diffuse_mip_7.mp3"
 		};
-		birchTreeTexture = TextureHelper.loadETC2Texture(context, "textures/birch_tree/diffuse_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		//birchTreeTexture = TextureHelper.loadETC2Texture(context, "textures/birch_tree/diffuse_mip_0.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		birchTreeTexture = TextureHelper.loadETC2Texture(context, birchTreeTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] birchTreeReflectionProxyTextureMips = {
 				"textures/birch_tree/reflection_proxy_mip_0.mp3",
@@ -748,7 +716,6 @@ public class Ground
 				"textures/fern_plant/fern_plant_mip_6.mp3",
 				"textures/fern_plant/fern_plant_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading fern plant texture");
 		fernPlantTexture = TextureHelper.loadETC2Texture(context, fernPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] fernPlantReflectionProxyTextureMips = {
@@ -773,7 +740,6 @@ public class Ground
 				"textures/weed_plant/diffuse_mip_6.mp3",
 				"textures/weed_plant/diffuse_mip_7.mp3"
 		};
-		//Log.d(TAG, "Loading weeds plant texture");
 		weedPlantTexture = TextureHelper.loadETC2Texture(context, weedPlantTextureMips, GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		String[] weedPlantReflectionProxyTextureMips = {
@@ -1072,9 +1038,7 @@ public class Ground
 		float currentY;
 		float currentZ;
 		float minimumX = (-groundPatchWidth / 2.0f);
-		float minimumZ = (groundPatchHeight / 2.0f);
 		float incrementX = groundPatchWidth / (float)numGroundPolygonsX;
-		float incrementZ = groundPatchWidth / (float)numGroundPolygonsZ;
 
 		// Create the vertex attributes
 		for(int i=0; i < GROUND_RIVER_PATCH_VERTICES_Z; i++)
@@ -1366,9 +1330,7 @@ public class Ground
 		float currentY;
 		float currentZ;
 		float minimumX = (-groundPatchWidth / 2.0f);
-		float minimumZ = (groundPatchHeight / 2.0f);
 		float incrementX = groundPatchWidth / (float)numGroundPolygonsX;
-		float incrementZ = groundPatchWidth / (float)numGroundPolygonsZ;
 
 		// Create the vertex attributes
 		for(int i=0; i < GROUND_RIVER_PATCH_VERTICES_Z; i++)
@@ -1498,18 +1460,13 @@ public class Ground
 		float[] normals = new float[numGroundVerticesX * GROUND_RIVER_PATCH_VERTICES_Z * NORMAL_COMPONENTS];
 
 		int positionsOffset = 0;
-		int texCoordsOffset = 0;
 		int normalsOffset = 0;
-		int tangentsOffset = 0;
-		int elementsOffset = 0;
 
 		float currentX;
 		float currentY;
 		float currentZ;
 		float minimumX = (-groundPatchWidth / 2.0f);
-		float minimumZ = (groundPatchHeight / 2.0f);
 		float incrementX = groundPatchWidth / (float)numGroundPolygonsX;
-		float incrementZ = groundPatchWidth / (float)numGroundPolygonsZ;
 
 		// Create the vertex attributes
 		for(int i=0; i < GROUND_RIVER_PATCH_VERTICES_Z; i++)
@@ -1764,7 +1721,6 @@ public class Ground
 		// Patches
 		groundPatches = new GroundPatch[numGroundPatchesX][numGroundPatchesZ];
 		groundVaoHandles = new int[numGroundPatchesX][numGroundPatchesZ];
-		groundDepthPrePassVaoHandles = new int[numGroundPatchesX][numGroundPatchesZ];
 
 		// FIRST LANE
 		groundPatches[0][0] = new GroundPatch(index++, numGroundVerticesX, numGroundVerticesZ, groundPatchWidth, groundPatchHeight, maximumVariance, vboHandles, patchCullingPoints, perspectiveCamera);
@@ -1812,7 +1768,6 @@ public class Ground
 			for(int z=0; z < numGroundPatchesZ; z++)
 			{
 				groundVaoHandles[x][z] = groundPatches[x][z].getGroundVaoHandle();
-				groundDepthPrePassVaoHandles[x][z] = groundPatches[x][z].getDepthPrePassVaoHandle();
 			}
 		}
 	}
@@ -1821,8 +1776,6 @@ public class Ground
 	public void update(float[] viewProjection, float[] lightViewProjection, vec3 displacement, float[] shadowMatrix, int shadowMapSampler, float deltaTime)
 	{
 		this.viewProjection = viewProjection;
-		//this.lightViewProjection = lightViewProjection;
-		this.displacement = displacement;
 		this.shadowMatrix = shadowMatrix;
 		this.shadowMapSampler = shadowMapSampler;
 
@@ -2059,27 +2012,6 @@ public class Ground
 		}
 
 		updateObjectsPatchesBuffer();
-	}
-
-
-	public void drawDepthPrePass()
-	{
-		depthPrePassProgram.useProgram();
-
-		//TODO: camera frustum culling
-		for(int i=0; i < numGroundPatchesX; i++)
-		{
-			for (int j = 0; j < numGroundPatchesZ; j++)
-			{
-				if(groundPatches[i][j].visible)
-				{
-					depthPrePassProgram.setUniforms(groundPatches[i][j].getModelViewProjectionMatrix());
-
-					glBindVertexArray(groundVaoHandles[i][j]);
-					glDrawElements(GL_TRIANGLES, patchElements.length, GL_UNSIGNED_SHORT, 0);
-				}
-			}
-		}
 	}
 
 
@@ -3799,62 +3731,12 @@ public class Ground
 
 	public void newGame()
 	{
-		//restartGroundPatches();
 		restartObjectsPatches();
-	}
-
-
-	private void restartGroundPatches()
-	{
-		groundLeftmostIndex = 0;
-		groundRightmostIndex = numGroundPatchesX-1;
-		groundUpperIndex = numGroundPatchesZ-1;
-		groundLowerIndex = 0;
-
-		float minimumX = -(float)((numGroundPatchesX-1)/2) * groundPatchWidth;
-		float minimumZ = groundPatchHeight;
-
-		// FIRST LANE
-		groundPatches[0][0].type = GROUND_PATCH_GROUND;
-		groundPatches[0][0].reinitialize(GROUND_PATCH_ROOT, null, null);
-		groundPatches[0][0].setCurrentPosition(minimumX, 0.0f, minimumZ);
-
-		for(int z=1; z < numGroundPatchesZ; z++)
-		{
-			groundPatches[0][z].type = GROUND_PATCH_GROUND;
-			groundPatches[0][z].reinitialize(
-					GROUND_PATCH_UP,
-					groundPatches[0][z-1].getVertexColors(GROUND_PATCH_UP),
-					null);
-			groundPatches[0][z].setCurrentPosition(minimumX, 0.0f, minimumZ - (float)z*groundPatchHeight);
-		}
-
-		// NEXT LANES
-		for(int x=1; x < numGroundPatchesX; x++)
-		{
-			groundPatches[x][0].type = GROUND_PATCH_GROUND;
-			groundPatches[x][0].reinitialize(
-					GROUND_PATCH_LEFT,
-					null,
-					groundPatches[x-1][0].getVertexColors(GROUND_PATCH_RIGHT));
-			groundPatches[x][0].setCurrentPosition(minimumX + x*groundPatchWidth, 0.0f, minimumZ);
-
-			for(int z=1; z < numGroundPatchesZ; z++)
-			{
-				groundPatches[x][z].type = GROUND_PATCH_GROUND;
-				groundPatches[x][z].reinitialize(
-						GROUND_PATCH_UP_LEFT,
-						groundPatches[x][z-1].getVertexColors(GROUND_PATCH_UP),
-						groundPatches[x-1][z].getVertexColors(GROUND_PATCH_RIGHT));
-				groundPatches[x][z].setCurrentPosition(minimumX + x*groundPatchWidth, 0.0f, minimumZ - z*groundPatchHeight);
-			}
-		}
 	}
 
 
 	private void restartObjectsPatches()
 	{
-		//float displacementZ = objectsPatches[0][objectsLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
 		float displacementZ = groundPatches[0][groundLowerIndex].getCurrentPosition().z - (objectsPatchHeight * 5f);
 
 		//objectsLeftmostIndex = 0;
@@ -3885,44 +3767,38 @@ public class Ground
 
 	public void saveState(FileOutputStream outputStream) throws IOException
 	{
-		StringBuilder builder = new StringBuilder();
+		String stateString = "GROUND "
+				+ groundUpperIndex + " "
+				+ groundLowerIndex + " "
+				+ groundLeftmostIndex + " "
+				+ groundRightmostIndex + " "
+				+ objectsUpperIndex + " "
+				+ objectsLowerIndex + " "
+				+ objectsLeftmostIndex + " "
+				+ objectsRightmostIndex + "\n";
+		outputStream.write(stateString.getBytes());
 
-		builder.append("GROUND ");
-		builder.append(groundUpperIndex);		builder.append(" ");
-		builder.append(groundLowerIndex);		builder.append(" ");
-		builder.append(groundLeftmostIndex);	builder.append(" ");
-		builder.append(groundRightmostIndex);	builder.append(" ");
-		builder.append(objectsUpperIndex);		builder.append(" ");
-		builder.append(objectsLowerIndex);		builder.append(" ");
-		builder.append(objectsLeftmostIndex);	builder.append(" ");
-		builder.append(objectsRightmostIndex);
-		builder.append("\n");
+		stateString = "BROKEN_TREE "
+				+ drawBrokenTree + " "
+				+ brokenTreeType + " "
+				+ brokenTreeDistanceZ + " "
+				+ brokenTreeForce + " "
+				+ brokenTreeScale + " "
+				+ brokenTreeX + " "
+				+ brokenTreeZ + " "
+				+ brokenTreeTopY + " "
+				+ brokenTreeTopRotationAngle + "\n";
+		outputStream.write(stateString.getBytes());
 
-		builder.append("BROKEN_TREE ");
-		builder.append(drawBrokenTree);			builder.append(" ");
-		builder.append(brokenTreeType);			builder.append(" ");
-		builder.append(brokenTreeDistanceZ);	builder.append(" ");
-		builder.append(brokenTreeForce);		builder.append(" ");
-		builder.append(brokenTreeScale);		builder.append(" ");
-		builder.append(brokenTreeX);			builder.append(" ");
-		builder.append(brokenTreeZ);			builder.append(" ");
-		builder.append(brokenTreeTopY);			builder.append(" ");
-		builder.append(brokenTreeTopRotationAngle);
-		builder.append("\n");
+		stateString = "NUM_GROUND_PATCHES "
+				+ numGroundPatchesX + " "
+				+ numGroundPatchesZ + "\n";
+		outputStream.write(stateString.getBytes());
 
-		builder.append("NUM_GROUND_PATCHES ");
-		builder.append(Integer.toString(numGroundPatchesX));
-		builder.append(" ");
-		builder.append(Integer.toString(numGroundPatchesZ));
-		builder.append("\n");
-
-		builder.append("NUM_OBJECTS_PATCHES ");
-		builder.append(Integer.toString(numObjectsPatchesX));
-		builder.append(" ");
-		builder.append(Integer.toString(numObjectsPatchesZ));
-		builder.append("\n");
-
-		outputStream.write(builder.toString().getBytes());
+		stateString = "NUM_OBJECTS_PATCHES "
+				+ numObjectsPatchesX + " "
+				+ numObjectsPatchesZ + "\n";
+		outputStream.write(stateString.getBytes());
 
 		for(int x=0; x < numGroundPatchesX; x++)
 		{

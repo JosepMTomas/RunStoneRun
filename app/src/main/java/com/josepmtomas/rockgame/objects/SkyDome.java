@@ -193,7 +193,7 @@ public class SkyDome
 		/***************************************/
 
 		setIdentityM(model, 0);
-		//translateM(model, 0, 0f, -5f, 0f);
+		translateM(model, 0, 0f, -10f, 0f);
 		//scaleM(model, 0, 100f, 100f, 100f);
 		//translateM(model, 0, 0f, 100f, 0f);
 		scaleM(model, 0, 100f, 100f, 100f);

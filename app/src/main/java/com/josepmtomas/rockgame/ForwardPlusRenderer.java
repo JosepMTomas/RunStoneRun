@@ -1,5 +1,6 @@
 package com.josepmtomas.rockgame;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.opengl.GLSurfaceView.Renderer;
@@ -65,9 +66,6 @@ public class ForwardPlusRenderer implements Renderer
 	private static final int RENDERER_STATE_CHANGING_MENU = 9;
 	private int rendererState = RENDERER_STATE_MAIN_MENU;
 
-	private static final int SHADOWMAP_SIZE = 256;
-
-
 	private int FRAMEBUFFER_WIDTH = 1280; // 1794
 	private int FRAMEBUFFER_HEIGHT = 720;	//1104
 	private int REFLECTION_MAP_WIDTH = 320;
@@ -75,7 +73,7 @@ public class ForwardPlusRenderer implements Renderer
 	private int SHADOW_MAP_WIDTH = 512;
 	private int SHADOW_MAP_HEIGHT = 512;
 
-	private float FRAMEBUFFER_ASPECT_RATIO = 0.5625f;
+	//private float FRAMEBUFFER_ASPECT_RATIO = 0.5625f;
 
 	private boolean isPaused = false;
 	private boolean isPlaying = false;
@@ -91,15 +89,15 @@ public class ForwardPlusRenderer implements Renderer
 	private float screenHeight;	// Screen height
 
 	// Camera
-	private PerspectiveCamera perspectiveCamera;
+	//private PerspectiveCamera perspectiveCamera;
 	//private vec3 eyePos = new vec3(0.0f, 25.0f, 50.0f);
 	private vec3 eyePos = new vec3(0.0f, 25.0f, 50.0f);
 	private vec3 eyeLook = new vec3(0.0f, 20.0f, 0.0f);
-	private float near = 0.1f;
+	/*private float near = 0.1f;
 	private float far = 1200.0f;	// 1200.0
 	private float fov = 60;
 	private float xRotation = 0.0f;
-	private float yRotation = 0.0f;
+	private float yRotation = 0.0f;*/
 
 	// Main render matrices
 	private float[] view = new float[16];
@@ -111,7 +109,6 @@ public class ForwardPlusRenderer implements Renderer
 	private final int[] rboID = new int[4];
 	private final int[] fboTexIDs = new int[4];
 	private int currentResolution = 0;
-	private final float[] resolutionPercentages = {1f, 0.75f, 0.5f, 0.25f};
 	private final int[] drawBuffers = {GL_COLOR_ATTACHMENT0};
 
 	// Reflection framebuffer
@@ -122,7 +119,6 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Shadow map framebuffer
 	private final int[] shadowMapFboID = new int[1];
-	private final int[] shadowMapRboID = new int[1];
 	private final int[] shadowMapTexID = new int[1];
 
 	// Shadow map matrices
@@ -137,17 +133,12 @@ public class ForwardPlusRenderer implements Renderer
 
 	// FPS
 	private int currentFPS = 0;
-	private int FPSCap = 20;
-	private long framePeriodNS = 1000000000 / FPSCap;
 	private FPSCounter fpsCounter;
 
 	// TIME
 	private long startTime = 0;
-	private long endTime = 0;
-	private float deltaTime = 0;
-	private long timeToFrame = 0;
-	private long updateTime = 0;
-	private long drawTime = 0;
+	//private long endTime = 0;
+	//private float deltaTime = 0;
 
 	// Objects
 	PlayerRock playerRock;
@@ -161,7 +152,6 @@ public class ForwardPlusRenderer implements Renderer
 	LightInfo lightInfo;
 
 	// Multiplier
-	private float scoreMultiplierValue = 1;
 	private float scoreMultiplierTime = 0;
 	private float scoreMultiplierPercent = 0;
 
@@ -171,19 +161,14 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Score
 	private float fScore = 0f;
-	private float fScoreIncrement = 0f;
 
-	// PlaterRock state
-	private int previousState = PLAYER_ROCK_MOVING;
+	// PlayerRock state
 	private int currentState = PLAYER_ROCK_MOVING;
 
 	// GameActivity
 	private GameActivity parent;
 
 	// UI menus
-	private UIPanelProgram uiPanelProgram;
-	private ScorePanelProgram scorePanelProgram;
-	private MenuTextures menuTextures;
 	private MainMenu mainMenu;
 	private OptionsMenu optionsMenu;
 	private CreditsMenu creditsMenu;
@@ -197,17 +182,16 @@ public class ForwardPlusRenderer implements Renderer
 
 	// Timer
 	private float resumeTimer = 0;
-	private float resumeTime = 2.0f;
 
 
-	public ForwardPlusRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height, float resolutionPercentage)
+	public ForwardPlusRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();
 		this.sharedPreferences = sharedPreferences;
 
-		this.FRAMEBUFFER_WIDTH = (int)width;//(int)(width * resolutionPercentage);
-		this.FRAMEBUFFER_HEIGHT = (int)height; //(int)(height * resolutionPercentage);
+		this.FRAMEBUFFER_WIDTH = (int)width;
+		this.FRAMEBUFFER_HEIGHT = (int)height;
 		framebufferDimensions[0] = FRAMEBUFFER_WIDTH;
 		framebufferDimensions[1] = FRAMEBUFFER_HEIGHT;
 
@@ -224,58 +208,15 @@ public class ForwardPlusRenderer implements Renderer
 	@Override
 	public void onSurfaceCreated(GL10 unused, EGLConfig eglConfig)
 	{
-		/*String text = "saved text\nsaved textt";
-
-		try
-		{
-			FileOutputStream outputStream = context.openFileOutput(SAVED_GAME_FILE_NAME, Context.MODE_PRIVATE);
-			outputStream.write(text.getBytes());
-			outputStream.close();
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}*/
-
-		try {
-			FileInputStream fis = context.openFileInput(SAVED_GAME_FILE_NAME);
-			InputStreamReader inputStreamReader = new InputStreamReader(fis);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			/*int size = fis.available();
-			byte[] bytes = new byte[size];
-			fis.read(bytes);
-			String string2 = new String(bytes);
-			String[] lines = string2.split("\n");
-			Log.w("Read ", size+" bytes");
-			for(int i=0; i<lines.length; i++)
-			{
-				Log.w("SAVED_GAME", lines[i]);
-			}*/
-			String nextLine;
-			while((nextLine = bufferedReader.readLine()) != null)
-			{
-				//Log.w("SAVED_GAME", nextLine);
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		// GL init
-		//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-
 		// Camera set up
-		perspectiveCamera = new PerspectiveCamera(eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, near, far, renderAspectRatio, fov);
+		float near = 0.1f;
+		float far = 1200.0f;
+		float fov = 60;
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, near, far, renderAspectRatio, fov);
 		setLookAtM(view, 0, 0f, 10f, 100f, 0f, 0f, 0f, 0f, 1f, 0f);
 		perspectiveM(projection, 0, fov, renderAspectRatio, near, far);
 
 		glEnable(GL_CULL_FACE);
-		//glCullFace(GL_BACK);
 
 		lightInfo = new LightInfo();
 		// Create and initialize objects
@@ -289,13 +230,12 @@ public class ForwardPlusRenderer implements Renderer
 		skyDome = new SkyDome(context, lightInfo);
 
 		screen = new Screen(context);
-		//hud = new Hud(context, renderWidth, renderHeight);
 
 
 		// UI
-		uiPanelProgram = new UIPanelProgram(context);
-		scorePanelProgram = new ScorePanelProgram(context);
-		menuTextures = new MenuTextures(context);
+		UIPanelProgram uiPanelProgram = new UIPanelProgram(context);
+		ScorePanelProgram scorePanelProgram = new ScorePanelProgram(context);
+		MenuTextures menuTextures = new MenuTextures(context);
 		hud = new Hud(context, this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
@@ -391,15 +331,8 @@ public class ForwardPlusRenderer implements Renderer
 		/************************************ SHADOW MAP MATRICES *********************************/
 
 		setLookAtM(shadowView, 0, 150f, 150f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
-		//setLookAtM(shadowView, 0, 300f, 200f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
-		//perspectiveM(shadowProjection, 0, 90f, 1f, 0.1f, 500f);
 		orthoM(shadowProjection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
-		//TODO: orthoM(shadowPerspective, 0, );
 		multiplyMM(shadowViewProjection, 0, shadowProjection, 0, shadowView, 0);
-
-		/*this.shadowView = lightInfo.view;
-		this.shadowProjection = lightInfo.projection;
-		this.shadowViewProjection = lightInfo.viewProjection;*/
 
 		setIdentityM(shadowBias, 0);
 		translateM(shadowBias, 0, 0.5f, 0.5f, 0.5f);
@@ -434,11 +367,7 @@ public class ForwardPlusRenderer implements Renderer
 		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[0]);
 
 		int mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
-		{
-			Log.d(TAG, "Main Framebuffer (100): OK");
-		}
-		else
+		if(mainFboStatus != GL_FRAMEBUFFER_COMPLETE)
 		{
 			Log.e(TAG, "Main Framebuffer (100): ERROR");
 		}
@@ -465,11 +394,7 @@ public class ForwardPlusRenderer implements Renderer
 		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[1]);
 
 		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
-		{
-			Log.d(TAG, "Main Framebuffer (75): OK");
-		}
-		else
+		if(mainFboStatus != GL_FRAMEBUFFER_COMPLETE)
 		{
 			Log.e(TAG, "Main Framebuffer (75): ERROR");
 		}
@@ -496,11 +421,7 @@ public class ForwardPlusRenderer implements Renderer
 		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[2]);
 
 		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
-		{
-			Log.d(TAG, "Main Framebuffer (50): OK");
-		}
-		else
+		if(mainFboStatus != GL_FRAMEBUFFER_COMPLETE)
 		{
 			Log.e(TAG, "Main Framebuffer (50): ERROR");
 		}
@@ -527,11 +448,7 @@ public class ForwardPlusRenderer implements Renderer
 		glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID[3]);
 
 		mainFboStatus = glCheckFramebufferStatus(GL_DRAW_FRAMEBUFFER);
-		if(mainFboStatus == GL_FRAMEBUFFER_COMPLETE)
-		{
-			Log.d(TAG, "Main Framebuffer (25): OK");
-		}
-		else
+		if(mainFboStatus != GL_FRAMEBUFFER_COMPLETE)
 		{
 			Log.e(TAG, "Main Framebuffer (25): ERROR");
 		}
@@ -564,7 +481,8 @@ public class ForwardPlusRenderer implements Renderer
 	@Override
 	public void onSurfaceChanged(GL10 unused, int width, int height)
 	{
-
+		//loadingDialog.dismiss();
+		parent.dismissDialog();
 	}
 
 	@Override
@@ -572,8 +490,8 @@ public class ForwardPlusRenderer implements Renderer
 	{
 		glClearColor(lightInfo.backColor[0], lightInfo.backColor[1], lightInfo.backColor[2], 1.0f);
 
-		endTime = System.nanoTime() - startTime;
-		deltaTime = ((float)(endTime/1000))*0.000001f;
+		long endTime = System.nanoTime() - startTime;
+		float deltaTime = ((float)(endTime/1000))*0.000001f;
 		//Log.w("CurrentFrame", " "+ endTime/1000000 + " ms");
 
 		//Log.w("DeltaTime", " = " + deltaTime + " s");
@@ -641,8 +559,8 @@ public class ForwardPlusRenderer implements Renderer
 		multiplyMM(shadowMatrix, 0, shadowBiasProjection, 0, lightInfo.view, 0);
 
 		setLookAtM(view, 0, eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, 0f, 1f, 0f);
-		rotateM(view, 0, yRotation, 1f, 0f, 0f);
-		rotateM(view, 0, xRotation, 0f, 1f, 0f);
+		//rotateM(view, 0, yRotation, 1f, 0f, 0f);
+		//rotateM(view, 0, xRotation, 0f, 1f, 0f);
 
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 
@@ -691,7 +609,7 @@ public class ForwardPlusRenderer implements Renderer
 		}
 
 		// Score
-		fScoreIncrement = playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
+		float fScoreIncrement = playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 		fScore += fScoreIncrement; //playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 
 		// Update hud
@@ -699,7 +617,7 @@ public class ForwardPlusRenderer implements Renderer
 		groundShield.update(deltaTime);
 
 		// Game state
-		previousState = currentState;
+		int previousState = currentState;
 		currentState = playerRock.state;
 		if(previousState == PLAYER_ROCK_MOVING && currentState == PLAYER_ROCK_BOUNCING)
 		{

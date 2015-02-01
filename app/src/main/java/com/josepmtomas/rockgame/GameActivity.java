@@ -3,6 +3,7 @@ package com.josepmtomas.rockgame;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,8 +23,10 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
-import org.apache.http.protocol.HTTP;
+
+import com.josepmtomas.rockgame.objects.SplashScreen;
 
 import java.util.List;
 
@@ -55,6 +58,9 @@ public class GameActivity extends Activity
 
 	private SharedPreferences sharedPreferences;
 
+	SplashScreen splash;
+	Dialog loadingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
 	{
@@ -82,7 +88,21 @@ public class GameActivity extends Activity
 		//final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
 		//final GameRenderer gameRenderer = new GameRenderer(this, width, height);
 		//deferredRenderer = new DeferredRenderer(this, width, height);
-		forwardPlusRenderer = new ForwardPlusRenderer(this, sharedPreferences, width, height, 0.75f);
+
+		splash = new SplashScreen(getApplicationContext(), (int)width, (int)height);
+		//loadingDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen); //Theme.DeviceDefault.NoActionBar.Fullscreen
+		loadingDialog = new Dialog(this, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
+		loadingDialog.setContentView(splash);
+		loadingDialog.show();
+
+		if(sharedPreferences.getBoolean("SavedGame", false))
+		{
+			Toast toast = Toast.makeText(this, "Resuming previous game.", Toast.LENGTH_LONG);
+			toast.show();
+		}
+
+
+		forwardPlusRenderer = new ForwardPlusRenderer(this, sharedPreferences, width, height);
 
 		Log.v("ACTIVITY", "This device supports OpenGL ES up to " + configurationInfo.getGlEsVersion());
 
@@ -649,5 +669,11 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		//myAlertDialog.show();
 		AlertDialog dialog = builder.create();
 		dialog.show();
+	}
+
+
+	public void dismissDialog()
+	{
+		loadingDialog.dismiss();
 	}
 }

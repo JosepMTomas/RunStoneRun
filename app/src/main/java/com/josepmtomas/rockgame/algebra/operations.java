@@ -4,7 +4,10 @@ import android.util.FloatMath;
 
 /**
  * Created by Josep on 16/07/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class operations
 {
 	//////////////////////////////////////////////////
@@ -152,31 +155,6 @@ public class operations
 		column.y = yz * (1f - cosAngle) - axis.y * sinAngle;
 		column.z = z2 + ((1f - z2) * cosAngle);
 		result.z = (vector.x * column.x) + (vector.y * column.y) + (vector.z * column.z);
-
-		// (0,0) rotation.m[0].x = x2 + ((1-x2)*cos(angle));
-		// (1,0) rotation.m[0].y = axis.x*axis.y*(1-cos(angle)) - axis.z*sin(angle);
-		// (2,0) rotation.m[0].z = axis.x*axis.z*(1-cos(angle)) + axis.y*sin(angle);
-
-		// (0,1) rotation.m[1].x = axis.x*axis.y*(1-cos(angle)) + axis.z*sin(angle);
-		// (1,1) rotation.m[1].y = y2 + (1-y2)*cos(angle);
-		// (2,1) rotation.m[1].z = axis.y*axis.z*(1-cos(angle)) - axis.x*sin(angle);
-
-		// (0,2) rotation.m[2].x = axis.x*axis.z*(1-cos(angle)) - axis.y*sin(angle);
-		// (1,2) rotation.m[2].y = axis.y*axis.z*(1-cos(angle)) + axis.x*sin(angle);
-		// (2,2) rotation.m[2].z = z2 + (1-z2)*cos(angle);
-
-		/**vec3 result;
-		 vec3 col;
-
-		 col = vec3(m.m[0].x, m.m[1].x, m.m[2].x);
-		 result.x = rcproduct(v,col);
-		 col = vec3(m.m[0].y, m.m[1].y, m.m[2].y);
-		 result.y = rcproduct(v,col);
-		 col = vec3(m.m[0].z, m.m[1].z, m.m[2].z);
-		 result.z = rcproduct(v,col);**/
-
-		//return (row.x*col.x)+(row.y*col.y)+(row.z*col.z);
-
 
 		return result;
 	}

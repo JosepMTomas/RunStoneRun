@@ -2,17 +2,20 @@ package com.josepmtomas.rockgame.algebra;
 
 /**
  * Created by Josep on 04/08/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class vec4
 {
 	public float x, y, z, w;
 
-	public vec4(float xyzw)
+	public vec4(float value)
 	{
-		x = xyzw;
-		y = xyzw;
-		z = xyzw;
-		w = xyzw;
+		x = value;
+		y = value;
+		z = value;
+		w = value;
 	}
 
 	public vec4(float x, float y, float z, float w)

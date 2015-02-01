@@ -9,7 +9,7 @@ import java.util.ArrayList;
  */
 public class RangeList
 {
-	private static float kSmallestRange = 0.000001f;
+	private static final float kSmallestRange = 0.000001f;
 
 	public ArrayList<RangeEntry> ranges;
 	public int numRanges, rangesSize;

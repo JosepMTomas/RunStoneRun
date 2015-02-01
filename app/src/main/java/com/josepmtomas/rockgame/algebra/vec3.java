@@ -4,7 +4,10 @@ import android.util.FloatMath;
 
 /**
  * Created by Josep on 16/07/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("unused")
 public class vec3
 {
 	public float x, y, z;
