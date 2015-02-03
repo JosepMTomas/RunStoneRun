@@ -227,6 +227,33 @@ public class RestartMenu
 	}
 
 
+	private void setCurrentElementsAttributes(float alpha)
+	{
+		backgroundPanelCurrentScale[0] = lerp(0f, 1f, alpha);
+		backgroundPanelCurrentScale[1] = lerp(0f, 1f, alpha);
+
+		restartTitleCurrentScale[0] = lerp(0f, restartTitleScale[0], alpha);
+		restartTitleCurrentScale[1] = lerp(0f, restartTitleScale[1], alpha);
+		restartTitleCurrentPosition[0] = lerp(0f, restartTitlePosition[0], alpha);
+		restartTitleCurrentPosition[1] = lerp(0f, restartTitlePosition[1], alpha);
+
+		restartTextCurrentScale[0] = lerp(0f, restartTextScale[0], alpha);
+		restartTextCurrentScale[1] = lerp(0f, restartTextScale[1], alpha);
+		restartTextCurrentPosition[0] = lerp(0f, restartTextPosition[0], alpha);
+		restartTextCurrentPosition[1] = lerp(0f, restartTextPosition[1], alpha);
+
+		yesButtonCurrentScale[0] = lerp(0f, yesButtonScale[0], alpha);
+		yesButtonCurrentScale[1] = lerp(0f, yesButtonScale[1], alpha);
+		yesButtonCurrentPosition[0] = lerp(0f, yesButtonPosition[0], alpha);
+		yesButtonCurrentPosition[1] = lerp(0f, yesButtonPosition[1], alpha);
+
+		noButtonCurrentScale[0] = lerp(0f, noButtonScale[0], alpha);
+		noButtonCurrentScale[1] = lerp(0f, noButtonScale[1], alpha);
+		noButtonCurrentPosition[0] = lerp(0f, noButtonPosition[0], alpha);
+		noButtonCurrentPosition[1] = lerp(0f, noButtonPosition[1], alpha);
+	}
+
+
 	public void update(float deltaTime)
 	{
 		if(currentState == UI_STATE_APPEARING)
@@ -242,28 +269,7 @@ public class RestartMenu
 				renderer.changedToRestartMenu();
 			}
 
-			backgroundPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			backgroundPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			restartTitleCurrentScale[0] = lerp(0f, restartTitleScale[0], menuOpacity);
-			restartTitleCurrentScale[1] = lerp(0f, restartTitleScale[1], menuOpacity);
-			restartTitleCurrentPosition[0] = lerp(0f, restartTitlePosition[0], menuOpacity);
-			restartTitleCurrentPosition[1] = lerp(0f, restartTitlePosition[1], menuOpacity);
-
-			restartTextCurrentScale[0] = lerp(0f, restartTextScale[0], menuOpacity);
-			restartTextCurrentScale[1] = lerp(0f, restartTextScale[1], menuOpacity);
-			restartTextCurrentPosition[0] = lerp(0f, restartTextPosition[0], menuOpacity);
-			restartTextCurrentPosition[1] = lerp(0f, restartTextPosition[1], menuOpacity);
-
-			yesButtonCurrentScale[0] = lerp(0f, yesButtonScale[0], menuOpacity);
-			yesButtonCurrentScale[1] = lerp(0f, yesButtonScale[1], menuOpacity);
-			yesButtonCurrentPosition[0] = lerp(0f, yesButtonPosition[0], menuOpacity);
-			yesButtonCurrentPosition[1] = lerp(0f, yesButtonPosition[1], menuOpacity);
-
-			noButtonCurrentScale[0] = lerp(0f, noButtonScale[0], menuOpacity);
-			noButtonCurrentScale[1] = lerp(0f, noButtonScale[1], menuOpacity);
-			noButtonCurrentPosition[0] = lerp(0f, noButtonPosition[0], menuOpacity);
-			noButtonCurrentPosition[1] = lerp(0f, noButtonPosition[1], menuOpacity);
+			setCurrentElementsAttributes(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -282,28 +288,7 @@ public class RestartMenu
 				}
 			}
 
-			backgroundPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			backgroundPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			restartTitleCurrentScale[0] = lerp(0f, restartTitleScale[0], menuOpacity);
-			restartTitleCurrentScale[1] = lerp(0f, restartTitleScale[1], menuOpacity);
-			restartTitleCurrentPosition[0] = lerp(0f, restartTitlePosition[0], menuOpacity);
-			restartTitleCurrentPosition[1] = lerp(0f, restartTitlePosition[1], menuOpacity);
-
-			restartTextCurrentScale[0] = lerp(0f, restartTextScale[0], menuOpacity);
-			restartTextCurrentScale[1] = lerp(0f, restartTextScale[1], menuOpacity);
-			restartTextCurrentPosition[0] = lerp(0f, restartTextPosition[0], menuOpacity);
-			restartTextCurrentPosition[1] = lerp(0f, restartTextPosition[1], menuOpacity);
-
-			yesButtonCurrentScale[0] = lerp(0f, yesButtonScale[0], menuOpacity);
-			yesButtonCurrentScale[1] = lerp(0f, yesButtonScale[1], menuOpacity);
-			yesButtonCurrentPosition[0] = lerp(0f, yesButtonPosition[0], menuOpacity);
-			yesButtonCurrentPosition[1] = lerp(0f, yesButtonPosition[1], menuOpacity);
-
-			noButtonCurrentScale[0] = lerp(0f, noButtonScale[0], menuOpacity);
-			noButtonCurrentScale[1] = lerp(0f, noButtonScale[1], menuOpacity);
-			noButtonCurrentPosition[0] = lerp(0f, noButtonPosition[0], menuOpacity);
-			noButtonCurrentPosition[1] = lerp(0f, noButtonPosition[1], menuOpacity);
+			setCurrentElementsAttributes(menuOpacity);
 		}
 	}
 

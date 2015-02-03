@@ -247,7 +247,7 @@ public class MainMenu
 	private void createButtons(float screenWidth, float screenHeight)
 	{
 		float width = screenWidth * 0.3f;
-		float height = screenWidth * 0.06f;
+		float height = screenWidth * 0.0902f;
 
 		createNewGameButton(width, height);
 		createHowToPlayButton(width, height);
@@ -261,9 +261,10 @@ public class MainMenu
 	public void createButtonsBackPanel(float screenWidth, float screenHeight)
 	{
 		float borderSize = screenHeight * 0.025f;
-		float cornerSize = screenWidth * 0.06f * 0.3f + borderSize;
-		float width = (screenWidth * 0.3f) + (borderSize * 2f);
-		float height = (screenWidth * 0.24f) + (borderSize * 2f);
+		//float cornerSize = screenWidth * 0.06f * 0.3f + borderSize;
+		float cornerSize = screenWidth * 0.0902f * 0.3f + borderSize;
+		float width = (screenWidth * 0.6f) + (borderSize * 2f);
+		float height = (screenWidth * 0.0902f * 2f) + (borderSize * 2f);
 
 		buttonsBackPanelVaoHandle = UIHelper.make9PatchPanel(width, height, cornerSize, UI_BASE_CENTER_CENTER);
 
@@ -271,7 +272,7 @@ public class MainMenu
 		buttonsBackPanelCurrentScale[1] = 1f;
 
 		buttonsBackPanelPosition[0] = 0f;
-		buttonsBackPanelPosition[1] = optionsButtonPosition[1] + (screenWidth * 0.03f);
+		buttonsBackPanelPosition[1] = newGameButtonPosition[1] - (screenWidth * 0.0451f);//optionsButtonPosition[1] + (screenWidth * 0.03f);
 		buttonsBackPanelCurrentPosition[0] = buttonsBackPanelPosition[0];
 		buttonsBackPanelCurrentPosition[1] = buttonsBackPanelPosition[1];
 	}
@@ -302,8 +303,8 @@ public class MainMenu
 		newGameButtonScale[0] = width;
 		newGameButtonScale[1] = height;
 
-		newGameButtonPosition[0] = 0f;
-		newGameButtonPosition[1] = height * -0.375f;
+		newGameButtonPosition[0] = width * -0.5f;
+		newGameButtonPosition[1] = height * -0.5f; //-0.375f;
 
 		// left-right-bottom-top
 		newGameButtonLimits[0] = newGameButtonPosition[0] - (width * 0.5f);
@@ -333,8 +334,8 @@ public class MainMenu
 		optionsButtonScale[0] = width;
 		optionsButtonScale[1] = height;
 
-		optionsButtonPosition[0] = howToPlayButtonPosition[0];
-		optionsButtonPosition[1] = howToPlayButtonPosition[1] - height;
+		optionsButtonPosition[0] = newGameButtonPosition[0] + width;
+		optionsButtonPosition[1] = newGameButtonPosition[1];
 
 		// left-right-bottom-top
 		optionsButtonLimits[0] = optionsButtonPosition[0] - (width * 0.5f);
@@ -672,6 +673,7 @@ public class MainMenu
 	public void releaseTouch()
 	{
 		newGameButtonCurrentTexture = textures.newGameButtonIdleTexture;
+		howToPlayButtonCurrentTexture = textures.howToPlayButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
 	}
@@ -688,7 +690,7 @@ public class MainMenu
 	private void touchHowToPlayButton()
 	{
 		howToPlayButtonCurrentTexture = textures.howToPlayButtonSelectedTexture;
-		//TODO: renderer.changingToHowToPlayMenu();
+		renderer.changingToHowToPlayMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
 
@@ -763,6 +765,57 @@ public class MainMenu
 	}
 
 
+	public void setCurrentElementsAttributes(float alpha)
+	{
+		buttonsBackPanelCurrentScale[0] = lerp(0f, 1f, alpha);
+		buttonsBackPanelCurrentScale[1] = lerp(0f, 1f, alpha);
+		buttonsBackPanelCurrentPosition[0] = lerp(0f, buttonsBackPanelPosition[0], alpha);
+		buttonsBackPanelCurrentPosition[1] = lerp(0f, buttonsBackPanelPosition[1], alpha);
+
+		recordBackPanelCurrentScale[0] = lerp(0f, 1f, alpha);
+		recordBackPanelCurrentScale[1] = lerp(0f, 1f, alpha);
+		recordBackPanelCurrentPosition[0] = lerp(0f, recordBackPanelPosition[0], alpha);
+		recordBackPanelCurrentPosition[1] = lerp(0f, recordBackPanelPosition[1], alpha);
+
+		gameTitleCurrentScale[0] = lerp(0f, gameTitleScale[0], alpha);
+		gameTitleCurrentScale[1] = lerp(0f, gameTitleScale[1], alpha);
+		gameTitleCurrentPosition[0] = lerp(0f, gameTitlePosition[0], alpha);
+		gameTitleCurrentPosition[1] = lerp(0f, gameTitlePosition[1], alpha);
+
+		newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], alpha);
+		newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], alpha);
+		newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], alpha);
+		newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], alpha);
+
+		howToPlayButtonCurrentScale[0] = lerp(0f, howToPlayButtonScale[0], alpha);
+		howToPlayButtonCurrentScale[1] = lerp(0f, howToPlayButtonScale[1], alpha);
+		howToPlayButtonCurrentPosition[0] = lerp(0f, howToPlayButtonPosition[0], alpha);
+		howToPlayButtonCurrentPosition[1] = lerp(0f, howToPlayButtonPosition[1], alpha);
+
+		optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], alpha);
+		optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], alpha);
+		optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], alpha);
+		optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], alpha);
+
+		creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], alpha);
+		creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], alpha);
+		creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], alpha);
+		creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], alpha);
+
+		recordButtonCurrentScale[0] = lerp(0f, recordButtonScale[0], alpha);
+		recordButtonCurrentScale[1] = lerp(0f, recordButtonScale[1], alpha);
+		recordButtonCurrentPosition[0] = lerp(0f, recordButtonPosition[0], alpha);
+		recordButtonCurrentPosition[1] = lerp(0f, recordButtonPosition[1], alpha);
+
+		scoreCurrentScale = alpha;
+		scoreCurrentPositionY = lerp(0f, scorePositionY, alpha);
+		for(int i=0; i<8; i++)
+		{
+			scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], alpha);
+		}
+	}
+
+
 	public void update(float deltaTime)
 	{
 		if(currentState == UI_STATE_APPEARING)
@@ -780,52 +833,7 @@ public class MainMenu
 				renderer.changedToMainMenu();
 			}
 
-			buttonsBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			buttonsBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-			buttonsBackPanelCurrentPosition[0] = lerp(0f, buttonsBackPanelPosition[0], menuOpacity);
-			buttonsBackPanelCurrentPosition[1] = lerp(0f, buttonsBackPanelPosition[1], menuOpacity);
-
-			recordBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			recordBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-			recordBackPanelCurrentPosition[0] = lerp(0f, recordBackPanelPosition[0], menuOpacity);
-			recordBackPanelCurrentPosition[1] = lerp(0f, recordBackPanelPosition[1], menuOpacity);
-
-			gameTitleCurrentScale[0] = lerp(0f, gameTitleScale[0], menuOpacity);
-			gameTitleCurrentScale[1] = lerp(0f, gameTitleScale[1], menuOpacity);
-			gameTitleCurrentPosition[0] = lerp(0f, gameTitlePosition[0], menuOpacity);
-			gameTitleCurrentPosition[1] = lerp(0f, gameTitlePosition[1], menuOpacity);
-
-			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
-			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
-			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
-			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
-
-			howToPlayButtonCurrentScale[0] = lerp(0f, howToPlayButtonScale[0], menuOpacity);
-			howToPlayButtonCurrentScale[1] = lerp(0f, howToPlayButtonScale[1], menuOpacity);
-			howToPlayButtonCurrentPosition[0] = lerp(0f, howToPlayButtonPosition[0], menuOpacity);
-			howToPlayButtonCurrentPosition[1] = lerp(0f, howToPlayButtonPosition[1], menuOpacity);
-
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
-			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
-
-			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
-			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
-			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
-			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
-
-			recordButtonCurrentScale[0] = lerp(0f, recordButtonScale[0], menuOpacity);
-			recordButtonCurrentScale[1] = lerp(0f, recordButtonScale[1], menuOpacity);
-			recordButtonCurrentPosition[0] = lerp(0f, recordButtonPosition[0], menuOpacity);
-			recordButtonCurrentPosition[1] = lerp(0f, recordButtonPosition[1], menuOpacity);
-
-			scoreCurrentScale = menuOpacity;
-			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
-			for(int i=0; i<8; i++)
-			{
-				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
-			}
+			setCurrentElementsAttributes(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -841,52 +849,7 @@ public class MainMenu
 				menuTimer = 0f;
 			}
 
-			buttonsBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			buttonsBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-			buttonsBackPanelCurrentPosition[0] = lerp(0f, buttonsBackPanelPosition[0], menuOpacity);
-			buttonsBackPanelCurrentPosition[1] = lerp(0f, buttonsBackPanelPosition[1], menuOpacity);
-
-			recordBackPanelCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			recordBackPanelCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-			recordBackPanelCurrentPosition[0] = lerp(0f, recordBackPanelPosition[0], menuOpacity);
-			recordBackPanelCurrentPosition[1] = lerp(0f, recordBackPanelPosition[1], menuOpacity);
-
-			gameTitleCurrentScale[0] = lerp(0f, gameTitleScale[0], menuOpacity);
-			gameTitleCurrentScale[1] = lerp(0f, gameTitleScale[1], menuOpacity);
-			gameTitleCurrentPosition[0] = lerp(0f, gameTitlePosition[0], menuOpacity);
-			gameTitleCurrentPosition[1] = lerp(0f, gameTitlePosition[1], menuOpacity);
-
-			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
-			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
-			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
-			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
-
-			howToPlayButtonCurrentScale[0] = lerp(0f, howToPlayButtonScale[0], menuOpacity);
-			howToPlayButtonCurrentScale[1] = lerp(0f, howToPlayButtonScale[1], menuOpacity);
-			howToPlayButtonCurrentPosition[0] = lerp(0f, howToPlayButtonPosition[0], menuOpacity);
-			howToPlayButtonCurrentPosition[1] = lerp(0f, howToPlayButtonPosition[1], menuOpacity);
-
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
-			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
-
-			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
-			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
-			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
-			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
-
-			recordButtonCurrentScale[0] = lerp(0f, recordButtonScale[0], menuOpacity);
-			recordButtonCurrentScale[1] = lerp(0f, recordButtonScale[1], menuOpacity);
-			recordButtonCurrentPosition[0] = lerp(0f, recordButtonPosition[0], menuOpacity);
-			recordButtonCurrentPosition[1] = lerp(0f, recordButtonPosition[1], menuOpacity);
-
-			scoreCurrentScale = menuOpacity;
-			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
-			for(int i=0; i<8; i++)
-			{
-				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
-			}
+			setCurrentElementsAttributes(menuOpacity);
 		}
 	}
 

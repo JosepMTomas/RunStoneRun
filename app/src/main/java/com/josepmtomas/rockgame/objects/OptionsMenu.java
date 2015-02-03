@@ -605,6 +605,68 @@ public class OptionsMenu
 	}
 
 
+	public void setCurrentProperties(float alpha)
+	{
+		background9PatchCurrentScale[0] = lerp(0f, background9PatchScale[0], alpha);
+		background9PatchCurrentScale[1] = lerp(0f, background9PatchScale[1], alpha);
+		optionsTitleCurrentScale[0] = lerp(0f, optionsTitleScale[0], alpha);
+		optionsTitleCurrentScale[1] = lerp(0f, optionsTitleScale[1], alpha);
+		screenResolutionTitleCurrentScale[0] = lerp(0f, screenResolutionTitleScale[0], alpha);
+		screenResolutionTitleCurrentScale[1] = lerp(0f, screenResolutionTitleScale[1], alpha);
+		resolutionPercentageButtonCurrentScale[0] = lerp(0f, resolutionPercentageButtonScale[0], alpha);
+		resolutionPercentageButtonCurrentScale[1] = lerp(0f, resolutionPercentageButtonScale[1], alpha);
+		postProcessDetailTitleCurrentScale[0] = lerp(0f, postProcessDetailTitleScale[0], alpha);
+		postProcessDetailTitleCurrentScale[1] = lerp(0f, postProcessDetailTitleScale[1], alpha);
+		postProcessDetailButtonCurrentScale[0] = lerp(0f, postProcessDetailButtonScale[0], alpha);
+		postProcessDetailButtonCurrentScale[1] = lerp(0f, postProcessDetailButtonScale[1], alpha);
+		musicTitleCurrentScale[0] = lerp(0f, musicTitleScale[0], alpha);
+		musicTitleCurrentScale[1] = lerp(0f, musicTitleScale[1], alpha);
+		musicButtonCurrentScale[0] = lerp(0f, musicButtonScale[0], alpha);
+		musicButtonCurrentScale[1] = lerp(0f, musicButtonScale[1], alpha);
+		effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], alpha);
+		effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], alpha);
+		effectsButtonCurrentScale[0] = lerp(0f, effectsButtonScale[0], alpha);
+		effectsButtonCurrentScale[1] = lerp(0f, effectsButtonScale[1], alpha);
+		backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], alpha);
+		backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], alpha);
+
+		optionsTitleCurrentPosition[0] = lerp(0f, optionsTitlePosition[0], alpha);
+		optionsTitleCurrentPosition[1] = lerp(0f, optionsTitlePosition[1], alpha);
+		screenResolutionTitleCurrentPosition[0] = lerp(0f, screenResolutionTitlePosition[0], alpha);
+		screenResolutionTitleCurrentPosition[1] = lerp(0f, screenResolutionTitlePosition[1], alpha);
+		resolutionPercentageButton25CurrentPosition[0] = lerp(0f, resolutionPercentageButton25Position[0], alpha);
+		resolutionPercentageButton25CurrentPosition[1] = lerp(0f, resolutionPercentageButton25Position[1], alpha);
+		resolutionPercentageButton50CurrentPosition[0] = lerp(0f, resolutionPercentageButton50Position[0], alpha);
+		resolutionPercentageButton50CurrentPosition[1] = lerp(0f, resolutionPercentageButton50Position[1], alpha);
+		resolutionPercentageButton75CurrentPosition[0] = lerp(0f, resolutionPercentageButton75Position[0], alpha);
+		resolutionPercentageButton75CurrentPosition[1] = lerp(0f, resolutionPercentageButton75Position[1], alpha);
+		resolutionPercentageButton100CurrentPosition[0] = lerp(0f, resolutionPercentageButton100Position[0], alpha);
+		resolutionPercentageButton100CurrentPosition[1] = lerp(0f, resolutionPercentageButton100Position[1], alpha);
+		postProcessDetailTitleCurrentPosition[0] = lerp(0f, postProcessDetailTitlePosition[0], alpha);
+		postProcessDetailTitleCurrentPosition[1] = lerp(0f, postProcessDetailTitlePosition[1], alpha);
+		postProcessNoDetailButtonCurrentPosition[0] = lerp(0f, postProcessNoDetailButtonPosition[0], alpha);
+		postProcessNoDetailButtonCurrentPosition[1] = lerp(0f, postProcessNoDetailButtonPosition[1], alpha);
+		postProcessLowDetailButtonCurrentPosition[0] = lerp(0f, postProcessLowDetailButtonPosition[0], alpha);
+		postProcessLowDetailButtonCurrentPosition[1] = lerp(0f, postProcessLowDetailButtonPosition[1], alpha);
+		postProcessHighDetailButtonCurrentPosition[0] = lerp(0f, postProcessHighDetailButtonPosition[0], alpha);
+		postProcessHighDetailButtonCurrentPosition[1] = lerp(0f, postProcessHighDetailButtonPosition[1], alpha);
+		musicTitleCurrentPosition[0] = lerp(0f, musicTitlePosition[0], alpha);
+		musicTitleCurrentPosition[1] = lerp(0f, musicTitlePosition[1], alpha);
+		musicEnableButtonCurrentPosition[0] = lerp(0f, musicEnableButtonPosition[0], alpha);
+		musicEnableButtonCurrentPosition[1] = lerp(0f, musicEnableButtonPosition[1], alpha);
+		musicDisableButtonCurrentPosition[0] = lerp(0f, musicDisableButtonPosition[0], alpha);
+		musicDisableButtonCurrentPosition[1] = lerp(0f, musicDisableButtonPosition[1], alpha);
+		effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], alpha);
+		effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], alpha);
+		effectsEnableButtonCurrentPosition[0] = lerp(0f, effectsEnableButtonPosition[0], alpha);
+		effectsEnableButtonCurrentPosition[1] = lerp(0f, effectsEnableButtonPosition[1], alpha);
+		effectsDisableButtonCurrentPosition[0] = lerp(0f, effectsDisableButtonPosition[0], alpha);
+		effectsDisableButtonCurrentPosition[1] = lerp(0f, effectsDisableButtonPosition[1], alpha);
+		backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], alpha);
+		backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], alpha);
+	}
+
+
 	public void update(float deltaTime)
 	{
 		if(currentState == UI_STATE_APPEARING)
@@ -624,63 +686,7 @@ public class OptionsMenu
 				renderer.changedToOptionMenu();
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, background9PatchScale[0], menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, background9PatchScale[1], menuOpacity);
-			optionsTitleCurrentScale[0] = lerp(0f, optionsTitleScale[0], menuOpacity);
-			optionsTitleCurrentScale[1] = lerp(0f, optionsTitleScale[1], menuOpacity);
-			screenResolutionTitleCurrentScale[0] = lerp(0f, screenResolutionTitleScale[0], menuOpacity);
-			screenResolutionTitleCurrentScale[1] = lerp(0f, screenResolutionTitleScale[1], menuOpacity);
-			resolutionPercentageButtonCurrentScale[0] = lerp(0f, resolutionPercentageButtonScale[0], menuOpacity);
-			resolutionPercentageButtonCurrentScale[1] = lerp(0f, resolutionPercentageButtonScale[1], menuOpacity);
-			postProcessDetailTitleCurrentScale[0] = lerp(0f, postProcessDetailTitleScale[0], menuOpacity);
-			postProcessDetailTitleCurrentScale[1] = lerp(0f, postProcessDetailTitleScale[1], menuOpacity);
-			postProcessDetailButtonCurrentScale[0] = lerp(0f, postProcessDetailButtonScale[0], menuOpacity);
-			postProcessDetailButtonCurrentScale[1] = lerp(0f, postProcessDetailButtonScale[1], menuOpacity);
-			musicTitleCurrentScale[0] = lerp(0f, musicTitleScale[0], menuOpacity);
-			musicTitleCurrentScale[1] = lerp(0f, musicTitleScale[1], menuOpacity);
-			musicButtonCurrentScale[0] = lerp(0f, musicButtonScale[0], menuOpacity);
-			musicButtonCurrentScale[1] = lerp(0f, musicButtonScale[1], menuOpacity);
-			effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], menuOpacity);
-			effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], menuOpacity);
-			effectsButtonCurrentScale[0] = lerp(0f, effectsButtonScale[0], menuOpacity);
-			effectsButtonCurrentScale[1] = lerp(0f, effectsButtonScale[1], menuOpacity);
-			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
-			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
-
-			optionsTitleCurrentPosition[0] = lerp(0f, optionsTitlePosition[0], menuOpacity);
-			optionsTitleCurrentPosition[1] = lerp(0f, optionsTitlePosition[1], menuOpacity);
-			screenResolutionTitleCurrentPosition[0] = lerp(0f, screenResolutionTitlePosition[0], menuOpacity);
-			screenResolutionTitleCurrentPosition[1] = lerp(0f, screenResolutionTitlePosition[1], menuOpacity);
-			resolutionPercentageButton25CurrentPosition[0] = lerp(0f, resolutionPercentageButton25Position[0], menuOpacity);
-			resolutionPercentageButton25CurrentPosition[1] = lerp(0f, resolutionPercentageButton25Position[1], menuOpacity);
-			resolutionPercentageButton50CurrentPosition[0] = lerp(0f, resolutionPercentageButton50Position[0], menuOpacity);
-			resolutionPercentageButton50CurrentPosition[1] = lerp(0f, resolutionPercentageButton50Position[1], menuOpacity);
-			resolutionPercentageButton75CurrentPosition[0] = lerp(0f, resolutionPercentageButton75Position[0], menuOpacity);
-			resolutionPercentageButton75CurrentPosition[1] = lerp(0f, resolutionPercentageButton75Position[1], menuOpacity);
-			resolutionPercentageButton100CurrentPosition[0] = lerp(0f, resolutionPercentageButton100Position[0], menuOpacity);
-			resolutionPercentageButton100CurrentPosition[1] = lerp(0f, resolutionPercentageButton100Position[1], menuOpacity);
-			postProcessDetailTitleCurrentPosition[0] = lerp(0f, postProcessDetailTitlePosition[0], menuOpacity);
-			postProcessDetailTitleCurrentPosition[1] = lerp(0f, postProcessDetailTitlePosition[1], menuOpacity);
-			postProcessNoDetailButtonCurrentPosition[0] = lerp(0f, postProcessNoDetailButtonPosition[0], menuOpacity);
-			postProcessNoDetailButtonCurrentPosition[1] = lerp(0f, postProcessNoDetailButtonPosition[1], menuOpacity);
-			postProcessLowDetailButtonCurrentPosition[0] = lerp(0f, postProcessLowDetailButtonPosition[0], menuOpacity);
-			postProcessLowDetailButtonCurrentPosition[1] = lerp(0f, postProcessLowDetailButtonPosition[1], menuOpacity);
-			postProcessHighDetailButtonCurrentPosition[0] = lerp(0f, postProcessHighDetailButtonPosition[0], menuOpacity);
-			postProcessHighDetailButtonCurrentPosition[1] = lerp(0f, postProcessHighDetailButtonPosition[1], menuOpacity);
-			musicTitleCurrentPosition[0] = lerp(0f, musicTitlePosition[0], menuOpacity);
-			musicTitleCurrentPosition[1] = lerp(0f, musicTitlePosition[1], menuOpacity);
-			musicEnableButtonCurrentPosition[0] = lerp(0f, musicEnableButtonPosition[0], menuOpacity);
-			musicEnableButtonCurrentPosition[1] = lerp(0f, musicEnableButtonPosition[1], menuOpacity);
-			musicDisableButtonCurrentPosition[0] = lerp(0f, musicDisableButtonPosition[0], menuOpacity);
-			musicDisableButtonCurrentPosition[1] = lerp(0f, musicDisableButtonPosition[1], menuOpacity);
-			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
-			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
-			effectsEnableButtonCurrentPosition[0] = lerp(0f, effectsEnableButtonPosition[0], menuOpacity);
-			effectsEnableButtonCurrentPosition[1] = lerp(0f, effectsEnableButtonPosition[1], menuOpacity);
-			effectsDisableButtonCurrentPosition[0] = lerp(0f, effectsDisableButtonPosition[0], menuOpacity);
-			effectsDisableButtonCurrentPosition[1] = lerp(0f, effectsDisableButtonPosition[1], menuOpacity);
-			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
-			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
+			setCurrentProperties(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -700,63 +706,7 @@ public class OptionsMenu
 				resetBackButtonCurrentTexture();
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, background9PatchScale[0], menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, background9PatchScale[1], menuOpacity);
-			optionsTitleCurrentScale[0] = lerp(0f, optionsTitleScale[0], menuOpacity);
-			optionsTitleCurrentScale[1] = lerp(0f, optionsTitleScale[1], menuOpacity);
-			screenResolutionTitleCurrentScale[0] = lerp(0f, screenResolutionTitleScale[0], menuOpacity);
-			screenResolutionTitleCurrentScale[1] = lerp(0f, screenResolutionTitleScale[1], menuOpacity);
-			resolutionPercentageButtonCurrentScale[0] = lerp(0f, resolutionPercentageButtonScale[0], menuOpacity);
-			resolutionPercentageButtonCurrentScale[1] = lerp(0f, resolutionPercentageButtonScale[1], menuOpacity);
-			postProcessDetailTitleCurrentScale[0] = lerp(0f, postProcessDetailTitleScale[0], menuOpacity);
-			postProcessDetailTitleCurrentScale[1] = lerp(0f, postProcessDetailTitleScale[1], menuOpacity);
-			postProcessDetailButtonCurrentScale[0] = lerp(0f, postProcessDetailButtonScale[0], menuOpacity);
-			postProcessDetailButtonCurrentScale[1] = lerp(0f, postProcessDetailButtonScale[1], menuOpacity);
-			musicTitleCurrentScale[0] = lerp(0f, musicTitleScale[0], menuOpacity);
-			musicTitleCurrentScale[1] = lerp(0f, musicTitleScale[1], menuOpacity);
-			musicButtonCurrentScale[0] = lerp(0f, musicButtonScale[0], menuOpacity);
-			musicButtonCurrentScale[1] = lerp(0f, musicButtonScale[1], menuOpacity);
-			effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], menuOpacity);
-			effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], menuOpacity);
-			effectsButtonCurrentScale[0] = lerp(0f, effectsButtonScale[0], menuOpacity);
-			effectsButtonCurrentScale[1] = lerp(0f, effectsButtonScale[1], menuOpacity);
-			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
-			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
-
-			optionsTitleCurrentPosition[0] = lerp(0f, optionsTitlePosition[0], menuOpacity);
-			optionsTitleCurrentPosition[1] = lerp(0f, optionsTitlePosition[1], menuOpacity);
-			screenResolutionTitleCurrentPosition[0] = lerp(0f, screenResolutionTitlePosition[0], menuOpacity);
-			screenResolutionTitleCurrentPosition[1] = lerp(0f, screenResolutionTitlePosition[1], menuOpacity);
-			resolutionPercentageButton25CurrentPosition[0] = lerp(0f, resolutionPercentageButton25Position[0], menuOpacity);
-			resolutionPercentageButton25CurrentPosition[1] = lerp(0f, resolutionPercentageButton25Position[1], menuOpacity);
-			resolutionPercentageButton50CurrentPosition[0] = lerp(0f, resolutionPercentageButton50Position[0], menuOpacity);
-			resolutionPercentageButton50CurrentPosition[1] = lerp(0f, resolutionPercentageButton50Position[1], menuOpacity);
-			resolutionPercentageButton75CurrentPosition[0] = lerp(0f, resolutionPercentageButton75Position[0], menuOpacity);
-			resolutionPercentageButton75CurrentPosition[1] = lerp(0f, resolutionPercentageButton75Position[1], menuOpacity);
-			resolutionPercentageButton100CurrentPosition[0] = lerp(0f, resolutionPercentageButton100Position[0], menuOpacity);
-			resolutionPercentageButton100CurrentPosition[1] = lerp(0f, resolutionPercentageButton100Position[1], menuOpacity);
-			postProcessDetailTitleCurrentPosition[0] = lerp(0f, postProcessDetailTitlePosition[0], menuOpacity);
-			postProcessDetailTitleCurrentPosition[1] = lerp(0f, postProcessDetailTitlePosition[1], menuOpacity);
-			postProcessNoDetailButtonCurrentPosition[0] = lerp(0f, postProcessNoDetailButtonPosition[0], menuOpacity);
-			postProcessNoDetailButtonCurrentPosition[1] = lerp(0f, postProcessNoDetailButtonPosition[1], menuOpacity);
-			postProcessLowDetailButtonCurrentPosition[0] = lerp(0f, postProcessLowDetailButtonPosition[0], menuOpacity);
-			postProcessLowDetailButtonCurrentPosition[1] = lerp(0f, postProcessLowDetailButtonPosition[1], menuOpacity);
-			postProcessHighDetailButtonCurrentPosition[0] = lerp(0f, postProcessHighDetailButtonPosition[0], menuOpacity);
-			postProcessHighDetailButtonCurrentPosition[1] = lerp(0f, postProcessHighDetailButtonPosition[1], menuOpacity);
-			musicTitleCurrentPosition[0] = lerp(0f, musicTitlePosition[0], menuOpacity);
-			musicTitleCurrentPosition[1] = lerp(0f, musicTitlePosition[1], menuOpacity);
-			musicEnableButtonCurrentPosition[0] = lerp(0f, musicEnableButtonPosition[0], menuOpacity);
-			musicEnableButtonCurrentPosition[1] = lerp(0f, musicEnableButtonPosition[1], menuOpacity);
-			musicDisableButtonCurrentPosition[0] = lerp(0f, musicDisableButtonPosition[0], menuOpacity);
-			musicDisableButtonCurrentPosition[1] = lerp(0f, musicDisableButtonPosition[1], menuOpacity);
-			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
-			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
-			effectsEnableButtonCurrentPosition[0] = lerp(0f, effectsEnableButtonPosition[0], menuOpacity);
-			effectsEnableButtonCurrentPosition[1] = lerp(0f, effectsEnableButtonPosition[1], menuOpacity);
-			effectsDisableButtonCurrentPosition[0] = lerp(0f, effectsDisableButtonPosition[0], menuOpacity);
-			effectsDisableButtonCurrentPosition[1] = lerp(0f, effectsDisableButtonPosition[1], menuOpacity);
-			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
-			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
+			setCurrentProperties(menuOpacity);
 		}
 	}
 

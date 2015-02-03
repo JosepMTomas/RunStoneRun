@@ -348,6 +348,40 @@ public class GameOverMenu
 	}
 
 
+	private void setCurrentElementsAttributes(float alpha)
+	{
+		background9PatchCurrentScale[0] = lerp(0f, 1f, alpha);
+		background9PatchCurrentScale[1] = lerp(0f, 1f, alpha);
+
+		gameOverTitleCurrentScale[0] = lerp(0f, gameOverTitleScale[0], alpha);
+		gameOverTitleCurrentScale[1] = lerp(0f, gameOverTitleScale[1], alpha);
+		gameOverTitleCurrentPosition[0] = lerp(0f, gameOverTitlePosition[0], alpha);
+		gameOverTitleCurrentPosition[1] = lerp(0f, gameOverTitlePosition[1], alpha);
+
+		finalScoreTitleCurrentScale[0] = lerp(0f, finalScoreTitleScale[0], alpha);
+		finalScoreTitleCurrentScale[1] = lerp(0f, finalScoreTitleScale[1], alpha);
+		finalScoreTitleCurrentPosition[0] = lerp(0f, finalScoreTitlePosition[0], alpha);
+		finalScoreTitleCurrentPosition[1] = lerp(0f, finalScoreTitlePosition[1], alpha);
+
+		touchToContinueTitleCurrentScale[0] = lerp(0f, touchToContinueTitleScale[0], alpha);
+		touchToContinueTitleCurrentScale[1] = lerp(0f, touchToContinueTitleScale[1], alpha);
+		touchToContinueTitleCurrentPosition[0] = lerp(0f, touchToContinueTitlePosition[0], alpha);
+		touchToContinueTitleCurrentPosition[1] = lerp(0f, touchToContinueTitlePosition[1], alpha);
+
+		newRecordTitleCurrentScale[0] = lerp(0f, newRecordTitleScale[0], alpha);
+		newRecordTitleCurrentScale[1] = lerp(0f, newRecordTitleScale[1], alpha);
+		newRecordTitleCurrentPosition[0] = lerp(0f, newRecordTitlePosition[0], alpha);
+		newRecordTitleCurrentPosition[1] = lerp(0f, newRecordTitlePosition[1], alpha);
+
+		scoreCurrentScale = alpha;
+		scoreCurrentPositionY = lerp(0f, scorePositionY, alpha);
+		for(int i=0; i<scoreNumberOfDigits; i++)
+		{
+			scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], alpha);
+		}
+	}
+
+
 	public void update(float deltaTime)
 	{
 		menuGlobalTimer += deltaTime;
@@ -365,35 +399,7 @@ public class GameOverMenu
 				renderer.changedToGameOverMenu();
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			gameOverTitleCurrentScale[0] = lerp(0f, gameOverTitleScale[0], menuOpacity);
-			gameOverTitleCurrentScale[1] = lerp(0f, gameOverTitleScale[1], menuOpacity);
-			gameOverTitleCurrentPosition[0] = lerp(0f, gameOverTitlePosition[0], menuOpacity);
-			gameOverTitleCurrentPosition[1] = lerp(0f, gameOverTitlePosition[1], menuOpacity);
-
-			finalScoreTitleCurrentScale[0] = lerp(0f, finalScoreTitleScale[0], menuOpacity);
-			finalScoreTitleCurrentScale[1] = lerp(0f, finalScoreTitleScale[1], menuOpacity);
-			finalScoreTitleCurrentPosition[0] = lerp(0f, finalScoreTitlePosition[0], menuOpacity);
-			finalScoreTitleCurrentPosition[1] = lerp(0f, finalScoreTitlePosition[1], menuOpacity);
-
-			touchToContinueTitleCurrentScale[0] = lerp(0f, touchToContinueTitleScale[0], menuOpacity);
-			touchToContinueTitleCurrentScale[1] = lerp(0f, touchToContinueTitleScale[1], menuOpacity);
-			touchToContinueTitleCurrentPosition[0] = lerp(0f, touchToContinueTitlePosition[0], menuOpacity);
-			touchToContinueTitleCurrentPosition[1] = lerp(0f, touchToContinueTitlePosition[1], menuOpacity);
-
-			newRecordTitleCurrentScale[0] = lerp(0f, newRecordTitleScale[0], menuOpacity);
-			newRecordTitleCurrentScale[1] = lerp(0f, newRecordTitleScale[1], menuOpacity);
-			newRecordTitleCurrentPosition[0] = lerp(0f, newRecordTitlePosition[0], menuOpacity);
-			newRecordTitleCurrentPosition[1] = lerp(0f, newRecordTitlePosition[1], menuOpacity);
-
-			scoreCurrentScale = menuOpacity;
-			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
-			for(int i=0; i<scoreNumberOfDigits; i++)
-			{
-				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
-			}
+			setCurrentElementsAttributes(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -407,35 +413,7 @@ public class GameOverMenu
 				currentState = UI_STATE_NOT_VISIBLE;
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			gameOverTitleCurrentScale[0] = lerp(0f, gameOverTitleScale[0], menuOpacity);
-			gameOverTitleCurrentScale[1] = lerp(0f, gameOverTitleScale[1], menuOpacity);
-			gameOverTitleCurrentPosition[0] = lerp(0f, gameOverTitlePosition[0], menuOpacity);
-			gameOverTitleCurrentPosition[1] = lerp(0f, gameOverTitlePosition[1], menuOpacity);
-
-			finalScoreTitleCurrentScale[0] = lerp(0f, finalScoreTitleScale[0], menuOpacity);
-			finalScoreTitleCurrentScale[1] = lerp(0f, finalScoreTitleScale[1], menuOpacity);
-			finalScoreTitleCurrentPosition[0] = lerp(0f, finalScoreTitlePosition[0], menuOpacity);
-			finalScoreTitleCurrentPosition[1] = lerp(0f, finalScoreTitlePosition[1], menuOpacity);
-
-			touchToContinueTitleCurrentScale[0] = lerp(0f, touchToContinueTitleScale[0], menuOpacity);
-			touchToContinueTitleCurrentScale[1] = lerp(0f, touchToContinueTitleScale[1], menuOpacity);
-			touchToContinueTitleCurrentPosition[0] = lerp(0f, touchToContinueTitlePosition[0], menuOpacity);
-			touchToContinueTitleCurrentPosition[1] = lerp(0f, touchToContinueTitlePosition[1], menuOpacity);
-
-			newRecordTitleCurrentScale[0] = lerp(0f, newRecordTitleScale[0], menuOpacity);
-			newRecordTitleCurrentScale[1] = lerp(0f, newRecordTitleScale[1], menuOpacity);
-			newRecordTitleCurrentPosition[0] = lerp(0f, newRecordTitlePosition[0], menuOpacity);
-			newRecordTitleCurrentPosition[1] = lerp(0f, newRecordTitlePosition[1], menuOpacity);
-
-			scoreCurrentScale = menuOpacity;
-			scoreCurrentPositionY = lerp(0f, scorePositionY, menuOpacity);
-			for(int i=0; i<scoreNumberOfDigits; i++)
-			{
-				scoreCurrentPositionsX[i] = lerp(0f, scorePositionsX[i], menuOpacity);
-			}
+			setCurrentElementsAttributes(menuOpacity);
 		}
 	}
 

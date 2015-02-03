@@ -372,6 +372,68 @@ public class CreditsMenu
 	}
 
 
+	private void setCurrentElementsAttributes(float alpha)
+	{
+		backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], alpha);
+		backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], alpha);
+
+		creditsTitleCurrentScale[0] = lerp(0f, creditsTitleScale[0], alpha);
+		creditsTitleCurrentScale[1] = lerp(0f, creditsTitleScale[1], alpha);
+		creditsTitleCurrentPosition[0] = lerp(0f, creditsTitlePosition[0], alpha);
+		creditsTitleCurrentPosition[1] = lerp(0f, creditsTitlePosition[1], alpha);
+
+		developerTitleCurrentScale[0] = lerp(0f, developerTitleScale[0], alpha);
+		developerTitleCurrentScale[1] = lerp(0f, developerTitleScale[1], alpha);
+		developerTitleCurrentPosition[0] = lerp(0f, developerTitlePosition[0], alpha);
+		developerTitleCurrentPosition[1] = lerp(0f, developerTitlePosition[1], alpha);
+
+		composerTitleCurrentScale[0] = lerp(0f, composerTitleScale[0], alpha);
+		composerTitleCurrentScale[1] = lerp(0f, composerTitleScale[1], alpha);
+		composerTitleCurrentPosition[0] = lerp(0f, composerTitlePosition[0], alpha);
+		composerTitleCurrentPosition[1] = lerp(0f, composerTitlePosition[1], alpha);
+
+		effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], alpha);
+		effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], alpha);
+		effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], alpha);
+		effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], alpha);
+
+		fontTitleCurrentScale[0] = lerp(0f, fontTitleScale[0], alpha);
+		fontTitleCurrentScale[1] = lerp(0f, fontTitleScale[1], alpha);
+		fontTitleCurrentPosition[0] = lerp(0f, fontTitlePosition[0], alpha);
+		fontTitleCurrentPosition[1] = lerp(0f, fontTitlePosition[1], alpha);
+
+		texturesTitleCurrentScale[0] = lerp(0f, texturesTitleScale[0], alpha);
+		texturesTitleCurrentScale[1] = lerp(0f, texturesTitleScale[1], alpha);
+		texturesTitleCurrentPosition[0] = lerp(0f, texturesTitlePosition[0], alpha);
+		texturesTitleCurrentPosition[1] = lerp(0f, texturesTitlePosition[1], alpha);
+
+		originalModelsTitleCurrentScale[0] = lerp(0f, originalModelsTitleScale[0], alpha);
+		originalModelsTitleCurrentScale[1] = lerp(0f, originalModelsTitleScale[1], alpha);
+		originalModelsTitleCurrentPosition[0] = lerp(0f, originalModelsTitlePosition[0], alpha);
+		originalModelsTitleCurrentPosition[1] = lerp(0f, originalModelsTitlePosition[1], alpha);
+
+		hughesTitleCurrentScale[0] = lerp(0f, hughesTitleScale[0], alpha);
+		hughesTitleCurrentScale[1] = lerp(0f, hughesTitleScale[1], alpha);
+		hughesTitleCurrentPosition[0] = lerp(0f, hughesTitlePosition[0], alpha);
+		hughesTitleCurrentPosition[1] = lerp(0f, hughesTitlePosition[1], alpha);
+
+		tomislavTitleCurrentScale[0] = lerp(0f, tomislavTitleScale[0], alpha);
+		tomislavTitleCurrentScale[1] = lerp(0f, tomislavTitleScale[1], alpha);
+		tomislavTitleCurrentPosition[0] = lerp(0f, tomislavTitlePosition[0], alpha);
+		tomislavTitleCurrentPosition[1] = lerp(0f, tomislavTitlePosition[1], alpha);
+
+		specialThanksTitleCurrentScale[0] = lerp(0f, specialThanksTitleScale[0], alpha);
+		specialThanksTitleCurrentScale[1] = lerp(0f, specialThanksTitleScale[1], alpha);
+		specialThanksTitleCurrentPosition[0] = lerp(0f, specialThanksTitlePosition[0], alpha);
+		specialThanksTitleCurrentPosition[1] = lerp(0f, specialThanksTitlePosition[1], alpha);
+
+		backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], alpha);
+		backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], alpha);
+		backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], alpha);
+		backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], alpha);
+	}
+
+
 	public void update(float deltaTime)
 	{
 		if(currentState == UI_STATE_APPEARING)
@@ -388,63 +450,7 @@ public class CreditsMenu
 				setCurrentPositions();
 			}
 
-			backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], menuOpacity);
-			backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], menuOpacity);
-
-			creditsTitleCurrentScale[0] = lerp(0f, creditsTitleScale[0], menuOpacity);
-			creditsTitleCurrentScale[1] = lerp(0f, creditsTitleScale[1], menuOpacity);
-			creditsTitleCurrentPosition[0] = lerp(0f, creditsTitlePosition[0], menuOpacity);
-			creditsTitleCurrentPosition[1] = lerp(0f, creditsTitlePosition[1], menuOpacity);
-
-			developerTitleCurrentScale[0] = lerp(0f, developerTitleScale[0], menuOpacity);
-			developerTitleCurrentScale[1] = lerp(0f, developerTitleScale[1], menuOpacity);
-			developerTitleCurrentPosition[0] = lerp(0f, developerTitlePosition[0], menuOpacity);
-			developerTitleCurrentPosition[1] = lerp(0f, developerTitlePosition[1], menuOpacity);
-
-			composerTitleCurrentScale[0] = lerp(0f, composerTitleScale[0], menuOpacity);
-			composerTitleCurrentScale[1] = lerp(0f, composerTitleScale[1], menuOpacity);
-			composerTitleCurrentPosition[0] = lerp(0f, composerTitlePosition[0], menuOpacity);
-			composerTitleCurrentPosition[1] = lerp(0f, composerTitlePosition[1], menuOpacity);
-
-			effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], menuOpacity);
-			effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], menuOpacity);
-			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
-			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
-
-			fontTitleCurrentScale[0] = lerp(0f, fontTitleScale[0], menuOpacity);
-			fontTitleCurrentScale[1] = lerp(0f, fontTitleScale[1], menuOpacity);
-			fontTitleCurrentPosition[0] = lerp(0f, fontTitlePosition[0], menuOpacity);
-			fontTitleCurrentPosition[1] = lerp(0f, fontTitlePosition[1], menuOpacity);
-
-			texturesTitleCurrentScale[0] = lerp(0f, texturesTitleScale[0], menuOpacity);
-			texturesTitleCurrentScale[1] = lerp(0f, texturesTitleScale[1], menuOpacity);
-			texturesTitleCurrentPosition[0] = lerp(0f, texturesTitlePosition[0], menuOpacity);
-			texturesTitleCurrentPosition[1] = lerp(0f, texturesTitlePosition[1], menuOpacity);
-
-			originalModelsTitleCurrentScale[0] = lerp(0f, originalModelsTitleScale[0], menuOpacity);
-			originalModelsTitleCurrentScale[1] = lerp(0f, originalModelsTitleScale[1], menuOpacity);
-			originalModelsTitleCurrentPosition[0] = lerp(0f, originalModelsTitlePosition[0], menuOpacity);
-			originalModelsTitleCurrentPosition[1] = lerp(0f, originalModelsTitlePosition[1], menuOpacity);
-
-			hughesTitleCurrentScale[0] = lerp(0f, hughesTitleScale[0], menuOpacity);
-			hughesTitleCurrentScale[1] = lerp(0f, hughesTitleScale[1], menuOpacity);
-			hughesTitleCurrentPosition[0] = lerp(0f, hughesTitlePosition[0], menuOpacity);
-			hughesTitleCurrentPosition[1] = lerp(0f, hughesTitlePosition[1], menuOpacity);
-
-			tomislavTitleCurrentScale[0] = lerp(0f, tomislavTitleScale[0], menuOpacity);
-			tomislavTitleCurrentScale[1] = lerp(0f, tomislavTitleScale[1], menuOpacity);
-			tomislavTitleCurrentPosition[0] = lerp(0f, tomislavTitlePosition[0], menuOpacity);
-			tomislavTitleCurrentPosition[1] = lerp(0f, tomislavTitlePosition[1], menuOpacity);
-
-			specialThanksTitleCurrentScale[0] = lerp(0f, specialThanksTitleScale[0], menuOpacity);
-			specialThanksTitleCurrentScale[1] = lerp(0f, specialThanksTitleScale[1], menuOpacity);
-			specialThanksTitleCurrentPosition[0] = lerp(0f, specialThanksTitlePosition[0], menuOpacity);
-			specialThanksTitleCurrentPosition[1] = lerp(0f, specialThanksTitlePosition[1], menuOpacity);
-
-			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
-			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
-			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
-			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
+			setCurrentElementsAttributes(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -460,63 +466,7 @@ public class CreditsMenu
 				resetCurrentTextures();
 			}
 
-			backgroundPanelCurrentScale[0] = lerp(0f, backgroundPanelScale[0], menuOpacity);
-			backgroundPanelCurrentScale[1] = lerp(0f, backgroundPanelScale[1], menuOpacity);
-
-			creditsTitleCurrentScale[0] = lerp(0f, creditsTitleScale[0], menuOpacity);
-			creditsTitleCurrentScale[1] = lerp(0f, creditsTitleScale[1], menuOpacity);
-			creditsTitleCurrentPosition[0] = lerp(0f, creditsTitlePosition[0], menuOpacity);
-			creditsTitleCurrentPosition[1] = lerp(0f, creditsTitlePosition[1], menuOpacity);
-
-			developerTitleCurrentScale[0] = lerp(0f, developerTitleScale[0], menuOpacity);
-			developerTitleCurrentScale[1] = lerp(0f, developerTitleScale[1], menuOpacity);
-			developerTitleCurrentPosition[0] = lerp(0f, developerTitlePosition[0], menuOpacity);
-			developerTitleCurrentPosition[1] = lerp(0f, developerTitlePosition[1], menuOpacity);
-
-			composerTitleCurrentScale[0] = lerp(0f, composerTitleScale[0], menuOpacity);
-			composerTitleCurrentScale[1] = lerp(0f, composerTitleScale[1], menuOpacity);
-			composerTitleCurrentPosition[0] = lerp(0f, composerTitlePosition[0], menuOpacity);
-			composerTitleCurrentPosition[1] = lerp(0f, composerTitlePosition[1], menuOpacity);
-
-			effectsTitleCurrentScale[0] = lerp(0f, effectsTitleScale[0], menuOpacity);
-			effectsTitleCurrentScale[1] = lerp(0f, effectsTitleScale[1], menuOpacity);
-			effectsTitleCurrentPosition[0] = lerp(0f, effectsTitlePosition[0], menuOpacity);
-			effectsTitleCurrentPosition[1] = lerp(0f, effectsTitlePosition[1], menuOpacity);
-
-			fontTitleCurrentScale[0] = lerp(0f, fontTitleScale[0], menuOpacity);
-			fontTitleCurrentScale[1] = lerp(0f, fontTitleScale[1], menuOpacity);
-			fontTitleCurrentPosition[0] = lerp(0f, fontTitlePosition[0], menuOpacity);
-			fontTitleCurrentPosition[1] = lerp(0f, fontTitlePosition[1], menuOpacity);
-
-			texturesTitleCurrentScale[0] = lerp(0f, texturesTitleScale[0], menuOpacity);
-			texturesTitleCurrentScale[1] = lerp(0f, texturesTitleScale[1], menuOpacity);
-			texturesTitleCurrentPosition[0] = lerp(0f, texturesTitlePosition[0], menuOpacity);
-			texturesTitleCurrentPosition[1] = lerp(0f, texturesTitlePosition[1], menuOpacity);
-
-			originalModelsTitleCurrentScale[0] = lerp(0f, originalModelsTitleScale[0], menuOpacity);
-			originalModelsTitleCurrentScale[1] = lerp(0f, originalModelsTitleScale[1], menuOpacity);
-			originalModelsTitleCurrentPosition[0] = lerp(0f, originalModelsTitlePosition[0], menuOpacity);
-			originalModelsTitleCurrentPosition[1] = lerp(0f, originalModelsTitlePosition[1], menuOpacity);
-
-			hughesTitleCurrentScale[0] = lerp(0f, hughesTitleScale[0], menuOpacity);
-			hughesTitleCurrentScale[1] = lerp(0f, hughesTitleScale[1], menuOpacity);
-			hughesTitleCurrentPosition[0] = lerp(0f, hughesTitlePosition[0], menuOpacity);
-			hughesTitleCurrentPosition[1] = lerp(0f, hughesTitlePosition[1], menuOpacity);
-
-			tomislavTitleCurrentScale[0] = lerp(0f, tomislavTitleScale[0], menuOpacity);
-			tomislavTitleCurrentScale[1] = lerp(0f, tomislavTitleScale[1], menuOpacity);
-			tomislavTitleCurrentPosition[0] = lerp(0f, tomislavTitlePosition[0], menuOpacity);
-			tomislavTitleCurrentPosition[1] = lerp(0f, tomislavTitlePosition[1], menuOpacity);
-
-			specialThanksTitleCurrentScale[0] = lerp(0f, specialThanksTitleScale[0], menuOpacity);
-			specialThanksTitleCurrentScale[1] = lerp(0f, specialThanksTitleScale[1], menuOpacity);
-			specialThanksTitleCurrentPosition[0] = lerp(0f, specialThanksTitlePosition[0], menuOpacity);
-			specialThanksTitleCurrentPosition[1] = lerp(0f, specialThanksTitlePosition[1], menuOpacity);
-
-			backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], menuOpacity);
-			backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], menuOpacity);
-			backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], menuOpacity);
-			backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], menuOpacity);
+			setCurrentElementsAttributes(menuOpacity);
 		}
 	}
 

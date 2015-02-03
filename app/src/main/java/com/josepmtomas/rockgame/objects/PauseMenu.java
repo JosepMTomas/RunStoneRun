@@ -229,7 +229,7 @@ public class PauseMenu
 		resumeButtonCurrentTexture = textures.resumeButtonIdleTexture;
 		restartButtonCurrentTexture = textures.restartButtonIdleTexture;
 		endGameButtonCurrentTexture = textures.endGameButtonIdleTexture;
-		optionsButtonCurrentTexture = textures.optionsBigButtonIdleTexture;
+		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 	}
 
 
@@ -294,9 +294,41 @@ public class PauseMenu
 
 	private void touchedOptionsButton()
 	{
-		optionsButtonCurrentTexture = textures.optionsBigButtonSelectedTexture;
+		optionsButtonCurrentTexture = textures.optionsButtonSelectedTexture;
 		renderer.changingToOptionsMenuFromPauseMenu();
 		currentState = UI_STATE_DISAPPEARING;
+	}
+
+
+	private void setCurrentElementsAttributes(float alpha)
+	{
+		background9PatchCurrentScale[0] = lerp(0f, 1f, alpha);
+		background9PatchCurrentScale[1] = lerp(0f, 1f, alpha);
+
+		pauseTitleCurrentScale[0] = lerp(0f, pauseTitleScale[0], alpha);
+		pauseTitleCurrentScale[1] = lerp(0f, pauseTitleScale[1], alpha);
+		pauseTitleCurrentPosition[0] = lerp(0f, pauseTitlePosition[0], alpha);
+		pauseTitleCurrentPosition[1] = lerp(0f, pauseTitlePosition[1], alpha);
+
+		resumeButtonCurrentScale[0] = lerp(0f, resumeButtonScale[0], alpha);
+		resumeButtonCurrentScale[1] = lerp(0f, resumeButtonScale[1], alpha);
+		resumeButtonCurrentPosition[0] = lerp(0f, resumeButtonPosition[0], alpha);
+		resumeButtonCurrentPosition[1] = lerp(0f, resumeButtonPosition[1], alpha);
+
+		restartButtonCurrentScale[0] = lerp(0f, restartButtonScale[0], alpha);
+		restartButtonCurrentScale[1] = lerp(0f, restartButtonScale[1], alpha);
+		restartButtonCurrentPosition[0] = lerp(0f, restartButtonPosition[0], alpha);
+		restartButtonCurrentPosition[1] = lerp(0f, restartButtonPosition[1], alpha);
+
+		endGameButtonCurrentScale[0] = lerp(0f, endGameButtonScale[0], alpha);
+		endGameButtonCurrentScale[1] = lerp(0f, endGameButtonScale[1], alpha);
+		endGameButtonCurrentPosition[0] = lerp(0f, endGameButtonPosition[0], alpha);
+		endGameButtonCurrentPosition[1] = lerp(0f, endGameButtonPosition[1], alpha);
+
+		optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], alpha);
+		optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], alpha);
+		optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], alpha);
+		optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], alpha);
 	}
 
 
@@ -315,34 +347,7 @@ public class PauseMenu
 				renderer.changedToPauseMenu();
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			pauseTitleCurrentScale[0] = lerp(0f, pauseTitleScale[0], menuOpacity);
-			pauseTitleCurrentScale[1] = lerp(0f, pauseTitleScale[1], menuOpacity);
-			pauseTitleCurrentPosition[0] = lerp(0f, pauseTitlePosition[0], menuOpacity);
-			pauseTitleCurrentPosition[1] = lerp(0f, pauseTitlePosition[1], menuOpacity);
-
-			resumeButtonCurrentScale[0] = lerp(0f, resumeButtonScale[0], menuOpacity);
-			resumeButtonCurrentScale[1] = lerp(0f, resumeButtonScale[1], menuOpacity);
-			resumeButtonCurrentPosition[0] = lerp(0f, resumeButtonPosition[0], menuOpacity);
-			resumeButtonCurrentPosition[1] = lerp(0f, resumeButtonPosition[1], menuOpacity);
-
-			restartButtonCurrentScale[0] = lerp(0f, restartButtonScale[0], menuOpacity);
-			restartButtonCurrentScale[1] = lerp(0f, restartButtonScale[1], menuOpacity);
-			restartButtonCurrentPosition[0] = lerp(0f, restartButtonPosition[0], menuOpacity);
-			restartButtonCurrentPosition[1] = lerp(0f, restartButtonPosition[1], menuOpacity);
-
-			endGameButtonCurrentScale[0] = lerp(0f, endGameButtonScale[0], menuOpacity);
-			endGameButtonCurrentScale[1] = lerp(0f, endGameButtonScale[1], menuOpacity);
-			endGameButtonCurrentPosition[0] = lerp(0f, endGameButtonPosition[0], menuOpacity);
-			endGameButtonCurrentPosition[1] = lerp(0f, endGameButtonPosition[1], menuOpacity);
-
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
-			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
-
+			setCurrentElementsAttributes(menuOpacity);
 		}
 		else if(currentState == UI_STATE_DISAPPEARING)
 		{
@@ -356,33 +361,7 @@ public class PauseMenu
 				currentState = UI_STATE_NOT_VISIBLE;
 			}
 
-			background9PatchCurrentScale[0] = lerp(0f, 1f, menuOpacity);
-			background9PatchCurrentScale[1] = lerp(0f, 1f, menuOpacity);
-
-			pauseTitleCurrentScale[0] = lerp(0f, pauseTitleScale[0], menuOpacity);
-			pauseTitleCurrentScale[1] = lerp(0f, pauseTitleScale[1], menuOpacity);
-			pauseTitleCurrentPosition[0] = lerp(0f, pauseTitlePosition[0], menuOpacity);
-			pauseTitleCurrentPosition[1] = lerp(0f, pauseTitlePosition[1], menuOpacity);
-
-			resumeButtonCurrentScale[0] = lerp(0f, resumeButtonScale[0], menuOpacity);
-			resumeButtonCurrentScale[1] = lerp(0f, resumeButtonScale[1], menuOpacity);
-			resumeButtonCurrentPosition[0] = lerp(0f, resumeButtonPosition[0], menuOpacity);
-			resumeButtonCurrentPosition[1] = lerp(0f, resumeButtonPosition[1], menuOpacity);
-
-			restartButtonCurrentScale[0] = lerp(0f, restartButtonScale[0], menuOpacity);
-			restartButtonCurrentScale[1] = lerp(0f, restartButtonScale[1], menuOpacity);
-			restartButtonCurrentPosition[0] = lerp(0f, restartButtonPosition[0], menuOpacity);
-			restartButtonCurrentPosition[1] = lerp(0f, restartButtonPosition[1], menuOpacity);
-
-			endGameButtonCurrentScale[0] = lerp(0f, endGameButtonScale[0], menuOpacity);
-			endGameButtonCurrentScale[1] = lerp(0f, endGameButtonScale[1], menuOpacity);
-			endGameButtonCurrentPosition[0] = lerp(0f, endGameButtonPosition[0], menuOpacity);
-			endGameButtonCurrentPosition[1] = lerp(0f, endGameButtonPosition[1], menuOpacity);
-
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
-			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
+			setCurrentElementsAttributes(menuOpacity);
 		}
 	}
 

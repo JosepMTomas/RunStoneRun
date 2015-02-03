@@ -12,6 +12,7 @@ import com.josepmtomas.rockgame.objects.EndGameMenu;
 import com.josepmtomas.rockgame.objects.GameOverMenu;
 import com.josepmtomas.rockgame.objects.Ground;
 import com.josepmtomas.rockgame.objects.GroundShield;
+import com.josepmtomas.rockgame.objects.HowToPlayMenu;
 import com.josepmtomas.rockgame.objects.Hud;
 import com.josepmtomas.rockgame.objects.LightInfo;
 import com.josepmtomas.rockgame.objects.MainMenu;
@@ -63,7 +64,8 @@ public class ForwardPlusRenderer implements Renderer
 	private static final int RENDERER_STATE_END_GAME_MENU = 6;
 	private static final int RENDERER_STATE_RESTART_MENU = 7;
 	private static final int RENDERER_STATE_GAME_OVER_MENU = 8;
-	private static final int RENDERER_STATE_CHANGING_MENU = 9;
+	private static final int RENDERER_STATE_HOW_TO_PLAY_MENU = 9;
+	private static final int RENDERER_STATE_CHANGING_MENU = 10;
 	private int rendererState = RENDERER_STATE_MAIN_MENU;
 
 	private int FRAMEBUFFER_WIDTH = 1280; // 1794
@@ -176,6 +178,7 @@ public class ForwardPlusRenderer implements Renderer
 	private EndGameMenu endGameMenu;
 	private RestartMenu restartMenu;
 	private GameOverMenu gameOverMenu;
+	private HowToPlayMenu howToPlayMenu;
 
 	// Shared preferences
 	private SharedPreferences sharedPreferences;
@@ -244,6 +247,7 @@ public class ForwardPlusRenderer implements Renderer
 		endGameMenu = new EndGameMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		restartMenu = new RestartMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		gameOverMenu = new GameOverMenu(this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
+		howToPlayMenu = new HowToPlayMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 
 		int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
@@ -531,6 +535,7 @@ public class ForwardPlusRenderer implements Renderer
 		endGameMenu.update(deltaTime);
 		restartMenu.update(deltaTime);
 		gameOverMenu.update(deltaTime);
+		howToPlayMenu.update(deltaTime);
 
 		shadowMapPass();
 		reflectionPass();
@@ -780,6 +785,7 @@ public class ForwardPlusRenderer implements Renderer
 		endGameMenu.draw();
 		restartMenu.draw();
 		gameOverMenu.draw();
+		howToPlayMenu.draw();
 		glDisable(GL_BLEND);
 	}
 
@@ -791,6 +797,7 @@ public class ForwardPlusRenderer implements Renderer
 			rightTouchState = TouchState.NOT_TOUCHING;
 			mainMenu.releaseTouch();
 			pauseMenu.releaseTouch();
+			howToPlayMenu.releaseTouch();
 		}
 	}
 
@@ -854,6 +861,10 @@ public class ForwardPlusRenderer implements Renderer
 			{
 				gameOverMenu.touch();
 			}
+			else if(rendererState == RENDERER_STATE_HOW_TO_PLAY_MENU)
+			{
+				howToPlayMenu.touch(newX, newY);
+			}
 		}
 	}
 
@@ -914,6 +925,12 @@ public class ForwardPlusRenderer implements Renderer
 		creditsMenu.setAppearing();
 	}
 
+	public void changingToHowToPlayMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		howToPlayMenu.setAppearing();
+	}
+
 	public void changingToEndGameMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
@@ -961,6 +978,11 @@ public class ForwardPlusRenderer implements Renderer
 		rendererState = RENDERER_STATE_RESTART_MENU;
 	}
 
+	public void changedToHowToPlayMenu()
+	{
+		rendererState = RENDERER_STATE_HOW_TO_PLAY_MENU;
+	}
+
 	public void changingToOptionsMenuFromMainMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
@@ -993,6 +1015,12 @@ public class ForwardPlusRenderer implements Renderer
 	}
 
 	public void changingFromGameOverMenuToMainMenu()
+	{
+		rendererState = RENDERER_STATE_CHANGING_MENU;
+		mainMenu.setAppearing();
+	}
+
+	public void changingFromHowToPlayMenuToMainMenu()
 	{
 		rendererState = RENDERER_STATE_CHANGING_MENU;
 		mainMenu.setAppearing();
