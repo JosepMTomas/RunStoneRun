@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ConfigurationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -88,6 +89,13 @@ public class GameActivity extends Activity
 		//final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
 		//final GameRenderer gameRenderer = new GameRenderer(this, width, height);
 		//deferredRenderer = new DeferredRenderer(this, width, height);
+
+		//
+
+		boolean isTablet = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+		Log.w(TAG, "isTablet = " + isTablet);
+
+		//
 
 		splash = new SplashScreen(getApplicationContext(), (int)width, (int)height);
 		//loadingDialog = new Dialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen); //Theme.DeviceDefault.NoActionBar.Fullscreen

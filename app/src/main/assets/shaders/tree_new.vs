@@ -57,7 +57,7 @@ void main()
 	vec4 finalPosition = viewProjection * vPosition;
 	
 	vAmbient = ambientColor;
-	vAmbient += dot(vec3(0.0, 1.0, 0.0), normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz)) * shadowFactor * 2.0;
+	vAmbient += (dot(vec3(0.0, 1.0, 0.0), normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz)) * shadowFactor * 2.0);
 
 	// Vertex distance to origin
 	vDistance = property.w;

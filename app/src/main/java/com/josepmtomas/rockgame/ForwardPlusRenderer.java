@@ -1143,6 +1143,7 @@ public class ForwardPlusRenderer implements Renderer
 				outputStream.write(string.getBytes());
 
 				playerRock.saveState(outputStream);
+				//groundShield.saveState(outputStream);
 				hud.saveState(outputStream);
 				ground.saveState(outputStream);
 
@@ -1186,29 +1187,10 @@ public class ForwardPlusRenderer implements Renderer
 			fScore = Float.parseFloat(tokens[1]);
 			lightInfo.timeOfDay = Float.parseFloat(tokens[2]);
 
-			//line = bufferedReader.readLine();
-			//tokens = line.split(" ");
 			playerRock.loadState(bufferedReader);
-
-			line = bufferedReader.readLine();
-			tokens = line.split(" ");
-			hud.loadState(tokens);
-
+			//groundShield.loadState(bufferedReader);
+			hud.loadState(bufferedReader);
 			ground.loadState(bufferedReader);
-
-			/*if(tokens[0].equals("PLAYER_ROCK"))
-			{
-				playerRock.loadState(tokens);
-			}
-			else if(tokens[0].equals("HUD"))
-			{
-				hud.loadState(tokens);
-			}
-			else if(tokens[0].equals("GROUND"))
-			{
-				ground.loadState(bufferedReader);
-			}*/
-
 		}
 		catch (FileNotFoundException e)
 		{

@@ -9,6 +9,7 @@ import com.josepmtomas.rockgame.programs.UIPanelProgram;
 import com.josepmtomas.rockgame.util.UIHelper;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
+import java.io.BufferedReader;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -1228,8 +1229,11 @@ public class Hud
 	}
 
 
-	public void loadState(String[] tokens)
+	public void loadState(BufferedReader bufferedReader) throws IOException
 	{
+		String line = bufferedReader.readLine();
+		String[] tokens = line.split(" ");
+
 		currentLife = Integer.parseInt(tokens[1]);
 		livesCounterCurrentState = Integer.parseInt(tokens[2]);
 		livesStates[0] = Integer.parseInt(tokens[3]);

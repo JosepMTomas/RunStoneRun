@@ -229,7 +229,7 @@ public class PauseMenu
 		resumeButtonCurrentTexture = textures.resumeButtonIdleTexture;
 		restartButtonCurrentTexture = textures.restartButtonIdleTexture;
 		endGameButtonCurrentTexture = textures.endGameButtonIdleTexture;
-		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
+		optionsButtonCurrentTexture = textures.optionsBigButtonIdleTexture;
 	}
 
 
@@ -294,7 +294,7 @@ public class PauseMenu
 
 	private void touchedOptionsButton()
 	{
-		optionsButtonCurrentTexture = textures.optionsButtonSelectedTexture;
+		optionsButtonCurrentTexture = textures.optionsBigButtonSelectedTexture;
 		renderer.changingToOptionsMenuFromPauseMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}

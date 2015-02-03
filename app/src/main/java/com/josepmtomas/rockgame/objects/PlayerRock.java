@@ -657,7 +657,6 @@ public class PlayerRock
 
 		if(state == PLAYER_ROCK_MOVING)
 		{
-			//currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + 10f);
 			currentSpeed = Math.min(MAX_PLAYER_SPEED, currentSpeed + PLAYER_SPEED_INCREMENT * deltaTime);
 		}
 		//currentSpeed = 0f;

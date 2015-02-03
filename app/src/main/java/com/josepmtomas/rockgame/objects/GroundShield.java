@@ -1,10 +1,14 @@
 package com.josepmtomas.rockgame.objects;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.josepmtomas.rockgame.programs.GroundShieldProgram;
 import com.josepmtomas.rockgame.util.TextureHelper;
 
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -213,5 +217,29 @@ public class GroundShield
 			glBindVertexArray(vaoHandle[0]);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
+	}
+
+
+	public void saveState(FileOutputStream outputStream) throws IOException
+	{
+		String stateString = "GROUND_SHIELD "
+				+ isVisible + " "
+				+ state + " "
+				+ timer + " "
+				+ totalTimer + "\n";
+
+		outputStream.write(stateString.getBytes());
+	}
+
+
+	public void loadState(BufferedReader bufferedReader) throws IOException
+	{
+		String line = bufferedReader.readLine();
+		String[] tokens = line.split(" ");
+
+		isVisible = Boolean.parseBoolean(tokens[1]);
+		state = Integer.parseInt(tokens[2]);
+		timer = Float.parseFloat(tokens[3]);
+		totalTimer = Float.parseFloat(tokens[4]);
 	}
 }

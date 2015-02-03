@@ -81,6 +81,14 @@ public class MainMenu
 	private float[] newGameButtonCurrentPosition = new float[2];
 	private float[] newGameButtonLimits = new float[4];
 
+	// How to play button
+	private int howToPlayButtonCurrentTexture;
+	private float[] howToPlayButtonScale = new float[2];
+	private float[] howToPlayButtonPosition = new float[2];
+	private float[] howToPlayButtonCurrentScale = new float[2];
+	private float[] howToPlayButtonCurrentPosition = new float[2];
+	private float[] howToPlayButtonLimits = new float[4];
+
 	// Options button
 	private int optionsButtonCurrentTexture;
 	private float[] optionsButtonScale = new float[2];
@@ -195,6 +203,7 @@ public class MainMenu
 	private void loadTextures()
 	{
 		newGameButtonCurrentTexture = textures.newGameButtonIdleTexture;
+		howToPlayButtonCurrentTexture = textures.howToPlayButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
 		speedButtonTexture = textures.speedNormalTexture;
@@ -227,7 +236,7 @@ public class MainMenu
 		gameTitleScale[0] = width;
 		gameTitleScale[1] = height;
 		gameTitlePosition[0] = 0f;
-		gameTitlePosition[1] = screenHeight * 0.325f;
+		gameTitlePosition[1] = screenHeight * 0.3375f;
 		gameTitleCurrentScale[0] = gameTitleScale[0];
 		gameTitleCurrentScale[1] = gameTitleScale[1];
 		gameTitleCurrentPosition[0] = gameTitlePosition[0];
@@ -238,9 +247,10 @@ public class MainMenu
 	private void createButtons(float screenWidth, float screenHeight)
 	{
 		float width = screenWidth * 0.3f;
-		float height = screenHeight * 0.16f;
+		float height = screenWidth * 0.06f;
 
 		createNewGameButton(width, height);
+		createHowToPlayButton(width, height);
 		createOptionsButton(width, height);
 		createCreditsButton(width, height);
 		createSpeedButton(screenWidth, screenHeight);
@@ -251,9 +261,9 @@ public class MainMenu
 	public void createButtonsBackPanel(float screenWidth, float screenHeight)
 	{
 		float borderSize = screenHeight * 0.025f;
-		float cornerSize = screenHeight * 0.048f + borderSize;
+		float cornerSize = screenWidth * 0.06f * 0.3f + borderSize;
 		float width = (screenWidth * 0.3f) + (borderSize * 2f);
-		float height = (screenHeight * 0.16f * 3f) + (borderSize * 2f);
+		float height = (screenWidth * 0.24f) + (borderSize * 2f);
 
 		buttonsBackPanelVaoHandle = UIHelper.make9PatchPanel(width, height, cornerSize, UI_BASE_CENTER_CENTER);
 
@@ -261,7 +271,7 @@ public class MainMenu
 		buttonsBackPanelCurrentScale[1] = 1f;
 
 		buttonsBackPanelPosition[0] = 0f;
-		buttonsBackPanelPosition[1] = optionsButtonPosition[1];
+		buttonsBackPanelPosition[1] = optionsButtonPosition[1] + (screenWidth * 0.03f);
 		buttonsBackPanelCurrentPosition[0] = buttonsBackPanelPosition[0];
 		buttonsBackPanelCurrentPosition[1] = buttonsBackPanelPosition[1];
 	}
@@ -303,13 +313,28 @@ public class MainMenu
 	}
 
 
+	private void createHowToPlayButton(float width, float height)
+	{
+		howToPlayButtonScale[0] = width;
+		howToPlayButtonScale[1] = height;
+
+		howToPlayButtonPosition[0] = newGameButtonPosition[0];
+		howToPlayButtonPosition[1] = newGameButtonPosition[1] - height;
+
+		howToPlayButtonLimits[0] = howToPlayButtonPosition[0] - (width * 0.5f);
+		howToPlayButtonLimits[1] = howToPlayButtonPosition[0] + (width * 0.5f);
+		howToPlayButtonLimits[2] = howToPlayButtonPosition[1] - (height * 0.5f);
+		howToPlayButtonLimits[3] = howToPlayButtonPosition[1] + (height * 0.5f);
+	}
+
+
 	private void createOptionsButton(float width, float height)
 	{
 		optionsButtonScale[0] = width;
 		optionsButtonScale[1] = height;
 
-		optionsButtonPosition[0] = newGameButtonPosition[0];
-		optionsButtonPosition[1] = newGameButtonPosition[1] - height;
+		optionsButtonPosition[0] = howToPlayButtonPosition[0];
+		optionsButtonPosition[1] = howToPlayButtonPosition[1] - height;
 
 		// left-right-bottom-top
 		optionsButtonLimits[0] = optionsButtonPosition[0] - (width * 0.5f);
@@ -485,6 +510,11 @@ public class MainMenu
 		newGameButtonCurrentPosition[0] = newGameButtonPosition[0];
 		newGameButtonCurrentPosition[1] = newGameButtonPosition[1];
 
+		howToPlayButtonCurrentScale[0] = howToPlayButtonScale[0];
+		howToPlayButtonCurrentScale[1] = howToPlayButtonScale[1];
+		howToPlayButtonCurrentPosition[0] = howToPlayButtonPosition[0];
+		howToPlayButtonCurrentPosition[1] = howToPlayButtonPosition[1];
+
 		optionsButtonCurrentScale[0] = optionsButtonScale[0];
 		optionsButtonCurrentScale[1] = optionsButtonScale[1];
 		optionsButtonCurrentPosition[0] = optionsButtonPosition[0];
@@ -599,7 +629,13 @@ public class MainMenu
 			{
 				touchNewGameButton();
 			}
-
+			else if(x >= howToPlayButtonLimits[0] &&
+					x <= howToPlayButtonLimits[1] &&
+					y >= howToPlayButtonLimits[2] &&
+					y <= howToPlayButtonLimits[3])
+			{
+				touchHowToPlayButton();
+			}
 			else if(x >= optionsButtonLimits[0] &&
 					x <= optionsButtonLimits[1] &&
 					y >= optionsButtonLimits[2] &&
@@ -607,7 +643,6 @@ public class MainMenu
 			{
 				touchOptionsButton();
 			}
-
 			else if(x >= optionsButtonLimits[0] &&
 					x <= optionsButtonLimits[1] &&
 					y >= creditsButtonLimits[2] &&
@@ -646,6 +681,14 @@ public class MainMenu
 	{
 		newGameButtonCurrentTexture = textures.newGameButtonSelectedTexture;
 		renderer.newGame();
+		currentState = UI_STATE_DISAPPEARING;
+	}
+
+
+	private void touchHowToPlayButton()
+	{
+		howToPlayButtonCurrentTexture = textures.howToPlayButtonSelectedTexture;
+		//TODO: renderer.changingToHowToPlayMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
 
@@ -754,15 +797,21 @@ public class MainMenu
 
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
-			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
-
 			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
 			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
+
+			howToPlayButtonCurrentScale[0] = lerp(0f, howToPlayButtonScale[0], menuOpacity);
+			howToPlayButtonCurrentScale[1] = lerp(0f, howToPlayButtonScale[1], menuOpacity);
+			howToPlayButtonCurrentPosition[0] = lerp(0f, howToPlayButtonPosition[0], menuOpacity);
+			howToPlayButtonCurrentPosition[1] = lerp(0f, howToPlayButtonPosition[1], menuOpacity);
+
+			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
+			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
 			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
 			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
+
+			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
+			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
 			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
 			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
 
@@ -809,15 +858,21 @@ public class MainMenu
 
 			newGameButtonCurrentScale[0] = lerp(0f, newGameButtonScale[0], menuOpacity);
 			newGameButtonCurrentScale[1] = lerp(0f, newGameButtonScale[1], menuOpacity);
-			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
-			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
-			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
-			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
-
 			newGameButtonCurrentPosition[0] = lerp(0f, newGameButtonPosition[0], menuOpacity);
 			newGameButtonCurrentPosition[1] = lerp(0f, newGameButtonPosition[1], menuOpacity);
+
+			howToPlayButtonCurrentScale[0] = lerp(0f, howToPlayButtonScale[0], menuOpacity);
+			howToPlayButtonCurrentScale[1] = lerp(0f, howToPlayButtonScale[1], menuOpacity);
+			howToPlayButtonCurrentPosition[0] = lerp(0f, howToPlayButtonPosition[0], menuOpacity);
+			howToPlayButtonCurrentPosition[1] = lerp(0f, howToPlayButtonPosition[1], menuOpacity);
+
+			optionsButtonCurrentScale[0] = lerp(0f, optionsButtonScale[0], menuOpacity);
+			optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], menuOpacity);
 			optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], menuOpacity);
 			optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], menuOpacity);
+
+			creditsButtonCurrentScale[0] = lerp(0f, creditsButtonScale[0], menuOpacity);
+			creditsButtonCurrentScale[1] = lerp(0f, creditsButtonScale[1], menuOpacity);
 			creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], menuOpacity);
 			creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], menuOpacity);
 
@@ -858,6 +913,9 @@ public class MainMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, newGameButtonCurrentScale, newGameButtonCurrentPosition, newGameButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, howToPlayButtonCurrentScale, howToPlayButtonCurrentPosition, howToPlayButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, optionsButtonCurrentScale, optionsButtonCurrentPosition, optionsButtonCurrentTexture, menuOpacity);
