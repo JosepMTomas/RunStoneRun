@@ -28,8 +28,6 @@ import static com.josepmtomas.runstonerun.algebra.operations.*;
  * @author Josep
  */
 
-//TODO: disable FPS counter
-
 public class Hud
 {
 	private ForwardPlusRenderer renderer;
@@ -194,11 +192,11 @@ public class Hud
 
 
 	// Frames per second panel
-	private float[] fpsPositionOffsetsX = {-1572f, -1700f};
+	/**private float[] fpsPositionOffsetsX = {-1572f, -1700f};
 	private float currentFpsPositionOffsetY;
 	private float averageFpsPositionOffsetY;
 	private int[] currentFpsNumbers = {0, 0};
-	private int[] averageFpsNumbers = {0, 0};
+	private int[] averageFpsNumbers = {0, 0};**/
 
 	// Programs
 	UIPanelProgram uiPanelProgram;
@@ -462,10 +460,10 @@ public class Hud
 
 		// FPS
 
-		fpsPositionOffsetsX[1] = -screenWidth + numberWidth;
+		/**fpsPositionOffsetsX[1] = -screenWidth + numberWidth;
 		fpsPositionOffsetsX[0] = fpsPositionOffsetsX[1] + numberWidth;
 		currentFpsPositionOffsetY = screenHeight * 0.9f;
-		averageFpsPositionOffsetY = screenHeight * 0.75f;
+		averageFpsPositionOffsetY = screenHeight * 0.75f;**/
 	}
 
 
@@ -560,7 +558,8 @@ public class Hud
 	}
 
 
-	public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
+	//public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
+	public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, float deltaTime)
 	{
 		multiplierProgressValue = multiplierPercent;
 
@@ -614,13 +613,13 @@ public class Hud
 		multiplierNumbers[0] = currentMultiplier % 10;
 		multiplierNumbers[2] = currentMultiplier / 10;
 
-		currentFpsNumbers[0] = currentFps % 10;
+		/**currentFpsNumbers[0] = currentFps % 10;
 		number = currentFps / 10;
 		currentFpsNumbers[1] = number % 10;
 		number = number / 10;
 		averageFpsNumbers[0] = number % 10;
 		number = number / 10;
-		averageFpsNumbers[1] = number;
+		averageFpsNumbers[1] = number;**/
 
 		// Score Panel
 		if(scoreCurrentState == UI_STATE_APPEARING)
@@ -1100,7 +1099,7 @@ public class Hud
 		}
 
 		// current FPS
-		scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);
+		/**scorePanelProgram.setCommonUniforms(viewProjection, textures.numbersAtlasTexture);
 		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[0], currentFpsPositionOffsetY, scoreTexCoordOffsetsX[currentFpsNumbers[0]], scoreTexCoordOffsetsY[currentFpsNumbers[0]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
@@ -1114,7 +1113,7 @@ public class Hud
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		scorePanelProgram.setSpecificUniforms(1f, fpsPositionOffsetsX[1], averageFpsPositionOffsetY, scoreTexCoordOffsetsX[averageFpsNumbers[1]], scoreTexCoordOffsetsY[averageFpsNumbers[1]],
 				scoreColor[0], scoreColor[1], scoreColor[2], scoreOpacity);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);**/
 
 		// get ready panel
 
@@ -1191,6 +1190,7 @@ public class Hud
 	{
 		String stateString = "HUD "
 				+ currentLife + " "
+				+ livesCounterPreviousState + " "
 				+ livesCounterCurrentState + " "
 				+ livesStates[0] + " "
 				+ livesStates[1] + " "
@@ -1201,7 +1201,17 @@ public class Hud
 				+ livesPercents[1] + " "
 				+ livesPercents[2] + " "
 				+ livesPercents[3] + " "
-				+ livesPercents[4] + "\n";
+				+ livesPercents[4] + " "
+				+ lifeRecoverTimer + " "
+				+ getReadyPanelState + " "
+				+ getReadyPanelTimer + " "
+				+ getReadyPanelOpacity + " "
+				+ getReadyPanelCurrentPositionY + " "
+				+ recoveringProgressBarState + " "
+				+ recoveringProgressBarTimer + " "
+				+ recoveringProgressBarPercent + " "
+				+ recoveringProgressBarOpacity + " "
+				+ recoveringCurrentPositionY + "\n";
 
 		outputStream.write(stateString.getBytes());
 	}
@@ -1213,16 +1223,42 @@ public class Hud
 		String[] tokens = line.split(" ");
 
 		currentLife = Integer.parseInt(tokens[1]);
-		livesCounterCurrentState = Integer.parseInt(tokens[2]);
-		livesStates[0] = Integer.parseInt(tokens[3]);
-		livesStates[1] = Integer.parseInt(tokens[4]);
-		livesStates[2] = Integer.parseInt(tokens[5]);
-		livesStates[3] = Integer.parseInt(tokens[6]);
-		livesStates[4] = Integer.parseInt(tokens[7]);
-		livesPercents[0] = Float.parseFloat(tokens[8]);
-		livesPercents[1] = Float.parseFloat(tokens[9]);
-		livesPercents[2] = Float.parseFloat(tokens[10]);
-		livesPercents[3] = Float.parseFloat(tokens[11]);
-		livesPercents[4] = Float.parseFloat(tokens[12]);
+		livesCounterPreviousState = Integer.parseInt(tokens[2]);
+		livesCounterCurrentState = Integer.parseInt(tokens[3]);
+		livesStates[0] = Integer.parseInt(tokens[4]);
+		livesStates[1] = Integer.parseInt(tokens[5]);
+		livesStates[2] = Integer.parseInt(tokens[6]);
+		livesStates[3] = Integer.parseInt(tokens[7]);
+		livesStates[4] = Integer.parseInt(tokens[8]);
+		livesPercents[0] = Float.parseFloat(tokens[9]);
+		livesPercents[1] = Float.parseFloat(tokens[10]);
+		livesPercents[2] = Float.parseFloat(tokens[11]);
+		livesPercents[3] = Float.parseFloat(tokens[12]);
+		livesPercents[4] = Float.parseFloat(tokens[13]);
+		lifeRecoverTimer = Float.parseFloat(tokens[14]);
+		getReadyPanelState = Integer.parseInt(tokens[15]);
+		getReadyPanelTimer = Float.parseFloat(tokens[16]);
+		getReadyPanelOpacity = Float.parseFloat(tokens[17]);
+		getReadyPanelCurrentPositionY = Float.parseFloat(tokens[18]);
+		recoveringProgressBarState = Integer.parseInt(tokens[19]);
+		recoveringProgressBarTimer = Float.parseFloat(tokens[20]);
+		recoveringProgressBarPercent = Float.parseFloat(tokens[21]);
+		recoveringProgressBarOpacity = Float.parseFloat(tokens[22]);
+		recoveringCurrentPositionY = Float.parseFloat(tokens[23]);
+
+		scoreCurrentState = UI_STATE_VISIBLE;
+		scoreOpacity = 1f;
+
+		multiplierProgressCurrentState = UI_STATE_VISIBLE;
+		multiplierProgressOpacity = 1f;
+
+		multiplierNumbersCurrentState = UI_STATE_VISIBLE;
+		multiplierNumbersOpacity = 1f;
+
+		pauseButtonState = UI_STATE_VISIBLE;
+		pauseButtonOpacity = 1f;
+
+		livesState = UI_STATE_VISIBLE;
+		livesOpacity = 1f;
 	}
 }

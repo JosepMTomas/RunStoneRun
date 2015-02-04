@@ -1,6 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'RunStoneRunKey'
+            keyPassword 'c6346999y30mnglFrcPn'
+            storeFile file('C:/Users/Josep/keystores/runstonerun.jks')
+            storePassword 'c6346999y30mnglFrcPn'
+        }
+    }
     compileSdkVersion 21
     buildToolsVersion "20.0.0"
     defaultConfig {
@@ -14,6 +22,7 @@ android {
         release {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {

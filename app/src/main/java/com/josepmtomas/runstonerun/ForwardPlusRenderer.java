@@ -24,9 +24,7 @@ import com.josepmtomas.runstonerun.objects.Screen;
 import com.josepmtomas.runstonerun.objects.SkyDome;
 import com.josepmtomas.runstonerun.programs.ScorePanelProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
-import com.josepmtomas.runstonerun.util.FPSCounter;
 import com.josepmtomas.runstonerun.util.PerspectiveCamera;
-import com.josepmtomas.runstonerun.util.TouchState;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -133,13 +131,11 @@ public class ForwardPlusRenderer implements Renderer
 	private Context context;	// Application context
 
 	// FPS
-	private int currentFPS = 0;
-	private FPSCounter fpsCounter;
+	/**private int currentFPS = 0;
+	private FPSCounter fpsCounter;**/
 
 	// TIME
 	private long startTime = 0;
-	//private long endTime = 0;
-	//private float deltaTime = 0;
 
 	// Objects
 	PlayerRock playerRock;
@@ -157,8 +153,8 @@ public class ForwardPlusRenderer implements Renderer
 	private float scoreMultiplierPercent = 0;
 
 	// State
-	private TouchState leftTouchState = TouchState.NOT_TOUCHING;
-	private TouchState rightTouchState = TouchState.NOT_TOUCHING;
+	//private TouchState leftTouchState = TouchState.NOT_TOUCHING;
+	//private TouchState rightTouchState = TouchState.NOT_TOUCHING;
 
 	// Score
 	private float fScore = 0f;
@@ -204,7 +200,7 @@ public class ForwardPlusRenderer implements Renderer
 		this.screenWidth = (int)width;
 		this.screenHeight = (int)height;
 
-		fpsCounter = new FPSCounter();
+		//fpsCounter = new FPSCounter();
 	}
 
 	@Override
@@ -504,7 +500,7 @@ public class ForwardPlusRenderer implements Renderer
 			rendererState = RENDERER_STATE_PLAYING;
 			setPause(true);
 			mainMenu.setNotVisible();
-			hud.setAppearing();
+			//hud.setAppearing();
 			update(0f);
 			isSavedGame = false;
 		}
@@ -543,7 +539,7 @@ public class ForwardPlusRenderer implements Renderer
 		shadingPass();
 		postProcessPass();
 
-		currentFPS = fpsCounter.logFrameWithAverage();
+		/**currentFPS = fpsCounter.logFrameWithAverage();**/
 
 		/*if(fpsCounter.logFrame(updateTime, drawTime))
 		{
@@ -563,9 +559,6 @@ public class ForwardPlusRenderer implements Renderer
 		multiplyMM(shadowMatrix, 0, shadowBiasProjection, 0, lightInfo.view, 0);
 
 		setLookAtM(view, 0, eyePos.x, eyePos.y, eyePos.z, eyeLook.x, eyeLook.y, eyeLook.z, 0f, 1f, 0f);
-		//rotateM(view, 0, yRotation, 1f, 0f, 0f);
-		//rotateM(view, 0, xRotation, 0f, 1f, 0f);
-
 		multiplyMM(viewProjection, 0, projection, 0, view, 0);
 
 		// Update View-Projection matrix on objects
@@ -575,7 +568,7 @@ public class ForwardPlusRenderer implements Renderer
 
 		////////////
 
-		if(leftTouchState.isTouching())
+		/*if(leftTouchState.isTouching())
 		{
 			//displacement.setValues(1f, 0.0f, playerRock.getDisplacement());
 			////displacement.setValues(playerRock.getDisplacement());
@@ -592,7 +585,7 @@ public class ForwardPlusRenderer implements Renderer
 			//displacement.setValues(0.0f, 0.0f, playerRock.getDisplacement());
 			////displacement.setValues(playerRock.getDisplacement());
 			playerRock.releaseTouch();
-		}
+		}*/
 
 		// score multiplier
 		if(playerRock.state == PLAYER_ROCK_MOVING)
@@ -617,7 +610,7 @@ public class ForwardPlusRenderer implements Renderer
 		fScore += fScoreIncrement; //playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 
 		// Update hud
-		hud.update((int)fScore, (int)fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, currentFPS, deltaTime);
+		hud.update((int)fScore, (int)fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, deltaTime);
 		groundShield.update(deltaTime);
 
 		// Game state
@@ -792,8 +785,9 @@ public class ForwardPlusRenderer implements Renderer
 	{
 		if(isLoaded)
 		{
-			leftTouchState = TouchState.NOT_TOUCHING;
-			rightTouchState = TouchState.NOT_TOUCHING;
+			/*leftTouchState = TouchState.NOT_TOUCHING;
+			rightTouchState = TouchState.NOT_TOUCHING;*/
+			playerRock.releaseTouch();
 			mainMenu.releaseTouch();
 			pauseMenu.releaseTouch();
 			howToPlayMenu.releaseTouch();
@@ -815,14 +809,14 @@ public class ForwardPlusRenderer implements Renderer
 				{
 					if(newX < 0)
 					{
-						leftTouchState = TouchState.TOUCHING;
-						rightTouchState = TouchState.NOT_TOUCHING;
+						/*leftTouchState = TouchState.TOUCHING;
+						rightTouchState = TouchState.NOT_TOUCHING;*/
 						playerRock.turnLeft();
 					}
 					else
 					{
-						leftTouchState = TouchState.NOT_TOUCHING;
-						rightTouchState = TouchState.TOUCHING;
+						/*leftTouchState = TouchState.NOT_TOUCHING;
+						rightTouchState = TouchState.TOUCHING;*/
 						playerRock.turnRight();
 					}
 				}
@@ -1170,7 +1164,7 @@ public class ForwardPlusRenderer implements Renderer
 				outputStream.write(string.getBytes());
 
 				playerRock.saveState(outputStream);
-				//groundShield.saveState(outputStream);
+				groundShield.saveState(outputStream);
 				hud.saveState(outputStream);
 				ground.saveState(outputStream);
 
@@ -1216,7 +1210,8 @@ public class ForwardPlusRenderer implements Renderer
 
 			playerRock.loadState(bufferedReader);
 			currentState = playerRock.state;
-			//groundShield.loadState(bufferedReader);
+
+			groundShield.loadState(bufferedReader);
 			hud.loadState(bufferedReader);
 			ground.loadState(bufferedReader);
 		}

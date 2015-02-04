@@ -232,8 +232,8 @@ public class OptionsMenu
 
 	private void loadPreferences()
 	{
-		resolution = sharedPreferences.getInt("ScreenResolution", 0);
-		postProcessQuality = sharedPreferences.getInt("PostProcessQuality", 0);
+		resolution = sharedPreferences.getInt("ScreenResolution", 1);
+		postProcessQuality = sharedPreferences.getInt("PostProcessQuality", 1);
 		musicEnabled = sharedPreferences.getBoolean("Music", true);
 		effectsEnabled = sharedPreferences.getBoolean("Effects", true);
 		speedButtonEnabled = !sharedPreferences.getBoolean("SpeedEnabled", true);
