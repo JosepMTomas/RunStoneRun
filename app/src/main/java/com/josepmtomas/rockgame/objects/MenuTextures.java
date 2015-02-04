@@ -125,7 +125,7 @@ public class MenuTextures
 
 	// How to play menu
 
-	public final int howToPlayTitleTexture;
+	public final int[] howToPlayTitleTextures = new int[5];
 	public final int howToPlayObjectivesPanelTexture;
 	public final int howToPlayControlsPanelTexture;
 	public final int howToPlayScorePanelTexture;
@@ -269,7 +269,11 @@ public class MenuTextures
 
 		// How to play menu
 
-		howToPlayTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[0] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_1.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[1] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_2.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[2] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_3.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[3] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_4.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[4] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_5.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayObjectivesPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_objectives.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayScorePanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_score.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayLivesPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_lives.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);

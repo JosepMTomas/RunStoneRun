@@ -1891,6 +1891,7 @@ public class GroundPatch extends BoundarySampler
 		x = Float.parseFloat(tokens[2]);
 		y = Float.parseFloat(tokens[3]);
 		z = Float.parseFloat(tokens[4]);
+		// Set the current position & set the current culling points
 		this.setCurrentPosition(x,y,z);
 		numGrassPointsPerLOD[LOD_A] = Integer.parseInt(tokens[5]);
 		numGrassPointsPerLOD[LOD_B] = Integer.parseInt(tokens[6]);

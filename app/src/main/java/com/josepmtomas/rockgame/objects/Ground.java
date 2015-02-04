@@ -484,7 +484,7 @@ public class Ground
 		palmPlant.addShadowGeometry("models/palm_plant_lod_a.vbm");
 		palmPlant.addReflectionGeometry("models/palm_plant_reflection.vbm");
 
-		rockA = new Rock(context, "models/rock_a_lod_a_2.vbm", "models/rock_a_lod_b_2.vbm");
+		rockA = new Rock(context, "models/rock_a_lod_a.vbm", "models/rock_a_lod_b.vbm");
 		rockA.addShadowGeometry("models/rock_a_lod_b.vbm");
 		rockA.addReflectionGeometry("models/rock_a_reflection.vbm");
 

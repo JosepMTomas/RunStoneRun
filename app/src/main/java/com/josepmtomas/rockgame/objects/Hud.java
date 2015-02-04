@@ -527,10 +527,10 @@ public class Hud
 	{
 		resetPauseButtonTexture();
 		scoreCurrentState = UI_STATE_APPEARING;
-		multiplierProgressCurrentState = UI_STATE_NOT_VISIBLE;
-		multiplierNumbersCurrentState = UI_STATE_NOT_VISIBLE;
-		livesState = UI_STATE_NOT_VISIBLE;
-		pauseButtonState = UI_STATE_NOT_VISIBLE;
+		multiplierProgressCurrentState = UI_STATE_APPEARING;
+		multiplierNumbersCurrentState = UI_STATE_APPEARING;
+		livesState = UI_STATE_APPEARING;
+		pauseButtonState = UI_STATE_APPEARING;
 	}
 
 
@@ -565,9 +565,9 @@ public class Hud
 		multiplierProgressValue = multiplierPercent;
 
 		nextLifeCounter += scoreIncrement;
-		if(nextLifeCounter >= 50000f)
+		if(nextLifeCounter >= 100000f)
 		{
-			nextLifeCounter -= 50000f;
+			nextLifeCounter -= 100000f;
 
 			if(livesStates[currentLife] != LIFE_OK)
 			{
@@ -633,7 +633,6 @@ public class Hud
 				scoreTimer = 0f;
 				scoreOpacity = 1f;
 				scoreCurrentState = UI_STATE_VISIBLE;
-				multiplierProgressCurrentState = UI_STATE_APPEARING;
 			}
 
 			scoreCurrentScale = lerp(2f, 1f, scoreOpacity);
@@ -676,7 +675,6 @@ public class Hud
 				multiplierProgressTimer = 0f;
 				multiplierProgressOpacity = 1f;
 				multiplierProgressCurrentState = UI_STATE_VISIBLE;
-				multiplierNumbersCurrentState = UI_STATE_APPEARING;
 			}
 
 			multiplierProgressCurrentScale = lerp(2f, 1f, multiplierProgressOpacity);
@@ -711,7 +709,6 @@ public class Hud
 				multiplierNumbersTimer = 0f;
 				multiplierNumbersOpacity = 1f;
 				multiplierNumbersCurrentState = UI_STATE_VISIBLE;
-				livesState = UI_STATE_APPEARING;
 			}
 
 			multiplierNumbersCurrentScale = lerp(2f, 1f, multiplierNumbersOpacity);
@@ -754,7 +751,6 @@ public class Hud
 				livesTimer = 0f;
 				livesOpacity = 1f;
 				livesState = UI_STATE_VISIBLE;
-				pauseButtonState = UI_STATE_APPEARING;
 			}
 
 			livesCurrentScale = lerp(2f, 1f, livesOpacity);
@@ -1193,24 +1189,6 @@ public class Hud
 
 	public void saveState(FileOutputStream outputStream) throws IOException
 	{
-		/*StringBuilder builder = new StringBuilder();
-
-		builder.append("HUD ");
-		builder.append(currentLife);		builder.append(" ");
-		builder.append(livesCounterState);	builder.append(" ");
-		builder.append(livesStates[0]);		builder.append(" ");
-		builder.append(livesStates[1]);		builder.append(" ");
-		builder.append(livesStates[2]);		builder.append(" ");
-		builder.append(livesStates[3]);		builder.append(" ");
-		builder.append(livesStates[4]);		builder.append(" ");
-		builder.append(livesPercents[0]);	builder.append(" ");
-		builder.append(livesPercents[1]);	builder.append(" ");
-		builder.append(livesPercents[2]);	builder.append(" ");
-		builder.append(livesPercents[3]);	builder.append(" ");
-		builder.append(livesPercents[4]);	builder.append("\n");
-
-		outputStream.write(builder.toString().getBytes());*/
-
 		String stateString = "HUD "
 				+ currentLife + " "
 				+ livesCounterCurrentState + " "

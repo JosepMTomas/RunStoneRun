@@ -1216,6 +1216,7 @@ public class ForwardPlusRenderer implements Renderer
 			lightInfo.timeOfDay = Float.parseFloat(tokens[2]);
 
 			playerRock.loadState(bufferedReader);
+			currentState = playerRock.state;
 			//groundShield.loadState(bufferedReader);
 			hud.loadState(bufferedReader);
 			ground.loadState(bufferedReader);

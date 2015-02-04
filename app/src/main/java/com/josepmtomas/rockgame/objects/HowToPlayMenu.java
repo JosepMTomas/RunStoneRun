@@ -146,7 +146,7 @@ public class HowToPlayMenu
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
-		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.26f, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
+		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenWidth * 0.96f/*1.26f*/, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
 		panelLeftOffset = screenWidth * -0.1f;
 		panelRightOffset = screenWidth * 0.1f;
@@ -280,7 +280,7 @@ public class HowToPlayMenu
 		// Left button
 		leftButtonScale[0] = screenHeight * 0.15f;
 		leftButtonScale[1] = screenHeight * 0.15f;
-		leftButtonPosition[0] = screenWidth * -0.5f + (screenHeight * 0.125f);
+		leftButtonPosition[0] = screenWidth * -0.5f + (screenHeight * 0.15f);
 		leftButtonPosition[1] = 0f;
 		leftButtonCurrentScale[0] = leftButtonScale[0];
 		leftButtonCurrentScale[1] = leftButtonScale[1];
@@ -295,7 +295,7 @@ public class HowToPlayMenu
 		// Right button
 		rightButtonScale[0] = screenHeight * 0.15f;
 		rightButtonScale[1] = screenHeight * 0.15f;
-		rightButtonPosition[0] = screenWidth * 0.5f - (screenHeight * 0.125f);
+		rightButtonPosition[0] = screenWidth * 0.5f - (screenHeight * 0.15f);
 		rightButtonPosition[1] = 0f;
 		rightButtonCurrentScale[0] = rightButtonScale[0];
 		rightButtonCurrentScale[1] = rightButtonScale[1];
@@ -615,7 +615,7 @@ public class HowToPlayMenu
 			glBindVertexArray(uiPanelVaoHandle);
 
 			// Options title
-			uiPanelProgram.setUniforms(viewProjection, howToPlayTitleCurrentScale, howToPlayTitleCurrentPosition, textures.howToPlayTitleTexture, menuOpacity);
+			uiPanelProgram.setUniforms(viewProjection, howToPlayTitleCurrentScale, howToPlayTitleCurrentPosition, textures.howToPlayTitleTextures[currentPanel], menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Back button

@@ -537,7 +537,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Credits");
 		builder.setMessage("Do you want to visit Yamaoka Yasuhiro's website?");
-		builder.setCancelable(false);
+		builder.setCancelable(true);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 		{
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -574,7 +574,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Credits");
 		builder.setMessage("Do you want to visit Giles Hodges' website?");
-		builder.setCancelable(false);
+		builder.setCancelable(true);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 		{
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -611,7 +611,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Credits");
 		builder.setMessage("Do you want to visit Hughes Muller's website?");
-		builder.setCancelable(false);
+		builder.setCancelable(true);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 		{
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -648,7 +648,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Credits");
 		builder.setMessage("Do you want to visit Tomislav Spajic's website?");
-		builder.setCancelable(false);
+		builder.setCancelable(true);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 		{
 			public void onClick(DialogInterface arg0, int arg1) {

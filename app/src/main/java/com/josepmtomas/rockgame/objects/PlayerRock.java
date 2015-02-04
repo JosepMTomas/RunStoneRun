@@ -173,9 +173,9 @@ public class PlayerRock
 
 		glGenVertexArrays(1, vaoHandle, 0);
 
-		load("models/player_rock_2.vbm");
+		load("models/player_rock.vbm");
 		loadShadow("models/player_rock.vbm");
-		loadReflection("models/player_rock_reflection_2.vbm");
+		loadReflection("models/player_rock_reflection.vbm");
 
 		/*String[] diffuseTextureMips = {
 				"textures/player_rock/diffuse_mip_0.mp3",
@@ -743,7 +743,10 @@ public class PlayerRock
 		multiplyMM(modelViewProjection, 0, viewProjectionMatrix, 0, model, 0);
 
 		setIdentityM(proxyModel, 0);
-		translateM(proxyModel, 0, 0.0f, -currentPositionY, currentPositionZ);
+		if(groundPatchType == GROUND_PATCH_RIVER_MIDDLE)
+			translateM(proxyModel, 0, 0.0f, -currentPositionY - 10f, currentPositionZ);
+		else
+			translateM(proxyModel, 0, 0.0f, -currentPositionY, currentPositionZ);
 		rotateM(proxyModel, 0, rotationY, 0f, 1f, 0f);
 		rotateM(proxyModel, 0, -rotationX, 1f, 0f, 0f); // +180f
 	}
@@ -818,7 +821,6 @@ public class PlayerRock
 	public void setAppearing()
 	{
 		state = PLAYER_ROCK_APPEARING;
-	//	smokeParticleSystem.setEnabled(true);
 	}
 
 
@@ -925,6 +927,7 @@ public class PlayerRock
 				+ scoreMultiplier + " "
 				+ state + " "
 				+ currentState + " "
+				+ playerRockTimer + " "
 				+ initialForce + "\n";
 		outputStream.write(stateString.getBytes());
 
@@ -949,7 +952,8 @@ public class PlayerRock
 		scoreMultiplier = Float.parseFloat(tokens[5]);
 		state = Integer.parseInt(tokens[6]);
 		currentState = Integer.parseInt(tokens[7]);
-		initialForce = Float.parseFloat(tokens[8]);
+		playerRockTimer = Float.parseFloat(tokens[8]);
+		initialForce = Float.parseFloat(tokens[9]);
 
 		smokeParticleSystem.loadState(bufferedReader);
 		waterParticleSystem.loadState(bufferedReader);
