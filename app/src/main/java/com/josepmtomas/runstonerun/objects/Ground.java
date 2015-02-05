@@ -2267,6 +2267,18 @@ public class Ground
 		glBindVertexArray(birchTree.vaoHandles[LOD_B]);
 		glDrawElementsInstanced(GL_TRIANGLES, birchTree.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, birchTreeNumInstances[LOD_B]);
 
+		//
+
+		treeProgram.setCommonUniforms(viewProjection, bushPlantTexture);
+
+		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_A]);
+		glBindVertexArray(bushPlant.vaoHandles[LOD_A]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_A]);
+
+		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_B]);
+		glBindVertexArray(bushPlant.vaoHandles[LOD_B]);
+		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_B]);
+
 		////
 
 		treeProgram.setCommonUniforms(viewProjection, palmPlantTexture);
@@ -2323,15 +2335,7 @@ public class Ground
 
 		////
 
-		treeProgram.setCommonUniforms(viewProjection, bushPlantTexture);
 
-		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_A]);
-		glBindVertexArray(bushPlant.vaoHandles[LOD_A]);
-		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_A], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_A]);
-
-		treeProgram.setSpecificUniforms(bushPlantArrayUbo[LOD_B]);
-		glBindVertexArray(bushPlant.vaoHandles[LOD_B]);
-		glDrawElementsInstanced(GL_TRIANGLES, bushPlant.numElementsToDraw[LOD_B], GL_UNSIGNED_SHORT, 0, bushPlantNumInstances[LOD_B]);
 
 
 		////

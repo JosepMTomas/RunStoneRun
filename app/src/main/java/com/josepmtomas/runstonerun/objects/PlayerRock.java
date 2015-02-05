@@ -658,27 +658,27 @@ public class PlayerRock
 		{
 			case TURNING_LEFT:
 				//rotationY += 2.5f;
-				rotationY += 75f * deltaTime;
-				if(rotationY > 75f)
+				rotationY += 90f * deltaTime;
+				if(rotationY > 45f)
 				{
-					rotationY = 75f;
+					rotationY = 45f;
 					currentState = MOVING_LEFT;
 				}
 				break;
 
 			case TURNING_RIGHT:
 				//rotationY -= 2.5f;
-				rotationY -= 75f * deltaTime;
-				if(rotationY < -75f)
+				rotationY -= 90f * deltaTime;
+				if(rotationY < -45f)
 				{
-					rotationY = -75f;
+					rotationY = -45f;
 					currentState = MOVING_RIGHT;
 				}
 				break;
 
 			case RETURNING_CENTER:
-				if(rotationY > 0) rotationY -= 75f * deltaTime;
-				if(rotationY < 0) rotationY += 75f * deltaTime;
+				if(rotationY > 0) rotationY -= 150f * deltaTime;
+				if(rotationY < 0) rotationY += 150f * deltaTime;
 				if(rotationY == 0) currentState = MOVING_FORWARD;
 				break;
 
@@ -882,7 +882,7 @@ public class PlayerRock
 		if(state == PLAYER_ROCK_MOVING)
 		{
 			recoverTimer = 0f;
-			currentSpeed = currentSpeed * 0.5f;
+			currentSpeed = Math.max(currentSpeed * 0.5f, 500f);
 			initialForce = 3f;
 			state = PLAYER_ROCK_BOUNCING;
 			scoreMultiplier = 0f;

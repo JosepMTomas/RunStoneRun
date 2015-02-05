@@ -49,7 +49,7 @@ public class LightInfo
 
 	// Ambient colors
 	private float[] ambientColor1 = {0.2f, 0.25f, 0.3f};
-	private float[] ambientColor2 = {0.2f, 0.25f, 0.3f};
+	private float[] ambientColor2 = {0.2f, 0.2f, 0.2f}; //{0.2f, 0.25f, 0.3f};
 	private float[] ambientColor3 = {0.1f, 0.1f, 0.1f};
 
 	// Background colors
@@ -66,11 +66,8 @@ public class LightInfo
 	public LightInfo()
 	{
 		lightPos = new vec3(150f, 150f, 0f);
-		//lightColor = new vec4(1f);
-		lightColor = new vec4(0.988f, 0.89f, 0.655f, 1f);	//light orange
-		//lightColor = new vec4(0.655f, 0.945f, 0.988f, 1.0f); // light blue
-		//lightColor = new vec4(1.0f, 0.0f, 0.0f, 1.0f);
-		ambientColor = new vec4(/*0.125f, 0.168f, 0.2f, 1f);*/0.2f, 0.25f, 0.3f, 1f);
+		lightColor = new vec4(0.988f, 0.89f, 0.655f, 1f);
+		ambientColor = new vec4(0.2f, 0.25f, 0.3f, 1f);
 
 		initialize();
 	}
