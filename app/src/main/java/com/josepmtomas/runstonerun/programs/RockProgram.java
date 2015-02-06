@@ -53,6 +53,6 @@ public class RockProgram extends ShaderProgram
 		glUniformBlockBinding(program, rockPropertiesBlockLocation, 0);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, rockProperties);
 
-		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
+		glUniformBlockBinding(program, lightInfoBlockLocation, 3);
 	}
 }

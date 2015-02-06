@@ -97,7 +97,7 @@ public class LightInfo
 		glBufferData(GL_UNIFORM_BUFFER, lightInfoArrayBuffer.capacity() * BYTES_PER_FLOAT, lightInfoArrayBuffer, GL_STREAM_DRAW);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		glBindBufferBase(GL_UNIFORM_BUFFER, 5, ubo[0]);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 3, ubo[0]);
 
 		setIdentityM(view, 0);
 		setIdentityM(projection, 0);

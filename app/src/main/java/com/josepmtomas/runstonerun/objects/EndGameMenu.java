@@ -327,4 +327,12 @@ public class EndGameMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}
+
+
+	public void onBackPressed()
+	{
+		currentState = UI_STATE_DISAPPEARING;
+		renderer.changingFromEndGameMenuToPauseMenu();
+		nextMenu = PAUSE_MENU;
+	}
 }

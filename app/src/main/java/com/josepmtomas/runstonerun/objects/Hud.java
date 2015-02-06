@@ -1,6 +1,7 @@
 package com.josepmtomas.runstonerun.objects;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.ProgressBarProgram;
@@ -559,11 +560,13 @@ public class Hud
 
 
 	//public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
-	public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, float deltaTime)
+	public void update(float currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, float deltaTime)
 	{
 		multiplierProgressValue = multiplierPercent;
-
 		nextLifeCounter += scoreIncrement;
+
+//		Log.w("Score", currentScore + " | next life = " + nextLifeCounter);
+
 		if(nextLifeCounter >= 100000f)
 		{
 			nextLifeCounter -= 100000f;
@@ -588,7 +591,7 @@ public class Hud
 		int i;
 		boolean end = false;
 		int number;
-		int nextScore = currentScore;
+		int nextScore = (int)currentScore;
 
 		for(i=0; i<8; i++)
 		{

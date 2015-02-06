@@ -587,4 +587,11 @@ public class CreditsMenu
 		renderer.changingFromCreditsMenuToMainMenu();
 		currentState = UI_STATE_DISAPPEARING;
 	}
+
+
+	public void onBackPressed()
+	{
+		renderer.changingFromCreditsMenuToMainMenu();
+		currentState = UI_STATE_DISAPPEARING;
+	}
 }

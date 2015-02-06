@@ -1,7 +1,6 @@
 package com.josepmtomas.runstonerun.objects;
 
 import android.content.Context;
-import android.util.Log;
 
 import static com.josepmtomas.runstonerun.Constants.*;
 
@@ -35,7 +34,7 @@ import static android.opengl.Matrix.*;
 
 public class PlayerRock
 {
-	private static final String TAG = "PlayerRock";
+	//private static final String TAG = "PlayerRock";
 
 	// Player rock movement states
 	private static final int MOVING_FORWARD = 0;
@@ -257,8 +256,6 @@ public class PlayerRock
 		{
 			e.printStackTrace();
 		}
-
-		Log.e(TAG, "numVertices = " + vertices.length + ", numElements = " + elements.length);
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Buffers
@@ -677,8 +674,8 @@ public class PlayerRock
 				break;
 
 			case RETURNING_CENTER:
-				if(rotationY > 0) rotationY -= 150f * deltaTime;
-				if(rotationY < 0) rotationY += 150f * deltaTime;
+				if(rotationY > 0) rotationY = Math.max(rotationY - (150f * deltaTime), 0f);
+				if(rotationY < 0) rotationY = Math.min(rotationY + (150f * deltaTime), 0f);
 				if(rotationY == 0) currentState = MOVING_FORWARD;
 				break;
 
@@ -740,7 +737,7 @@ public class PlayerRock
 	}
 
 
-	public void drawDepthPrePass()
+	/*public void drawDepthPrePass()
 	{
 		multiplyMM(modelViewProjection, 0, viewProjection, 0, model, 0);
 
@@ -749,7 +746,7 @@ public class PlayerRock
 
 		//glBindVertexArray(positionsVaoHandle[0]);
 		//glDrawElements(GL_TRIANGLES, indices.length, GL_UNSIGNED_INT, 0);
-	}
+	}*/
 
 
 	public void drawShadowMap()
@@ -766,8 +763,8 @@ public class PlayerRock
 
 	public void drawReflectionProxy(float[] shadowMatrix, int shadowMapSampler)
 	{
-		if(viewProjection == null) Log.w("PlayerRock", "viewProjection is null");
-		if(proxyModel == null) Log.w("PlayerRock", "proxyModel is null");
+		//if(viewProjection == null) Log.w("PlayerRock", "viewProjection is null");
+		//if(proxyModel == null) Log.w("PlayerRock", "proxyModel is null");
 		multiplyMM(proxyModelViewProjection, 0, viewProjection, 0, proxyModel, 0);
 
 		playerRockProgram.useProgram();

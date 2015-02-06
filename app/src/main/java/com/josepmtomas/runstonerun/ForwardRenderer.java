@@ -45,6 +45,7 @@ import static android.opengl.Matrix.*;
  * Created by Josep on 05/09/2014.
  * @author Josep
  */
+
 public class ForwardRenderer implements Renderer
 {
 	private static final String TAG = "Renderer";
@@ -151,10 +152,6 @@ public class ForwardRenderer implements Renderer
 	// Multiplier
 	private float scoreMultiplierTime = 0;
 	private float scoreMultiplierPercent = 0;
-
-	// State
-	//private TouchState leftTouchState = TouchState.NOT_TOUCHING;
-	//private TouchState rightTouchState = TouchState.NOT_TOUCHING;
 
 	// Score
 	private float fScore = 0f;
@@ -535,19 +532,10 @@ public class ForwardRenderer implements Renderer
 		shadowMapPass();
 		reflectionPass();
 		glViewport(0, 0, renderWidth, renderHeight);
-		depthPrePass();
 		shadingPass();
 		postProcessPass();
 
 		/**currentFPS = fpsCounter.logFrameWithAverage();**/
-
-		/*if(fpsCounter.logFrame(updateTime, drawTime))
-		{
-			updateTime = 0;
-			drawTime = 0;
-		}*/
-
-		//Log.w(TAG, "isPlaying = " + isPlaying);
 	}
 
 
@@ -565,27 +553,6 @@ public class ForwardRenderer implements Renderer
 		playerRock.update(viewProjection, deltaTime, ground.getNearestGroundPatchType());
 		ground.update(viewProjection, shadowViewProjection, playerRock.getDisplacementVec3(), shadowMatrix, shadowMapTexID[0], deltaTime);
 		skyDome.update(viewProjection);
-
-		////////////
-
-		/*if(leftTouchState.isTouching())
-		{
-			//displacement.setValues(1f, 0.0f, playerRock.getDisplacement());
-			////displacement.setValues(playerRock.getDisplacement());
-			playerRock.turnLeft();
-		}
-		else if(rightTouchState.isTouching())
-		{
-			//displacement.setValues(-1f, 0.0f, playerRock.getDisplacement());
-			////displacement.setValues(playerRock.getDisplacement());
-			playerRock.turnRight();
-		}
-		else
-		{
-			//displacement.setValues(0.0f, 0.0f, playerRock.getDisplacement());
-			////displacement.setValues(playerRock.getDisplacement());
-			playerRock.releaseTouch();
-		}*/
 
 		// score multiplier
 		if(playerRock.state == PLAYER_ROCK_MOVING)
@@ -610,7 +577,7 @@ public class ForwardRenderer implements Renderer
 		fScore += fScoreIncrement; //playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 
 		// Update hud
-		hud.update((int)fScore, (int)fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, deltaTime);
+		hud.update(fScore, fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, deltaTime);
 		groundShield.update(deltaTime);
 
 		// Game state
@@ -621,11 +588,6 @@ public class ForwardRenderer implements Renderer
 			if(hud.hit(playerRock.lastObjectTypeHit))
 				groundShield.hit();
 		}
-
-		/*mainMenu.update(deltaTime);
-		optionsMenu.update(deltaTime);
-		creditsMenu.update(deltaTime);
-		pauseMenu.update(deltaTime);*/
 	}
 
 
@@ -636,7 +598,6 @@ public class ForwardRenderer implements Renderer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, REFLECTION_MAP_WIDTH, REFLECTION_MAP_HEIGHT);
 
-		//TODO: render reflection proxies
 		glDisable(GL_CULL_FACE);
 		playerRock.drawReflectionProxy(shadowMatrix, shadowMapTexID[0]);
 		ground.drawReflections();
@@ -645,12 +606,6 @@ public class ForwardRenderer implements Renderer
 
 
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	}
-
-
-	private void lightCullingPass()
-	{
-
 	}
 
 
@@ -670,7 +625,7 @@ public class ForwardRenderer implements Renderer
 	}
 
 
-	private void depthPrePass()
+	/*private void depthPrePass()
 	{
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[currentResolution]);
 		glDrawBuffers(GL_DRAW_FRAMEBUFFER, drawBuffers, 0);
@@ -686,59 +641,26 @@ public class ForwardRenderer implements Renderer
 		//int[] buffers = {GL_DEPTH_ATTACHMENT};
 		//glDrawBuffers(1, buffers, 0);
 
-		//TODO: draw depth pre-pass
 		playerRock.drawDepthPrePass();
 		//ground.drawDepthPrePass();
-	}
+	}*/
 
 
 	private void shadingPass()
 	{
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[currentResolution]);
+		glDrawBuffers(GL_DRAW_FRAMEBUFFER, drawBuffers, 0);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glViewport(0, 0, renderWidth, renderHeight);
 		// Real render
 		//glEnable(GL_DEPTH_TEST);	// We still want depth test
 		glDepthFunc(GL_LEQUAL);		// Only draw pixels if they are the closest ones
-		glColorMask(true, true, true, true);	// We want color this time
-		//glDepthMask(false);			// Writing the z component is useless now, we already have it
-		glDepthMask(false);
-
-		//int[] buffers = {GL_COLOR_ATTACHMENT0};
-		//glDrawBuffers(1, buffers, 0);
-
+		//glColorMask(true, true, true, true);	// We want color this time
 		//glDepthMask(false);
-		//glColorMask(true, true, true, true);
-		//glDepthFunc(GL_LEQUAL);
-
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		//TODO: draw scene normally
-		//playerRock.draw(shadowMatrix, shadowMapTexID[0]);
-		/////////ground.draw(reflectionTexID[0], framebufferDimensions);
-
-
-		/**glDepthMask(true);
-		testTree.drawTrunk();
-
-		//glDisable(GL_DEPTH_TEST);
-		//glDepthMask(false);
-		glDisable(GL_CULL_FACE);
-		//glEnable(GL_BLEND);
-		//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		testTree.drawLeaves();
-		glEnable(GL_CULL_FACE);
-		glDepthMask(true);**/
 
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
-		glDepthMask(true);
-
-		/**float treeScale = 100f;
-		vec2 point;
-		for(int i=0; i < sampler.points.size(); i++)
-		{
-			point = sampler.points.get(i);
-			testTree.drawAtPosition(point.x*treeScale, 0.0f, point.y*treeScale);
-		}**/
+		//glDepthMask(true);
 
 		ground.draw(reflectionTexID[0], framebufferDimensions);
 
@@ -1225,5 +1147,37 @@ public class ForwardRenderer implements Renderer
 		}
 	}
 
+
+	public void onBackPressed()
+	{
+		if(rendererState == RENDERER_STATE_OPTIONS_MENU)
+		{
+			optionsMenu.onBackPressed();
+		}
+		else if(rendererState == RENDERER_STATE_HOW_TO_PLAY_MENU)
+		{
+			howToPlayMenu.onBackPressed();
+		}
+		else if(rendererState == RENDERER_STATE_CREDITS_MENU)
+		{
+			creditsMenu.onBackPressed();
+		}
+		else if(rendererState == RENDERER_STATE_PLAYING)
+		{
+			setPause(true);
+		}
+		else if(rendererState == RENDERER_STATE_RESTART_MENU)
+		{
+			restartMenu.onBackPressed();
+		}
+		else if(rendererState == RENDERER_STATE_END_GAME_MENU)
+		{
+			endGameMenu.onBackPressed();
+		}
+		else
+		{
+			parent.exit();
+		}
+	}
 }
 

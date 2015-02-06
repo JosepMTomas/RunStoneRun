@@ -390,8 +390,34 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	public void onBackPressed()
 	{
-		forwardRenderer.setPause(true);
+		/*forwardRenderer.setPause(true);
 		//super.onBackPressed();
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("Exit game");
+		builder.setMessage("Are you sure you want to exit?");
+		builder.setCancelable(false);
+		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface arg0, int arg1) {
+				// do something when the OK button is clicked
+				GameActivity.super.onBackPressed();
+				forwardRenderer.onDestroy();
+			}
+		});
+		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+			public void onClick(DialogInterface arg0, int arg1) {
+				// do something when the Cancel button is clicked
+			}
+		});
+		//myAlertDialog.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();*/
+		forwardRenderer.onBackPressed();
+	}
+
+	public void exit()
+	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Exit game");
 		builder.setMessage("Are you sure you want to exit?");

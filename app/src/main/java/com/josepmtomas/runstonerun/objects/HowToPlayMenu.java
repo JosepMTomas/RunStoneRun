@@ -833,4 +833,11 @@ public class HowToPlayMenu
 		leftButtonCurrentTexture = textures.leftArrowButtonIdle;
 		rightButtonCurrentTexture = textures.rightArrowButtonIdle;
 	}
+
+
+	public void onBackPressed()
+	{
+		currentState = UI_STATE_DISAPPEARING;
+		renderer.changingFromHowToPlayMenuToMainMenu();
+	}
 }

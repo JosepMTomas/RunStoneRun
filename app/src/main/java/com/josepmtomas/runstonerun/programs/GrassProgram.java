@@ -47,13 +47,12 @@ public class GrassProgram extends ShaderProgram
 		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
 		glUniform1i(diffuseSamplerLocation, 1);
 
-		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
+		glUniformBlockBinding(program, lightInfoBlockLocation, 3);
 	}
 
 
 	public void setSpecificUniforms(int grassPropertiesUbo)
 	{
-
 		glUniformBlockBinding(program, grassPropertiesBlockLocation, 0);
 		glBindBufferBase(GL_UNIFORM_BUFFER, 0, grassPropertiesUbo);
 	}

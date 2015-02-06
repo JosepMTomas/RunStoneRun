@@ -1125,4 +1125,19 @@ public class OptionsMenu
 
 		savePreferences();
 	}
+
+
+	public void onBackPressed()
+	{
+		currentState = UI_STATE_DISAPPEARING;
+
+		if(previousMenu == MAIN_MENU)
+		{
+			renderer.changingFromOptionsMenuToMainMenu();
+		}
+		else
+		{
+			renderer.changingFromOptionsMenuToPauseMenu();
+		}
+	}
 }

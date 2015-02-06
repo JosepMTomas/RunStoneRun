@@ -63,7 +63,7 @@ public class GroundProgram  extends ShaderProgram
 
 		glUniform2fv(framebufferDimensionsLocation, 1, dimensions, 0);
 
-		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
+		glUniformBlockBinding(program, lightInfoBlockLocation, 3);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, shadowMapSampler);

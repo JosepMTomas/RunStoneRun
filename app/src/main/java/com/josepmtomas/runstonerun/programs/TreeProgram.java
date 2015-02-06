@@ -40,7 +40,7 @@ public class TreeProgram extends ShaderProgram
 		glBindTexture(GL_TEXTURE_2D, diffuseSampler);
 		glUniform1i(diffuseSamplerLocation, 0);
 
-		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
+		glUniformBlockBinding(program, lightInfoBlockLocation, 3);
 	}
 
 

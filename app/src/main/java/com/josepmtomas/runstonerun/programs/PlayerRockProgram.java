@@ -54,6 +54,6 @@ public class PlayerRockProgram extends ShaderProgram
 		glBindTexture(GL_TEXTURE_2D, normalSampler);
 		glUniform1i(normalSamplerLocation, 2);
 
-		glUniformBlockBinding(program, lightInfoBlockLocation, 5);
+		glUniformBlockBinding(program, lightInfoBlockLocation, 3);
 	}
 }
