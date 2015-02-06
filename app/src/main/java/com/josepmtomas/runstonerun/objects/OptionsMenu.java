@@ -2,7 +2,7 @@ package com.josepmtomas.runstonerun.objects;
 
 import android.content.SharedPreferences;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.GameActivity;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
@@ -21,7 +21,7 @@ public class OptionsMenu
 {
 	//
 	private GameActivity parent;
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures textures;
 
@@ -175,7 +175,7 @@ public class OptionsMenu
 	private SharedPreferences sharedPreferences;
 
 
-	public OptionsMenu(GameActivity parent, ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public OptionsMenu(GameActivity parent, ForwardRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.sharedPreferences = sharedPreferences;

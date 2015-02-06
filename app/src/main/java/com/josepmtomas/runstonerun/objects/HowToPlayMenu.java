@@ -1,6 +1,6 @@
 package com.josepmtomas.runstonerun.objects;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
 
@@ -17,7 +17,7 @@ import static android.opengl.Matrix.*;
 
 public class HowToPlayMenu
 {
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures textures;
 
@@ -138,7 +138,7 @@ public class HowToPlayMenu
 
 
 
-	public HowToPlayMenu(ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public HowToPlayMenu(ForwardRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.uiPanelProgram = panelProgram;
 		this.textures = textures;

@@ -2,7 +2,7 @@ package com.josepmtomas.runstonerun.objects;
 
 import android.util.FloatMath;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.ScorePanelProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
@@ -26,7 +26,7 @@ public class GameOverMenu
 {
 	private static final String TAG = "GameOverMenu";
 
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private ScorePanelProgram scorePanelProgram;
 	private MenuTextures textures;
@@ -101,7 +101,7 @@ public class GameOverMenu
 	private float scoreCurrentPositionY = 0f;
 
 
-	public GameOverMenu(ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public GameOverMenu(ForwardRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;

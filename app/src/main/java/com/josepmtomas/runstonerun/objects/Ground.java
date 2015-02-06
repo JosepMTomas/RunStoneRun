@@ -1184,8 +1184,8 @@ public class Ground
 				vertices[verticesOffset++] = y;
 				vertices[verticesOffset++] = minimumZ - ((float)z * groundPatchHeight);
 				// Texture coordinates
-				vertices[verticesOffset++] = (float)x / (float)numPolygonsX;
-				vertices[verticesOffset++] = (float)z / (float)numPolygonsZ;
+				vertices[verticesOffset++] = (float)x * 2f / (float)numPolygonsX;
+				vertices[verticesOffset++] = (float)z * 2f / (float)numPolygonsZ;
 				// Normals
 				vertices[verticesOffset++] = 0f;
 				vertices[verticesOffset++] = 1f;

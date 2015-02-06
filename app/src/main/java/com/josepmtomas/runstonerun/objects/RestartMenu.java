@@ -1,6 +1,6 @@
 package com.josepmtomas.runstonerun.objects;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
 
@@ -16,7 +16,7 @@ import static android.opengl.Matrix.*;
  */
 public class RestartMenu
 {
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures menuTextures;
 
@@ -72,7 +72,7 @@ public class RestartMenu
 	private float[] noButtonLimits = new float[4];
 
 
-	public RestartMenu(ForwardPlusRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public RestartMenu(ForwardRenderer renderer, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = panelProgram;

@@ -48,7 +48,7 @@ public class GameActivity extends Activity
 	private float previousX;
 	private float previousY;
 
-	private ForwardPlusRenderer forwardPlusRenderer;
+	private ForwardRenderer forwardRenderer;
 
 	private MediaPlayer backgroundMusicPlayer;
 	private Thread backgroundMusicThread;
@@ -110,7 +110,7 @@ public class GameActivity extends Activity
 		}
 
 
-		forwardPlusRenderer = new ForwardPlusRenderer(this, sharedPreferences, width, height);
+		forwardRenderer = new ForwardRenderer(this, sharedPreferences, width, height);
 
 		Log.v("ACTIVITY", "This device supports OpenGL ES up to " + configurationInfo.getGlEsVersion());
 
@@ -167,7 +167,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 		glSurfaceView.setEGLContextClientVersion(3);
 		//glSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR | GLSurfaceView.DEBUG_LOG_GL_CALLS);
-		glSurfaceView.setRenderer(forwardPlusRenderer);
+		glSurfaceView.setRenderer(forwardRenderer);
 		//glSurfaceView.setRenderer(deferredRenderer);
 		//glSurfaceView.setRenderer(gameRenderer);
 		glSurfaceView.setPreserveEGLContextOnPause(true);
@@ -199,7 +199,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 							forwardPlusRenderer.pressRight();
 						}*/
 
-						forwardPlusRenderer.touch(currentX,currentY);
+						forwardRenderer.touch(currentX,currentY);
 
 						//deferredRenderer.handleTouch();
 
@@ -210,7 +210,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 					{
 						//Log.d(TAG, "Released");
 						//gameRenderer.releaseTouch();
-						forwardPlusRenderer.releaseTouch();
+						forwardRenderer.releaseTouch();
 					}
 					return true;
 				} else {
@@ -364,7 +364,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	protected void onStop() {
 		super.onStop();
 
-		forwardPlusRenderer.setPause(true);
+		forwardRenderer.setPause(true);
 		Log.d(TAG, "<<<<< ON STOP >>>>>");
 	}
 
@@ -372,7 +372,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	protected void onDestroy()
 	{
-		forwardPlusRenderer.onDestroy();
+		forwardRenderer.onDestroy();
 
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -390,7 +390,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	public void onBackPressed()
 	{
-		forwardPlusRenderer.setPause(true);
+		forwardRenderer.setPause(true);
 		//super.onBackPressed();
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Exit game");
@@ -401,7 +401,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 			public void onClick(DialogInterface arg0, int arg1) {
 				// do something when the OK button is clicked
 				GameActivity.super.onBackPressed();
-				forwardPlusRenderer.onDestroy();
+				forwardRenderer.onDestroy();
 			}
 		});
 		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -45,7 +45,7 @@ import static android.opengl.Matrix.*;
  * Created by Josep on 05/09/2014.
  * @author Josep
  */
-public class ForwardPlusRenderer implements Renderer
+public class ForwardRenderer implements Renderer
 {
 	private static final String TAG = "Renderer";
 
@@ -182,7 +182,7 @@ public class ForwardPlusRenderer implements Renderer
 	private float resumeTimer = 0;
 
 
-	public ForwardPlusRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height)
+	public ForwardRenderer(GameActivity parent, SharedPreferences sharedPreferences, float width, float height)
 	{
 		this.parent = parent;
 		this.context = parent.getApplicationContext();

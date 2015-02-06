@@ -2,7 +2,7 @@ package com.josepmtomas.runstonerun.objects;
 
 import android.content.Context;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.ProgressBarProgram;
 import com.josepmtomas.runstonerun.programs.ScorePanelProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
@@ -30,7 +30,7 @@ import static com.josepmtomas.runstonerun.algebra.operations.*;
 
 public class Hud
 {
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private MenuTextures textures;
 
 	// Geometry attributes constants
@@ -206,7 +206,7 @@ public class Hud
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures menuTextures, float screenWidth, float screenHeight)
+	public Hud(Context context, ForwardRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures menuTextures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;

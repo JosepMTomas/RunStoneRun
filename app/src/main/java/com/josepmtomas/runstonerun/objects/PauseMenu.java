@@ -1,6 +1,6 @@
 package com.josepmtomas.runstonerun.objects;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
 
@@ -16,7 +16,7 @@ import static android.opengl.Matrix.*;
  */
 public class PauseMenu
 {
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
 	private MenuTextures textures;
 
@@ -84,7 +84,7 @@ public class PauseMenu
 	private float[] optionsButtonLimits = new float[4];
 
 
-	public PauseMenu(ForwardPlusRenderer renderer, UIPanelProgram uiPanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public PauseMenu(ForwardRenderer renderer, UIPanelProgram uiPanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;

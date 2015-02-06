@@ -3,7 +3,7 @@ package com.josepmtomas.runstonerun.objects;
 
 import android.content.SharedPreferences;
 
-import com.josepmtomas.runstonerun.ForwardPlusRenderer;
+import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.programs.ScorePanelProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
@@ -31,7 +31,7 @@ public class MainMenu
 	private static final int BYTE_STRIDE = 5 * BYTES_PER_FLOAT;
 
 	//
-	private ForwardPlusRenderer renderer;
+	private ForwardRenderer renderer;
 	private MenuTextures textures;
 	private SharedPreferences sharedPreferences;
 
@@ -149,7 +149,7 @@ public class MainMenu
 	private ScorePanelProgram scorePanelProgram;
 
 
-	public MainMenu(ForwardPlusRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public MainMenu(ForwardRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, ScorePanelProgram scorePanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.sharedPreferences = sharedPreferences;
