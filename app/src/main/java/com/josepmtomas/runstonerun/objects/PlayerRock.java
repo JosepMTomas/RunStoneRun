@@ -654,7 +654,6 @@ public class PlayerRock
 		switch(currentState)
 		{
 			case TURNING_LEFT:
-				//rotationY += 2.5f;
 				rotationY += 90f * deltaTime;
 				if(rotationY > 45f)
 				{
@@ -664,7 +663,6 @@ public class PlayerRock
 				break;
 
 			case TURNING_RIGHT:
-				//rotationY -= 2.5f;
 				rotationY -= 90f * deltaTime;
 				if(rotationY < -45f)
 				{

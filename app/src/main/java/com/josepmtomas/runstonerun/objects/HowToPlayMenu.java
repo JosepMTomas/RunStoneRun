@@ -116,6 +116,36 @@ public class HowToPlayMenu
 	private int pauseCurrentState;
 	private boolean pauseDirection;
 
+	// Speed panel
+	private float[] speedScale = new float[2];
+	private float[] speedPosition = new float[2];
+	private float[] speedCurrentScale = new float[2];
+	private float[] speedCurrentPosition = new float[2];
+	private float speedPanelTimer = 0f;
+	private float speedCurrentOpacity;
+	private int speedCurrentState;
+	private boolean speedDirection;
+
+	// Visibility panel
+	private float[] visibilityScale = new float[2];
+	private float[] visibilityPosition = new float[2];
+	private float[] visibilityCurrentScale = new float[2];
+	private float[] visibilityCurrentPosition = new float[2];
+	private float visibilityPanelTimer = 0f;
+	private float visibilityCurrentOpacity;
+	private int visibilityCurrentState;
+	private boolean visibilityDirection;
+
+	// Exit panel
+	private float[] exitScale = new float[2];
+	private float[] exitPosition = new float[2];
+	private float[] exitCurrentScale = new float[2];
+	private float[] exitCurrentPosition = new float[2];
+	private float exitPanelTimer = 0f;
+	private float exitCurrentOpacity;
+	private int exitCurrentState;
+	private boolean exitDirection;
+
 	// Left button
 	private float[] leftButtonScale = new float[2];
 	private float[] leftButtonPosition = new float[2];
@@ -242,8 +272,8 @@ public class HowToPlayMenu
 		controlsCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Score panel
-		scoreScale[0] = maxPanelSizeX * 0.98f;
-		scoreScale[1] = maxPanelSizeY * 0.64f;
+		scoreScale[0] = maxPanelSizeX * 0.995f;
+		scoreScale[1] = maxPanelSizeY * 0.648f;
 		scorePosition[0] = 0f;
 		scorePosition[1] = 0f;
 		scoreCurrentScale[0] = scoreScale[0];
@@ -254,8 +284,8 @@ public class HowToPlayMenu
 		scoreCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Lives panel
-		livesScale[0] = maxPanelSizeX * 0.95f;
-		livesScale[1] = maxPanelSizeY * 0.725f;
+		livesScale[0] = maxPanelSizeX * 0.97f;
+		livesScale[1] = maxPanelSizeY * 0.743f;
 		livesPosition[0] = 0f;
 		livesPosition[1] = 0f;
 		livesCurrentScale[0] = livesScale[0];
@@ -266,8 +296,8 @@ public class HowToPlayMenu
 		livesCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Pause panel
-		pauseScale[0] = maxPanelSizeX * 0.9f;
-		pauseScale[1] = maxPanelSizeY * 0.33f;
+		pauseScale[0] = maxPanelSizeX * 0.916f;
+		pauseScale[1] = maxPanelSizeY * 0.34f;
 		pausePosition[0] = 0f;
 		pausePosition[1] = 0f;
 		pauseCurrentScale[0] = pauseScale[0];
@@ -276,6 +306,42 @@ public class HowToPlayMenu
 		pauseCurrentPosition[1] = pausePosition[1];
 		pauseCurrentOpacity = 0.0f;
 		pauseCurrentState = UI_STATE_NOT_VISIBLE;
+
+		// Speed panel
+		speedScale[0] = maxPanelSizeX * 0.929f;
+		speedScale[1] = maxPanelSizeY * 0.409f;
+		speedPosition[0] = 0f;
+		speedPosition[1] = 0f;
+		speedCurrentScale[0] = speedScale[0];
+		speedCurrentScale[1] = speedScale[1];
+		speedCurrentPosition[0] = speedPosition[0];
+		speedCurrentPosition[1] = speedPosition[1];
+		speedCurrentOpacity = 0.0f;
+		speedCurrentState = UI_STATE_NOT_VISIBLE;
+
+		// Visibility panel
+		visibilityScale[0] = maxPanelSizeX * 0.952f;
+		visibilityScale[1] = maxPanelSizeY * 0.354f;
+		visibilityPosition[0] = 0f;
+		visibilityPosition[1] = 0f;
+		visibilityCurrentScale[0] = visibilityScale[0];
+		visibilityCurrentScale[1] = visibilityScale[1];
+		visibilityCurrentPosition[0] = visibilityPosition[0];
+		visibilityCurrentPosition[1] = visibilityPosition[1];
+		visibilityCurrentOpacity = 0.0f;
+		visibilityCurrentState = UI_STATE_NOT_VISIBLE;
+
+		// Exit panel
+		exitScale[0] = maxPanelSizeX * 0.929f;
+		exitScale[1] = maxPanelSizeY * 0.409f;
+		exitPosition[0] = 0f;
+		exitPosition[1] = 0f;
+		exitCurrentScale[0] = exitScale[0];
+		exitCurrentScale[1] = exitScale[1];
+		exitCurrentPosition[0] = exitPosition[0];
+		exitCurrentPosition[1] = exitPosition[1];
+		exitCurrentOpacity = 0.0f;
+		exitCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Left button
 		leftButtonScale[0] = screenHeight * 0.15f;
@@ -329,6 +395,12 @@ public class HowToPlayMenu
 		livesCurrentState = UI_STATE_NOT_VISIBLE;
 		pauseCurrentOpacity = 0f;
 		pauseCurrentState = UI_STATE_NOT_VISIBLE;
+		speedCurrentOpacity = 0f;
+		speedCurrentState = UI_STATE_NOT_VISIBLE;
+		visibilityCurrentOpacity = 0f;
+		visibilityCurrentState = UI_STATE_NOT_VISIBLE;
+		exitCurrentOpacity = 0f;
+		exitCurrentState = UI_STATE_NOT_VISIBLE;
 	}
 
 
@@ -366,6 +438,21 @@ public class HowToPlayMenu
 		pauseCurrentScale[1] = lerp(0, pauseScale[1], alpha);
 		pauseCurrentPosition[0] = lerp(0, pausePosition[0], alpha);
 		pauseCurrentPosition[1] = lerp(0, pausePosition[1], alpha);
+
+		speedCurrentScale[0] = lerp(0, speedScale[0], alpha);
+		speedCurrentScale[1] = lerp(0, speedScale[1], alpha);
+		speedCurrentPosition[0] = lerp(0, speedPosition[0], alpha);
+		speedCurrentPosition[1] = lerp(0, speedPosition[1], alpha);
+
+		visibilityCurrentScale[0] = lerp(0, visibilityScale[0], alpha);
+		visibilityCurrentScale[1] = lerp(0, visibilityScale[1], alpha);
+		visibilityCurrentPosition[0] = lerp(0, visibilityPosition[0], alpha);
+		visibilityCurrentPosition[1] = lerp(0, visibilityPosition[1], alpha);
+
+		exitCurrentScale[0] = lerp(0, exitScale[0], alpha);
+		exitCurrentScale[1] = lerp(0, exitScale[1], alpha);
+		exitCurrentPosition[0] = lerp(0, exitPosition[0], alpha);
+		exitCurrentPosition[1] = lerp(0, exitPosition[1], alpha);
 
 		backButtonCurrentScale[0] = lerp(0, backButtonScale[0], alpha);
 		backButtonCurrentScale[1] = lerp(0, backButtonScale[1], alpha);
@@ -598,6 +685,114 @@ public class HowToPlayMenu
 			else
 				pauseCurrentPosition[0] = lerp(panelLeftOffset, pausePosition[0], pauseCurrentOpacity);
 		}
+
+		// Speed panel
+		if(speedCurrentState == UI_STATE_APPEARING)
+		{
+			speedPanelTimer += deltaTime;
+			speedCurrentOpacity = speedPanelTimer / PANEL_TRANSITION_TIME;
+
+			if(speedPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				speedPanelTimer = 0f;
+				speedCurrentOpacity = 1f;
+				speedCurrentState = UI_STATE_VISIBLE;
+			}
+
+			if(speedDirection)
+				speedCurrentPosition[0] = lerp(panelLeftOffset, speedPosition[0], speedCurrentOpacity);
+			else
+				speedCurrentPosition[0] = lerp(panelRightOffset, speedPosition[0], speedCurrentOpacity);
+		}
+		else if(speedCurrentState == UI_STATE_DISAPPEARING)
+		{
+			speedPanelTimer += deltaTime;
+			speedCurrentOpacity = 1.0f - (speedPanelTimer / PANEL_TRANSITION_TIME);
+
+			if(speedPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				speedPanelTimer = 0f;
+				speedCurrentOpacity = 0f;
+				speedCurrentState = UI_STATE_NOT_VISIBLE;
+			}
+
+			if(speedDirection)
+				speedCurrentPosition[0] = lerp(panelRightOffset, speedPosition[0], speedCurrentOpacity);
+			else
+				speedCurrentPosition[0] = lerp(panelLeftOffset, speedPosition[0], speedCurrentOpacity);
+		}
+
+		// Visibility panel
+		if(visibilityCurrentState == UI_STATE_APPEARING)
+		{
+			visibilityPanelTimer += deltaTime;
+			visibilityCurrentOpacity = visibilityPanelTimer / PANEL_TRANSITION_TIME;
+
+			if(visibilityPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				visibilityPanelTimer = 0f;
+				visibilityCurrentOpacity = 1f;
+				visibilityCurrentState = UI_STATE_VISIBLE;
+			}
+
+			if(visibilityDirection)
+				visibilityCurrentPosition[0] = lerp(panelLeftOffset, visibilityPosition[0], visibilityCurrentOpacity);
+			else
+				visibilityCurrentPosition[0] = lerp(panelRightOffset, visibilityPosition[0], visibilityCurrentOpacity);
+		}
+		else if(visibilityCurrentState == UI_STATE_DISAPPEARING)
+		{
+			visibilityPanelTimer += deltaTime;
+			visibilityCurrentOpacity = 1.0f - (visibilityPanelTimer / PANEL_TRANSITION_TIME);
+
+			if(visibilityPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				visibilityPanelTimer = 0f;
+				visibilityCurrentOpacity = 0f;
+				visibilityCurrentState = UI_STATE_NOT_VISIBLE;
+			}
+
+			if(visibilityDirection)
+				visibilityCurrentPosition[0] = lerp(panelRightOffset, visibilityPosition[0], visibilityCurrentOpacity);
+			else
+				visibilityCurrentPosition[0] = lerp(panelLeftOffset, visibilityPosition[0], visibilityCurrentOpacity);
+		}
+
+		// Exit panel
+		if(exitCurrentState == UI_STATE_APPEARING)
+		{
+			exitPanelTimer += deltaTime;
+			exitCurrentOpacity = exitPanelTimer / PANEL_TRANSITION_TIME;
+
+			if(exitPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				exitPanelTimer = 0f;
+				exitCurrentOpacity = 1f;
+				exitCurrentState = UI_STATE_VISIBLE;
+			}
+
+			if(exitDirection)
+				exitCurrentPosition[0] = lerp(panelLeftOffset, exitPosition[0], exitCurrentOpacity);
+			else
+				exitCurrentPosition[0] = lerp(panelRightOffset, exitPosition[0], exitCurrentOpacity);
+		}
+		else if(exitCurrentState == UI_STATE_DISAPPEARING)
+		{
+			exitPanelTimer += deltaTime;
+			exitCurrentOpacity = 1.0f - (exitPanelTimer / PANEL_TRANSITION_TIME);
+
+			if(exitPanelTimer >= PANEL_TRANSITION_TIME)
+			{
+				exitPanelTimer = 0f;
+				exitCurrentOpacity = 0f;
+				exitCurrentState = UI_STATE_NOT_VISIBLE;
+			}
+
+			if(exitDirection)
+				exitCurrentPosition[0] = lerp(panelRightOffset, exitPosition[0], exitCurrentOpacity);
+			else
+				exitCurrentPosition[0] = lerp(panelLeftOffset, exitPosition[0], exitCurrentOpacity);
+		}
 	}
 
 
@@ -657,6 +852,27 @@ public class HowToPlayMenu
 				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 			}
 
+			// Speed panel
+			if(speedCurrentState != UI_STATE_NOT_VISIBLE)
+			{
+				uiPanelProgram.setUniforms(viewProjection, speedCurrentScale, speedCurrentPosition, textures.howToPlaySpeedPanelTexture, menuOpacity * speedCurrentOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
+
+			// Visibility
+			if(visibilityCurrentState != UI_STATE_NOT_VISIBLE)
+			{
+				uiPanelProgram.setUniforms(viewProjection, visibilityCurrentScale, visibilityCurrentPosition, textures.howToPlayVisibilityPanelTexture, menuOpacity * visibilityCurrentOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
+
+			// Exit panel
+			if(exitCurrentState != UI_STATE_NOT_VISIBLE)
+			{
+				uiPanelProgram.setUniforms(viewProjection, exitCurrentScale, exitCurrentPosition, textures.howToPlayExitPanelTexture, menuOpacity * exitCurrentOpacity);
+				glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+			}
+
 			// Left button
 			uiPanelProgram.setUniforms(viewProjection, leftButtonCurrentScale, leftButtonCurrentPosition, leftButtonCurrentTexture, menuOpacity * leftButtonCurrentOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
@@ -710,7 +926,7 @@ public class HowToPlayMenu
 			leftButtonEnabled = false;
 		}
 
-		if(fromPanel == 4)
+		if(fromPanel == 7)
 		{
 			rightButtonCurrentOpacity = 1f;
 			rightButtonEnabled = true;
@@ -734,6 +950,18 @@ public class HowToPlayMenu
 				livesCurrentState = UI_STATE_APPEARING;
 				livesDirection = true;
 				break;
+			case 4:
+				pauseCurrentState = UI_STATE_APPEARING;
+				pauseDirection = true;
+				break;
+			case 5:
+				speedCurrentState = UI_STATE_APPEARING;
+				speedDirection = true;
+				break;
+			case 6:
+				visibilityCurrentState = UI_STATE_APPEARING;
+				visibilityDirection = true;
+				break;
 		}
 
 		switch(fromPanel)
@@ -754,6 +982,18 @@ public class HowToPlayMenu
 				pauseCurrentState = UI_STATE_DISAPPEARING;
 				pauseDirection = true;
 				break;
+			case 5:
+				speedCurrentState = UI_STATE_DISAPPEARING;
+				speedDirection = true;
+				break;
+			case 6:
+				visibilityCurrentState = UI_STATE_DISAPPEARING;
+				visibilityDirection = true;
+				break;
+			case 7:
+				exitCurrentState = UI_STATE_DISAPPEARING;
+				exitDirection = true;
+				break;
 		}
 	}
 
@@ -766,7 +1006,7 @@ public class HowToPlayMenu
 		fromPanel = currentPanel;
 		currentPanel = toPanel;
 
-		if(toPanel == 4)
+		if(toPanel == 7)
 		{
 			rightButtonCurrentOpacity = 0.25f;
 			rightButtonEnabled = false;
@@ -796,6 +1036,18 @@ public class HowToPlayMenu
 				pauseCurrentState = UI_STATE_APPEARING;
 				pauseDirection = false;
 				break;
+			case 5:
+				speedCurrentState = UI_STATE_APPEARING;
+				speedDirection = false;
+				break;
+			case 6:
+				visibilityCurrentState = UI_STATE_APPEARING;
+				visibilityDirection = false;
+				break;
+			case 7:
+				exitCurrentState = UI_STATE_APPEARING;
+				exitDirection = false;
+				break;
 		}
 
 		switch(fromPanel)
@@ -815,6 +1067,18 @@ public class HowToPlayMenu
 			case 3:
 				livesCurrentState = UI_STATE_DISAPPEARING;
 				livesDirection = false;
+				break;
+			case 4:
+				pauseCurrentState = UI_STATE_DISAPPEARING;
+				pauseDirection = false;
+				break;
+			case 5:
+				speedCurrentState = UI_STATE_DISAPPEARING;
+				speedDirection = false;
+				break;
+			case 6:
+				visibilityCurrentState = UI_STATE_DISAPPEARING;
+				visibilityDirection = false;
 				break;
 		}
 	}

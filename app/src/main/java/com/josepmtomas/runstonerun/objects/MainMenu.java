@@ -105,6 +105,14 @@ public class MainMenu
 	private float[] creditsButtonCurrentPosition = new float[2];
 	private float[] creditsButtonLimits = new float[4];
 
+	// Exit button
+	private int exitButtonCurrentTexture;
+	private float[] exitButtonScale = new float[2];
+	private float[] exitButtonPosition = new float[2];
+	private float[] exitButtonCurrentScale = new float[2];
+	private float[] exitButtonCurrentPosition = new float[2];
+	private float[] exitButtonLimits = new float[4];
+
 	// Record button
 	private float[] recordButtonScale = new float[2];
 	private float[] recordButtonPosition = new float[2];
@@ -206,6 +214,7 @@ public class MainMenu
 		howToPlayButtonCurrentTexture = textures.howToPlayButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
+		exitButtonCurrentTexture = textures.exitButtonIdle;
 		speedButtonTexture = textures.speedNormalTexture;
 		visibilityButtonTexture = textures.visibilityEnabledTexture;
 	}
@@ -253,6 +262,7 @@ public class MainMenu
 		createHowToPlayButton(width, height);
 		createOptionsButton(width, height);
 		createCreditsButton(width, height);
+		createExitButton(screenWidth, screenHeight);
 		createSpeedButton(screenWidth, screenHeight);
 		createVisibilityButton(screenWidth, screenHeight);
 	}
@@ -358,6 +368,27 @@ public class MainMenu
 		creditsButtonLimits[1] = creditsButtonPosition[0] + (width * 0.5f);
 		creditsButtonLimits[2] = creditsButtonPosition[1] - (height * 0.5f);
 		creditsButtonLimits[3] = creditsButtonPosition[1] + (height * 0.5f);
+	}
+
+
+	@SuppressWarnings("unused")
+	private void createExitButton(float screenWidth, float screenHeight)
+	{
+		float size = screenHeight * 0.15f;
+		float sizeHalf = size * 0.5f;
+		float positionOffset = size * 0.75f;
+
+		exitButtonScale[0] = size;
+		exitButtonScale[1] = size;
+
+		exitButtonPosition[0] = screenWidth * 0.5f - positionOffset;
+		exitButtonPosition[1] = screenHeight * -0.5f + positionOffset;
+
+		// left-right-bottom-top
+		exitButtonLimits[0] = exitButtonPosition[0] - sizeHalf;
+		exitButtonLimits[1] = exitButtonPosition[0] + sizeHalf;
+		exitButtonLimits[2] = exitButtonPosition[1] - sizeHalf;
+		exitButtonLimits[3] = exitButtonPosition[1] + sizeHalf;
 	}
 
 
@@ -526,6 +557,11 @@ public class MainMenu
 		creditsButtonCurrentPosition[0] = creditsButtonPosition[0];
 		creditsButtonCurrentPosition[1] = creditsButtonPosition[1];
 
+		exitButtonCurrentScale[0] = exitButtonScale[0];
+		exitButtonCurrentScale[1] = exitButtonScale[1];
+		exitButtonCurrentPosition[0] = exitButtonPosition[0];
+		exitButtonCurrentPosition[1] = exitButtonPosition[1];
+
 		recordButtonCurrentScale[0] = recordButtonScale[0];
 		recordButtonCurrentScale[1] = recordButtonScale[1];
 		recordButtonCurrentPosition[0] = recordButtonPosition[0];
@@ -651,6 +687,13 @@ public class MainMenu
 			{
 				touchCreditsButton();
 			}
+			else if(x >= exitButtonLimits[0] &&
+					x <= exitButtonLimits[1] &&
+					y >= exitButtonLimits[2] &&
+					y <= exitButtonLimits[3])
+			{
+				touchExitButton();
+			}
 		}
 
 		if(	x >= speedButtonLimits[0] &&
@@ -676,6 +719,7 @@ public class MainMenu
 		howToPlayButtonCurrentTexture = textures.howToPlayButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
 		creditsButtonCurrentTexture = textures.creditsButtonIdleTexture;
+		exitButtonCurrentTexture = textures.exitButtonIdle;
 	}
 
 
@@ -708,6 +752,13 @@ public class MainMenu
 		creditsButtonCurrentTexture = textures.creditsButtonSelectedTexture;
 		renderer.changingToCreditsMenu();
 		currentState = UI_STATE_DISAPPEARING;
+	}
+
+
+	private void touchExitButton()
+	{
+		exitButtonCurrentTexture = textures.exitButtonSelected;
+		renderer.onBackPressed();
 	}
 
 
@@ -802,6 +853,11 @@ public class MainMenu
 		creditsButtonCurrentPosition[0] = lerp(0f, creditsButtonPosition[0], alpha);
 		creditsButtonCurrentPosition[1] = lerp(0f, creditsButtonPosition[1], alpha);
 
+		exitButtonCurrentScale[0] = lerp(exitButtonScale[0] * 2f, exitButtonScale[0], alpha);
+		exitButtonCurrentScale[1] = lerp(exitButtonScale[1] * 2f, exitButtonScale[1], alpha);
+		exitButtonCurrentPosition[0] = lerp(exitButtonPosition[0] * 2f, exitButtonPosition[0], alpha);
+		exitButtonCurrentPosition[1] = lerp(exitButtonPosition[1] * 2f, exitButtonPosition[1], alpha);
+
 		recordButtonCurrentScale[0] = lerp(0f, recordButtonScale[0], alpha);
 		recordButtonCurrentScale[1] = lerp(0f, recordButtonScale[1], alpha);
 		recordButtonCurrentPosition[0] = lerp(0f, recordButtonPosition[0], alpha);
@@ -885,6 +941,9 @@ public class MainMenu
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, creditsButtonCurrentScale, creditsButtonCurrentPosition, creditsButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			uiPanelProgram.setUniforms(viewProjection, exitButtonCurrentScale, exitButtonCurrentPosition, exitButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			uiPanelProgram.setUniforms(viewProjection, recordButtonCurrentScale, recordButtonCurrentPosition, textures.recordButtonTexture, menuOpacity);

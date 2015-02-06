@@ -1038,12 +1038,14 @@ public class ForwardRenderer implements Renderer
 		{
 			rendererState = RENDERER_STATE_RESUMING;
 			resumeTimer = 0f;
+			hud.setPauseButtonVisible();
 			hud.resume();
 		}
 		else
 		{
 			if(rendererState == RENDERER_STATE_PLAYING)
 			{
+				hud.setPauseButtonNotVisible();
 				pauseMenu.setAppearing();
 				isPaused = true;
 			}
@@ -1173,6 +1175,10 @@ public class ForwardRenderer implements Renderer
 		else if(rendererState == RENDERER_STATE_END_GAME_MENU)
 		{
 			endGameMenu.onBackPressed();
+		}
+		else if(rendererState == RENDERER_STATE_GAME_OVER_MENU)
+		{
+			gameOverMenu.touch();
 		}
 		else
 		{

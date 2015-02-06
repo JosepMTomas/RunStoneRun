@@ -16,6 +16,7 @@ import static com.josepmtomas.runstonerun.algebra.operations.*;
  * Created by Josep on 01/12/2014.
  * @author Josep
  */
+
 public class LightInfo
 {
 	private vec3 lightPos;

@@ -421,7 +421,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Exit game");
 		builder.setMessage("Are you sure you want to exit?");
-		builder.setCancelable(false);
+		builder.setCancelable(true);
 		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
 			public void onClick(DialogInterface arg0, int arg1) {

@@ -83,6 +83,14 @@ public class PauseMenu
 	private float[] optionsButtonCurrentPosition = new float[2];
 	private float[] optionsButtonLimits = new float[4];
 
+	// Exit button
+	private int exitButtonCurrentTexture;
+	private float[] exitButtonScale = new float[2];
+	private float[] exitButtonPosition = new float[2];
+	private float[] exitButtonCurrentScale = new float[2];
+	private float[] exitButtonCurrentPosition = new float[2];
+	private float[] exitButtonLimits = new float[4];
+
 
 	public PauseMenu(ForwardRenderer renderer, UIPanelProgram uiPanelProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
@@ -94,6 +102,7 @@ public class PauseMenu
 
 		createMatrices(screenWidth, screenHeight);
 		createElements(screenWidth, screenHeight);
+		createExitButton(screenWidth, screenHeight);
 
 		loadTextures();
 	}
@@ -210,6 +219,30 @@ public class PauseMenu
 	}
 
 
+	private void createExitButton(float screenWidth, float screenHeight)
+	{
+		float size = screenHeight * 0.15f;
+		float sizeHalf = size * 0.5f;
+		float positionOffset = size * 0.75f;
+
+		exitButtonScale[0] = size;
+		exitButtonScale[1] = size;
+		exitButtonCurrentScale[0] = exitButtonScale[0];
+		exitButtonCurrentScale[1] = exitButtonScale[1];
+
+		exitButtonPosition[0] = screenWidth * 0.5f - positionOffset;
+		exitButtonPosition[1] = screenHeight * -0.5f + positionOffset;
+		exitButtonCurrentPosition[0] = exitButtonPosition[0];
+		exitButtonCurrentPosition[1] = exitButtonPosition[1];
+
+		// left-right-bottom-top
+		exitButtonLimits[0] = exitButtonPosition[0] - sizeHalf;
+		exitButtonLimits[1] = exitButtonPosition[0] + sizeHalf;
+		exitButtonLimits[2] = exitButtonPosition[1] - sizeHalf;
+		exitButtonLimits[3] = exitButtonPosition[1] + sizeHalf;
+	}
+
+
 	private void loadTextures()
 	{
 
@@ -230,6 +263,7 @@ public class PauseMenu
 		restartButtonCurrentTexture = textures.restartButtonIdleTexture;
 		endGameButtonCurrentTexture = textures.endGameButtonIdleTexture;
 		optionsButtonCurrentTexture = textures.optionsButtonIdleTexture;
+		exitButtonCurrentTexture = textures.exitButtonIdle;
 	}
 
 
@@ -262,6 +296,13 @@ public class PauseMenu
 				y <= optionsButtonLimits[3])
 		{
 			touchedOptionsButton();
+		}
+		else if(x >= exitButtonLimits[0] &&
+				x <= exitButtonLimits[1] &&
+				y >= exitButtonLimits[2] &&
+				y <= exitButtonLimits[3])
+		{
+			touchedExitButton();
 		}
 	}
 
@@ -300,6 +341,13 @@ public class PauseMenu
 	}
 
 
+	private void touchedExitButton()
+	{
+		exitButtonCurrentTexture = textures.exitButtonSelected;
+		renderer.onBackPressed();
+	}
+
+
 	private void setCurrentElementsAttributes(float alpha)
 	{
 		background9PatchCurrentScale[0] = lerp(0f, 1f, alpha);
@@ -329,6 +377,11 @@ public class PauseMenu
 		optionsButtonCurrentScale[1] = lerp(0f, optionsButtonScale[1], alpha);
 		optionsButtonCurrentPosition[0] = lerp(0f, optionsButtonPosition[0], alpha);
 		optionsButtonCurrentPosition[1] = lerp(0f, optionsButtonPosition[1], alpha);
+
+		exitButtonCurrentScale[0] = lerp(exitButtonScale[0] * 2f, exitButtonScale[0], alpha);
+		exitButtonCurrentScale[1] = lerp(exitButtonScale[1] * 2f, exitButtonScale[1], alpha);
+		exitButtonCurrentPosition[0] = lerp(exitButtonPosition[0] * 2f, exitButtonPosition[0], alpha);
+		exitButtonCurrentPosition[1] = lerp(exitButtonPosition[1] * 2f, exitButtonPosition[1], alpha);
 	}
 
 
@@ -398,6 +451,10 @@ public class PauseMenu
 
 			// Options button
 			uiPanelProgram.setUniforms(viewProjection, optionsButtonCurrentScale, optionsButtonCurrentPosition, optionsButtonCurrentTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Exit button
+			uiPanelProgram.setUniforms(viewProjection, exitButtonCurrentScale, exitButtonCurrentPosition, exitButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 		}
 	}

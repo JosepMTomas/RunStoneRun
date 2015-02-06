@@ -125,12 +125,15 @@ public class MenuTextures
 
 	// How to play menu
 
-	public final int[] howToPlayTitleTextures = new int[5];
+	public final int[] howToPlayTitleTextures = new int[8];
 	public final int howToPlayObjectivesPanelTexture;
 	public final int howToPlayControlsPanelTexture;
 	public final int howToPlayScorePanelTexture;
 	public final int howToPlayLivesPanelTexture;
 	public final int howToPlayPausePanelTexture;
+	public final int howToPlaySpeedPanelTexture;
+	public final int howToPlayVisibilityPanelTexture;
+	public final int howToPlayExitPanelTexture;
 
 	// Arrow buttons
 
@@ -138,6 +141,10 @@ public class MenuTextures
 	public final int leftArrowButtonSelected;
 	public final int rightArrowButtonIdle;
 	public final int rightArrowButtonSelected;
+
+	// Exit button
+	public final int exitButtonIdle;
+	public final int exitButtonSelected;
 
 
 	public MenuTextures(Context context)
@@ -265,7 +272,7 @@ public class MenuTextures
 		gameOverTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/game_over_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		finalScoreTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/final_score_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		touchToContinueTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/touch_to_continue_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		newRecordTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/new_record_title.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		newRecordTitleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/new_record_title_new.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// How to play menu
 
@@ -274,10 +281,16 @@ public class MenuTextures
 		howToPlayTitleTextures[2] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_3.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayTitleTextures[3] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_4.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayTitleTextures[4] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_5.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[5] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_6.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[6] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_7.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayTitleTextures[7] = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_title_8.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayObjectivesPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_objectives.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayScorePanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_score.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayLivesPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_lives.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		howToPlayPausePanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_pause.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlaySpeedPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_speed.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayVisibilityPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_visibility.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		howToPlayExitPanelTexture = TextureHelper.loadETC2Texture(context, "textures/menus/how_to_play_exit.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		if(isTablet)
 		{
@@ -294,5 +307,10 @@ public class MenuTextures
 		leftArrowButtonSelected = TextureHelper.loadETC2Texture(context, "textures/menus/left_arrow_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		rightArrowButtonIdle = TextureHelper.loadETC2Texture(context, "textures/menus/right_arrow_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		rightArrowButtonSelected = TextureHelper.loadETC2Texture(context, "textures/menus/right_arrow_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+
+		// Exit button
+
+		exitButtonIdle = TextureHelper.loadETC2Texture(context, "textures/menus/exit_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
+		exitButtonSelected = TextureHelper.loadETC2Texture(context, "textures/menus/exit_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 	}
 }
