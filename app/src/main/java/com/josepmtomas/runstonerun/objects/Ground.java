@@ -8,7 +8,6 @@ import static com.josepmtomas.runstonerun.Constants.*;
 import com.josepmtomas.runstonerun.algebra.operations;
 import com.josepmtomas.runstonerun.algebra.vec3;
 import com.josepmtomas.runstonerun.programs.BrokenTreeProgram;
-import com.josepmtomas.runstonerun.programs.DepthPrePassProgram;
 import com.josepmtomas.runstonerun.programs.GrassLowProgram;
 import com.josepmtomas.runstonerun.programs.GrassProgram;
 import com.josepmtomas.runstonerun.programs.GroundProgram;
@@ -228,7 +227,6 @@ public class Ground
 	private float[] shadowMatrix;
 	private int shadowMapSampler;
 
-	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
 	ShadowPassInstancedProgram shadowPassInstancedProgram;
 
@@ -500,7 +498,6 @@ public class Ground
 		// Shader programs
 		////////////////////////////////////////////////////////////////////////////////////////////
 
-		depthPrePassProgram = new DepthPrePassProgram(context);
 		shadowPassProgram = new ShadowPassProgram(context);
 		shadowPassInstancedProgram = new ShadowPassInstancedProgram(context);
 		grassProgram = new GrassProgram(context);

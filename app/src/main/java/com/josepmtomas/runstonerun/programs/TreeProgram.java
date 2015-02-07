@@ -21,7 +21,7 @@ public class TreeProgram extends ShaderProgram
 
 	public TreeProgram(Context context)
 	{
-		super(context, "shaders/tree_new.vs", "shaders/tree_new.fs");
+		super(context, "shaders/tree.vs", "shaders/tree.fs");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
 

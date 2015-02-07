@@ -2,7 +2,6 @@
 precision lowp float;
 
 uniform sampler2D diffuseSampler;
-//uniform sampler2D normalSampler;
 
 //DEBUG
 uniform int lod;
@@ -10,14 +9,11 @@ uniform int lod;
 in vec4 vPosition;
 in vec2 vTexCoord;
 in vec3 vNormal;
-in vec3 vTangent;
-in vec3 vBinormal;
 
-//in float vShadows;
+in vec4 vBackColor;
 in float vDistance;
-in float vDiffuse;
-
-//flat in int index;
+in vec4 vDiffuse;
+in vec4 vAmbient;
 
 out vec4 fragColor;
 
@@ -25,12 +21,14 @@ void main()
 {	
 	lowp vec4 diffuseTex = texture(diffuseSampler, vTexCoord);
 	
-	if(diffuseTex.w < 0.6) discard;
+	if(diffuseTex.w < 0.5) discard;
 
-	fragColor = diffuseTex * vDiffuse + 0.1;
+	fragColor = (diffuseTex * vDiffuse);
 	//fragColor = fragColor * vShadows;
 	
-	////fragColor = mix(fragColor, vec4(1.0), vDistance);
+	fragColor += (diffuseTex * vAmbient);
+	
+	fragColor = mix(fragColor, vBackColor, vDistance);
 	
 	/*if(lod == 0)
 	{

@@ -23,7 +23,7 @@ public class GrassLowProgram extends ShaderProgram
 
 	public GrassLowProgram(Context context)
 	{
-		super(context, "shaders/grass_new_low.vs", "shaders/grass_new_low.fs");
+		super(context, "shaders/grass_low.vs", "shaders/grass_low.fs");
 
 		grassPropertiesBlockLocation = glGetUniformBlockIndex(program, "grassProperties");
 		lightInfoBlockLocation = glGetUniformBlockIndex(program, "lightInfo");

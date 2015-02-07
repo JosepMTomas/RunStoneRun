@@ -5,79 +5,65 @@ layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
 layout (location = 3) in vec4 aTangent;
 
-layout (std140) uniform modelMatrices
+layout (std140) uniform treeProperties
 {
-    mat4 model[512];
+    vec4 properties[512];
 };
 
-layout (std140) uniform modelIndices
+layout (std140) uniform lightInfo
 {
-	vec4 indices[512];
+	vec3 vLight;
+	vec4 lightColor;
+	vec4 ambientColor;
+	vec4 backColor;
+	float shadowFactor;
 };
-
-/*layout (std140) uniform worldModelMatrices
-{
-	mat4 worldModel[9];
-};*/
-
-layout (std140) uniform worldMVPMatrices
-{
-	mat4 worldMVP[9];
-};
-
-uniform sampler2DShadow shadowMapSampler;
-uniform mat4 shadowMatrix;
 
 uniform mat4 viewProjection;
 
 out vec4 vPosition;
 out vec2 vTexCoord;
 out vec3 vNormal;
-out vec3 vTangent;
-out vec3 vBinormal;
+out vec4 vAmbient;
 
-//flat out int index;
 
-//out float vShadows;
-out float vDiffuse;
+out vec4 vDiffuse;
+out lowp vec4 vBackColor;
 out lowp float vDistance;
 
-const vec3 vLight = normalize(vec3(1.0, 0.0, 0.0));
-
-int worldModelIndex = int(indices[gl_InstanceID].x);
-//mat4 treeModel = model[gl_InstanceID];
-//mat4 mvp = viewProjection * worldModel[worldModelIndex];
-//mat4 modelViewProjection = mvp * treeModel;
-//mat4 treeModel = worldModel[worldModelIndex] * model[gl_InstanceID];
-//mat4 modelViewProjection = viewProjection * treeModel;
-
-mat4 treeModel = model[gl_InstanceID];
-mat4 modelViewProjection = worldMVP[worldModelIndex] * treeModel;
+//const vec3 vLight = vec3(0.71, 0.71, 0.0);
 
 void main()
 {
-	//index = worldModelIndex;
+	vec4 property = properties[gl_InstanceID];
 
-	vPosition = aPosition;
+	// Final position
+	/*vPosition = aPosition;
+	vPosition *= vec4(property.z,property.z,property.z,1.0);
+	vPosition += vec4(property.x, 0.0, property.y, 0.0);*/
+	vec3 position = aPosition.xyz * property.z;
+	position += vec3(property.x, 0.0, property.y);
+	vPosition = vec4(position, 1.0);
+	
+	// Texture coordinates & normal attributes
 	vTexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
-	vNormal = normalize((treeModel * vec4(aNormal, 0.0)).xyz);
-	vTangent = aTangent.xyz;
-	vBinormal = normalize(cross(vNormal, vTangent)) * aTangent.w;
+	vNormal = aNormal;
 	
-	/*vec4 shadowCoords = shadowMatrix * (treeModel * aPosition);
-	vShadows = textureProj(shadowMapSampler, shadowCoords);
-	vShadows += 0.25;
-	vShadows = clamp(vShadows, 0.0, 1.0);*/
+	// Per-vertex diffuse component
+	float diffuse = dot(vNormal, vLight);
+	diffuse = clamp(diffuse, 0.0, 1.0);
+	vDiffuse = lightColor * diffuse;
 	
-	vDiffuse = dot(vNormal, vLight);
-	vDiffuse *= 2.0;
-	vDiffuse = clamp(vDiffuse, 0.0, 1.0);
-	//vDiffuse += 0.25;
+	vec4 finalPosition = viewProjection * vPosition;
 	
-	/*vDistance = abs(distance(treeModel * aPosition, vec4(0.0))) * 0.00125;
-	vDistance = clamp(vDistance, 0.0, 1.0);
-	vDistance = vDistance * vDistance;*/
-	vDistance = indices[gl_InstanceID].y;
+	vAmbient = ambientColor;
+	vAmbient += (dot(vec3(0.0, 1.0, 0.0), normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz)) * shadowFactor * 2.0);
+
+	// Vertex distance to origin
+	vDistance = property.w;
+	vDistance *= vDistance;
 	
-	gl_Position = modelViewProjection * aPosition;
+	vBackColor = backColor;
+	
+	gl_Position = finalPosition; //viewProjection * vPosition;
 }

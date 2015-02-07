@@ -17,7 +17,7 @@ public class TreeShadowPassProgram extends ShaderProgram
 
 	public TreeShadowPassProgram(Context context)
 	{
-		super(context, "shaders/tree_shadow_pass_new.vs", "shaders/tree_shadow_pass_new.fs");
+		super(context, "shaders/tree_shadow_pass.vs", "shaders/tree_shadow_pass.fs");
 
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");
 		treePropertiesBlockLocation = glGetUniformBlockIndex(program, "treeProperties");

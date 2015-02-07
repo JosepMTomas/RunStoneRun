@@ -22,7 +22,7 @@ public class GrassProgram extends ShaderProgram
 
 	public GrassProgram(Context context)
 	{
-		super(context, "shaders/grass_new.vs", "shaders/grass_new.fs");
+		super(context, "shaders/grass.vs", "shaders/grass.fs");
 
 		shadowMatrixLocation = glGetUniformLocation(program, "shadowMatrix");
 		viewProjectionLocation = glGetUniformLocation(program, "viewProjection");

@@ -2,34 +2,19 @@
 
 layout (location = 0) in vec4 aPosition;
 
-layout (std140) uniform modelMatrices
+layout (std140) uniform treeProperties
 {
-    mat4 model[512];
-};
-
-layout (std140) uniform modelIndices
-{
-	vec4 indices[512];
-};
-
-/*layout (std140) uniform worldModelMatrices
-{
-	mat4 worldModel[9];
-};*/
-
-layout (std140) uniform worldMVPMatrices
-{
-	mat4 worldMVP[9];
+	vec4 properties[512];
 };
 
 uniform mat4 viewProjection;
 
-int worldModelIndex = int(indices[gl_InstanceID].x);
-/*mat4 treeModel = worldModel[worldModelIndex] * model[gl_InstanceID];
-mat4 modelViewProjection = viewProjection * treeModel;*/
-mat4 modelViewProjection = worldMVP[worldModelIndex] * model[gl_InstanceID];
-
 void main()
 {
-	gl_Position = modelViewProjection * aPosition;
+	vec3 position = aPosition.xyz;
+	vec4 property = properties[gl_InstanceID];
+	position *= property.z;
+	position += vec3(property.x, 0.0, property.y);
+
+	gl_Position = viewProjection * vec4(position, 1.0);
 }

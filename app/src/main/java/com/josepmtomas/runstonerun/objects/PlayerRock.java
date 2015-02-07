@@ -7,7 +7,6 @@ import static com.josepmtomas.runstonerun.Constants.*;
 import com.josepmtomas.runstonerun.GameActivity;
 import com.josepmtomas.runstonerun.algebra.operations;
 import com.josepmtomas.runstonerun.algebra.vec3;
-import com.josepmtomas.runstonerun.programs.DepthPrePassProgram;
 import com.josepmtomas.runstonerun.programs.PlayerRockProgram;
 import com.josepmtomas.runstonerun.programs.ShadowPassProgram;
 import com.josepmtomas.runstonerun.util.TextureHelper;
@@ -91,7 +90,6 @@ public class PlayerRock
 	public int[] reflectionVaoHandle = new int[1];
 
 	// Shader program
-	DepthPrePassProgram depthPrePassProgram;
 	ShadowPassProgram shadowPassProgram;
 	PlayerRockProgram playerRockProgram;
 
@@ -163,7 +161,6 @@ public class PlayerRock
 
 		currentPositionY = 10f;
 
-		depthPrePassProgram = new DepthPrePassProgram(context);
 		shadowPassProgram = new ShadowPassProgram(context);
 		playerRockProgram = new PlayerRockProgram(context);
 
