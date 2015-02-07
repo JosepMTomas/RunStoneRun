@@ -19,6 +19,7 @@ import static android.opengl.GLES30.*;
  * Created by Josep on 30/09/2014.
  * @author Josep
  */
+
 public class GrassPatch
 {
 	private static final int POSITION_COMPONENTS = 3;

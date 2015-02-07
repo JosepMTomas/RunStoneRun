@@ -23,6 +23,7 @@ import static com.josepmtomas.runstonerun.Constants.*;
  * Created by Josep on 16/01/2015.
  * @author Josep
  */
+
 public class SmokeParticleSystem
 {
 	//private static final String TAG = "SmokePS";

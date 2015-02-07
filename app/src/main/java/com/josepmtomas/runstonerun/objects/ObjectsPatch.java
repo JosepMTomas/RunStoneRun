@@ -1338,6 +1338,5 @@ public class ObjectsPatch extends BoundarySampler
 		}
 
 		updateObjectsArrays();
-
 	}
 }

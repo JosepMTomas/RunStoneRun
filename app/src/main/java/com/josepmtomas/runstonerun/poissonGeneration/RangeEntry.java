@@ -5,6 +5,7 @@ package com.josepmtomas.runstonerun.poissonGeneration;
  * @author Josep
  */
 
+@SuppressWarnings("unused")
 public class RangeEntry
 {
 	public float min, max;

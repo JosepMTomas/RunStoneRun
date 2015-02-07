@@ -570,10 +570,13 @@ public class Hud
 	}
 
 
-	//public void update(int currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, int currentFps, float deltaTime)
 	public void update(float currentScore, float scoreIncrement, int currentMultiplier, float multiplierPercent, float deltaTime)
 	{
-		multiplierProgressValue = multiplierPercent;
+		if(currentMultiplier == 99)
+			multiplierProgressValue = 1f;
+		else
+			multiplierProgressValue = multiplierPercent;
+
 		nextLifeCounter += scoreIncrement;
 
 		if(nextLifeCounter >= 100000f)

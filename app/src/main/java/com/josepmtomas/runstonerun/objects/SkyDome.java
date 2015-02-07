@@ -22,6 +22,7 @@ import static android.opengl.Matrix.*;
  * Created by Josep on 05/10/2014.
  * @author Josep
  */
+
 public class SkyDome
 {
 	private static final int POSITION_COMPONENTS = 3;

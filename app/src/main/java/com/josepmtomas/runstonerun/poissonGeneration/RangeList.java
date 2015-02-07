@@ -6,7 +6,10 @@ import java.util.ArrayList;
 
 /**
  * Created by Josep on 22/09/2014.
+ * @author Josep
  */
+
+@SuppressWarnings("all")
 public class RangeList
 {
 	private static final float kSmallestRange = 0.000001f;

@@ -73,12 +73,10 @@ public class operations
 		return new vec3(a.x + b.x, a.y + b.y, a.z + b.z);
 	}
 
-
 	public static vec3 multiply(vec3 a, float x)
 	{
 		return new vec3(a.x * x, a.y * x, a.z * x);
 	}
-
 
 	public static void multiplyVF(float[] result, int resultOffset, float[] vector, int vectorOffset, float value)
 	{
@@ -88,7 +86,6 @@ public class operations
 		}
 	}
 
-
 	public static void multiplyVV(float[] result, int resultOffset, float[] a, int offsetA, float[] b, int offsetB)
 	{
 		for(int i=0; i < 4; i++)
@@ -97,18 +94,15 @@ public class operations
 		}
 	}
 
-
 	public static vec3 negate(vec3 vector)
 	{
 		return new vec3(-vector.x, -vector.y, -vector.z);
 	}
 
-
 	public static vec3 normalize(vec3 a)
 	{
 		return multiply(a, 1.0f / a.module());
 	}
-
 
 	public static vec3 reflectV(vec3 vector, vec3 normal)
 	{
@@ -122,7 +116,6 @@ public class operations
 
 		return result;
 	}
-
 
 	public static vec3 rotate(vec3 vector, vec3 axis, float degrees)
 	{
@@ -159,7 +152,6 @@ public class operations
 		return result;
 	}
 
-
 	public static vec3 subtract(vec3 a, vec3 b)
 	{
 		vec3 sum = new vec3(0.0f);
@@ -171,7 +163,6 @@ public class operations
 		return sum;
 	}
 
-
 	public static float distanceBetween(vec3 a, vec3 b)
 	{
 		return FloatMath.sqrt(
@@ -180,24 +171,20 @@ public class operations
 				FloatMath.pow(a.z - b.z, 2f));
 	}
 
-
 	public static float distanceToOrigin(vec3 a)
 	{
 		return FloatMath.sqrt(a.x*a.x + a.y*a.y + a.z*a.z);
 	}
-
 
 	public static float distanceToOrigin(float x, float y, float z)
 	{
 		return FloatMath.sqrt(x*x + y*y + z*z);
 	}
 
-
 	public static float distanceToOrigin(float x, float y)
 	{
 		return FloatMath.sqrt(x*x + y*y);
 	}
-
 
 	public static float dotProduct(vec3 a, vec3 b)
 	{
@@ -216,5 +203,4 @@ public class operations
 						a.z*b.x - a.x*b.z,
 						a.x*b.y - a.y*b.x);
 	}
-
 }

@@ -815,7 +815,7 @@ public class PlayerRock
 	{
 		if(isFast)
 		{
-			notVisibleSpeed = 2500f;
+			notVisibleSpeed = MAX_PLAYER_SPEED;
 		}
 		else
 		{
@@ -838,6 +838,11 @@ public class PlayerRock
 	public void releaseTouch()
 	{
 		currentState = RETURNING_CENTER;
+	}
+
+	public void incrementMultiplier()
+	{
+		scoreMultiplier = Math.min(9.9f, scoreMultiplier + 0.1f);
 	}
 
 	public void newGame(int groundPatchType)

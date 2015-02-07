@@ -75,8 +75,6 @@ public class ForwardRenderer implements Renderer
 	private int SHADOW_MAP_WIDTH = 512;
 	private int SHADOW_MAP_HEIGHT = 512;
 
-	//private float FRAMEBUFFER_ASPECT_RATIO = 0.5625f;
-
 	private boolean isPaused = false;
 	private boolean isPlaying = false;
 	private boolean isSavedGame = false;
@@ -91,15 +89,8 @@ public class ForwardRenderer implements Renderer
 	private float screenHeight;	// Screen height
 
 	// Camera
-	//private PerspectiveCamera perspectiveCamera;
-	//private vec3 eyePos = new vec3(0.0f, 25.0f, 50.0f);
 	private vec3 eyePos = new vec3(0.0f, 25.0f, 50.0f);
 	private vec3 eyeLook = new vec3(0.0f, 20.0f, 0.0f);
-	/*private float near = 0.1f;
-	private float far = 1200.0f;	// 1200.0
-	private float fov = 60;
-	private float xRotation = 0.0f;
-	private float yRotation = 0.0f;*/
 
 	// Main render matrices
 	private float[] view = new float[16];
@@ -198,8 +189,6 @@ public class ForwardRenderer implements Renderer
 
 		this.screenWidth = (int)width;
 		this.screenHeight = (int)height;
-
-		//fpsCounter = new FPSCounter();
 	}
 
 	@Override
@@ -215,8 +204,8 @@ public class ForwardRenderer implements Renderer
 
 		glEnable(GL_CULL_FACE);
 
-		lightInfo = new LightInfo();
 		// Create and initialize objects
+		lightInfo = new LightInfo();
 		playerRock = new PlayerRock(parent, lightInfo);
 		groundShield = new GroundShield(context);
 		ground = new Ground(context,
@@ -245,17 +234,9 @@ public class ForwardRenderer implements Renderer
 		gameOverMenu = new GameOverMenu(this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		howToPlayMenu = new HowToPlayMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 
-		/*int[] result = new int[3];
-		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
-		glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, result, 1);
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, result, 2);
-
-		Log.i(TAG, "Max uniform blocks in vertex shader = " + result[0] + " binding locations");
-		Log.i(TAG, "Max uniform block size = " + result[1] + " Bytes / " + (result[1]/Constants.BYTES_PER_FLOAT) + " Floats / " + ((result[1]/Constants.BYTES_PER_FLOAT)/16) + " Matrices(mat4)");
-		Log.i(TAG, "Max texture image units = " + result[2]);*/
-
-
-		/**************************************** REFLECTION ***************************************/
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Reflection
+		////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Reflection framebuffer & renderbuffer
 		glGenFramebuffers(1, reflectionFboID, 0);
@@ -292,7 +273,9 @@ public class ForwardRenderer implements Renderer
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 
-		/********************************** SHADOW MAP FRAMEBUFFER ********************************/
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Shadow map framebuffer
+		////////////////////////////////////////////////////////////////////////////////////////////
 
 		// Create an OpenGL texture object
 		glGenTextures(1, shadowMapTexID, 0);
@@ -328,7 +311,9 @@ public class ForwardRenderer implements Renderer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
-		/************************************ SHADOW MAP MATRICES *********************************/
+		////////////////////////////////////////////////////////////////////////////////////////////
+		// Shadow map matrices
+		////////////////////////////////////////////////////////////////////////////////////////////
 
 		setLookAtM(shadowView, 0, 150f, 150f, -200f, 0f, 0f, -200f, 0f, 1f, 0f);
 		orthoM(shadowProjection, 0, -500f, 500f, -500f, 500f, 0.5f, 1000f);
@@ -454,19 +439,13 @@ public class ForwardRenderer implements Renderer
 		}
 
 		isLoaded = true;
-
-		/*boolean savedGameExists = sharedPreferences.getBoolean("SavedGame", false);
-		Log.w(TAG, "SavedGame found = " + savedGameExists);*/
 		isPlaying = sharedPreferences.getBoolean("SavedGame", false);
+
 		if(isPlaying)
 		{
 			Log.w(TAG, "There was a saved game ... loading state");
 			loadState();
 			Log.w(TAG, "Finished loading state ... pausing game");
-			/*rendererState = RENDERER_STATE_PLAYING;
-			setPause(true);
-			mainMenu.setNotVisible();
-			update(0f);*/
 			isSavedGame = true;
 		}
 		else
@@ -481,7 +460,6 @@ public class ForwardRenderer implements Renderer
 	@Override
 	public void onSurfaceChanged(GL10 unused, int width, int height)
 	{
-		//loadingDialog.dismiss();
 		parent.dismissDialog();
 	}
 
@@ -492,9 +470,6 @@ public class ForwardRenderer implements Renderer
 
 		long endTime = System.nanoTime() - startTime;
 		float deltaTime = ((float)(endTime/1000))*0.000001f;
-		//Log.w("CurrentFrame", " "+ endTime/1000000 + " ms");
-
-		//Log.w("DeltaTime", " = " + deltaTime + " s");
 
 		if(isSavedGame)
 		{
@@ -507,6 +482,7 @@ public class ForwardRenderer implements Renderer
 		}
 
 		startTime = System.nanoTime();
+
 		// Clear everything
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -535,7 +511,6 @@ public class ForwardRenderer implements Renderer
 
 		shadowMapPass();
 		reflectionPass();
-		glViewport(0, 0, renderWidth, renderHeight);
 		shadingPass();
 		postProcessPass();
 
@@ -566,7 +541,7 @@ public class ForwardRenderer implements Renderer
 			if (scoreMultiplierTime > 2f)
 			{
 				scoreMultiplierTime -= 2f;
-				playerRock.scoreMultiplier += 0.1f;
+				playerRock.incrementMultiplier();
 			}
 		}
 		else if(playerRock.state == PLAYER_ROCK_RECOVERING || playerRock.state == PLAYER_ROCK_BOUNCING)
@@ -629,42 +604,16 @@ public class ForwardRenderer implements Renderer
 	}
 
 
-	/*private void depthPrePass()
-	{
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[currentResolution]);
-		glDrawBuffers(GL_DRAW_FRAMEBUFFER, drawBuffers, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, renderWidth, renderHeight);
-
-		// Z pre-pass
-		glEnable(GL_DEPTH_TEST);	// We want depth test
-		glDepthFunc(GL_LESS);		// We want the nearest pixels
-		glColorMask(false, false, false, false);	//Disable color, it's useless, we only want depth
-		glDepthMask(true);			// Ask z writing
-
-		//int[] buffers = {GL_DEPTH_ATTACHMENT};
-		//glDrawBuffers(1, buffers, 0);
-
-		playerRock.drawDepthPrePass();
-		//ground.drawDepthPrePass();
-	}*/
-
-
 	private void shadingPass()
 	{
+		glViewport(0, 0, renderWidth, renderHeight);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fboID[currentResolution]);
 		glDrawBuffers(GL_DRAW_FRAMEBUFFER, drawBuffers, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, renderWidth, renderHeight);
-		// Real render
-		//glEnable(GL_DEPTH_TEST);	// We still want depth test
-		glDepthFunc(GL_LEQUAL);		// Only draw pixels if they are the closest ones
-		//glColorMask(true, true, true, true);	// We want color this time
-		//glDepthMask(false);
 
+		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
-		//glDepthMask(true);
 
 		ground.draw(reflectionTexID[0], framebufferDimensions);
 
@@ -691,7 +640,6 @@ public class ForwardRenderer implements Renderer
 		glViewport(0, 0, (int)screenWidth, (int)screenHeight);
 
 		screen.draw(fboTexIDs[currentResolution], playerRock.currentSpeed * MAX_PLAYER_SPEED_FACTOR);
-		//screen.draw(reflectionTexID[0]);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -711,8 +659,6 @@ public class ForwardRenderer implements Renderer
 	{
 		if(isLoaded)
 		{
-			/*leftTouchState = TouchState.NOT_TOUCHING;
-			rightTouchState = TouchState.NOT_TOUCHING;*/
 			playerRock.releaseTouch();
 			mainMenu.releaseTouch();
 			pauseMenu.releaseTouch();
@@ -735,14 +681,10 @@ public class ForwardRenderer implements Renderer
 				{
 					if(newX < 0)
 					{
-						/*leftTouchState = TouchState.TOUCHING;
-						rightTouchState = TouchState.NOT_TOUCHING;*/
 						playerRock.turnLeft();
 					}
 					else
 					{
-						/*leftTouchState = TouchState.NOT_TOUCHING;
-						rightTouchState = TouchState.TOUCHING;*/
 						playerRock.turnRight();
 					}
 				}
@@ -1079,7 +1021,6 @@ public class ForwardRenderer implements Renderer
 		setDefaultMenuPreferences();
 
 		// State (save the state of the current game)
-
 		String string = "SAVED_GAME "
 				+ fScore + " " +
 				+ lightInfo.timeOfDay + "\n";
@@ -1190,4 +1131,3 @@ public class ForwardRenderer implements Renderer
 		}
 	}
 }
-

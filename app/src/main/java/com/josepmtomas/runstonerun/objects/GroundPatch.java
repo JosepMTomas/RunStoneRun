@@ -1564,12 +1564,6 @@ public class GroundPatch extends BoundarySampler
 	}
 
 
-	public int getDepthPrePassVaoHandle()
-	{
-		return depthPrePassVaoHandle[0];
-	}
-
-
 	public void setCurrentPosition(float x, float y, float z)
 	{
 		this.currentPosition.setValues(x,y,z);
@@ -1950,4 +1944,3 @@ public class GroundPatch extends BoundarySampler
 		filterGrassPoints();
 	}
 }
-

@@ -16,8 +16,6 @@ import static com.josepmtomas.runstonerun.Constants.*;
 
 public class UIHelper
 {
-
-
 	public static int make9PatchPanel(float width, float height, float cornerSize, int baseType)
 	{
 		int[] vaoHandle = new int[1];

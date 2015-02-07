@@ -35,23 +35,14 @@ public class GameActivity extends Activity
 {
 	private static final String TAG = "GameActivity";
 
-	private GLSurfaceView glSurfaceView;
-
 	private boolean soundEffectsEnabled = true;
-
-	private float height;
-	private float width;
 
 	private float currentX;
 	private float currentY;
 
-	private float previousX;
-	private float previousY;
-
 	private ForwardRenderer forwardRenderer;
 
 	private MediaPlayer backgroundMusicPlayer;
-	private Thread backgroundMusicThread;
 
 	private MediaPlayer impactRockOnTreeSoundEffect;
 	private MediaPlayer impactRockOnRockSoundEffect;
@@ -63,6 +54,7 @@ public class GameActivity extends Activity
 	Dialog loadingDialog;
 
     @Override
+	@SuppressWarnings("all")
     protected void onCreate(Bundle savedInstanceState)
 	{
         super.onCreate(savedInstanceState);
@@ -71,14 +63,14 @@ public class GameActivity extends Activity
 
 		loadShadedPreferences();
 
-		glSurfaceView = new GLSurfaceView(this);
+		GLSurfaceView glSurfaceView = new GLSurfaceView(this);
 		//glSurfaceView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
 		// Get the width and height of the window
 		WindowManager windowManager = getWindowManager();
 		Display display = windowManager.getDefaultDisplay();
-		this.width = (float)display.getWidth();
-		this.height = (float)display.getHeight();
+		float width = (float)display.getWidth();
+		float height = (float)display.getHeight();
 
 		Point realSizePoint = new Point();
 		display.getRealSize(realSizePoint);
@@ -87,10 +79,6 @@ public class GameActivity extends Activity
 		final ActivityManager activityManager = (ActivityManager)getSystemService(Context.ACTIVITY_SERVICE);
 		final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
 		//final boolean supportsES3 = configurationInfo.reqGlEsVersion >= 0x30000;
-		//final GameRenderer gameRenderer = new GameRenderer(this, width, height);
-		//deferredRenderer = new DeferredRenderer(this, width, height);
-
-		//
 
 		boolean isTablet = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
 		Log.w(TAG, "isTablet = " + isTablet);
@@ -147,7 +135,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		impactRockOnTreeSoundEffect = MediaPlayer.create(this, R.raw.impact_rock_on_tree);
 		treeFallingSoundEffect = MediaPlayer.create(this, R.raw.tree_falling);
 
-		backgroundMusicThread = new Thread(new Runnable() {
+		Thread backgroundMusicThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				//AudioManager am = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
@@ -176,40 +164,14 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 			@Override
 			public boolean onTouch(View view, MotionEvent event) {
 				if (event != null) {
-					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN)
+					{
 						currentX = event.getX();
 						currentY = event.getY();
-
-						//Log.d(TAG, "X = " + currentX);
-
-						/*if (currentX < width / 3.0f)
-						{
-							//gameRenderer.pressLeft();
-							forwardPlusRenderer.pressLeft();
-						}
-						else if(currentX < (width / 3.0f)*2f )
-						{
-							//forwardPlusRenderer.scroll();
-							forwardPlusRenderer.pressCenter(currentX, currentY);
-							forwardPlusRenderer.setPause(false);
-						}
-						else
-						{
-							//gameRenderer.pressRight();
-							forwardPlusRenderer.pressRight();
-						}*/
-
 						forwardRenderer.touch(currentX,currentY);
-
-						//deferredRenderer.handleTouch();
-
-						previousX = event.getX();
-						previousY = event.getY();
 					}
 					else if (event.getAction() == MotionEvent.ACTION_UP)
 					{
-						//Log.d(TAG, "Released");
-						//gameRenderer.releaseTouch();
 						forwardRenderer.releaseTouch();
 					}
 					return true;
@@ -231,46 +193,8 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        /**int id = item.getItemId();
-        if (id == R.id.action_normals)
-		{
-			deferredRenderer.setDebugVisualization(0);
-            return true;
-        }
-		if(id == R.id.action_diffuse)
-		{
-			deferredRenderer.setDebugVisualization(1);
-			return true;
-		}
-		if(id == R.id.action_specular)
-		{
-			deferredRenderer.setDebugVisualization(2);
-			return true;
-		}
-		if(id == R.id.action_shadows)
-		{
-			deferredRenderer.setDebugVisualization(3);
-			return true;
-		}
-		if(id == R.id.action_depth)
-		{
-			deferredRenderer.setDebugVisualization(4);
-			return true;
-		}
-		if(id == R.id.action_final)
-		{
-			deferredRenderer.setDebugVisualization(5);
-			return true;
-		}
-		if(id == R.id.action_switch_post_process)
-		{
-			deferredRenderer.switchPostProcess();
-			return true;
-		}**/
+    public boolean onOptionsItemSelected(MenuItem item)
+	{
         return super.onOptionsItemSelected(item);
     }
 
@@ -354,9 +278,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 
 		Log.d(TAG, "<<<<< ON PAUSE >>>>>");
 		backgroundMusicPlayer.pause();
-		//forwardPlusRenderer.setPause(true);
-
-		//forwardPlusRenderer.deleteGL();
 	}
 
 
@@ -391,29 +312,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	public void onBackPressed()
 	{
-		/*forwardRenderer.setPause(true);
-		//super.onBackPressed();
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Exit game");
-		builder.setMessage("Are you sure you want to exit?");
-		builder.setCancelable(false);
-		builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-			public void onClick(DialogInterface arg0, int arg1) {
-				// do something when the OK button is clicked
-				GameActivity.super.onBackPressed();
-				forwardRenderer.onDestroy();
-			}
-		});
-		builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-			public void onClick(DialogInterface arg0, int arg1) {
-				// do something when the Cancel button is clicked
-			}
-		});
-		//myAlertDialog.show();
-		AlertDialog dialog = builder.create();
-		dialog.show();*/
 		forwardRenderer.onBackPressed();
 	}
 
@@ -437,7 +335,6 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 				// do something when the Cancel button is clicked
 			}
 		});
-		//myAlertDialog.show();
 		AlertDialog dialog = builder.create();
 		dialog.show();
 	}

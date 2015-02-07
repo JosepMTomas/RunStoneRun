@@ -11,6 +11,7 @@ import static android.opengl.GLES30.*;
  * Created by Josep on 01/01/2015.
  * @author Josep
  */
+
 public class MenuTextures
 {
 	// Game title

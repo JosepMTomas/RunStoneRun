@@ -14,6 +14,7 @@ import java.util.Random;
  * @author Josep
  */
 
+@SuppressWarnings("all")
 public class PDSampler
 {
 	protected final int kMaxPointsPerCell = 9;
