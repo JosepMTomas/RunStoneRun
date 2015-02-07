@@ -288,7 +288,7 @@ public class CreditsMenu
 		tomislavTitleLimits[3] = tomislavTitlePosition[1] + (buttonHeightHalf * 0.65f);
 
 		// Special thanks title
-		specialThanksTitleScale[0] = buttonHeight * 4.0f;
+		specialThanksTitleScale[0] = buttonHeight * 7.66666f;//4
 		specialThanksTitleScale[1] = buttonHeight * 1.0f;
 		specialThanksTitlePosition[0] = 0f;
 		specialThanksTitlePosition[1] = buttonHeight * -2.75f;

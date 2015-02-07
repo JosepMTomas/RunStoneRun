@@ -1195,15 +1195,22 @@ public class OptionsMenu
 
 	public void onBackPressed()
 	{
-		currentState = UI_STATE_DISAPPEARING;
-
-		if(previousMenu == MAIN_MENU)
+		if (!menuEnabled)
 		{
-			renderer.changingFromOptionsMenuToMainMenu();
+			touchVisibilityButton();
 		}
 		else
 		{
-			renderer.changingFromOptionsMenuToPauseMenu();
+			currentState = UI_STATE_DISAPPEARING;
+
+			if (previousMenu == MAIN_MENU)
+			{
+				renderer.changingFromOptionsMenuToMainMenu();
+			}
+			else
+			{
+				renderer.changingFromOptionsMenuToPauseMenu();
+			}
 		}
 	}
 }

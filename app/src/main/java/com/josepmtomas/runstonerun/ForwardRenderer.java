@@ -1113,6 +1113,11 @@ public class ForwardRenderer implements Renderer
 		{
 			setPause(true);
 		}
+		else if(rendererState == RENDERER_STATE_MAIN_MENU)
+		{
+			if(mainMenu.onBackPressed())
+				parent.exit();
+		}
 		else if(rendererState == RENDERER_STATE_RESTART_MENU)
 		{
 			restartMenu.onBackPressed();

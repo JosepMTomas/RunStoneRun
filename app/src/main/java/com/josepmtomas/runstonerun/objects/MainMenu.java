@@ -593,7 +593,7 @@ public class MainMenu
 		for(i=0; i<8; i++)
 		{
 			scoreNumbers[i] = 0;
-			scoreOpacities[i] = 0.5f;
+			scoreOpacities[i] = 0.375f;
 		}
 
 		i=0;
@@ -636,7 +636,7 @@ public class MainMenu
 		for(i=0; i<8; i++)
 		{
 			scoreNumbers[i] = 0;
-			scoreOpacities[i] = 0.5f;
+			scoreOpacities[i] = 0.375f;
 		}
 
 		i=0;
@@ -982,6 +982,19 @@ public class MainMenu
 
 			uiPanelProgram.setUniforms(viewProjection, visibilityButtonCurrentScale, visibilityButtonCurrentPosition, visibilityButtonTexture, buttonsOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+		}
+	}
+
+	public boolean onBackPressed()
+	{
+		if(!menuEnabled)
+		{
+			touchVisibilityButton();
+			return false;
+		}
+		else
+		{
+			return true;
 		}
 	}
 }
