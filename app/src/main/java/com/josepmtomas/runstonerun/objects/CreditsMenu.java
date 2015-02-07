@@ -188,6 +188,7 @@ public class CreditsMenu
 
 		float buttonWidthHalf = buttonWidth * 0.5f;
 		float buttonHeightHalf = buttonHeight * 0.5f;
+		float titleWidthHalf;
 
 		// Background
 		backgroundPanelScale[0] = 1f;
@@ -206,8 +207,9 @@ public class CreditsMenu
 		developerTitleScale[1] = buttonHeight * 1.0f;
 		developerTitlePosition[0] = 0f;
 		developerTitlePosition[1] = buttonHeight * 2.75f;
-		developerTitleLimits[0] = developerTitlePosition[0] - buttonWidthHalf;
-		developerTitleLimits[1] = developerTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = developerTitleScale[0] * 0.5f;
+		developerTitleLimits[0] = developerTitlePosition[0] - titleWidthHalf;
+		developerTitleLimits[1] = developerTitlePosition[0] + titleWidthHalf;
 		developerTitleLimits[2] = developerTitlePosition[1] - buttonHeightHalf;
 		developerTitleLimits[3] = developerTitlePosition[1] + buttonHeightHalf;
 
@@ -216,8 +218,9 @@ public class CreditsMenu
 		composerTitleScale[1] = buttonHeight * 1.0f;
 		composerTitlePosition[0] = buttonWidth * -0.8f;
 		composerTitlePosition[1] = buttonHeight * 1.5f;
-		composerTitleLimits[0] = composerTitlePosition[0] - buttonWidthHalf;
-		composerTitleLimits[1] = composerTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = composerTitleScale[0] * 0.5f;
+		composerTitleLimits[0] = composerTitlePosition[0] - titleWidthHalf;
+		composerTitleLimits[1] = composerTitlePosition[0] + titleWidthHalf;
 		composerTitleLimits[2] = composerTitlePosition[1] - buttonHeightHalf;
 		composerTitleLimits[3] = composerTitlePosition[1] + buttonHeightHalf;
 
@@ -227,8 +230,9 @@ public class CreditsMenu
 		effectsTitleScale[1] = buttonHeight * 1.0f;
 		effectsTitlePosition[0] = buttonWidth * 0.75f;
 		effectsTitlePosition[1] = buttonHeight * 1.5f; //0.25f
-		effectsTitleLimits[0] = effectsTitlePosition[0] - buttonWidthHalf;
-		effectsTitleLimits[1] = effectsTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = effectsTitleScale[0] * 0.5f;
+		effectsTitleLimits[0] = effectsTitlePosition[0] - titleWidthHalf;
+		effectsTitleLimits[1] = effectsTitlePosition[0] + titleWidthHalf;
 		effectsTitleLimits[2] = effectsTitlePosition[1] - buttonHeightHalf;
 		effectsTitleLimits[3] = effectsTitlePosition[1] + buttonHeightHalf;
 
@@ -237,8 +241,9 @@ public class CreditsMenu
 		fontTitleScale[1] = buttonHeight * 1f;
 		fontTitlePosition[0] = buttonWidth * -0.8f;
 		fontTitlePosition[1] = buttonHeight * 0.25f; //-1.0f
-		fontTitleLimits[0] = fontTitlePosition[0] - buttonWidthHalf;
-		fontTitleLimits[1] = fontTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = fontTitleScale[0] * 0.5f;
+		fontTitleLimits[0] = fontTitlePosition[0] - titleWidthHalf;
+		fontTitleLimits[1] = fontTitlePosition[0] + titleWidthHalf;
 		fontTitleLimits[2] = fontTitlePosition[1] - buttonHeightHalf;
 		fontTitleLimits[3] = fontTitlePosition[1] + buttonHeightHalf;
 
@@ -247,8 +252,9 @@ public class CreditsMenu
 		texturesTitleScale[1] = buttonHeight * 1f;
 		texturesTitlePosition[0] = buttonWidth * 0.85f;
 		texturesTitlePosition[1] = buttonHeight * 0.25f;
-		texturesTitleLimits[0] = texturesTitlePosition[0] - buttonWidthHalf;
-		texturesTitleLimits[1] = texturesTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = texturesTitleScale[0] * 0.5f;
+		texturesTitleLimits[0] = texturesTitlePosition[0] - titleWidthHalf;
+		texturesTitleLimits[1] = texturesTitlePosition[0] + titleWidthHalf;
 		texturesTitleLimits[2] = texturesTitlePosition[1] - buttonHeightHalf;
 		texturesTitleLimits[3] = texturesTitlePosition[1] + buttonHeightHalf;
 
@@ -263,8 +269,9 @@ public class CreditsMenu
 		hughesTitleScale[1] = buttonHeight * 0.433333f;
 		hughesTitlePosition[0] = 0f;
 		hughesTitlePosition[1] = buttonHeight * -1.3f;
-		hughesTitleLimits[0] = hughesTitlePosition[0] - buttonWidthHalf;
-		hughesTitleLimits[1] = hughesTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = hughesTitleScale[0] * 0.5f;
+		hughesTitleLimits[0] = hughesTitlePosition[0] - titleWidthHalf;
+		hughesTitleLimits[1] = hughesTitlePosition[0] + titleWidthHalf;
 		hughesTitleLimits[2] = hughesTitlePosition[1] - (buttonHeightHalf * 0.65f);
 		hughesTitleLimits[3] = hughesTitlePosition[1] + (buttonHeightHalf * 0.65f);
 
@@ -273,8 +280,9 @@ public class CreditsMenu
 		tomislavTitleScale[1] = buttonHeight * 0.466666f;
 		tomislavTitlePosition[0] = 0f;
 		tomislavTitlePosition[1] = buttonHeight * -1.75f;
-		tomislavTitleLimits[0] = tomislavTitlePosition[0] - buttonWidthHalf;
-		tomislavTitleLimits[1] = tomislavTitlePosition[0] + buttonWidthHalf;
+		titleWidthHalf = tomislavTitleScale[0] * 0.5f;
+		tomislavTitleLimits[0] = tomislavTitlePosition[0] - titleWidthHalf;
+		tomislavTitleLimits[1] = tomislavTitlePosition[0] + titleWidthHalf;
 		tomislavTitleLimits[2] = tomislavTitlePosition[1] - (buttonHeightHalf * 0.65f);
 		tomislavTitleLimits[3] = tomislavTitlePosition[1] + (buttonHeightHalf * 0.65f);
 

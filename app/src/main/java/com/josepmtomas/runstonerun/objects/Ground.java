@@ -49,10 +49,10 @@ public class Ground
 	private static final int TANGENT_COMPONENTS = 4;
 
 	private final static int RIVER_MIN_LENGTH = 1;
-	private final static int RIVER_MAX_LENGTH = 3;
+	private final static int RIVER_MAX_LENGTH = 2;
 	private final static int RIVER_LENGTH_DIFFERENCE = RIVER_MAX_LENGTH - RIVER_MIN_LENGTH;
 	private final static int RIVER_WAIT = 18;
-	private final static float RIVER_APPEAR_CHANCE = 0.9f;
+	private final static float RIVER_APPEAR_CHANCE = 0.3f;
 
 	// Random number generator
 	private Random random = new Random();
@@ -2410,7 +2410,7 @@ public class Ground
 				);
 			}
 
-			riverWaitCount = Math.max(0, riverWaitCount-1);
+			//riverWaitCount = Math.max(0, riverWaitCount-1);
 		}
 		else if(generatorState == GROUND_PATCH_RIVER_ENTRY)
 		{
@@ -2519,7 +2519,7 @@ public class Ground
 				// Generate the river length
 				currentRiverLength = random.nextInt(RIVER_LENGTH_DIFFERENCE) + RIVER_MIN_LENGTH;
 				currentRiverCount = 0;
-				riverWaitCount = 11 + currentRiverLength;
+				riverWaitCount = 7 + currentRiverLength;//11
 
 				// Reposition the new patches
 				current = objectsLeftmostIndex;
@@ -2565,6 +2565,8 @@ public class Ground
 				objectsUpperIndex++;
 				objectsUpperIndex = objectsUpperIndex % numObjectsPatchesZ;
 			}
+
+			riverWaitCount = Math.max(0, riverWaitCount-1);
 		}
 	}
 

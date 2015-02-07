@@ -144,8 +144,8 @@ public class RestartMenu
 		restartTitleCurrentPosition[1] = restartTitlePosition[1];
 
 		// End Game Text
-		restartTextScale[0] = titleWidth * 0.8f;
-		restartTextScale[1] = titleHeight * 1.5f;
+		restartTextScale[0] = titleWidth * 0.65f;//0.8f;
+		restartTextScale[1] = titleHeight * 1.0f;//1.5f;
 		restartTextPosition[0] = 0f;
 		restartTextPosition[1] = 0f;
 		restartTextCurrentScale[0] = restartTextScale[0];

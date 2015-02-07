@@ -105,8 +105,6 @@ public class MenuTextures
 	public final int restartButtonSelectedTexture;
 	public final int endGameButtonIdleTexture;
 	public final int endGameButtonSelectedTexture;
-	///public final int optionsBigButtonIdleTexture;
-	///public final int optionsBigButtonSelectedTexture;
 
 	// End Game dialog
 
@@ -257,9 +255,6 @@ public class MenuTextures
 
 		endGameButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 		endGameButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/end_game_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-
-		//optionsBigButtonIdleTexture = TextureHelper.loadETC2Texture(context, "textures/menus/options_big_idle.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
-		//optionsBigButtonSelectedTexture = TextureHelper.loadETC2Texture(context, "textures/menus/options_big_selected.mp3", GL_COMPRESSED_RGBA8_ETC2_EAC, false, true);
 
 		// End game dialog
 

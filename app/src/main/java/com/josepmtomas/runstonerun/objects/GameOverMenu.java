@@ -24,7 +24,7 @@ import static android.opengl.Matrix.*;
  */
 public class GameOverMenu
 {
-	private static final String TAG = "GameOverMenu";
+	//private static final String TAG = "GameOverMenu";
 
 	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
@@ -261,8 +261,8 @@ public class GameOverMenu
 		finalScoreTitleCurrentPosition[0] = finalScoreTitlePosition[0];
 		finalScoreTitleCurrentPosition[1] = finalScoreTitlePosition[1];
 
-		touchToContinueTitleScale[0] = titleHeight * 6f;
-		touchToContinueTitleScale[1] = titleHeight * 1.5f;
+		touchToContinueTitleScale[0] = titleHeight * 4.5f;//6f;
+		touchToContinueTitleScale[1] = titleHeight * 1.0f;//1.5f;
 		touchToContinueTitlePosition[0] = 0f;
 		touchToContinueTitlePosition[1] = titleHeight * -1.75f;
 		touchToContinueTitleCurrentScale[0] = touchToContinueTitleScale[0];

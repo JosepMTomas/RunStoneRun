@@ -123,8 +123,8 @@ public class Constants
 
 
 	public static final float PLAYER_SPEED_INCREMENT = 625f;
-	public static final float MAX_PLAYER_SPEED = 2500f;
-	public static final float MAX_PLAYER_SPEED_FACTOR = 0.0003333f;
+	public static final float MAX_PLAYER_SPEED = 3000f;
+	public static final float MAX_PLAYER_SPEED_FACTOR = 1f / MAX_PLAYER_SPEED;//0.0003333f;
 
 	// PlayerRock states
 	public static final int PLAYER_ROCK_NOT_VISIBLE = 0;
@@ -147,7 +147,7 @@ public class Constants
 	public static final int PAUSE_MENU = 4;
 	public static final int GAME_OVER_MENU = 5;
 
-	// HUD base points (X_Y)
+	// HUD base points (UI_BASE_X_Y)
 	public static final int UI_BASE_LEFT_TOP = 0;
 	public static final int UI_BASE_LEFT_CENTER = 1;
 	public static final int UI_BASE_LEFT_BOTTOM = 2;
