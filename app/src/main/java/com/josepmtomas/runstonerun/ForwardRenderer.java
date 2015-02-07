@@ -22,8 +22,10 @@ import com.josepmtomas.runstonerun.objects.PlayerRock;
 import com.josepmtomas.runstonerun.objects.RestartMenu;
 import com.josepmtomas.runstonerun.objects.Screen;
 import com.josepmtomas.runstonerun.objects.SkyDome;
+import com.josepmtomas.runstonerun.programs.ProgressBarProgram;
 import com.josepmtomas.runstonerun.programs.ScorePanelProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
+import com.josepmtomas.runstonerun.util.FPSCounter;
 import com.josepmtomas.runstonerun.util.PerspectiveCamera;
 
 import java.io.BufferedReader;
@@ -132,8 +134,8 @@ public class ForwardRenderer implements Renderer
 	private Context context;	// Application context
 
 	// FPS
-	/**private int currentFPS = 0;
-	private FPSCounter fpsCounter;**/
+	private int currentFPS = 0;
+	private FPSCounter fpsCounter;
 
 	// TIME
 	private long startTime = 0;
@@ -226,14 +228,16 @@ public class ForwardRenderer implements Renderer
 
 		screen = new Screen(context);
 
+		fpsCounter = new FPSCounter();
 
 		// UI
 		UIPanelProgram uiPanelProgram = new UIPanelProgram(context);
+		ProgressBarProgram progressBarProgram = new ProgressBarProgram(context);
 		ScorePanelProgram scorePanelProgram = new ScorePanelProgram(context);
 		MenuTextures menuTextures = new MenuTextures(context);
-		hud = new Hud(context, this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
+		hud = new Hud(context, this, uiPanelProgram, progressBarProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		mainMenu = new MainMenu(this, sharedPreferences, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
-		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, menuTextures, screenWidth, screenHeight);
+		optionsMenu = new OptionsMenu(parent, this, sharedPreferences, uiPanelProgram, progressBarProgram, menuTextures, screenWidth, screenHeight);
 		creditsMenu = new CreditsMenu(parent, this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		pauseMenu = new PauseMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 		endGameMenu = new EndGameMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
@@ -241,14 +245,14 @@ public class ForwardRenderer implements Renderer
 		gameOverMenu = new GameOverMenu(this, uiPanelProgram, scorePanelProgram, menuTextures, screenWidth, screenHeight);
 		howToPlayMenu = new HowToPlayMenu(this, uiPanelProgram, menuTextures, screenWidth, screenHeight);
 
-		int[] result = new int[3];
+		/*int[] result = new int[3];
 		glGetIntegerv(GL_MAX_VERTEX_UNIFORM_BLOCKS, result, 0);
 		glGetIntegerv(GL_MAX_UNIFORM_BLOCK_SIZE, result, 1);
 		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, result, 2);
 
 		Log.i(TAG, "Max uniform blocks in vertex shader = " + result[0] + " binding locations");
 		Log.i(TAG, "Max uniform block size = " + result[1] + " Bytes / " + (result[1]/Constants.BYTES_PER_FLOAT) + " Floats / " + ((result[1]/Constants.BYTES_PER_FLOAT)/16) + " Matrices(mat4)");
-		Log.i(TAG, "Max texture image units = " + result[2]);
+		Log.i(TAG, "Max texture image units = " + result[2]);*/
 
 
 		/**************************************** REFLECTION ***************************************/
@@ -521,7 +525,7 @@ public class ForwardRenderer implements Renderer
 
 		hud.updateOther(deltaTime);
 		mainMenu.update(deltaTime);
-		optionsMenu.update(deltaTime);
+		optionsMenu.update(deltaTime, (float)currentFPS);
 		creditsMenu.update(deltaTime);
 		pauseMenu.update(deltaTime);
 		endGameMenu.update(deltaTime);
@@ -535,7 +539,7 @@ public class ForwardRenderer implements Renderer
 		shadingPass();
 		postProcessPass();
 
-		/**currentFPS = fpsCounter.logFrameWithAverage();**/
+		currentFPS = fpsCounter.framesFromLastDeltas(deltaTime);//fpsCounter.countFrames();
 	}
 
 

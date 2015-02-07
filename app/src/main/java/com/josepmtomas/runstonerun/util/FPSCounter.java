@@ -17,6 +17,11 @@ public class FPSCounter
 	long totalFrames = 0;
 	float average = 0f;
 
+	int currentIndex = 0;
+	int lastIndex = 1;
+	float framesSum = 0f;
+	float[] deltas = {0f,0f,0f,0f,0f,0f,0f,0f,0f,0f};
+
 	public void logFrame()
 	{
 		frames++;
@@ -26,6 +31,33 @@ public class FPSCounter
 			frames = 0;
 			startTime = System.nanoTime();
 		}
+	}
+
+	public int countFrames()
+	{
+		frames++;
+		if(System.nanoTime() - startTime >= 1000000000)
+		{
+			lastFrames = frames;
+			frames = 0;
+			startTime = System.nanoTime();
+		}
+		return lastFrames;
+	}
+
+	public int framesFromLastDeltas(float deltaTime)
+	{
+		deltas[currentIndex] = deltaTime;
+		framesSum += deltaTime;
+		framesSum -= deltas[lastIndex];
+
+		currentIndex++;
+		currentIndex = currentIndex % 10;
+
+		lastIndex++;
+		lastIndex = lastIndex % 10;
+
+		return (int)(1.0f / (framesSum * 0.1f));
 	}
 
 	public int logFrameWithAverage()

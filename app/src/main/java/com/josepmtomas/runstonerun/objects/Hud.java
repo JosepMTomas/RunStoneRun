@@ -206,7 +206,7 @@ public class Hud
 	private static final float NUMBER_HEIGHT_PERCENTAGE = 0.15f;
 
 
-	public Hud(Context context, ForwardRenderer renderer, UIPanelProgram uiPanelProgram, ScorePanelProgram scorePanelProgram, MenuTextures menuTextures, float screenWidth, float screenHeight)
+	public Hud(Context context, ForwardRenderer renderer, UIPanelProgram uiPanelProgram, ProgressBarProgram progressBarProgram, ScorePanelProgram scorePanelProgram, MenuTextures menuTextures, float screenWidth, float screenHeight)
 	{
 		this.renderer = renderer;
 		this.uiPanelProgram = uiPanelProgram;
@@ -247,7 +247,7 @@ public class Hud
 		setPositions(screenWidth, screenHeight, (screenHeight * NUMBER_HEIGHT_PERCENTAGE * 0.7134f) , screenHeight * NUMBER_HEIGHT_PERCENTAGE);
 
 		// Programs
-		progressBarProgram = new ProgressBarProgram(context);
+		this.progressBarProgram = progressBarProgram;
 	}
 
 

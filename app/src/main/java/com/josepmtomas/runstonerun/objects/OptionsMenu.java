@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import com.josepmtomas.runstonerun.ForwardRenderer;
 import com.josepmtomas.runstonerun.GameActivity;
+import com.josepmtomas.runstonerun.programs.ProgressBarProgram;
 import com.josepmtomas.runstonerun.programs.UIPanelProgram;
 import com.josepmtomas.runstonerun.util.UIHelper;
 
@@ -23,6 +24,7 @@ public class OptionsMenu
 	private GameActivity parent;
 	private ForwardRenderer renderer;
 	private UIPanelProgram uiPanelProgram;
+	private ProgressBarProgram progressBarProgram;
 	private MenuTextures textures;
 
 	// Preferences
@@ -153,6 +155,20 @@ public class OptionsMenu
 	private float[] visibilityButtonLimits = new float[4];
 	private int visibilityButtonTexture;
 
+	// Performance title
+	private float[] performanceTitleScale = new float[2];
+	private float[] performanceTitlePosition = new float[2];
+	private float[] performanceTitleCurrentScale = new float[2];
+	private float[] performanceTitleCurrentPosition = new float[2];
+
+	// Performance progress bar
+	private int performanceProgressVaoHandle;
+	private float[] performanceProgressPosition = new float[2];
+	private float performanceProgressCurrentScale;
+	private float[] performanceProgressCurrentPosition = new float[2];
+	private float[] performanceProgressBarColor = {1f,1f,1f};
+	private float performanceProgressBarPercent = 0.5f;
+
 	// Textures
 
 	private int backButtonCurrentTexture;
@@ -175,15 +191,18 @@ public class OptionsMenu
 	private SharedPreferences sharedPreferences;
 
 
-	public OptionsMenu(GameActivity parent, ForwardRenderer renderer, SharedPreferences sharedPreferences, UIPanelProgram panelProgram, MenuTextures textures, float screenWidth, float screenHeight)
+	public OptionsMenu(GameActivity parent, ForwardRenderer renderer, SharedPreferences sharedPreferences,
+					   UIPanelProgram panelProgram, ProgressBarProgram progressBarProgram, MenuTextures textures, float screenWidth, float screenHeight)
 	{
 		this.parent = parent;
 		this.sharedPreferences = sharedPreferences;
 		this.uiPanelProgram = panelProgram;
+		this.progressBarProgram = progressBarProgram;
 		this.textures = textures;
 		this.renderer = renderer;
 		this.currentState = UI_STATE_NOT_VISIBLE;
 
+		performanceProgressVaoHandle = UIHelper.makeProgressBar(screenHeight * 1f, screenHeight * 0.05f, UI_BASE_CENTER_CENTER);
 		uiPanelVaoHandle = UIHelper.makePanel(1f, 1f, UI_BASE_CENTER_CENTER);
 		ui9PatchVaoHandle = UIHelper.make9PatchPanel(screenHeight * 1.26f, screenHeight * 0.96f, screenHeight * 0.06f, UI_BASE_CENTER_CENTER);
 
@@ -354,51 +373,18 @@ public class OptionsMenu
 		float soundButtonSize = optionButtonHeight * 1.5f;
 		float soundButtonSizeHalf = soundButtonSize * 0.5f;
 
-		// Scales
-
 		optionsTitleScale[0] = optionButtonHeight * 10f;
 		optionsTitleScale[1] = optionButtonHeight * 1f;
-
-		screenResolutionTitleScale[0] = optionButtonHeight * 7f;
-		screenResolutionTitleScale[1] = optionButtonHeight;
-
-		resolutionPercentageButtonScale[0] = optionButtonWidth;
-		resolutionPercentageButtonScale[1] = optionButtonHeight;
-
-		postProcessDetailTitleScale[0] = optionButtonHeight * 8f;
-		postProcessDetailTitleScale[1] = optionButtonHeight;
-
-		postProcessDetailButtonScale[0] = optionButtonWidth;
-		postProcessDetailButtonScale[1] = optionButtonHeight;
-
-		musicTitleScale[0] = optionButtonHeight * 2f;
-		musicTitleScale[1] = optionButtonHeight;
-
-		musicButtonScale[0] = optionButtonHeight * 1.5f;
-		musicButtonScale[1] = optionButtonHeight * 1.5f;
-
-		effectsTitleScale[0] = optionButtonHeight * 3f;
-		effectsTitleScale[1] = optionButtonHeight;
-		effectsButtonScale[0] = optionButtonHeight * 1.5f;
-		effectsButtonScale[1] = optionButtonHeight * 1.5f;
-
-		backButtonScale[0] = optionButtonWidth;
-		backButtonScale[1] = optionButtonHeight;
-
-		speedButtonScale[0] = optionButtonHeight * 1.5f;
-		speedButtonScale[1] = optionButtonHeight * 1.5f;
-
-		visibilityButtonScale[0] = optionButtonHeight * 1.5f;
-		visibilityButtonScale[1] = optionButtonHeight * 1.5f;
-
-		// Positions
-
 		optionsTitlePosition[0] = 0f;
 		optionsTitlePosition[1] = optionButtonHeight * 4f;
 
+		screenResolutionTitleScale[0] = optionButtonHeight * 7f;
+		screenResolutionTitleScale[1] = optionButtonHeight;
 		screenResolutionTitlePosition[0] = 0f;
 		screenResolutionTitlePosition[1] = optionButtonHeight * 3.125f;
 
+		resolutionPercentageButtonScale[0] = optionButtonWidth;
+		resolutionPercentageButtonScale[1] = optionButtonHeight;
 		resolutionPercentageButton25Position[0] = optionButtonWidth * -1.5f;
 		resolutionPercentageButton25Position[1] = optionButtonHeight * 2.25f;
 		resolutionPercentageButton50Position[0] = optionButtonWidth * -0.5f;
@@ -408,10 +394,13 @@ public class OptionsMenu
 		resolutionPercentageButton100Position[0] = optionButtonWidth * 1.5f;
 		resolutionPercentageButton100Position[1] = optionButtonHeight * 2.25f;
 
-
+		postProcessDetailTitleScale[0] = optionButtonHeight * 8f;
+		postProcessDetailTitleScale[1] = optionButtonHeight;
 		postProcessDetailTitlePosition[0] = 0f;
 		postProcessDetailTitlePosition[1] = optionButtonHeight * 1.375f;
 
+		postProcessDetailButtonScale[0] = optionButtonWidth;
+		postProcessDetailButtonScale[1] = optionButtonHeight;
 		postProcessNoDetailButtonPosition[0] = -optionButtonWidth;
 		postProcessNoDetailButtonPosition[1] = optionButtonHeight * 0.5f;
 		postProcessLowDetailButtonPosition[0] = 0f;
@@ -419,34 +408,52 @@ public class OptionsMenu
 		postProcessHighDetailButtonPosition[0] = optionButtonWidth;
 		postProcessHighDetailButtonPosition[1] = optionButtonHeight * 0.5f;
 
-
-		musicTitlePosition[0] = -optionButtonWidth;
+		musicTitleScale[0] = optionButtonHeight * 2f;
+		musicTitleScale[1] = optionButtonHeight;
+		musicTitlePosition[0] = -optionButtonWidth * 1.6f;//-optionButtonWidth;
 		musicTitlePosition[1] = optionButtonHeight * -1.0f;
 
-		musicEnableButtonPosition[0] = 0f;
+		musicButtonScale[0] = optionButtonHeight * 1.5f;
+		musicButtonScale[1] = optionButtonHeight * 1.5f;
+		musicEnableButtonPosition[0] = optionButtonHeight * -2.75f;//0f;
 		musicEnableButtonPosition[1] = optionButtonHeight * -1.0f;
-
-		musicDisableButtonPosition[0] = optionButtonHeight * 1.5f;
+		musicDisableButtonPosition[0] = optionButtonHeight * -1.25f;//optionButtonHeight * 1.5f;
 		musicDisableButtonPosition[1] = optionButtonHeight * -1.0f;
 
+		effectsTitleScale[0] = optionButtonHeight * 3f;
+		effectsTitleScale[1] = optionButtonHeight;
+		effectsTitlePosition[0] = optionButtonWidth * 0.425f;//-optionButtonWidth;
+		effectsTitlePosition[1] = optionButtonHeight * -1.0f;//optionButtonHeight * -2.5f;
 
-		effectsTitlePosition[0] = -optionButtonWidth;
-		effectsTitlePosition[1] = optionButtonHeight * -2.5f;
+		effectsButtonScale[0] = optionButtonHeight * 1.5f;
+		effectsButtonScale[1] = optionButtonHeight * 1.5f;
+		effectsEnableButtonPosition[0] = optionButtonHeight * 3.75f;//0f;
+		effectsEnableButtonPosition[1] = optionButtonHeight * -1.0f;//optionButtonHeight * -2.5f;
+		effectsDisableButtonPosition[0] = optionButtonHeight * 5.25f;//optionButtonHeight * 1.5f;
+		effectsDisableButtonPosition[1] = optionButtonHeight * -1.0f;//optionButtonHeight * -2.5f;
 
-		effectsEnableButtonPosition[0] = 0f;
-		effectsEnableButtonPosition[1] = optionButtonHeight * -2.5f;
-
-		effectsDisableButtonPosition[0] = optionButtonHeight * 1.5f;
-		effectsDisableButtonPosition[1] = optionButtonHeight * -2.5f;
-
+		backButtonScale[0] = optionButtonWidth;
+		backButtonScale[1] = optionButtonHeight;
 		backButtonPosition[0] = 0f;
 		backButtonPosition[1] = -optionButtonHeight * 4f;
 
+		speedButtonScale[0] = optionButtonHeight * 1.5f;
+		speedButtonScale[1] = optionButtonHeight * 1.5f;
 		speedButtonPosition[0] = screenWidth * -0.5f + (optionButtonHeight * 0.75f);
 		speedButtonPosition[1] = optionButtonHeight * 0.75f;
 
+		visibilityButtonScale[0] = optionButtonHeight * 1.5f;
+		visibilityButtonScale[1] = optionButtonHeight * 1.5f;
 		visibilityButtonPosition[0] = screenWidth * -0.5f + (optionButtonHeight * 0.75f);
 		visibilityButtonPosition[1] = optionButtonHeight * -0.75f;
+
+		performanceTitleScale[0] = optionButtonHeight * 4.5f;
+		performanceTitleScale[1] = optionButtonHeight;
+		performanceTitlePosition[0] = screenWidth * -0.175f;
+		performanceTitlePosition[1] = screenHeight * -0.25f;
+
+		performanceProgressPosition[0] = screenWidth * 0.3f;//0.25
+		performanceProgressPosition[1] = screenHeight * -0.5f;
 
 		// Limits (left-right-bottom-top)
 		resolutionPercentageButton25Limits[0] = resolutionPercentageButton25Position[0] - optionButtonWidthHalf;
@@ -556,6 +563,11 @@ public class OptionsMenu
 		backButtonCurrentScale[0] = backButtonScale[0];
 		backButtonCurrentScale[1] = backButtonScale[1];
 
+		performanceTitleCurrentScale[0] = performanceTitleScale[0];
+		performanceTitleCurrentScale[1] = performanceTitleScale[1];
+
+		performanceProgressCurrentScale = 1f;
+
 		// Positions
 		optionsTitleCurrentPosition[0] = optionsTitlePosition[0];
 		optionsTitleCurrentPosition[1] = optionsTitlePosition[1];
@@ -602,6 +614,12 @@ public class OptionsMenu
 
 		backButtonCurrentPosition[0] = backButtonPosition[0];
 		backButtonCurrentPosition[1] = backButtonPosition[1];
+
+		performanceTitleCurrentPosition[0] = performanceTitlePosition[0];
+		performanceTitleCurrentPosition[1] = performanceTitlePosition[1];
+
+		performanceProgressCurrentPosition[0] = performanceProgressPosition[0];
+		performanceProgressCurrentPosition[1] = performanceProgressPosition[1];
 	}
 
 
@@ -629,6 +647,9 @@ public class OptionsMenu
 		effectsButtonCurrentScale[1] = lerp(0f, effectsButtonScale[1], alpha);
 		backButtonCurrentScale[0] = lerp(0f, backButtonScale[0], alpha);
 		backButtonCurrentScale[1] = lerp(0f, backButtonScale[1], alpha);
+		performanceTitleCurrentScale[0] = lerp(0f, performanceTitleScale[0], alpha);
+		performanceTitleCurrentScale[1] = lerp(0f, performanceTitleScale[1], alpha);
+		performanceProgressCurrentScale = alpha;
 
 		optionsTitleCurrentPosition[0] = lerp(0f, optionsTitlePosition[0], alpha);
 		optionsTitleCurrentPosition[1] = lerp(0f, optionsTitlePosition[1], alpha);
@@ -664,11 +685,43 @@ public class OptionsMenu
 		effectsDisableButtonCurrentPosition[1] = lerp(0f, effectsDisableButtonPosition[1], alpha);
 		backButtonCurrentPosition[0] = lerp(0f, backButtonPosition[0], alpha);
 		backButtonCurrentPosition[1] = lerp(0f, backButtonPosition[1], alpha);
+		performanceTitleCurrentPosition[0] = lerp(0f, performanceTitlePosition[0], alpha);
+		performanceTitleCurrentPosition[1] = lerp(0f, performanceTitlePosition[1], alpha);
+		performanceProgressCurrentPosition[0] = lerp(0f, performanceProgressPosition[0], alpha);
+		performanceProgressCurrentPosition[1] = lerp(0f, performanceProgressPosition[1], alpha);
 	}
 
 
-	public void update(float deltaTime)
+	public void update(float deltaTime, float fps)
 	{
+		//float fps = frames;//1f / deltaTime;
+		performanceProgressBarPercent = fps * 0.01666667f;
+
+		if(fps >= 0f && fps < 20f)
+		{
+			performanceProgressBarColor[0] = 1f;
+			performanceProgressBarColor[1] = 0.25f;
+			performanceProgressBarColor[2] = 0.25f;
+		}
+		else if(fps >= 20f && fps < 30f)
+		{
+			performanceProgressBarColor[0] = 1f;
+			performanceProgressBarColor[1] = 1f;
+			performanceProgressBarColor[2] = 0.25f;
+		}
+		else if(fps >= 30f && fps < 45f)
+		{
+			performanceProgressBarColor[0] = 0.25f;
+			performanceProgressBarColor[1] = 1f;
+			performanceProgressBarColor[2] = 0.25f;
+		}
+		else if(fps >= 45f && fps < 65f)
+		{
+			performanceProgressBarColor[0] = 0f;
+			performanceProgressBarColor[1] = 0.75f;
+			performanceProgressBarColor[2] = 1.0f;
+		}
+
 		if(currentState == UI_STATE_APPEARING)
 		{
 			menuTimer += deltaTime;
@@ -791,6 +844,9 @@ public class OptionsMenu
 			uiPanelProgram.setUniforms(viewProjection, effectsButtonCurrentScale, effectsDisableButtonCurrentPosition, effectsDisableButtonCurrentTexture, menuOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
+			// Performance title
+			uiPanelProgram.setUniforms(viewProjection, performanceTitleCurrentScale, performanceTitleCurrentPosition, textures.performanceTitleTexture, menuOpacity);
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
 
 			// Back button
 			uiPanelProgram.setUniforms(viewProjection, backButtonCurrentScale, backButtonCurrentPosition, backButtonCurrentTexture, menuOpacity);
@@ -803,6 +859,15 @@ public class OptionsMenu
 			// Visibility button
 			uiPanelProgram.setUniforms(viewProjection, visibilityButtonScale, visibilityButtonPosition, visibilityButtonTexture, visibilityButtonOpacity);
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, 0);
+
+			// Performance progress bar
+			progressBarProgram.useProgram();
+			progressBarProgram.setCommonUniforms(viewProjection, textures.progressBarTexture);
+			progressBarProgram.setSpecificUniforms(performanceProgressCurrentScale, performanceProgressCurrentPosition[0], performanceProgressCurrentPosition[1],
+					performanceProgressBarColor[0], performanceProgressBarColor[1], performanceProgressBarColor[2], menuOpacity, performanceProgressBarPercent);
+
+			glBindVertexArray(performanceProgressVaoHandle);
+			glDrawElements(GL_TRIANGLES, 18, GL_UNSIGNED_SHORT, 0);
 		}
 	}
 
