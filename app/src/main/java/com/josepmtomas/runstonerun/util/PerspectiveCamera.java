@@ -96,12 +96,18 @@ public class PerspectiveCamera
 		frustumNearPoints[2] = add(cN, add( multiply(v, hHNear), multiply(u, hWNear)));
 		frustumNearPoints[3] = add(cN, subtract( multiply(v, hHNear), multiply(u, hWNear)));
 
-		buildFrustumPlane(0, frustumNearPoints[0], frustumNearPoints[1], frustumFarPoints[0]);
-		buildFrustumPlane(1, frustumNearPoints[1], frustumNearPoints[2], frustumFarPoints[1]);
-		buildFrustumPlane(2, frustumNearPoints[2], frustumNearPoints[3], frustumFarPoints[2]);
-		buildFrustumPlane(3, frustumNearPoints[3], frustumNearPoints[0], frustumFarPoints[3]);
-		buildFrustumPlane(4, frustumNearPoints[0], frustumNearPoints[3], frustumNearPoints[2]);
-		buildFrustumPlane(5, frustumFarPoints[3], frustumFarPoints[0], frustumFarPoints[1]);
+		/*Log.w("FrustumFar","["+frustumFarPoints[0].x+", "+frustumFarPoints[0].y+", "+frustumFarPoints[0].z+"]\n["
+							+frustumFarPoints[1].x+", "+frustumFarPoints[1].y+", "+frustumFarPoints[1].z+"]\n["
+							+frustumFarPoints[2].x+", "+frustumFarPoints[2].y+", "+frustumFarPoints[2].z+"]\n["
+							+frustumFarPoints[3].x+", "+frustumFarPoints[3].y+", "+frustumFarPoints[3].z+"]");*/
+		//Log.w("FrustumNear","["+frustumNearPoints[0]+"]["+frustumNearPoints[1]+"]["+frustumNearPoints[2]+"]["+frustumNearPoints[3]+"]");
+
+		buildFrustumPlane(0, frustumNearPoints[0], frustumNearPoints[1], frustumFarPoints[0]);	// bottom plane
+		buildFrustumPlane(1, frustumNearPoints[1], frustumNearPoints[2], frustumFarPoints[1]);	// right plane
+		buildFrustumPlane(2, frustumNearPoints[2], frustumNearPoints[3], frustumFarPoints[2]);	// top plane
+		buildFrustumPlane(3, frustumNearPoints[3], frustumNearPoints[0], frustumFarPoints[3]);	// left plane
+		buildFrustumPlane(4, frustumNearPoints[0], frustumNearPoints[3], frustumNearPoints[2]);	// near plane
+		buildFrustumPlane(5, frustumFarPoints[3], frustumFarPoints[0], frustumFarPoints[1]);	// far plane
 	}
 
 
@@ -170,6 +176,42 @@ public class PerspectiveCamera
 		for(int i=0; i < points.length; i+=3)
 		{
 			if(sphereInFrustum(points[i], points[i+1], points[i+2], radius)) return true;
+		}
+
+		return false;
+	}
+
+
+	public boolean treePointVisible(float x, float y, float z)
+	{
+		if((dot(frustumPlanesN[0].x, frustumPlanesN[0].y, frustumPlanesN[0].z, x, y, z) - frustumPlanesD[1]) < 0.0f)
+		{
+			return false;
+		}
+		else if((dot(frustumPlanesN[0].x, frustumPlanesN[0].y, frustumPlanesN[0].z, x, y, z) - frustumPlanesD[3]) < 0.0f)
+		{
+			return false;
+		}
+		else if((dot(frustumPlanesN[0].x, frustumPlanesN[0].y, frustumPlanesN[0].z, x, y, z) - frustumPlanesD[4]) < 0.0f)
+		{
+			return false;
+		}
+		return true;
+	}
+
+
+	// check planes 1,3,4
+	public boolean cullTreePoints(float[] treeCullingPoints, int offset, int count)
+	{
+		//int length = treeCullingPoints.length;
+		int length = offset + (count*3);
+
+		for(int i=offset; i<length; i+=3)
+		{
+			if(treePointVisible(treeCullingPoints[i], treeCullingPoints[i+1], treeCullingPoints[i+2]))
+			{
+				return true;
+			}
 		}
 
 		return false;

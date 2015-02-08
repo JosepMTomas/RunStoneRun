@@ -123,49 +123,49 @@ public class ObjectsPatch extends BoundarySampler
 
 		random = new Random();
 
-		pineTreePoints = new float[384];
-		pineTreePointsLODA = new float[1024];
-		pineTreePointsLODB = new float[1024];
+		pineTreePoints = new float[48];
+		pineTreePointsLODA = new float[64];
+		pineTreePointsLODB = new float[64];
 
-		hugeTreePoints = new float[384];
-		hugeTreePointsLODA = new float[1024];
-		hugeTreePointsLODB = new float[1024];
+		hugeTreePoints = new float[48];
+		hugeTreePointsLODA = new float[64];
+		hugeTreePointsLODB = new float[64];
 
-		palmTreePoints = new float[384];
-		palmTreePointsLODA = new float[1024];
-		palmTreePointsLODB = new float[1024];
+		palmTreePoints = new float[48];
+		palmTreePointsLODA = new float[64];
+		palmTreePointsLODB = new float[64];
 
-		birchTreePoints = new float[384];
-		birchTreePointsLODA = new float[1024];
-		birchTreePointsLODB = new float[1024];
+		birchTreePoints = new float[48];
+		birchTreePointsLODA = new float[64];
+		birchTreePointsLODB = new float[64];
 
-		fernPlantPoints = new float[384];
-		fernPlantPointsLODA = new float[1024];
-		fernPlantPointsLODB = new float[1024];
+		fernPlantPoints = new float[48];
+		fernPlantPointsLODA = new float[64];
+		fernPlantPointsLODB = new float[64];
 
-		weedPlantPoints = new float[384];
-		weedPlantPointsLODA = new float[1024];
-		weedPlantPointsLODB = new float[1024];
+		weedPlantPoints = new float[48];
+		weedPlantPointsLODA = new float[64];
+		weedPlantPointsLODB = new float[64];
 
-		bushPlantPoints = new float[384];
-		bushPlantPointsLODA = new float[1024];
-		bushPlantPointsLODB = new float[1024];
+		bushPlantPoints = new float[48];
+		bushPlantPointsLODA = new float[64];
+		bushPlantPointsLODB = new float[64];
 
-		palmPlantPoints = new float[384];
-		palmPlantPointsLODA = new float[1024];
-		palmPlantPointsLODB = new float[1024];
+		palmPlantPoints = new float[48];
+		palmPlantPointsLODA = new float[64];
+		palmPlantPointsLODB = new float[64];
 
-		rockAPoints = new float[384];
-		rockAPointsLODA = new float[1024];
-		rockAPointsLODB = new float[1024];
+		rockAPoints = new float[48];
+		rockAPointsLODA = new float[64];
+		rockAPointsLODB = new float[64];
 
-		rockBPoints = new float[384];
-		rockBPointsLODA = new float[1024];
-		rockBPointsLODB = new float[1024];
+		rockBPoints = new float[48];
+		rockBPointsLODA = new float[64];
+		rockBPointsLODB = new float[64];
 
 		rockCPoints = new float[384];
-		rockCPointsLODA = new float[1024];
-		rockCPointsLODB = new float[1024];
+		rockCPointsLODA = new float[64];
+		rockCPointsLODB = new float[64];
 	}
 
 
@@ -187,7 +187,7 @@ public class ObjectsPatch extends BoundarySampler
 
 	private void initializeTreePoints()
 	{
-		for(int i=0; i < 384; i++)
+		for(int i=0; i < 48; i++)
 		{
 			pineTreePoints[i] = 0f;
 			hugeTreePoints[i] = 0f;
@@ -202,7 +202,7 @@ public class ObjectsPatch extends BoundarySampler
 			rockCPoints[i] = 0f;
 		}
 
-		for(int i=0; i < 1024; i++)
+		for(int i=0; i<64; i++)
 		{
 			pineTreePointsLODA[i] = 0f;
 			pineTreePointsLODB[i] = 0f;
@@ -227,6 +227,12 @@ public class ObjectsPatch extends BoundarySampler
 			rockCPointsLODA[i] = 0f;
 			rockCPointsLODB[i] = 0f;
 		}
+
+		/*for(int i=0; i < 1024; i++)
+		{
+
+
+		}*/
 
 		for(int i=0; i < (MAX_TREE_INSTANCES_TOTAL*4); i++)
 		{
