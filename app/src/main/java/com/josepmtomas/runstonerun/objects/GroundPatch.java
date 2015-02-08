@@ -1704,7 +1704,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODA[offsetLODA++] = pointX;
 					grassPointsLODA[offsetLODA++] = pointZ;
 					grassPointsLODA[offsetLODA++] = grassPointsScale[i];
-					grassPointsLODA[offsetLODA++] = distance / 800f;
+					grassPointsLODA[offsetLODA++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_A] += 1;
 				}
 				else if(distance < GRASS_LOD_B_MAX_DISTANCE)
@@ -1712,7 +1712,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODB[offsetLODB++] = pointX;
 					grassPointsLODB[offsetLODB++] = pointZ;
 					grassPointsLODB[offsetLODB++] = grassPointsScale[i];
-					grassPointsLODB[offsetLODB++] = distance / 800f;
+					grassPointsLODB[offsetLODB++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_B] += 1;
 				}
 				else // LOD_C
@@ -1720,7 +1720,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODC[offsetLODC++] = pointX;
 					grassPointsLODC[offsetLODC++] = pointZ;
 					grassPointsLODC[offsetLODC++] = grassPointsScale[i];
-					grassPointsLODC[offsetLODC++] = distance / 800f;
+					grassPointsLODC[offsetLODC++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_C] += 1;
 				}
 
@@ -1773,7 +1773,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODA[offsetLODA++] = pointX;
 					grassPointsLODA[offsetLODA++] = pointZ;
 					grassPointsLODA[offsetLODA++] = grassPointsScale[i];
-					grassPointsLODA[offsetLODA++] = distance / 800f;
+					grassPointsLODA[offsetLODA++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_A] += 1;
 				}
 				else if(distance < GRASS_LOD_B_MAX_DISTANCE)
@@ -1781,7 +1781,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODB[offsetLODB++] = pointX;
 					grassPointsLODB[offsetLODB++] = pointZ;
 					grassPointsLODB[offsetLODB++] = grassPointsScale[i];
-					grassPointsLODB[offsetLODB++] = distance / 800f;
+					grassPointsLODB[offsetLODB++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_B] += 1;
 				}
 				else // LOD_C
@@ -1789,7 +1789,7 @@ public class GroundPatch extends BoundarySampler
 					grassPointsLODC[offsetLODC++] = pointX;
 					grassPointsLODC[offsetLODC++] = pointZ;
 					grassPointsLODC[offsetLODC++] = grassPointsScale[i];
-					grassPointsLODC[offsetLODC++] = distance / 800f;
+					grassPointsLODC[offsetLODC++] = distance / 700f;
 					numGrassPointsPerLOD[LOD_C] += 1;
 				}
 

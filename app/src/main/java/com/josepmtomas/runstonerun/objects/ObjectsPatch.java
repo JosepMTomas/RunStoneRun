@@ -520,7 +520,7 @@ public class ObjectsPatch extends BoundarySampler
 				pineTreePointsLODA[offsetLODA++] = pointX;
 				pineTreePointsLODA[offsetLODA++] = pointZ;
 				pineTreePointsLODA[offsetLODA++] = scale;
-				pineTreePointsLODA[offsetLODA++] = distance / 800f;
+				pineTreePointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -535,7 +535,7 @@ public class ObjectsPatch extends BoundarySampler
 				pineTreePointsLODB[offsetLODB++] = pointX;
 				pineTreePointsLODB[offsetLODB++] = pointZ;
 				pineTreePointsLODB[offsetLODB++] = scale;
-				pineTreePointsLODB[offsetLODB++] = distance / 800f;
+				pineTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -567,7 +567,7 @@ public class ObjectsPatch extends BoundarySampler
 				hugeTreePointsLODA[offsetLODA++] = pointX;
 				hugeTreePointsLODA[offsetLODA++] = pointZ;
 				hugeTreePointsLODA[offsetLODA++] = scale;
-				hugeTreePointsLODA[offsetLODA++] = distance / 800f;
+				hugeTreePointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -582,7 +582,7 @@ public class ObjectsPatch extends BoundarySampler
 				hugeTreePointsLODB[offsetLODB++] = pointX;
 				hugeTreePointsLODB[offsetLODB++] = pointZ;
 				hugeTreePointsLODB[offsetLODB++] = scale;
-				hugeTreePointsLODB[offsetLODB++] = distance / 800f;
+				hugeTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -614,7 +614,7 @@ public class ObjectsPatch extends BoundarySampler
 				palmTreePointsLODA[offsetLODA++] = pointX;
 				palmTreePointsLODA[offsetLODA++] = pointZ;
 				palmTreePointsLODA[offsetLODA++] = scale;
-				palmTreePointsLODA[offsetLODA++] = distance / 800f;
+				palmTreePointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -629,7 +629,7 @@ public class ObjectsPatch extends BoundarySampler
 				palmTreePointsLODB[offsetLODB++] = pointX;
 				palmTreePointsLODB[offsetLODB++] = pointZ;
 				palmTreePointsLODB[offsetLODB++] = scale;
-				palmTreePointsLODB[offsetLODB++] = distance / 800f;
+				palmTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -661,7 +661,7 @@ public class ObjectsPatch extends BoundarySampler
 				birchTreePointsLODA[offsetLODA++] = pointX;
 				birchTreePointsLODA[offsetLODA++] = pointZ;
 				birchTreePointsLODA[offsetLODA++] = scale;
-				birchTreePointsLODA[offsetLODA++] = distance / 800f;
+				birchTreePointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -676,7 +676,7 @@ public class ObjectsPatch extends BoundarySampler
 				birchTreePointsLODB[offsetLODB++] = pointX;
 				birchTreePointsLODB[offsetLODB++] = pointZ;
 				birchTreePointsLODB[offsetLODB++] = scale;
-				birchTreePointsLODB[offsetLODB++] = distance / 800f;
+				birchTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -708,7 +708,7 @@ public class ObjectsPatch extends BoundarySampler
 				fernPlantPointsLODA[offsetLODA++] = pointX;
 				fernPlantPointsLODA[offsetLODA++] = pointZ;
 				fernPlantPointsLODA[offsetLODA++] = scale;
-				fernPlantPointsLODA[offsetLODA++] = distance / 800f;
+				fernPlantPointsLODA[offsetLODA++] = distance / 700f;
 
 				countLODA++;
 			}
@@ -717,7 +717,7 @@ public class ObjectsPatch extends BoundarySampler
 				fernPlantPointsLODB[offsetLODB++] = pointX;
 				fernPlantPointsLODB[offsetLODB++] = pointZ;
 				fernPlantPointsLODB[offsetLODB++] = scale;
-				fernPlantPointsLODB[offsetLODB++] = distance / 800f;
+				fernPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -749,7 +749,7 @@ public class ObjectsPatch extends BoundarySampler
 				weedPlantPointsLODA[offsetLODA++] = pointX;
 				weedPlantPointsLODA[offsetLODA++] = pointZ;
 				weedPlantPointsLODA[offsetLODA++] = scale;
-				weedPlantPointsLODA[offsetLODA++] = distance / 800f;
+				weedPlantPointsLODA[offsetLODA++] = distance / 700f;
 
 				countLODA++;
 			}
@@ -758,7 +758,7 @@ public class ObjectsPatch extends BoundarySampler
 				weedPlantPointsLODB[offsetLODB++] = pointX;
 				weedPlantPointsLODB[offsetLODB++] = pointZ;
 				weedPlantPointsLODB[offsetLODB++] = scale;
-				weedPlantPointsLODB[offsetLODB++] = distance / 800f;
+				weedPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -790,7 +790,7 @@ public class ObjectsPatch extends BoundarySampler
 				bushPlantPointsLODA[offsetLODA++] = pointX;
 				bushPlantPointsLODA[offsetLODA++] = pointZ;
 				bushPlantPointsLODA[offsetLODA++] = scale;
-				bushPlantPointsLODA[offsetLODA++] = distance / 800f;
+				bushPlantPointsLODA[offsetLODA++] = distance / 700f;
 
 				countLODA++;
 			}
@@ -799,7 +799,7 @@ public class ObjectsPatch extends BoundarySampler
 				bushPlantPointsLODB[offsetLODB++] = pointX;
 				bushPlantPointsLODB[offsetLODB++] = pointZ;
 				bushPlantPointsLODB[offsetLODB++] = scale;
-				bushPlantPointsLODB[offsetLODB++] = distance / 800f;
+				bushPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -831,7 +831,7 @@ public class ObjectsPatch extends BoundarySampler
 				palmPlantPointsLODA[offsetLODA++] = pointX;
 				palmPlantPointsLODA[offsetLODA++] = pointZ;
 				palmPlantPointsLODA[offsetLODA++] = scale;
-				palmPlantPointsLODA[offsetLODA++] = distance / 800f;
+				palmPlantPointsLODA[offsetLODA++] = distance / 700f;
 
 				countLODA++;
 			}
@@ -840,7 +840,7 @@ public class ObjectsPatch extends BoundarySampler
 				palmPlantPointsLODB[offsetLODB++] = pointX;
 				palmPlantPointsLODB[offsetLODB++] = pointZ;
 				palmPlantPointsLODB[offsetLODB++] = scale;
-				palmPlantPointsLODB[offsetLODB++] = distance / 800f;
+				palmPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -872,7 +872,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockAPointsLODA[offsetLODA++] = pointX;
 				rockAPointsLODA[offsetLODA++] = pointZ;
 				rockAPointsLODA[offsetLODA++] = scale;
-				rockAPointsLODA[offsetLODA++] = distance / 800f;
+				rockAPointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.51f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (4.261f * scale);
@@ -887,7 +887,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockAPointsLODB[offsetLODB++] = pointX;
 				rockAPointsLODB[offsetLODB++] = pointZ;
 				rockAPointsLODB[offsetLODB++] = scale;
-				rockAPointsLODB[offsetLODB++] = distance / 800f;
+				rockAPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -919,7 +919,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockBPointsLODA[offsetLODA++] = pointX;
 				rockBPointsLODA[offsetLODA++] = pointZ;
 				rockBPointsLODA[offsetLODA++] = scale;
-				rockBPointsLODA[offsetLODA++] = distance / 800f;
+				rockBPointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.208f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (-0.908f * scale);
@@ -934,7 +934,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockBPointsLODB[offsetLODB++] = pointX;
 				rockBPointsLODB[offsetLODB++] = pointZ;
 				rockBPointsLODB[offsetLODB++] = scale;
-				rockBPointsLODB[offsetLODB++] = distance / 800f;
+				rockBPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -966,7 +966,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockCPointsLODA[offsetLODA++] = pointX;
 				rockCPointsLODA[offsetLODA++] = pointZ;
 				rockCPointsLODA[offsetLODA++] = scale;
-				rockCPointsLODA[offsetLODA++] = distance / 800f;
+				rockCPointsLODA[offsetLODA++] = distance / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.246f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (3.743f * scale);
@@ -981,7 +981,7 @@ public class ObjectsPatch extends BoundarySampler
 				rockCPointsLODB[offsetLODB++] = pointX;
 				rockCPointsLODB[offsetLODB++] = pointZ;
 				rockCPointsLODB[offsetLODB++] = scale;
-				rockCPointsLODB[offsetLODB++] = distance / 800f;
+				rockCPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
