@@ -203,4 +203,10 @@ public class operations
 						a.z*b.x - a.x*b.z,
 						a.x*b.y - a.y*b.x);
 	}
+
+
+	public static vec3 getBinormal(vec3 normal, vec3 tangent, float tangentW)
+	{
+		return multiply(normalize(cross(normal, tangent)), tangentW);
+	}
 }

@@ -46,7 +46,7 @@ void main()
 	vPosition = vec4(position, 1.0);
 	
 	// Texture coordinates & normal attributes
-	vTexCoord = vec2(aTexCoord.x, 1.0 - aTexCoord.y);
+	vTexCoord = aTexCoord;
 	vNormal = aNormal;
 	
 	// Per-vertex diffuse component
@@ -61,7 +61,7 @@ void main()
 
 	// Vertex distance to origin
 	vDistance = property.w;
-	vDistance *= vDistance;
+	//vDistance *= vDistance;
 	
 	vBackColor = backColor;
 	

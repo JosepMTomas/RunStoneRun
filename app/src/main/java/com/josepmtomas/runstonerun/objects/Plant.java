@@ -137,7 +137,7 @@ public class Plant
 
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					vertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
@@ -279,7 +279,7 @@ public class Plant
 
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					vertices[verticesOffset++] = 1.0f - Float.parseFloat(tokens[5]);
 
 					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);

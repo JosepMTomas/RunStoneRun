@@ -2,6 +2,8 @@ package com.josepmtomas.runstonerun.objects;
 
 import android.content.Context;
 
+import com.josepmtomas.runstonerun.algebra.vec3;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,7 @@ import java.nio.ShortBuffer;
 
 import static android.opengl.GLES30.*;
 import static com.josepmtomas.runstonerun.Constants.*;
+import static com.josepmtomas.runstonerun.algebra.operations.*;
 
 /**
  * Created by Josep on 30/11/2014.
@@ -24,18 +27,21 @@ public class Rock
 	private static final int POSITION_COMPONENTS = 3;
 	private static final int TEXCOORD_COMPONENTS = 2;
 	private static final int NORMAL_COMPONENTS = 3;
-	private static final int TANGENT_COMPONENTS = 4;
-	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS;
+	private static final int TANGENT_COMPONENTS = 3;
+	private static final int BINORMAL_COMPONENTS = 3;
+	private static final int TOTAL_COMPONENTS = POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS + TANGENT_COMPONENTS + BINORMAL_COMPONENTS;
 
 	private static final int POSITION_OFFSET = 0;
 	private static final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
 	private static final int NORMAL_OFFSET = TEXCOORD_OFFSET + TEXCOORD_COMPONENTS;
 	private static final int TANGENT_OFFSET = NORMAL_OFFSET + NORMAL_COMPONENTS;
+	private static final int BINORMAL_OFFSET = TANGENT_OFFSET + TANGENT_COMPONENTS;
 
 	private static final int POSITION_BYTE_OFFSET = POSITION_OFFSET * BYTES_PER_FLOAT;
 	private static final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * BYTES_PER_FLOAT;
 	private static final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
 	private static final int TANGENT_BYTE_OFFSET = TANGENT_OFFSET * BYTES_PER_FLOAT;
+	private static final int BINORMAL_BYTE_OFFSET = BINORMAL_OFFSET * BYTES_PER_FLOAT;
 
 	private static final int BYTE_STRIDE = TOTAL_COMPONENTS * BYTES_PER_FLOAT;
 
@@ -92,6 +98,9 @@ public class Rock
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
 		ShortBuffer elementsBuffer;
+		vec3 normal = new vec3(0f);
+		vec3 tangent = new vec3(0f);
+		vec3 binormal;
 
 		////////////////////////////////////////////////////////////////////////////////////////////
 		// Read geometry from file
@@ -139,15 +148,24 @@ public class Rock
 					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1f;
 
 					// Read the vertex normals
-					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[7]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[8]);
+					normal.setValues(Float.parseFloat(tokens[6]), Float.parseFloat(tokens[7]), Float.parseFloat(tokens[8]));
+					vertices[verticesOffset++] = normal.x;
+					vertices[verticesOffset++] = normal.y;
+					vertices[verticesOffset++] = normal.z;
 
 					// read the vertex tangents
-					vertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[12]);
+					tangent.setValues(Float.parseFloat(tokens[9]), Float.parseFloat(tokens[10]), Float.parseFloat(tokens[11]));
+					vertices[verticesOffset++] = tangent.x;
+					vertices[verticesOffset++] = tangent.y;
+					vertices[verticesOffset++] = tangent.z;
+					//vertices[verticesOffset++] = Float.parseFloat(tokens[12]);
+
+					// calculate the vertex binormal
+					binormal = getBinormal(normal, tangent, Float.parseFloat(tokens[12]));
+					vertices[verticesOffset++] = binormal.x;
+					vertices[verticesOffset++] = binormal.y;
+					vertices[verticesOffset++] = binormal.z;
+
 				}
 				else if(tokens[0].equals("FACE"))
 				{
@@ -211,7 +229,12 @@ public class Rock
 		// Vertex tangents
 		glEnableVertexAttribArray(3);
 		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
+		glVertexAttribPointer(3, 3, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
+
+		// Vertex binormals
+		glEnableVertexAttribArray(4);
+		glBindBuffer(GL_ARRAY_BUFFER, vboHandlesLODA[0]);
+		glVertexAttribPointer(4, 3, GL_FLOAT, false, BYTE_STRIDE, BINORMAL_BYTE_OFFSET);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboHandlesLODA[1]);
 
@@ -278,7 +301,7 @@ public class Rock
 
 					// Read the vertex texture coordinates
 					vertices[verticesOffset++] = Float.parseFloat(tokens[4]);
-					vertices[verticesOffset++] = Float.parseFloat(tokens[5]);
+					vertices[verticesOffset++] = Float.parseFloat(tokens[5]) * -1f;
 
 					// Read the vertex normals
 					vertices[verticesOffset++] = Float.parseFloat(tokens[6]);

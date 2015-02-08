@@ -3,7 +3,8 @@
 layout (location = 0) in vec4 aPosition;
 layout (location = 1) in vec2 aTexCoord;
 layout (location = 2) in vec3 aNormal;
-layout (location = 3) in vec4 aTangent;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBinormal;
 
 layout (std140) uniform rockProperties
 {
@@ -39,13 +40,13 @@ void main()
 	//vShadows = textureProj(shadowMapSampler, shadowCoords);
 	
 	// calculate final distance
-	vDistance = property.w * property.w;
+	vDistance = property.w;// * property.w;
 	
 	// calculate attributes
 	vTexCoord = aTexCoord;
 	vNormal = aNormal;
-	vTangent = aTangent.xyz;
-	vBinormal = normalize(cross(aNormal, aTangent.xyz)) * aTangent.w;
+	vTangent = aTangent;
+	vBinormal = aBinormal;//normalize(cross(aNormal, aTangent.xyz)) * aTangent.w;
 	
 	vec4 finalPosition = viewProjection * position;
 	vLight = normalize(lightPos - position.xyz);

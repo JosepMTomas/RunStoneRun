@@ -514,7 +514,7 @@ public class ForwardRenderer implements Renderer
 		shadingPass();
 		postProcessPass();
 
-		currentFPS = fpsCounter.framesFromLastDeltas(deltaTime);//fpsCounter.countFrames();
+		currentFPS = fpsCounter.framesFromLastDeltas(deltaTime);
 	}
 
 

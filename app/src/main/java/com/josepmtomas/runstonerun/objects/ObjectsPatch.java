@@ -517,10 +517,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				pineTreePointsLODA[offsetLODA++] = pointX;
 				pineTreePointsLODA[offsetLODA++] = pointZ;
 				pineTreePointsLODA[offsetLODA++] = scale;
-				pineTreePointsLODA[offsetLODA++] = distance / 700f;
+				pineTreePointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -532,10 +534,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				pineTreePointsLODB[offsetLODB++] = pointX;
 				pineTreePointsLODB[offsetLODB++] = pointZ;
 				pineTreePointsLODB[offsetLODB++] = scale;
-				pineTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				pineTreePointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -564,10 +568,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				hugeTreePointsLODA[offsetLODA++] = pointX;
 				hugeTreePointsLODA[offsetLODA++] = pointZ;
 				hugeTreePointsLODA[offsetLODA++] = scale;
-				hugeTreePointsLODA[offsetLODA++] = distance / 700f;
+				hugeTreePointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -579,10 +585,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				hugeTreePointsLODB[offsetLODB++] = pointX;
 				hugeTreePointsLODB[offsetLODB++] = pointZ;
 				hugeTreePointsLODB[offsetLODB++] = scale;
-				hugeTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				hugeTreePointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -611,10 +619,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				palmTreePointsLODA[offsetLODA++] = pointX;
 				palmTreePointsLODA[offsetLODA++] = pointZ;
 				palmTreePointsLODA[offsetLODA++] = scale;
-				palmTreePointsLODA[offsetLODA++] = distance / 700f;
+				palmTreePointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -626,10 +636,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				palmTreePointsLODB[offsetLODB++] = pointX;
 				palmTreePointsLODB[offsetLODB++] = pointZ;
 				palmTreePointsLODB[offsetLODB++] = scale;
-				palmTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				palmTreePointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -658,10 +670,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				birchTreePointsLODA[offsetLODA++] = pointX;
 				birchTreePointsLODA[offsetLODA++] = pointZ;
 				birchTreePointsLODA[offsetLODA++] = scale;
-				birchTreePointsLODA[offsetLODA++] = distance / 700f;
+				birchTreePointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
@@ -673,10 +687,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				birchTreePointsLODB[offsetLODB++] = pointX;
 				birchTreePointsLODB[offsetLODB++] = pointZ;
 				birchTreePointsLODB[offsetLODB++] = scale;
-				birchTreePointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				birchTreePointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -705,19 +721,23 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				fernPlantPointsLODA[offsetLODA++] = pointX;
 				fernPlantPointsLODA[offsetLODA++] = pointZ;
 				fernPlantPointsLODA[offsetLODA++] = scale;
-				fernPlantPointsLODA[offsetLODA++] = distance / 700f;
+				fernPlantPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				countLODA++;
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				fernPlantPointsLODB[offsetLODB++] = pointX;
 				fernPlantPointsLODB[offsetLODB++] = pointZ;
 				fernPlantPointsLODB[offsetLODB++] = scale;
-				fernPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				fernPlantPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -746,19 +766,23 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				weedPlantPointsLODA[offsetLODA++] = pointX;
 				weedPlantPointsLODA[offsetLODA++] = pointZ;
 				weedPlantPointsLODA[offsetLODA++] = scale;
-				weedPlantPointsLODA[offsetLODA++] = distance / 700f;
+				weedPlantPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				countLODA++;
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				weedPlantPointsLODB[offsetLODB++] = pointX;
 				weedPlantPointsLODB[offsetLODB++] = pointZ;
 				weedPlantPointsLODB[offsetLODB++] = scale;
-				weedPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				weedPlantPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -787,19 +811,23 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				bushPlantPointsLODA[offsetLODA++] = pointX;
 				bushPlantPointsLODA[offsetLODA++] = pointZ;
 				bushPlantPointsLODA[offsetLODA++] = scale;
-				bushPlantPointsLODA[offsetLODA++] = distance / 700f;
+				bushPlantPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				countLODA++;
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				bushPlantPointsLODB[offsetLODB++] = pointX;
 				bushPlantPointsLODB[offsetLODB++] = pointZ;
 				bushPlantPointsLODB[offsetLODB++] = scale;
-				bushPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				bushPlantPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -828,19 +856,23 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				palmPlantPointsLODA[offsetLODA++] = pointX;
 				palmPlantPointsLODA[offsetLODA++] = pointZ;
 				palmPlantPointsLODA[offsetLODA++] = scale;
-				palmPlantPointsLODA[offsetLODA++] = distance / 700f;
+				palmPlantPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				countLODA++;
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				palmPlantPointsLODB[offsetLODB++] = pointX;
 				palmPlantPointsLODB[offsetLODB++] = pointZ;
 				palmPlantPointsLODB[offsetLODB++] = scale;
-				palmPlantPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				palmPlantPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -869,10 +901,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				rockAPointsLODA[offsetLODA++] = pointX;
 				rockAPointsLODA[offsetLODA++] = pointZ;
 				rockAPointsLODA[offsetLODA++] = scale;
-				rockAPointsLODA[offsetLODA++] = distance / 700f;
+				rockAPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.51f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (4.261f * scale);
@@ -884,10 +918,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				rockAPointsLODB[offsetLODB++] = pointX;
 				rockAPointsLODB[offsetLODB++] = pointZ;
 				rockAPointsLODB[offsetLODB++] = scale;
-				rockAPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				rockAPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -916,10 +952,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				rockBPointsLODA[offsetLODA++] = pointX;
 				rockBPointsLODA[offsetLODA++] = pointZ;
 				rockBPointsLODA[offsetLODA++] = scale;
-				rockBPointsLODA[offsetLODA++] = distance / 700f;
+				rockBPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.208f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (-0.908f * scale);
@@ -931,10 +969,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				rockBPointsLODB[offsetLODB++] = pointX;
 				rockBPointsLODB[offsetLODB++] = pointZ;
 				rockBPointsLODB[offsetLODB++] = scale;
-				rockBPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				rockBPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}
@@ -963,10 +1003,12 @@ public class ObjectsPatch extends BoundarySampler
 
 			if(distance < TREE_LOD_A_MAX_DISTANCE)
 			{
+				distance = distance * 0.0014285f; // 1/700
+				distance = distance * distance;
 				rockCPointsLODA[offsetLODA++] = pointX;
 				rockCPointsLODA[offsetLODA++] = pointZ;
 				rockCPointsLODA[offsetLODA++] = scale;
-				rockCPointsLODA[offsetLODA++] = distance / 700f;
+				rockCPointsLODA[offsetLODA++] = distance;// / 700f;
 
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.246f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (3.743f * scale);
@@ -978,10 +1020,12 @@ public class ObjectsPatch extends BoundarySampler
 			}
 			else
 			{
+				distance = Math.min(1.0f, distance * 0.0014285f); // 1/700
+				distance = distance * distance;
 				rockCPointsLODB[offsetLODB++] = pointX;
 				rockCPointsLODB[offsetLODB++] = pointZ;
 				rockCPointsLODB[offsetLODB++] = scale;
-				rockCPointsLODB[offsetLODB++] = Math.min(1.0f, distance / 700f);
+				rockCPointsLODB[offsetLODB++] = distance;//Math.min(1.0f, distance / 700f);
 
 				countLODB++;
 			}

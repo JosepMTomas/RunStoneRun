@@ -51,7 +51,7 @@ void main()
 	
 	diffuseTex = (diffuseTex * lightColor * diffuse) + (diffuseTex * diffuse2);
 	
-	vColor = mix(diffuseTex + ambient, backColor, property.w);
+	vColor = mix(diffuseTex + ambient, backColor, property.w);//property.w * property.w
 	
 	
 	//diffuse = dot(aNormal, normalize(vec3(0.0, 50.0, 0.0) - finalPosition.xyz));
