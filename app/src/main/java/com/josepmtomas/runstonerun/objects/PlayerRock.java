@@ -619,6 +619,12 @@ public class PlayerRock
 				initialForce = -initialForce * 0.75f;
 			}
 
+			if(currentPositionY > 80f)
+			{
+				currentPositionY = 80f;
+				initialForce = -initialForce * 0.5f;
+			}
+
 			if(previousPositionY == currentPositionY)
 			{
 				state = PLAYER_ROCK_RECOVERING;

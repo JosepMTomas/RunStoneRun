@@ -154,11 +154,9 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		/*****************/
 
 		glSurfaceView.setEGLContextClientVersion(3);
-		//glSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR | GLSurfaceView.DEBUG_LOG_GL_CALLS);
+		glSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR | GLSurfaceView.DEBUG_LOG_GL_CALLS);
 		glSurfaceView.setRenderer(forwardRenderer);
-		//glSurfaceView.setRenderer(deferredRenderer);
-		//glSurfaceView.setRenderer(gameRenderer);
-		glSurfaceView.setPreserveEGLContextOnPause(true);
+		glSurfaceView.setPreserveEGLContextOnPause(false);
 
 		glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
 			@Override

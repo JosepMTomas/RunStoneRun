@@ -554,6 +554,15 @@ public class Hud
 	}
 
 
+	public void setResumingNotVisible()
+	{
+		resumingProgressBarState = UI_STATE_NOT_VISIBLE;
+		resumingProgressBarOpacity = 0f;
+		resumingPanelState = UI_STATE_NOT_VISIBLE;
+		resumingPanelOpacity = 0f;
+	}
+
+
 	public boolean touch(float x, float y)
 	{
 		if(	x >= pauseButtonLimits[0] &&

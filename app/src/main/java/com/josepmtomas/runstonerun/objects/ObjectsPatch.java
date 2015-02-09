@@ -228,12 +228,6 @@ public class ObjectsPatch extends BoundarySampler
 			rockCPointsLODB[i] = 0f;
 		}
 
-		/*for(int i=0; i < 1024; i++)
-		{
-
-
-		}*/
-
 		for(int i=0; i < (MAX_TREE_INSTANCES_TOTAL*4); i++)
 		{
 			collisionCylinders[i] = 0f;
@@ -310,7 +304,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 2.9f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 2.65f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 0f;
 				numCollisionCylinders++;
 			}
@@ -326,7 +320,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 4.5f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 4.25f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 1f;
 				numCollisionCylinders++;
 			}
@@ -342,7 +336,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.z + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 2.4f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 2.15f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 2f;
 				numCollisionCylinders++;
 			}
@@ -358,7 +352,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.x + currentPoint.x;
 				collisionCylinders[collisionCylindersOffset++] = currentPosition.y + currentPoint.y;
-				collisionCylinders[collisionCylindersOffset++] = 1.5f * scaleValue;
+				collisionCylinders[collisionCylindersOffset++] = 1.25f * scaleValue;
 				collisionCylinders[collisionCylindersOffset++] = 3f;
 				numCollisionCylinders++;
 			}
@@ -413,7 +407,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.x + currentPoint.x + (0.51f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.y + (4.261f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.z + currentPoint.y + (0.903f * scaleValue);
-				collisionSpheres[collisionSpheresOffset++] = 12f * scaleValue;//13.766f * scaleValue;
+				collisionSpheres[collisionSpheresOffset++] = 11.75f * scaleValue;//13.766f * scaleValue; //12
 				numCollisionSpheres++;
 
 				rockACount++;
@@ -429,7 +423,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.x + currentPoint.x + (0.208f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.y + (-0.908f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.z + currentPoint.y + (0.692f * scaleValue);
-				collisionSpheres[collisionSpheresOffset++] = 8.769f * scaleValue;
+				collisionSpheres[collisionSpheresOffset++] = 8.519f * scaleValue; //8.769
 				numCollisionSpheres++;
 
 				rockBCount++;
@@ -445,7 +439,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.x + currentPoint.x + (0.246f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.y + (3.743f * scaleValue);
 				collisionSpheres[collisionSpheresOffset++] = currentPosition.z + currentPoint.y;
-				collisionSpheres[collisionSpheresOffset++] = 9f;
+				collisionSpheres[collisionSpheresOffset++] = 8.75f;//9
 				numCollisionSpheres++;
 
 				rockCCount++;
@@ -532,7 +526,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 2.9f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 2.65f * scale;//2.9
 				collisionCylinders[collisionCylindersOffset++] = 0.0f;
 
 				countLODA++;
@@ -583,7 +577,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 4.5f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 4.25f * scale;//4.5
 				collisionCylinders[collisionCylindersOffset++] = 1.0f;
 
 				countLODA++;
@@ -634,7 +628,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 2.4f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 2.15f * scale; //2.4
 				collisionCylinders[collisionCylindersOffset++] = 2.0f;
 
 				countLODA++;
@@ -685,7 +679,7 @@ public class ObjectsPatch extends BoundarySampler
 
 				collisionCylinders[collisionCylindersOffset++] = pointX;
 				collisionCylinders[collisionCylindersOffset++] = pointZ;
-				collisionCylinders[collisionCylindersOffset++] = 1.5f * scale;
+				collisionCylinders[collisionCylindersOffset++] = 1.25f * scale; //1.5
 				collisionCylinders[collisionCylindersOffset++] = 3.0f;
 
 				countLODA++;
@@ -917,7 +911,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.51f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (4.261f * scale);
 				collisionSpheres[collisionSpheresOffset++] = pointZ + (0.903f * scale);
-				collisionSpheres[collisionSpheresOffset++] = 12f * scale; //13.766f * scale;
+				collisionSpheres[collisionSpheresOffset++] = 11.75f * scale; //13.766f * scale; //12
 
 				countLODA++;
 				collisionSpheresCount++;
@@ -968,7 +962,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.208f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (-0.908f * scale);
 				collisionSpheres[collisionSpheresOffset++] = pointZ + (0.692f * scale);
-				collisionSpheres[collisionSpheresOffset++] = 8.769f * scale; //13.766f * scale;
+				collisionSpheres[collisionSpheresOffset++] = 8.519f * scale; //13.766f * scale; //8.769
 
 				countLODA++;
 				collisionSpheresCount++;
@@ -1019,7 +1013,7 @@ public class ObjectsPatch extends BoundarySampler
 				collisionSpheres[collisionSpheresOffset++] = pointX + (0.246f * scale);
 				collisionSpheres[collisionSpheresOffset++] = (3.743f * scale);
 				collisionSpheres[collisionSpheresOffset++] = pointZ;
-				collisionSpheres[collisionSpheresOffset++] = 9f * scale;
+				collisionSpheres[collisionSpheresOffset++] = 8.75f * scale;	//9
 
 				countLODA++;
 				collisionSpheresCount++;

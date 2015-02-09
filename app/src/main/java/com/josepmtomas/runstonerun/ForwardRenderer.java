@@ -489,6 +489,7 @@ public class ForwardRenderer implements Renderer
 		if(rendererState == RENDERER_STATE_RESUMING)
 		{
 			resumeTimer += deltaTime;
+			//Log.d("Resuming","Time: "+resumeTimer + " sec. out of "+ PLAYER_RESUMING_TIME + " sec.");
 			if(resumeTimer >= PLAYER_RESUMING_TIME)
 			{
 				isPaused = false;
@@ -554,6 +555,15 @@ public class ForwardRenderer implements Renderer
 		// Score
 		float fScoreIncrement = playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
 		fScore += fScoreIncrement; //playerRock.getDisplacementVec3().z * playerRock.scoreMultiplier;
+
+		if(fScore >= 99999999f && rendererState == RENDERER_STATE_PLAYING)
+		{
+			fScore = 99999999f;
+			//gameOverMenu.setAppearing(99999999, true);
+			//hud.setDisappearing();
+			rendererState = RENDERER_STATE_CHANGING_MENU;
+			gameOver();
+		}
 
 		// Update hud
 		hud.update(fScore, fScoreIncrement, (int)(playerRock.scoreMultiplier*10), scoreMultiplierPercent, deltaTime);
@@ -694,6 +704,13 @@ public class ForwardRenderer implements Renderer
 					rendererState = RENDERER_STATE_PAUSE_MENU;
 				}
 			}
+			else if(rendererState == RENDERER_STATE_RESUMING)
+			{
+				if(hud.touch(newX, newY))
+				{
+					setPause(true);
+				}
+			}
 			else if(rendererState == RENDERER_STATE_PAUSE_MENU)
 			{
 				pauseMenu.touch(newX, newY);
@@ -763,19 +780,21 @@ public class ForwardRenderer implements Renderer
 
 		int highScore = sharedPreferences.getInt("LocalHighScore",0);
 
-		if((int)fScore > highScore)
+		int score = Math.min(99999999, (int)fScore);
+
+		if(score > highScore)
 		{
 			SharedPreferences.Editor editor = sharedPreferences.edit();
-			editor.putInt("LocalHighScore", (int)fScore);
+			editor.putInt("LocalHighScore", score);
 			editor.apply();
 
 			rendererState = RENDERER_STATE_CHANGING_MENU;
-			gameOverMenu.setAppearing((int)fScore, true);
+			gameOverMenu.setAppearing(score, true);
 		}
 		else
 		{
 			rendererState = RENDERER_STATE_CHANGING_MENU;
-			gameOverMenu.setAppearing((int)fScore, false);
+			gameOverMenu.setAppearing(score, false);
 		}
 
 	}
@@ -995,6 +1014,15 @@ public class ForwardRenderer implements Renderer
 				pauseMenu.setAppearing();
 				isPaused = true;
 			}
+			else if(rendererState == RENDERER_STATE_RESUMING)
+			{
+				rendererState = RENDERER_STATE_PAUSE_MENU;
+				hud.setPauseButtonNotVisible();
+				hud.setResumingNotVisible();
+				pauseMenu.setAppearing();
+				resumeTimer = 0f;
+				isPaused = true;
+			}
 		}
 	}
 
@@ -1109,7 +1137,7 @@ public class ForwardRenderer implements Renderer
 		{
 			creditsMenu.onBackPressed();
 		}
-		else if(rendererState == RENDERER_STATE_PLAYING)
+		else if(rendererState == RENDERER_STATE_PLAYING || rendererState == RENDERER_STATE_RESUMING)
 		{
 			setPause(true);
 		}

@@ -145,8 +145,8 @@ public class EndGameMenu
 		endGameTitleCurrentPosition[1] = endGameTitlePosition[1];
 
 		// End Game Text
-		endGameTextScale[0] = titleWidth * 0.8f; // 1
-		endGameTextScale[1] = titleHeight * 1.0f;//1.5f;
+		endGameTextScale[0] = titleWidth * 0.9f; // 1
+		endGameTextScale[1] = titleHeight * 2.0f;//1.5f;
 		endGameTextPosition[0] = 0f;
 		endGameTextPosition[1] = 0f;
 		endGameTextCurrentScale[0] = endGameTextScale[0];
