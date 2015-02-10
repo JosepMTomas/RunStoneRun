@@ -21,6 +21,7 @@ out vec3 vLight;
 out float vDistance;
 
 out vec4 vShadowCoords;
+const vec3 binormal = vec3(0.0,0.0,-1.0);
 
 void main()
 {
@@ -28,7 +29,7 @@ void main()
 	vTexCoord = aTexCoord * 2.0;
 	vNormal = normalize(aNormal);
 	vTangent = aTangent.xyz;
-	vBinormal = cross(aNormal, aTangent.xyz) * aTangent.w;
+	vBinormal = binormal;//cross(aNormal, aTangent.xyz) * aTangent.w;
 	vColor = aColor;
 	
 	vDistance = abs(distance(uModel * aPosition, vec4(0.0))) * 0.00143;

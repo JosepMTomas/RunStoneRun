@@ -478,6 +478,16 @@ public class Rock
 
 	private void loadReflection(Context context, String reflectionFileName)
 	{
+		final int POSITION_OFFSET = 0;
+		final int TEXCOORD_OFFSET = POSITION_OFFSET + POSITION_COMPONENTS;
+		final int NORMAL_OFFSET = TEXCOORD_OFFSET + TEXCOORD_COMPONENTS;
+
+		final int POSITION_BYTE_OFFSET = POSITION_OFFSET * BYTES_PER_FLOAT;
+		final int TEXCOORD_BYTE_OFFSET = TEXCOORD_OFFSET * BYTES_PER_FLOAT;
+		final int NORMAL_BYTE_OFFSET = NORMAL_OFFSET * BYTES_PER_FLOAT;
+
+		final int BYTE_STRIDE = (POSITION_COMPONENTS + TEXCOORD_COMPONENTS + NORMAL_COMPONENTS) * BYTES_PER_FLOAT;
+
 		int numVertices, numElements;
 		FloatBuffer verticesBuffer;
 		ShortBuffer elementsBuffer;
@@ -531,12 +541,6 @@ public class Rock
 					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[6]);
 					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[7]);
 					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[8]);
-
-					// read the vertex tangents
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[9]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[10]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[11]);
-					reflectionVertices[verticesOffset++] = Float.parseFloat(tokens[12]);
 				}
 				else if(tokens[0].equals("FACE"))
 				{
@@ -597,11 +601,6 @@ public class Rock
 		glEnableVertexAttribArray(2);
 		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
 		glVertexAttribPointer(2, 3, GL_FLOAT, false, BYTE_STRIDE, NORMAL_BYTE_OFFSET);
-
-		// Vertex tangents
-		glEnableVertexAttribArray(3);
-		glBindBuffer(GL_ARRAY_BUFFER, reflectionVboHandles[0]);
-		glVertexAttribPointer(3, 4, GL_FLOAT, false, BYTE_STRIDE, TANGENT_BYTE_OFFSET);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, reflectionVboHandles[1]);
 

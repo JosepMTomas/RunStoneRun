@@ -56,8 +56,6 @@ void main()
 
 	lowp vec4 reflectionColor = texture(reflectionSampler, screen + normalDistort);
 	lowp vec4 diffuseColor = mix(groundColor, grassColor, vColor.x);
-	//lowp vec4 diffuseColor = mix(groundColor, grassColor, clamp(pow(vColor.x, 2.0) * 2.0, 0.0, 1.0));
-	//lowp vec4 ambient = diffuseColor * ambientColor;
 	
 	lowp float shadow = textureProj(shadowMapSampler, vShadowCoords);
 	shadow += ambientColor.x;
@@ -72,32 +70,9 @@ void main()
 	diffuseColor = (diffuseColor * lightColor * diffuse) + (diffuseColor * vec4(dot(normal, vLight) * 2.0 * shadowFactor));// + ambient;
 	
 	fragColor = mix(diffuseColor, backColor, vDistance);
-	//fragColor = fragColor * (1.0 - vColor.y);
 	
 	lowp float height = clamp(vColor.x + groundHeight, 0.0, 1.0);
-	//lowp float height = pow(clamp(vColor.x + groundHeight, 0.0, 1.0), 3.0);
 	
 	//fragColor = mix((fragColor + reflectionColor * (1.0 - height)) * 0.5, fragColor, height); 
 	fragColor = mix(reflectionColor, fragColor, height);
-	//fragColor = groundColor;
-	//fragColor = reflectionColor * (1.0 - height);
-	
-	/*if(lod == 0)
-	{
-		fragColor = vec4(1.0,0.0,0.0,1.0);
-	}
-	else if(lod == 1)
-	{
-		fragColor = vec4(0.0,1.0,0.0,1.0);
-	}
-	else
-	{
-		fragColor = vec4(1.0, 0.0, 1.0, 1.0);
-	}*/
-	
-	////fragColor = fragColor + ((1.0 - pow(vColor.x, 3.0)) * reflectionColor );
-	
-	///fragColor = mix(fragColor, vec4(1.0), vDistance);
-	//fragColor = vec4(diffuse);
-	//fragColor = vec4(shadowFactor);
 }
