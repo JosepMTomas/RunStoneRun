@@ -248,8 +248,8 @@ public class HowToPlayMenu
 		backButtonCurrentTexture = textures.backButtonIdleTexture;
 
 		// Objectives panel
-		objectivesScale[0] = maxPanelSizeX * 0.9f;
-		objectivesScale[1] = maxPanelSizeY * 0.22f;
+		objectivesScale[0] = maxPanelSizeX * 0.918f;//0.9f;
+		objectivesScale[1] = maxPanelSizeY * 0.228f;//0.22f;
 		objectivesPosition[0] = 0f;
 		objectivesPosition[1] = 0f;
 		objectivesCurrentScale[0] = objectivesScale[0];
@@ -260,8 +260,8 @@ public class HowToPlayMenu
 		objectivesCurrentState = UI_STATE_VISIBLE;
 
 		// Controls panel
-		controlsScale[0] = maxPanelSizeX * 0.8f;
-		controlsScale[1] = maxPanelSizeY * 0.61f;
+		controlsScale[0] = maxPanelSizeX * 0.836f;//0.8f;
+		controlsScale[1] = maxPanelSizeY * 0.624f;//0.61f;
 		controlsPosition[0] = 0f;
 		controlsPosition[1] = 0f;
 		controlsCurrentScale[0] = controlsScale[0];
@@ -272,7 +272,7 @@ public class HowToPlayMenu
 		controlsCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Score panel
-		scoreScale[0] = maxPanelSizeX * 0.995f;
+		scoreScale[0] = maxPanelSizeX * 1.0f;//0.995f;
 		scoreScale[1] = maxPanelSizeY * 0.648f;
 		scorePosition[0] = 0f;
 		scorePosition[1] = 0f;
@@ -284,8 +284,8 @@ public class HowToPlayMenu
 		scoreCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Lives panel
-		livesScale[0] = maxPanelSizeX * 0.97f;
-		livesScale[1] = maxPanelSizeY * 0.743f;
+		livesScale[0] = maxPanelSizeX * 0.971f;//0.97f;
+		livesScale[1] = maxPanelSizeY * 0.744f;//0.743f;
 		livesPosition[0] = 0f;
 		livesPosition[1] = 0f;
 		livesCurrentScale[0] = livesScale[0];
@@ -296,8 +296,8 @@ public class HowToPlayMenu
 		livesCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Pause panel
-		pauseScale[0] = maxPanelSizeX * 0.916f;
-		pauseScale[1] = maxPanelSizeY * 0.34f;
+		pauseScale[0] = maxPanelSizeX * 0.92f;//0.916f;
+		pauseScale[1] = maxPanelSizeY * 0.342f;//0.34f;
 		pausePosition[0] = 0f;
 		pausePosition[1] = 0f;
 		pauseCurrentScale[0] = pauseScale[0];
@@ -308,8 +308,8 @@ public class HowToPlayMenu
 		pauseCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Speed panel
-		speedScale[0] = maxPanelSizeX * 0.929f;
-		speedScale[1] = maxPanelSizeY * 0.409f;
+		speedScale[0] = maxPanelSizeX * 0.948f;//0.929f;
+		speedScale[1] = maxPanelSizeY * 0.408f;//0.409f;
 		speedPosition[0] = 0f;
 		speedPosition[1] = 0f;
 		speedCurrentScale[0] = speedScale[0];
@@ -320,8 +320,8 @@ public class HowToPlayMenu
 		speedCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Visibility panel
-		visibilityScale[0] = maxPanelSizeX * 0.952f;
-		visibilityScale[1] = maxPanelSizeY * 0.354f;
+		visibilityScale[0] = maxPanelSizeX * 0.971f;//0.952f;
+		visibilityScale[1] = maxPanelSizeY * 0.355f;//0.354f;
 		visibilityPosition[0] = 0f;
 		visibilityPosition[1] = 0f;
 		visibilityCurrentScale[0] = visibilityScale[0];
@@ -332,8 +332,8 @@ public class HowToPlayMenu
 		visibilityCurrentState = UI_STATE_NOT_VISIBLE;
 
 		// Exit panel
-		exitScale[0] = maxPanelSizeX * 0.929f;
-		exitScale[1] = maxPanelSizeY * 0.409f;
+		exitScale[0] = maxPanelSizeX * 0.912f;//0.929f;
+		exitScale[1] = maxPanelSizeY * 0.380f;//0.409f;
 		exitPosition[0] = 0f;
 		exitPosition[1] = 0f;
 		exitCurrentScale[0] = exitScale[0];
