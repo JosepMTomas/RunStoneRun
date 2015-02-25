@@ -1008,6 +1008,7 @@ public class ForwardRenderer implements Renderer
 		}
 		else
 		{
+			hud.onStop();
 			if(rendererState == RENDERER_STATE_PLAYING)
 			{
 				hud.setPauseButtonNotVisible();

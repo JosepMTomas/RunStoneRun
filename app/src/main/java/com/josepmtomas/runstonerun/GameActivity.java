@@ -156,7 +156,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 		glSurfaceView.setEGLContextClientVersion(3);
 		glSurfaceView.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR | GLSurfaceView.DEBUG_LOG_GL_CALLS);
 		glSurfaceView.setRenderer(forwardRenderer);
-		glSurfaceView.setPreserveEGLContextOnPause(false);
+		glSurfaceView.setPreserveEGLContextOnPause(true);
 
 		glSurfaceView.setOnTouchListener(new View.OnTouchListener() {
 			@Override
@@ -292,7 +292,7 @@ mediaPlayer.start(); // no need to call prepare(); create() does that for you*/
 	@Override
 	protected void onDestroy()
 	{
-		forwardRenderer.onDestroy();
+		//forwardRenderer.onDestroy();
 
 		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

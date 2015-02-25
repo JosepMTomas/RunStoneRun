@@ -39,7 +39,7 @@ public class LightInfo
 	public float[] viewProjection = new float[16];
 
 	// Time
-	public float timeOfDay = 10f;
+	public float timeOfDay = 12f;
 	private static final float TIME_OF_DAY_MULTIPLIER = 0.25f;
 	public float timeOfDayAlpha = 0f;
 
@@ -54,9 +54,9 @@ public class LightInfo
 	private float[] ambientColor3 = {0.1f, 0.1f, 0.1f};
 
 	// Background colors
-	private float[] backColor1 = {0.949f, 0.623f, 0.38f};
+	private float[] backColor1 = {0.933f, 0.776f, 0.635f};//{0.949f, 0.623f, 0.38f};	//Dusk
 	private float[] backColor2 = {1f, 1f, 1f};
-	private float[] backColor3 = {0.09f, 0.078f, 0.35f};
+	private float[] backColor3 = {0.121f, 0.117f, 0.455f};//{0.09f, 0.078f, 0.35f};
 	public float[] backColor = {0f, 0f, 0f};
 
 	// Shadow factor

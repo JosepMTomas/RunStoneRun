@@ -501,6 +501,7 @@ public class Hud
 	public void resume()
 	{
 		//livesCounterCurrentState = LIVES_TIMER_COUNTING;
+		//livesCounterPreviousState = LIVES_TIMER_COUNTING;
 		livesCounterCurrentState = livesCounterPreviousState;
 		resetPauseButtonTexture();
 		resumingPanelTimer = 0f;
@@ -576,6 +577,12 @@ public class Hud
 			return true;
 		}
 		return false;
+	}
+
+
+	public void onStop()
+	{
+		livesCounterPreviousState = livesCounterCurrentState;
 	}
 
 

@@ -853,6 +853,9 @@ public class PlayerRock
 		scoreMultiplier = 1.0f;
 		currentSpeed = 0f;
 		currentPositionY = 10f;
+		playerRockTimer = 0f;
+		playerRockTimerPercent = 0f;
+		currentPositionZ = 50f;
 		initialForce = 0f;
 
 		if(groundPatchType == GROUND_PATCH_RIVER_MIDDLE)
